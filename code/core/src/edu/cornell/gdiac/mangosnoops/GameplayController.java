@@ -27,6 +27,8 @@ import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.entity.*;
 import edu.cornell.gdiac.mangosnoops.GameObject.ObjectType;
 
+import java.util.HashSet;
+
 /**
  * Controller to handle gameplay interactions.
  * </summary>
@@ -34,6 +36,17 @@ import edu.cornell.gdiac.mangosnoops.GameObject.ObjectType;
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
+
+
+	/** The change in x, computed based on the wheel angle */
+	private float rotationMagnitude;
+
+	/** Data structure containing gnome data */
+	private HashSet<Gnome> gnomes;
+
+	/** Car instance, containing information about the wheel, */
+	private Car car;
+
 	// Graphics assets for the entities
 	/** The texture file for a ship object*/
 	private static final String BEETLE_FILE = "images/beetle.png";
@@ -56,28 +69,6 @@ public class GameplayController {
 	private Texture greenTexture;
 	/** Texture for red shells, as they look the same */
 	private Texture redTexture;
-
-	/** The minimum x-velocity of a newly generated shell */
-	private static final float MIN_SHELL_VX = 3;
-	/** The maximum y-velocity of a newly generated shell */
-	private static final float MAX_SHELL_VX = 10;
-	/** The y-position offset of a newly generated bullet */
-	private static final float BULLET_OFFSET = 5.0f;
-	/** The vertical speed of a newly generated bullet */
-	private static final float BULLET_SPEED  = 10.0f;
-	/** The minimum velocity factor (x shell velocity) of a newly created star */
-	private static final float MIN_STAR_FACTOR = 0.1f;
-	/** The maximum velocity factor (x shell velocity) of a newly created star */
-	private static final float MAX_STAR_FACTOR = 0.2f;
-	/** The minimum velocity offset (+ shell velocity) of a newly created star */
-	private static final float MIN_STAR_OFFSET = -3.0f;
-	/** The maximum velocity offset (+ shell velocity) of a newly created star */
-	private static final float MAX_STAR_OFFSET = 3.0f;
-
-	/** Reference to player (need to change to allow multiple players) */
-	private Ship player;
-	/** Shell count for the display in window corner */
-	private int shellCount;
 
 	// List of objects with the garbage collection set.
 	/** The currently active object */
@@ -140,8 +131,7 @@ public class GameplayController {
 	 * Creates a new GameplayController with no active elements.
 	 */
 	public GameplayController() {
-		player = null;
-		shellCount = 0;
+		car = null;
 		objects = new Array<GameObject>();
 		backing = new Array<GameObject>();
 	}
@@ -160,14 +150,12 @@ public class GameplayController {
 	}
 
 	/**
-	 * Returns a reference to the currently active player.
+	 * Returns a reference to the currently active car
 	 *
-	 * This property needs to be modified if you want multiple players.
-	 *
-	 * @return a reference to the currently active player.
+	 * @return a reference to the currently active car.
 	 */
-	public Ship getPlayer() {
-		return player;
+	public Ship getCar() {
+		return car;
 	}
 
 	/**
@@ -178,18 +166,9 @@ public class GameplayController {
 	 * @return true if the currently active player is alive.
 	 */
 	public boolean isAlive() {
-		return player != null;
+		return car != null;
 	}
 
-	/**
-	 * Returns the number of shells currently active on the screen.
-	 *
-	 * @return the number of shells currently active on the screen.
-	 */
-	public int getShellCount() {
-		return shellCount;
-	}
-	
 	/**
 	 * Starts a new game.
 	 *
@@ -200,59 +179,22 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		// Create the player's ship
-		player = new Ship();
-		player.setTexture(beetleTexture);
-		player.getPosition().set(x,y);
+        car = new Car();
+		car.setTexture(beetleTexture);
+		car.getPosition().set(x,y);
 
 		// Player must be in object list.
-		objects.add(player);
+		objects.add(car);
 	}
 
 	/**
 	 * Resets the game, deleting all objects.
 	 */
 	public void reset() {
-		player = null;
-		shellCount = 0;
+		car = null;
 		objects.clear();
 	}
 
-	/**
-	 * Adds a new shell to the game.
-	 *
-	 * A shell is generated at the top with a random horizontal position. Notice that
-	 * this allocates memory to the heap.  If we were REALLY worried about performance,
-	 * we would use a memory pool here.
-	 *
-	 * @param width  Current game width
-	 * @param height Current game height
-	 */
-	public void addShell(float width, float height) {
-		// Add a new shell
-		Shell b = new Shell();
-		if (RandomController.rollInt(0, 2) == 0) {
-			// Needs two shots to kill
-			b.setTexture(redTexture);
-			b.setDamagedTexture(greenTexture);
-		} else {
-			//  Needs one shot to kill
-			b.setTexture(greenTexture);
-			b.setDamagedTexture(null);
-		}
-
-		// Only define vx. Gravity takes care of vy.
-		float vx = RandomController.rollFloat(MIN_SHELL_VX,MAX_SHELL_VX);
-		// Coin flip positive or negative
-		vx = vx*((float)RandomController.rollInt(0, 1) * 2 - 1);
-
-		// Position the shell
-		b.setX(RandomController.rollFloat(0, width));
-		b.setY(height);
-		b.setVX(vx);
-		objects.add(b);
-		shellCount++;
-	}
-	
 	/**
 	 * Garbage collects all deleted objects.
 	 *
@@ -290,28 +232,7 @@ public class GameplayController {
 	 * @param o Object to destroy
 	 */
 	protected void destroy(GameObject o) {
-		switch(o.getType()) {
-		case SHIP:
-			player = null;
-			break;
-		case SHELL:
-			// Create some stars
-			for (int j = 0; j < 6; j++) {
-				Star s = new Star();
-				s.setTexture(starTexture);
-				s.getPosition().set(o.getPosition());
-				float vx = o.getVX() * RandomController.rollFloat(MIN_STAR_FACTOR, MAX_STAR_FACTOR) 
-							+ RandomController.rollFloat(MIN_STAR_OFFSET, MAX_STAR_OFFSET);
-				float vy = o.getVY() * RandomController.rollFloat(MIN_STAR_FACTOR, MAX_STAR_FACTOR) 
-							+ RandomController.rollFloat(MIN_STAR_OFFSET, MAX_STAR_OFFSET);
-				s.getVelocity().set(vx,vy);
-				backing.add(s);
-			}
-			shellCount--;
-			break;
-		default:
-			break;
-		}
+	    // TODO: carry out actions that occur on death of object o
 	}
 	
 	/**
@@ -323,15 +244,7 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
-		// Process the player
-		if (player != null) {
-			resolvePlayer(input,delta);
-		}
-
-		// Process the other (non-ship) objects.
-		for (GameObject o : objects) {
-			o.update(delta);
-		}
+	    // TODO: update object states based on input
 	}
 
 	/**
@@ -343,23 +256,7 @@ public class GameplayController {
 	 * @param input  Reference to the input controller
 	 * @param delta  Number of seconds since last animation frame
 	 */
-	public void resolvePlayer(InputController input, float delta) {
-		player.setMovement(input.getMovement());
-		player.setFiring(input.didFire());
-		player.update(delta);
-		if (!player.isFiring()) {
-			return;
-		}
-
-		// Create a new bullet
-		Bullet b = new Bullet();
-		b.setTexture(bulletTexture);
-		b.setX(player.getX());
-		b.setY(player.getY()+player.getRadius()+BULLET_OFFSET);
-		b.setVY(BULLET_SPEED);
-		backing.add(b); // Bullet added NEXT frame.
-
-		// Prevent player from firing immediately afterwards.
-		player.resetCooldown();
+	public void resolveCar(InputController input, float delta) {
+		// TODO: update car state based on input
 	}
 }
