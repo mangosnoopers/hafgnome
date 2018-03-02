@@ -40,7 +40,10 @@ public class GameMode implements Screen {
 		/** When the ships is dead (but shells still work) */
 		OVER
 	}
-	
+
+	// LEVEL - TODO: Don't just hardcode the JSON url in lol
+	private static String LEVEL_JSON = "temp.json";
+
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
@@ -141,7 +144,7 @@ public class GameMode implements Screen {
 	/** Reads input from keyboard or game pad (CONTROLLER CLASS) */
 	private InputController inputController;
 	/** Handle collision and physics (CONTROLLER CLASS) */
-	private CollisionController physicsController;
+	private CollisionController collisionController;
 	/** Constructs the game models and handle basic gameplay (CONTROLLER CLASS) */
 	private GameplayController gameplayController;
 	
@@ -170,9 +173,9 @@ public class GameMode implements Screen {
 
 		// Create the controllers.
 		inputController = new InputController();
-		gameplayController = new GameplayController(); 
+		gameplayController = new GameplayController(new LevelObject(LEVEL_JSON));
 		// YOU WILL NEED TO MODIFY THIS NEXT LINE
-		physicsController = new CollisionController(canvas.getWidth(), canvas.getHeight());
+		collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
 	}
 	
 	/**
@@ -181,7 +184,7 @@ public class GameMode implements Screen {
 	public void dispose() {
 		inputController = null;
 		gameplayController = null;
-		physicsController  = null;
+		collisionController = null;
 		canvas = null;
 	}
 	
@@ -203,13 +206,13 @@ public class GameMode implements Screen {
 		switch (gameState) {
 		case INTRO:
 			gameState = GameState.PLAY;
-			gameplayController.start(canvas.getWidth() / 2.0f, physicsController.getFloorLedge());
+			gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			break;
 		case OVER:
 			if (inputController.didReset()) {
 				gameState = GameState.PLAY;
 				gameplayController.reset();
-				gameplayController.start(canvas.getWidth() / 2.0f, physicsController.getFloorLedge());
+				gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			} else {
 				play(delta);
 			}
@@ -230,13 +233,8 @@ public class GameMode implements Screen {
 	 */
 	protected void play(float delta) {
 		// if no player is alive, declare game over
-		if (!gameplayController.isAlive()) {
+		if (gameplayController.getCar().isDestroyed()) {
 			gameState = GameState.OVER;
-		}
-
-		// Add a new shell if time.
-		if (RandomController.rollInt(0, 25) == 0 || inputController.didFlood()) {
-			gameplayController.addShell(canvas.getWidth(), canvas.getHeight());
 		}
 
 		// Update objects.
@@ -245,7 +243,7 @@ public class GameMode implements Screen {
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
-		physicsController.processCollisions(gameplayController.getObjects(),(int)offset);
+		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
@@ -263,12 +261,12 @@ public class GameMode implements Screen {
 		canvas.begin();
 		canvas.drawBackground(background,offset,-100);
 		// Draw the game objects
-		for (GameObject o : gameplayController.getObjects()) {
+		for (GameObject o : gameplayController.getGnomez()) {
 			o.draw(canvas);
 		}
 
 		// Output a simple debugging message stating the number of shells on the screen
-		String message = "Current shells: "+gameplayController.getShellCount();
+		String message = "Current movement: "+gameplayController.getCar().getMovement();
 		canvas.drawText(message, displayFont, COUNTER_OFFSET, canvas.getHeight()-COUNTER_OFFSET);
 
 		if (gameState == GameState.OVER) {
