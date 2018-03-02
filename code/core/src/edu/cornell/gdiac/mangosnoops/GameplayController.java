@@ -42,10 +42,13 @@ public class GameplayController {
 	private float rotationMagnitude;
 
 	/** Data structure containing gnome data */
-	private HashSet<Gnome> gnomes;
+	private Array<Gnome> gnomez;
 
 	/** Car instance, containing information about the wheel, */
-	private Car car;
+	private Car yonda;
+
+	/** Data structure with level format */
+	private LevelObject level;
 
 	// Graphics assets for the entities
 	/** The texture file for a ship object*/
@@ -71,10 +74,8 @@ public class GameplayController {
 	private Texture redTexture;
 
 	// List of objects with the garbage collection set.
-	/** The currently active object */
-	private Array<GameObject> objects;
 	/** The backing set for garbage collection */
-	private Array<GameObject> backing;
+	private Array<Gnome> backing;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -131,31 +132,41 @@ public class GameplayController {
 	 * Creates a new GameplayController with no active elements.
 	 */
 	public GameplayController() {
-		car = null;
-		objects = new Array<GameObject>();
-		backing = new Array<GameObject>();
+		yonda = null;
+		gnomez = new Array<Gnome>();
+		backing = new Array<Gnome>();
+	}
+
+	/**
+	 * Creates a new GameplayController with no active elements.
+	 *
+	 * @param level is the Level information (which was saved in a JSON file)
+	 */
+	public GameplayController(LevelObject level) {
+		this.level = level;
+		yonda = null;
+		gnomez = new Array<Gnome>();
+		backing = new Array<Gnome>();
 	}
 
 	/**
 	 * Returns the list of the currently active (not destroyed) game objects
 	 *
- 	 * As this method returns a reference and Lists are mutable, other classes can 
- 	 * technical modify this list.  That is a very bad idea.  Other classes should
+	 * As this method returns a reference and Lists are mutable, other classes can
+	 * technical modify this list.  That is a very bad idea.  Other classes should
 	 * only mark objects as destroyed and leave list management to this class.
 	 *
-	 * @return the list of the currently active (not destroyed) game objects
+	 * @return a reference to all the gnomes
 	 */
-	public Array<GameObject> getObjects() {
-		return objects;
-	}
+	public Array<Gnome> getGnomez() { return gnomez; }
 
 	/**
 	 * Returns a reference to the currently active car
 	 *
 	 * @return a reference to the currently active car.
 	 */
-	public Ship getCar() {
-		return car;
+	public Car getCar() {
+		return yonda;
 	}
 
 	/**
@@ -166,7 +177,7 @@ public class GameplayController {
 	 * @return true if the currently active player is alive.
 	 */
 	public boolean isAlive() {
-		return car != null;
+		return yonda != null;
 	}
 
 	/**
@@ -179,20 +190,18 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		// Create the player's ship
-        car = new Car();
-		car.setTexture(beetleTexture);
-		car.getPosition().set(x,y);
-
-		// Player must be in object list.
-		objects.add(car);
+        yonda = level.getCar();
+		yonda.setTexture(beetleTexture);
+		yonda.getPosition().set(x,y);
+		gnomez = level.getGnomez();
 	}
 
 	/**
 	 * Resets the game, deleting all objects.
 	 */
 	public void reset() {
-		car = null;
-		objects.clear();
+		yonda = null;
+		gnomez.clear();
 	}
 
 	/**
@@ -204,19 +213,19 @@ public class GameplayController {
 	 */
 	public void garbageCollect() {
 		// INVARIANT: backing and objects are disjoint
-		for (GameObject o : objects) {
-			if (o.isDestroyed()) {
-				destroy(o);
+		for (Gnome g : gnomez) {
+			if (g.isDestroyed()) {
+				destroy(g);
 			} else {
-				backing.add(o);
+				backing.add(g);
 			}
 		}
 
 		// Swap the backing store and the objects.
 		// This is essentially stop-and-copy garbage collection
-		Array<GameObject> tmp = backing;
-		backing = objects;
-		objects = tmp;
+		Array<Gnome> tmp = backing;
+		backing = gnomez;
+		gnomez = tmp;
 		backing.clear();
 	}
 	
