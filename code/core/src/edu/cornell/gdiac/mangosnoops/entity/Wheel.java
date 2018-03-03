@@ -8,17 +8,31 @@ import com.badlogic.gdx.graphics.*;
 
 public class Wheel {
 
-    // Coordinates of wheel center
-    static private Vector center;
+    // Coordinates of wheel center]
+    private static Vector2 center;
+
+    // Dimensions of wheelzone
+    private static Vector2 wheelZone;
 
     // Vector from center of wheel to its outer radius
-    static private Vector2 outerRadius;
+    private static Vector2 outerRadius;
 
     // Vector from center of wheel to its inner radius
-    static private Vector2 innerRadius;
+    private static Vector2 innerRadius;
 
-    public Wheel(){ }
+    // The Car that this wheel belongs to
+    private Car car;
 
+    //Constructor
+    public Wheel(Car car){
+        center = new Vector2();
+        wheelZone = new Vector2();
+        outerRadius = new Vector2();
+        innerRadius - new Vector2();
+        this.car = car;
+    }
+
+    //Rotate wheel by an angle theta
     public void rotate(float theta){return;}
 
     public void snapBack(float theta){return;}
