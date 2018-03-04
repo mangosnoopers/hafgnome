@@ -191,9 +191,11 @@ public class GameplayController {
 	public void start(float x, float y) {
 		// Create the player's ship
         yonda = level.getCar();
+        /* TODO: commented this out to get game to run, car is null rn
 		yonda.setTexture(beetleTexture);
 		yonda.getPosition().set(x,y);
 		gnomez = level.getGnomez();
+		*/
 	}
 
 	/**

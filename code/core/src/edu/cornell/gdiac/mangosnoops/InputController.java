@@ -89,7 +89,7 @@ public class InputController {
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClick   = (Gdx.input.isTouched());
-		//TO DO : Read rotation input and change movement
+		//TODO : Read rotation input and change movement
 	}
 
 }

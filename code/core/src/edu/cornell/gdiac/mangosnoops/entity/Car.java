@@ -22,6 +22,8 @@ public class Car extends GameObject {
     private float movement = 0.0f;
     /** Current animation frame for this ship */
     private float animeframe;
+    /** Angle of car */
+    private float angle = 0.0f;
 
     /**
      * Returns the type of this object.
@@ -40,6 +42,8 @@ public class Car extends GameObject {
      * @return the current player movement input.
      */
     public float getMovement() { return movement; }
+
+    public float getAngle() { return angle; }
 
     public Car() {
         animeframe = 0.0f;
