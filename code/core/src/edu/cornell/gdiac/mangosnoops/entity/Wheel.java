@@ -20,6 +20,9 @@ public class Wheel {
     // Vector from center of wheel to its inner radius
     private static Vector2 innerRadius;
 
+    // Current angle of the wheel
+    private float ang;
+
     // The Car that this wheel belongs to
     private Car car;
 
@@ -36,4 +39,8 @@ public class Wheel {
     public void rotate(float theta){return;}
 
     public void snapBack(float theta){return;}
+
+    public void drawWheel(GameCanvas canvas){
+
+    }
 }

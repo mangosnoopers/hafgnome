@@ -35,7 +35,10 @@ public class InputController {
 	protected boolean exitPressed;
 	/** The left/right movement of the player this turn -- left is negative */
 	private float movement = 0.0f;
-	
+	/** Whether the mouse has been left-clicked **/
+	private boolean mouseClick;
+
+
 	/**
 	 * Returns the amount of sideways movement. 
 	 *
@@ -64,12 +67,18 @@ public class InputController {
 	public boolean didExit() {
 		return exitPressed;
 	}
-	
+
+	/**
+	 * Returns whether the mouse was left-clicked
+	 *
+	 * @return whether the mouse was left-clicked
+	 */
+	public boolean didLeftClick(){return mouseClick;}
+
 	/**
 	 * Creates a new input controller
 	 */
-	public InputController() { 
-
+	public InputController() {
 	}
 
 	/**
@@ -79,7 +88,7 @@ public class InputController {
 		// Give priority to gamepad results
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-
+		mouseClick   = (Gdx.input.isTouched());
 		//TO DO : Read rotation input and change movement
 	}
 
