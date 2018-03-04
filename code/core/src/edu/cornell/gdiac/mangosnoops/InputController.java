@@ -21,22 +21,16 @@ import com.badlogic.gdx.*;
 import edu.cornell.gdiac.util.*;
 
 /**
- * Class for reading player input. 
- *
- * This supports both a keyboard and X-Box controller. In previous solutions, we only 
- * detected the X-Box controller on start-up.  This class allows us to hot-swap in
- * a controller via the new XBox360Controller class.
+ * Class for reading player keyboard input.
  */
 public class InputController {
 	// Fields to manage game state
-	/** Whether the reset button was pressed. */
-	protected boolean resetPressed;
-	/** Whether the exit button was pressed. */
-	protected boolean exitPressed;
+	/** Whether the wheel was pressed. */
+	protected boolean wheelPressed;
+	/** Whether the wheel was released. **/
+	protected boolean wheelReleased;
 	/** The left/right movement of the player this turn -- left is negative */
 	private float movement = 0.0f;
-	/** Whether the mouse has been left-clicked **/
-	private boolean mouseClick;
 
 
 	/**
@@ -51,29 +45,22 @@ public class InputController {
 	}
 
 	/**
-	 * Returns true if the reset button was pressed.
+	 * Returns true if the wheel was pressed.
 	 *
-	 * @return true if the reset button was pressed.
+	 * @return true if the wheel was pressed.
 	 */
-	public boolean didReset() {
-		return resetPressed;
+	public boolean didPressWheel() {
+		return wheelPressed;
 	}
 
 	/**
-	 * Returns true if the exit button was pressed.
+	 * Returns true if the wheel was released.
 	 *
-	 * @return true if the exit button was pressed.
+	 * @return true if the wheel was released.
 	 */
-	public boolean didExit() {
-		return exitPressed;
+	public boolean didReleaseWheel() {
+		return wheelReleased;
 	}
-
-	/**
-	 * Returns whether the mouse was left-clicked
-	 *
-	 * @return whether the mouse was left-clicked
-	 */
-	public boolean didLeftClick(){return mouseClick;}
 
 	/**
 	 * Creates a new input controller
@@ -85,11 +72,9 @@ public class InputController {
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
-		// Give priority to gamepad results
-		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
-		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-		mouseClick   = (Gdx.input.isTouched());
-		//TO DO : Read rotation input and change movement
+		wheelPressed = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+
+		//TODO : Read rotation input and change movement
 	}
 
 }
