@@ -50,6 +50,15 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
+
+	// 3D PERSPECTIVE STUFF
+	private Pixmap projectedRoad;
+	private Texture roadTex;
+	private Vector3 cam = new Vector3(309, 19, 30);
+	private final Vector2 scale = new Vector2(150, 150);
+	private final int HORIZON = 200;
+
+
 	/**
 	 * Creates a new GameCanvas determined by the application configuration.
 	 * 
@@ -67,6 +76,10 @@ public class GameCanvas {
 		// Initialize the cache objects
 		holder = new TextureRegion();
 		local  = new Affine2();
+
+		projectedRoad = new Pixmap(getWidth(), getHeight(), Pixmap.Format.RGB888);
+		roadTex = new Texture(projectedRoad, projectedRoad.getFormat(), true);
+
 	}
 		
     /**
@@ -309,6 +322,54 @@ public class GameCanvas {
         spriteBatch.draw(image, x,   y);
         spriteBatch.draw(image, x+w, y);
     }
+
+
+	/**
+	 * Draw the road, projected to a pseudo-3D perspective.
+	 */
+	public void drawRoad(Pixmap roadMap, float angle) {
+
+		/* TODO: cam.x, cam.y should come from Car state
+		 * (just put this here to show scrolling road) */
+		cam.x -= 15 * -Math.cos(angle);
+		cam.y -= 15 * -Math.sin(angle);
+
+		int h = getHeight(); int w = getWidth();
+
+	    for (int y = (int) HORIZON; y < h; y++) {
+
+	    	float z = y - HORIZON;
+	    	float scaling = cam.z * scale.y / scale.x / z;
+
+	    	double s = Math.sin(angle);
+	    	double c = Math.cos(angle);
+
+	    	double dx = scaling * -s;
+			double dy = scaling * c;
+
+	    	double projectedX = -w / 2 * dx + cam.x + (cam.z * scale.y / z) * c;
+	    	double projectedY = -w / 2 * dy + cam.y + (cam.z * scale.y / z) * s;
+
+	    	for (int x = 0; x < w; x++) {
+
+	    		projectedRoad.setColor(Color.GREEN);
+	    		projectedRoad.drawPixel(x, y);
+
+	    		int projectedXCoord = (int) (projectedX + x * dx);
+				int projectedYCoord = (int) (projectedY + x * dy) % roadMap.getHeight();
+
+	    		projectedRoad.setColor(roadMap.getPixel(projectedXCoord, projectedYCoord));
+				projectedRoad.drawPixel(x, y);
+
+			}
+
+
+		}
+
+		roadTex.draw(projectedRoad, 0, 0);
+		draw(roadTex, 0, 0);
+
+	}
 
 	/**
 	 * Draws the tinted texture at the given position.

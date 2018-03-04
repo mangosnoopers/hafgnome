@@ -31,7 +31,7 @@ public class Wheel {
         center = new Vector2();
         wheelZone = new Vector2();
         outerRadius = new Vector2();
-        innerRadius - new Vector2();
+        innerRadius = new Vector2();
         this.car = car;
     }
 
