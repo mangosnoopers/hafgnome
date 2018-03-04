@@ -18,6 +18,7 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.util.*;
 
 /**
@@ -37,6 +38,8 @@ public class InputController {
 	private float movement = 0.0f;
 	/** Whether the mouse has been left-clicked **/
 	private boolean mouseClick;
+
+	private boolean clickHasBeenHeld;
 
 
 	/**
@@ -73,7 +76,7 @@ public class InputController {
 	 *
 	 * @return whether the mouse was left-clicked
 	 */
-	public boolean didLeftClick(){return mouseClick;}
+	public boolean isLeftClicked(){return mouseClick;}
 
 	/**
 	 * Creates a new input controller
@@ -88,8 +91,14 @@ public class InputController {
 		// Give priority to gamepad results
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-		mouseClick   = (Gdx.input.isTouched());
+		mouseClick   = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
 		//TO DO : Read rotation input and change movement
 	}
 
+    public Vector2 mouseCoords(){
+	    if(mouseClick) {
+            return (new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        }
+        return null;
 }
+    public
