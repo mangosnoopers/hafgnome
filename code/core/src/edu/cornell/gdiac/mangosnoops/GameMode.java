@@ -49,7 +49,14 @@ public class GameMode implements Screen {
 	private static String BKGD_FILE = "images/background.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/TimesRoman.ttf";
-	
+
+	/** The file for the road image */
+	private static String ROAD_FILE = "images/road.png";
+
+	/** A pixel map of the original road image, to be mapped to the
+	 * pseudo-3d view */
+	private Pixmap roadMap;
+
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -58,8 +65,9 @@ public class GameMode implements Screen {
 	private int FONT_SIZE = 24;
 
 	/** Track all loaded assets (for unloading purposes) */
-	private Array<String> assets;	
-	
+	private Array<String> assets;
+
+
 	/** 
 	 * Preloads the assets for this game.
 	 * 
@@ -73,6 +81,9 @@ public class GameMode implements Screen {
 		// Load the background.
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
+
+		// Load the road asset
+		manager.load(ROAD_FILE, Pixmap.class);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -107,6 +118,10 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(BKGD_FILE)) {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		}
+
+		if (manager.isLoaded(ROAD_FILE)) {
+			roadMap = manager.get(ROAD_FILE, Pixmap.class);
 		}
 
 		// Load gameplay content
@@ -209,6 +224,7 @@ public class GameMode implements Screen {
 			gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			break;
 		case OVER:
+		    /* TODO: commenting out to get game 2 run
 			if (inputController.didReset()) {
 				gameState = GameState.PLAY;
 				gameplayController.reset();
@@ -216,6 +232,7 @@ public class GameMode implements Screen {
 			} else {
 				play(delta);
 			}
+			*/
 			break;
 		case PLAY:
 			play(delta);
@@ -233,9 +250,11 @@ public class GameMode implements Screen {
 	 */
 	protected void play(float delta) {
 		// if no player is alive, declare game over
+		/* TODO: commented this out to get game to run, car is null rn
 		if (gameplayController.getCar().isDestroyed()) {
 			gameState = GameState.OVER;
 		}
+		*/
 
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
@@ -260,14 +279,16 @@ public class GameMode implements Screen {
 		float offset = -((totalTime * TIME_MODIFIER) % canvas.getWidth());
 		canvas.begin();
 		canvas.drawBackground(background,offset,-100);
+		canvas.drawRoad(roadMap, 1.54f);
 		// Draw the game objects
 		for (GameObject o : gameplayController.getGnomez()) {
 			o.draw(canvas);
 		}
 
 		// Output a simple debugging message stating the number of shells on the screen
-		String message = "Current movement: "+gameplayController.getCar().getMovement();
-		canvas.drawText(message, displayFont, COUNTER_OFFSET, canvas.getHeight()-COUNTER_OFFSET);
+        // TODO: commented this out to get game to run, car is null rn
+		//String message = "Current movement: "+gameplayController.getCar().getMovement();
+		//canvas.drawText(message, displayFont, COUNTER_OFFSET, canvas.getHeight()-COUNTER_OFFSET);
 
 		if (gameState == GameState.OVER) {
 			canvas.drawTextCentered("Game Over!",displayFont, GAME_OVER_OFFSET);
@@ -303,9 +324,11 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
+			/* TODO: commentin out 2 get game 2 run
 			if (inputController.didExit() && listener != null) {
 				listener.exitScreen(this, 0);
 			}
+			*/
 		}
 	}
 
