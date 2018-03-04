@@ -224,6 +224,7 @@ public class GameMode implements Screen {
 			gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			break;
 		case OVER:
+		    /* TODO: commenting out to get game 2 run
 			if (inputController.didReset()) {
 				gameState = GameState.PLAY;
 				gameplayController.reset();
@@ -231,6 +232,7 @@ public class GameMode implements Screen {
 			} else {
 				play(delta);
 			}
+			*/
 			break;
 		case PLAY:
 			play(delta);
@@ -322,9 +324,11 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
+			/* TODO: commentin out 2 get game 2 run
 			if (inputController.didExit() && listener != null) {
 				listener.exitScreen(this, 0);
 			}
+			*/
 		}
 	}
 
