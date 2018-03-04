@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.mangosnoops.entity;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.*;
 
@@ -21,10 +22,14 @@ public class Wheel {
     private static Vector2 innerRadius;
 
     // Current angle of the wheel
-    private float ang;
+    private float ang = 0;
 
     // The Car that this wheel belongs to
     private Car car;
+
+    private Sprite wheelSprite;
+
+    private float ang;
 
     //Constructor
     public Wheel(Car car){
@@ -38,9 +43,19 @@ public class Wheel {
     //Rotate wheel by an angle theta
     public void rotate(float theta){return;}
 
-    public void snapBack(float theta){return;}
+    public void snapBack(){
+        ang = 0;
+        return;
+    }
 
     public void drawWheel(GameCanvas canvas){
+        if(wheelSprite == null) {
+            return;
+        }
+        float ox = 0.5f * wheelSprite.getRegionWidth();
+        float oy = 0.5 * wheelSprite.getRegionWidth();
 
+        canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
+        }
     }
 }
