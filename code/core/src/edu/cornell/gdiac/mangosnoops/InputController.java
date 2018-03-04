@@ -25,19 +25,24 @@ import edu.cornell.gdiac.util.*;
  * Class for reading player keyboard input.
  */
 public class InputController {
-    // Wheel constants: TODO UPDATE THESE
+    // Constants
     /** Wheel inner radius */
-    private static final Vector2 WHEEL_INNER = new Vector2(3.0f,3.0f);
+    private static final float WHEEL_INNER = 3.0f;
     /** Wheel outer radius */
-    private static final Vector2 WHEEL_OUTER = new Vector2(5.0f,5.0f);
+    private static final float WHEEL_OUTER = 5.0f;
+    /** Factor to translate an angle to left/right movement */
+    private static final float ANGLE_TO_LR = 3.0f;
 
 	// Fields to manage game state
 	/** Whether the left mouse button was clicked. */
-	protected boolean mouseClicked;
-	/** The left/right movement of the player this turn -- left is negative */
+	private boolean mouseClicked;
+    /** Vector location of first click */
+    private Vector2 firstClick;
+
+    /** The angle used to rotate the wheel, in radians */
+    private float theta = 0.0f;
+	/** The left/right movement of the player's view -- left is negative */
 	private float movement = 0.0f;
-    /** Whether the mouse has been dragged while clicking. */
-	private boolean mouseDragged;
 
 
 	/**
@@ -50,9 +55,10 @@ public class InputController {
 	public float getMovement() { return movement; }
 
 	/**
-	 * Returns true if the left mouse button was clicked.
+	 * Returns the angle used to rotate the wheel. If this angle is 0, the
+     * wheel is still.
 	 */
-	public boolean didClickLeft() { return mouseClicked; }
+	public float getWheelRotation() { return theta; }
 
 	/**
 	 * Creates a new input controller
@@ -62,25 +68,53 @@ public class InputController {
 
     /**
      * Returns true if the mouse is positioned inside the area of the wheel.
-     * @return
+     *
+     * @param p the vector giving the mouse's (x,y) screen coordinates
      */
-	private boolean inWheelArea() {
+	private boolean inWheelArea(Vector2 p) {
         return false;
 	}
+
+    /**
+     * Processes the player clicking and dragging on the wheel. The user must
+     * have already clicked on the wheel (i.e. firstClick is not null).
+     *
+     * This method sets the angle to turn the wheel by, and the left/right shift
+     * in the player's view.
+     */
+	private void processWheelTurn() {
+	    while (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+
+	        // bounce back if cursor leaves wheel
+	        if (!inWheelArea(new Vector2(Gdx.input.getX(), Gdx.input.getY()))) {
+	            return;
+            }
+        }
+
+        // when mouse is let go, set theta and movement
+        Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+	    theta = endPosition.angle(firstClick);
+	    movement = theta / ANGLE_TO_LR;
+    }
 
 	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+		firstClick = mouseCoords();
 
-		if (inWheelArea()) {
-		    return;
-		    // do things
+		// player clicked the wheel
+		if (firstClick != null && inWheelArea(firstClick)) {
+		    processWheelTurn();
         }
 	}
 
-    public Vector2 mouseCoords() {
+    /**
+     * Returns a vector giving the location of the first mouse click, or null
+     * if the mouse was not clicked.
+     */
+    private Vector2 mouseCoords() {
         if (mouseClicked) {
             return new Vector2(Gdx.input.getX(), Gdx.input.getY());
         }
