@@ -18,22 +18,26 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.util.*;
 
 /**
  * Class for reading player keyboard input.
  */
 public class InputController {
+    // Wheel constants: TODO UPDATE THESE
+    /** Wheel inner radius */
+    private static final Vector2 WHEEL_INNER = new Vector2(3.0f,3.0f);
+    /** Wheel outer radius */
+    private static final Vector2 WHEEL_OUTER = new Vector2(5.0f,5.0f);
+
 	// Fields to manage game state
-	/** Whether the wheel was pressed. */
-	protected boolean wheelPressed;
-	/** Whether the wheel was released. **/
-	protected boolean wheelReleased;
+	/** Whether the left mouse button was clicked. */
+	protected boolean mouseClicked;
 	/** The left/right movement of the player this turn -- left is negative */
 	private float movement = 0.0f;
-
-	private boolean clickHasBeenHeld;
+    /** Whether the mouse has been dragged while clicking. */
+	private boolean mouseDragged;
 
 
 	/**
@@ -43,64 +47,43 @@ public class InputController {
 	 *
 	 * @return the amount of sideways movement. 
 	 */
-	public float getMovement() {
-		return movement;
-	}
+	public float getMovement() { return movement; }
 
 	/**
-	 * Returns true if the wheel was pressed.
-	 *
-	 * @return true if the wheel was pressed.
+	 * Returns true if the left mouse button was clicked.
 	 */
-	public boolean didPressWheel() {
-		return wheelPressed;
-	}
+	public boolean didClickLeft() { return mouseClicked; }
 
 	/**
-	 * Returns true if the wheel was released.
-	 *
-	 * @return true if the wheel was released.
-	 */
-	public boolean didReleaseWheel() {
-		return wheelReleased;
-	}
-
-	/**
-<<<<<<< HEAD
-	 * Returns whether the mouse was left-clicked
-	 *
-	 * @return whether the mouse was left-clicked
-	 */
-	public boolean isLeftClicked(){return mouseClick;}
-
-	/**
-=======
->>>>>>> 54cfec06d5ba6ec615a63bd0f0b2d3df60a2b74f
 	 * Creates a new input controller
 	 */
 	public InputController() {
+	}
+
+    /**
+     * Returns true if the mouse is positioned inside the area of the wheel.
+     * @return
+     */
+	private boolean inWheelArea() {
+        return false;
 	}
 
 	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
-<<<<<<< HEAD
-		// Give priority to gamepad results
-		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
-		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-		mouseClick   = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
-		//TO DO : Read rotation input and change movement
-=======
-		wheelPressed = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
-		//TODO : Read rotation input and change movement
->>>>>>> 54cfec06d5ba6ec615a63bd0f0b2d3df60a2b74f
+		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+
+		if (inWheelArea()) {
+		    return;
+		    // do things
+        }
 	}
 
-    public Vector2 mouseCoords(){
-	    if(mouseClick) {
-            return (new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+    public Vector2 mouseCoords() {
+        if (mouseClicked) {
+            return new Vector2(Gdx.input.getX(), Gdx.input.getY());
         }
         return null;
+    }
 }
-    public
