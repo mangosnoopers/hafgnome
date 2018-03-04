@@ -18,9 +18,12 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
+
+import javax.swing.*;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.
@@ -329,6 +332,14 @@ public class GameCanvas {
 	 */
 	public void drawRoad(Pixmap roadMap, float angle) {
 
+	    // TODO: delete these, just 4 testing stuff
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			cam.x += 10;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			cam.x -= 10;
+		}
+
 		/* TODO: cam.x, cam.y should come from Car state
 		 * (just put this here to show scrolling road) */
 		cam.x -= 15 * -Math.cos(angle);
@@ -362,7 +373,6 @@ public class GameCanvas {
 				projectedRoad.drawPixel(x, y);
 
 			}
-
 
 		}
 
