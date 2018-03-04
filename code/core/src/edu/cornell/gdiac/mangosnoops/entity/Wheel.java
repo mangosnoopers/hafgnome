@@ -29,7 +29,6 @@ public class Wheel {
 
     private Sprite wheelSprite;
 
-    private float ang;
 
     //Constructor
     public Wheel(Car car){
@@ -53,9 +52,8 @@ public class Wheel {
             return;
         }
         float ox = 0.5f * wheelSprite.getRegionWidth();
-        float oy = 0.5 * wheelSprite.getRegionWidth();
+        float oy = 0.5f * wheelSprite.getRegionWidth();
 
         canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
-        }
     }
 }
