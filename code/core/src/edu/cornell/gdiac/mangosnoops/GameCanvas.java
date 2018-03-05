@@ -333,11 +333,10 @@ public class GameCanvas {
         spriteBatch.draw(image, x+w, y);
     }
 
-
 	/**
 	 * Draw the road, projected to a pseudo-3D perspective.
 	 */
-	public void drawRoad(Pixmap roadMap, float angle) {
+	public void drawRoad(Pixmap roadMap, float angle, float xOff) {
 
 	    // TODO: delete these, just 4 testing stuff
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -351,6 +350,7 @@ public class GameCanvas {
 		 * (just put this here to show scrolling road) */
 		cam.x -= 15 * -Math.cos(angle);
 		cam.y -= 15 * -Math.sin(angle);
+		cam.x += xOff;
 
 		int h = getHeight(); int w = getWidth();
 

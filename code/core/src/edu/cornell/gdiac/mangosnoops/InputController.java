@@ -28,7 +28,9 @@ import edu.cornell.gdiac.util.*;
 public class InputController {
     // Constants
     /** Factor to translate an angle to left/right movement */
-    private static final float ANGLE_TO_LR = 3.0f;
+    private static final float ANGLE_TO_LR = 7.0f;
+    /** Default angle from which to view the road */
+    private static final float DEFAULT_VIEW = 1.54f;
 
 	// Fields to manage game state
 	/** Whether the left mouse button was clicked. */
@@ -42,13 +44,14 @@ public class InputController {
 	/** The left/right movement of the player's view -- left is negative */
 	private float movement = 0.0f;
 
+    /**
+     * Creates a new input controller.
+     */
+    public InputController() {
+    }
 
 	/**
 	 * Returns the amount of sideways movement. 
-	 *
-	 * -1 = left, 1 = right, 0 = still
-	 *
-	 * @return the amount of sideways movement. 
 	 */
 	public float getMovement() { return movement; }
 
@@ -56,12 +59,6 @@ public class InputController {
      * Set the wheel used for input controls.
      */
     public void setWheel(Wheel w) { this.w = w; }
-
-	/**
-	 * Creates a new input controller
-	 */
-	public InputController() {
-	}
 
     /**
      * Returns true if the mouse is positioned inside the area of the wheel.
@@ -85,11 +82,11 @@ public class InputController {
 	        // bounce back to center if cursor leaves wheel
 	        if (!inWheelArea(new Vector2(Gdx.input.getX(), Gdx.input.getY()))) {
 	            w.setAng(0.0f);
-	            movement = w.getAng() / ANGLE_TO_LR; //TODO: change this to smt that makes sense
+	            movement = 0.0f; //TODO: change this to smt that makes sense
 	            return;
             }
 
-            // otherwise change wheel angle
+            // otherwise change wheel angle and lateral screen movement
             w.setAng(w.getAng() - Gdx.input.getDeltaX());
 	        movement = w.getAng() / ANGLE_TO_LR;
         }

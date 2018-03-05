@@ -302,7 +302,7 @@ public class GameMode implements Screen {
 	private void draw(float delta) {
 		float offset = -((totalTime * TIME_MODIFIER) % canvas.getWidth());
 		canvas.begin();
-		canvas.drawRoad(roadMap, 1.54f);
+		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
 		canvas.draw(clouds,200 , 400);
 		// Draw the game objects
 		for (GameObject o : gameplayController.getGnomez()) {
