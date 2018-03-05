@@ -159,6 +159,7 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
+        wheel = new Wheel(400,20);
 	}
 
 	/**
@@ -215,7 +216,6 @@ public class GameplayController {
 		yonda.getPosition().set(x,y);
 		gnomez = level.getGnomez();
 		*/
-		wheel = new Wheel(400,350);
 		wheel.setWheelSprite(wheelTexture);
 	}
 

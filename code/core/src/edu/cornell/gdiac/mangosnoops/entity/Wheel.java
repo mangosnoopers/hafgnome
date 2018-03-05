@@ -54,9 +54,6 @@ public class Wheel {
         float ox = 0.5f * wheelSprite.getWidth();
         float oy = 0.5f * wheelSprite.getWidth();
 
-        System.out.println("drawWheel called");
-        System.out.println(wheelSprite);
-
         canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
     }
 
