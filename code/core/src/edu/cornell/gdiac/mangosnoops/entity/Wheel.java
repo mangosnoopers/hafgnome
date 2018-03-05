@@ -47,6 +47,17 @@ public class Wheel {
         return;
     }
 
+    /**
+     * Return the current angle of the wheel.
+     */
+    public float getAng() { return ang; }
+
+    /**
+     * Set the angle of the wheel.
+     * @param a The angle to set the wheel to
+     */
+    public void setAng(float a) { ang = a; }
+
     public void drawWheel(GameCanvas canvas){
         if(wheelSprite == null) {
             return;
