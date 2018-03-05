@@ -18,6 +18,7 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.mangosnoops.entity.Wheel;
 import edu.cornell.gdiac.util.*;
@@ -29,8 +30,8 @@ public class InputController {
     // Constants
     /** Factor to translate an angle to left/right movement */
     private static final float ANGLE_TO_LR = 7.0f;
-    /** Default angle from which to view the road */
-    private static final float DEFAULT_VIEW = 1.54f;
+    /** Window height */
+    private static final float WINDOW_HEIGHT = 600;
 
 	// Fields to manage game state
 	/** Whether the left mouse button was clicked. */
@@ -62,11 +63,18 @@ public class InputController {
 
     /**
      * Returns true if the mouse is positioned inside the area of the wheel.
+     * The wheel must not be null.
      *
      * @param p the vector giving the mouse's (x,y) screen coordinates
      */
 	private boolean inWheelArea(Vector2 p) {
-        return true;
+	    // Position of wheel on screen
+	    Vector2 cen = w.getCenter();
+	    Texture wsprite = w.getWheelSprite();
+        return p.x > cen.x - wsprite.getWidth()/2.0f
+                && p.x < cen.x + wsprite.getWidth()/2.0f
+                && WINDOW_HEIGHT - p.y > cen.y - wsprite.getHeight()/2.0f
+                && WINDOW_HEIGHT - p.y < cen.y + wsprite.getHeight()/2.0f;
 	}
 
     /**
