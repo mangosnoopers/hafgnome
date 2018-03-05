@@ -53,7 +53,6 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
-
 	// 3D PERSPECTIVE STUFF
 	private Pixmap projectedRoad;
 	private Texture roadTex;
@@ -354,7 +353,7 @@ public class GameCanvas {
 
 		int h = getHeight(); int w = getWidth();
 
-	    for (int y = (int) HORIZON; y < h; y++) {
+	    for (int y = HORIZON; y < h; y++) {
 
 	    	float z = y - HORIZON;
 	    	float scaling = cam.z * scale.y / scale.x / z;
