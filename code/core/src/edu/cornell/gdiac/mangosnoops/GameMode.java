@@ -57,6 +57,8 @@ public class GameMode implements Screen {
 
 	private static String SKY_FILE = "images/sky.png";
 
+	private static String WHEEL_FILE = "images/wheelard_straight"
+
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -74,6 +76,8 @@ public class GameMode implements Screen {
 	private Texture clouds;
 
 	private Texture sky;
+
+	private Texture wheelTexture;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -97,6 +101,9 @@ public class GameMode implements Screen {
 
 		// Load sky
 		manager.load(SKY_FILE, Texture.class);
+
+		// Load Wheel
+		manager.load(WHEEL_FILE, Texture.class);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -143,6 +150,9 @@ public class GameMode implements Screen {
 
 		if (manager.isLoaded(SKY_FILE)) {
 			sky = manager.get(CLOUDS_FILE, Texture.class);
+		}
+		if(manager.isLoaded(WHEEL_FILE)){
+			wheelTexture = manager.get(WHEEL_FILE,Texture.class)
 		}
 
 
