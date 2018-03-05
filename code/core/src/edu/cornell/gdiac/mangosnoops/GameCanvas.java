@@ -56,7 +56,7 @@ public class GameCanvas {
 	// 3D PERSPECTIVE STUFF
 	private Pixmap projectedRoad;
 	private Texture roadTex;
-	private Vector3 cam = new Vector3(309, 19, 30);
+	private Vector3 cam = new Vector3(309, 19, 30	);
 	private final Vector2 scale = new Vector2(150, 150);
 	private final int HORIZON = 200;
 
@@ -362,7 +362,7 @@ public class GameCanvas {
 	    	double c = Math.cos(angle);
 
 			double scaledCX = -w / 2 * scaling;
-			double scaledCY = -w / 2 * scaling;
+			double scaledCY = -h / 2 * scaling;
 
 			double scaledCamZ = cam.z * scale.y / z;
 
