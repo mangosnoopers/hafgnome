@@ -85,8 +85,9 @@ public class InputController {
 	private void processWheelTurn() {
 	    float origTheta = theta;
 	    if (mouseClicked && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            theta += endPosition.angle(firstClick);
+//            Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+//            theta += endPosition.angle(firstClick);
+            theta += Gdx.input.getDeltaX();
 
 	        // bounce back if cursor leaves wheel
 	        if (!inWheelArea(new Vector2(Gdx.input.getX(), Gdx.input.getY()))) {
@@ -110,7 +111,7 @@ public class InputController {
 		firstClick = mouseCoords();
 
 		// player clicked the wheel
-		if (firstClick != null && inWheelArea(firstClick)) {
+		if (mouseClicked && inWheelArea(firstClick)) {
 		    processWheelTurn();
         }
 	}
