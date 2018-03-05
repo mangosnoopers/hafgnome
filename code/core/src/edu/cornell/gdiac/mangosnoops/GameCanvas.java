@@ -361,21 +361,23 @@ public class GameCanvas {
 	    	double s = Math.sin(angle);
 	    	double c = Math.cos(angle);
 
-	    	double dx = scaling * -s;
-			double dy = scaling * c;
+			double scaledCX = -w / 2 * scaling;
+			double scaledCY = -w / 2 * scaling;
 
-	    	double projectedX = -w / 2 * dx + cam.x + (cam.z * scale.y / z) * c;
-	    	double projectedY = -w / 2 * dy + cam.y + (cam.z * scale.y / z) * s;
+			double scaledCamZ = cam.z * scale.y / z;
+
+	    	double offsetX = -s * scaledCX + c * scaledCamZ + cam.x;
+	    	double offsetY = c * scaledCY + s * scaledCamZ + cam.y;
 
 	    	for (int x = 0; x < w; x++) {
 
 	    		projectedRoad.setColor(Color.GREEN);
 	    		projectedRoad.drawPixel(x, y);
 
-	    		int projectedXCoord = (int) (projectedX + x * dx);
-				int projectedYCoord = (int) (projectedY + x * dy) % roadMap.getHeight();
+	    		int pX = (int) (-s * x * scaling + offsetX);
+				int pY = (int) (c * y * scaling + offsetY) % roadMap.getHeight();
 
-	    		projectedRoad.setColor(roadMap.getPixel(projectedXCoord, projectedYCoord));
+	    		projectedRoad.setColor(roadMap.getPixel(pX, pY));
 				projectedRoad.drawPixel(x, y);
 
 			}
