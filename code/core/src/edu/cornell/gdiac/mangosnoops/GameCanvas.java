@@ -80,7 +80,14 @@ public class GameCanvas {
 		holder = new TextureRegion();
 		local  = new Affine2();
 
+		// Initalize projected road, color blue initially (this is dumb, just for prototype)
 		projectedRoad = new Pixmap(getWidth(), getHeight(), Pixmap.Format.RGB888);
+		projectedRoad.setColor(Color.BLUE);
+		for (int i = 0; i < projectedRoad.getWidth(); i++) {
+			for (int j = 0; j < projectedRoad.getHeight(); j++) {
+			    projectedRoad.drawPixel(i, j);
+			}
+		}
 		roadTex = new Texture(projectedRoad, projectedRoad.getFormat(), true);
 
 	}

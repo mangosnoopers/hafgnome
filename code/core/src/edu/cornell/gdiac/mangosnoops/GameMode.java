@@ -53,9 +53,9 @@ public class GameMode implements Screen {
 	/** The file for the road image */
 	private static String ROAD_FILE = "images/road.png";
 
-	/** A pixel map of the original road image, to be mapped to the
-	 * pseudo-3d view */
-	private Pixmap roadMap;
+	private static String CLOUDS_FILE = "images/clouds.png";
+
+	private static String SKY_FILE = "images/sky.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -67,6 +67,13 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
+	/** A pixel map of the original road image, to be mapped to the
+	 * pseudo-3d view */
+	private Pixmap roadMap;
+
+	private Texture clouds;
+
+	private Texture sky;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -84,6 +91,12 @@ public class GameMode implements Screen {
 
 		// Load the road asset
 		manager.load(ROAD_FILE, Pixmap.class);
+
+		// Load the clouds
+		manager.load(CLOUDS_FILE, Texture.class);
+
+		// Load sky
+		manager.load(SKY_FILE, Texture.class);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -123,6 +136,15 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(ROAD_FILE)) {
 			roadMap = manager.get(ROAD_FILE, Pixmap.class);
 		}
+
+		if (manager.isLoaded(CLOUDS_FILE)) {
+			clouds = manager.get(CLOUDS_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(SKY_FILE)) {
+			sky = manager.get(CLOUDS_FILE, Texture.class);
+		}
+
 
 		// Load gameplay content
 		gameplayController.loadContent(manager);
@@ -278,9 +300,8 @@ public class GameMode implements Screen {
 	private void draw(float delta) {
 		float offset = -((totalTime * TIME_MODIFIER) % canvas.getWidth());
 		canvas.begin();
-
-		canvas.drawBackground(background,offset,-100);
 		canvas.drawRoad(roadMap, 1.54f);
+		canvas.draw(clouds,200 , 400);
 		// Draw the game objects
 		for (GameObject o : gameplayController.getGnomez()) {
 			o.draw(canvas);
