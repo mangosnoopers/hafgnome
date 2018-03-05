@@ -27,7 +27,7 @@ public class Wheel {
     // The Car that this wheel belongs to
     private Car car;
 
-    private Sprite wheelSprite;
+    private Texture wheelSprite;
 
 
     //Constructor
@@ -40,7 +40,7 @@ public class Wheel {
     }
 
     //Rotate wheel by an angle theta
-    public void rotate(float theta){return;}
+    public void rotate(float theta){ return; }
 
     public void snapBack(){
         ang = 0;
@@ -51,18 +51,21 @@ public class Wheel {
         if(wheelSprite == null) {
             return;
         }
-        float ox = 0.5f * wheelSprite.getRegionWidth();
-        float oy = 0.5f * wheelSprite.getRegionWidth();
+        float ox = 0.5f * wheelSprite.getWidth();
+        float oy = 0.5f * wheelSprite.getWidth();
+
+        System.out.println("drawWheel called");
+        System.out.println(wheelSprite);
 
         canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
     }
 
     /**
      * Sets the image texture for this wheel
-     * @param value
+     * @param
      */
-    public void setWheelSprite(Sprite value){
-        wheelSprite = value;
+    public void setWheelSprite(Texture tex){
+        wheelSprite = tex;
     }
 
 }
