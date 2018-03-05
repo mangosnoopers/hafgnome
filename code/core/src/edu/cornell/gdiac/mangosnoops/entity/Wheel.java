@@ -32,7 +32,6 @@ public class Wheel {
 
     //Constructor
     public Wheel(float x, float y){
-        center = new Vector2();
         wheelZone = new Vector2();
         outerRadius = new Vector2();
         innerRadius = new Vector2();
@@ -63,7 +62,7 @@ public class Wheel {
             return;
         }
         float ox = 0.5f * wheelSprite.getWidth();
-        float oy = 0.5f * wheelSprite.getWidth();
+        float oy = 0.5f * wheelSprite.getHeight();
 
         canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
     }
@@ -72,8 +71,22 @@ public class Wheel {
      * Sets the image texture for this wheel
      * @param
      */
-    public void setWheelSprite(Texture tex){
+    public void setWheelSprite(Texture tex) {
         wheelSprite = tex;
+    }
+
+    /**
+     * Return the wheel sprite texture.
+     */
+    public Texture getWheelSprite() {
+        return wheelSprite;
+    }
+
+    /**
+     * Returns the center coordinates of the wheel sprite.
+     */
+    public Vector2 getCenter() {
+        return center;
     }
 
 }
