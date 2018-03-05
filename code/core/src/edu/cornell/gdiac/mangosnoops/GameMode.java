@@ -57,7 +57,7 @@ public class GameMode implements Screen {
 
 	private static String SKY_FILE = "images/sky.png";
 
-	private static String WHEEL_FILE = "images/wheelard_straight"
+	private static String WHEEL_FILE = "images/wheelard_straight.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -152,7 +152,7 @@ public class GameMode implements Screen {
 			sky = manager.get(CLOUDS_FILE, Texture.class);
 		}
 		if(manager.isLoaded(WHEEL_FILE)){
-			wheelTexture = manager.get(WHEEL_FILE,Texture.class)
+			wheelTexture = manager.get(WHEEL_FILE,Texture.class);
 		}
 
 
