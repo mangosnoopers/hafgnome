@@ -31,12 +31,12 @@ public class Wheel {
 
 
     //Constructor
-    public Wheel(Car car){
+    public Wheel(float x, float y){
         center = new Vector2();
         wheelZone = new Vector2();
         outerRadius = new Vector2();
         innerRadius = new Vector2();
-        this.car = car;
+        center = new Vector2(x,y);
     }
 
     //Rotate wheel by an angle theta
@@ -56,4 +56,13 @@ public class Wheel {
 
         canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
     }
+
+    /**
+     * Sets the image texture for this wheel
+     * @param value
+     */
+    public void setWheelSprite(Sprite value){
+        wheelSprite = value;
+    }
+
 }
