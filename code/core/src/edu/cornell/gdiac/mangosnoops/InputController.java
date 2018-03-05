@@ -19,6 +19,7 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
+import edu.cornell.gdiac.mangosnoops.entity.Wheel;
 import edu.cornell.gdiac.util.*;
 
 /**
@@ -26,10 +27,6 @@ import edu.cornell.gdiac.util.*;
  */
 public class InputController {
     // Constants
-    /** Wheel inner radius */
-    private static final float WHEEL_INNER = 3.0f;
-    /** Wheel outer radius */
-    private static final float WHEEL_OUTER = 5.0f;
     /** Factor to translate an angle to left/right movement */
     private static final float ANGLE_TO_LR = 3.0f;
 
@@ -39,8 +36,9 @@ public class InputController {
     /** Vector location of first click */
     private Vector2 firstClick;
 
-    /** The angle used to rotate the wheel, in radians */
-    private float theta = 0.0f;
+    // Wheel controls
+    /** The wheel used for user control */
+    private Wheel w;
 	/** The left/right movement of the player's view -- left is negative */
 	private float movement = 0.0f;
 
@@ -54,11 +52,10 @@ public class InputController {
 	 */
 	public float getMovement() { return movement; }
 
-	/**
-	 * Returns the angle used to rotate the wheel. If this angle is 0, the
-     * wheel is still.
-	 */
-	public float getWheelRotation() { return theta; }
+    /**
+     * Set the wheel used for input controls.
+     */
+    public void setWheel(Wheel w) { this.w = w; }
 
 	/**
 	 * Creates a new input controller
@@ -83,24 +80,20 @@ public class InputController {
      * in the player's view.
      */
 	private void processWheelTurn() {
-	    float origTheta = theta;
-	    if (mouseClicked && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-//            Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-//            theta += endPosition.angle(firstClick);
-            theta += Gdx.input.getDeltaX();
+	    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 
-	        // bounce back if cursor leaves wheel
+	        // bounce back to center if cursor leaves wheel
 	        if (!inWheelArea(new Vector2(Gdx.input.getX(), Gdx.input.getY()))) {
-	            theta = origTheta;
-	            movement = theta / ANGLE_TO_LR;
+	            w.setAng(0.0f);
+	            movement = w.getAng() / ANGLE_TO_LR; //TODO: change this to smt that makes sense
 	            return;
             }
+
+            // otherwise change wheel angle
+            w.setAng(w.getAng() - Gdx.input.getDeltaX());
+	        movement = w.getAng() / ANGLE_TO_LR;
         }
 
-        // when mouse is let go, set theta and movement
-//        Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-//	    theta = endPosition.angle(firstClick);
-//	    movement = theta / ANGLE_TO_LR;
     }
 
 	/**
@@ -108,22 +101,16 @@ public class InputController {
 	 */
 	public void readInput() {
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
-		firstClick = mouseCoords();
+        if (mouseClicked) {
+            firstClick = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+        } else {
+            firstClick = null;
+        }
 
 		// player clicked the wheel
-		if (mouseClicked && inWheelArea(firstClick)) {
+		if (w != null && mouseClicked && inWheelArea(firstClick)) {
 		    processWheelTurn();
         }
 	}
 
-    /**
-     * Returns a vector giving the location of the first mouse click, or null
-     * if the mouse was not clicked.
-     */
-    private Vector2 mouseCoords() {
-        if (mouseClicked) {
-            return new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        }
-        return null;
-    }
 }

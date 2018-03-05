@@ -308,6 +308,7 @@ public class GameMode implements Screen {
 		for (GameObject o : gameplayController.getGnomez()) {
 			o.draw(canvas);
 		}
+		inputController.setWheel(gameplayController.getWheel());
 		gameplayController.getWheel().drawWheel(canvas);
 
 		// Output a simple debugging message stating the number of shells on the screen
