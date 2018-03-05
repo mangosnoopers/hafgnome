@@ -72,7 +72,7 @@ public class InputController {
      * @param p the vector giving the mouse's (x,y) screen coordinates
      */
 	private boolean inWheelArea(Vector2 p) {
-        return false;
+        return true;
 	}
 
     /**
@@ -83,18 +83,23 @@ public class InputController {
      * in the player's view.
      */
 	private void processWheelTurn() {
-	    while (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+	    float origTheta = theta;
+	    if (mouseClicked && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            theta += endPosition.angle(firstClick);
 
 	        // bounce back if cursor leaves wheel
 	        if (!inWheelArea(new Vector2(Gdx.input.getX(), Gdx.input.getY()))) {
+	            theta = origTheta;
+	            movement = theta / ANGLE_TO_LR;
 	            return;
             }
         }
 
         // when mouse is let go, set theta and movement
-        Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-	    theta = endPosition.angle(firstClick);
-	    movement = theta / ANGLE_TO_LR;
+//        Vector2 endPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+//	    theta = endPosition.angle(firstClick);
+//	    movement = theta / ANGLE_TO_LR;
     }
 
 	/**
