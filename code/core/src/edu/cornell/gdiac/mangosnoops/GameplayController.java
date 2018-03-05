@@ -47,6 +47,9 @@ public class GameplayController {
 	/** Car instance, containing information about the wheel, */
 	private Car yonda;
 
+	/** Location and animation information for the wheel **/
+	private Wheel wheel;
+
 	/** Data structure with level format */
 	private LevelObject level;
 
@@ -61,8 +64,10 @@ public class GameplayController {
 	private static final String RSHELL_FILE = "images/red.png";
 	/** The texture file for a star */
 	private static final String STAR_FILE = "images/star.png";
+    /** The texture file for the wheel **/
+    private static final String WHEEL_FILE = "images/wheelard_straight.png";
 
-	/** Texture for all ships, as they look the same */
+    /** Texture for all ships, as they look the same */
 	private Texture beetleTexture;
 	/** Texture for all stars, as they look the same */
 	private Texture starTexture;
@@ -72,6 +77,8 @@ public class GameplayController {
 	private Texture greenTexture;
 	/** Texture for red shells, as they look the same */
 	private Texture redTexture;
+	/** Texture for the wheel**/
+	private Texture wheelTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -98,6 +105,8 @@ public class GameplayController {
 		assets.add(GSHELL_FILE);			
 		manager.load(RSHELL_FILE,Texture.class);
 		assets.add(RSHELL_FILE);
+		manager.load(WHEEL_FILE,Texture.class);
+		assets.add(WHEEL_FILE);
 	}
 	
 	/** 
@@ -116,6 +125,7 @@ public class GameplayController {
 		starTexture = createTexture(manager,STAR_FILE);
 		redTexture = createTexture(manager,RSHELL_FILE);
 		greenTexture = createTexture(manager,GSHELL_FILE);
+		wheelTexture = createTexture(manager,WHEEL_FILE);
 	}
 	
 	
@@ -127,7 +137,9 @@ public class GameplayController {
 		}
 		return null;
 	}
-	
+
+
+
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 */
@@ -135,6 +147,7 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
+		wheel = new Wheel(400,350);\
 	}
 
 	/**
@@ -147,6 +160,7 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
+		wheel = new Wheel(400, 350);
 	}
 
 	/**
@@ -168,6 +182,13 @@ public class GameplayController {
 	public Car getCar() {
 		return yonda;
 	}
+
+    /**
+     * Returns a reference to the wheel
+     *
+     * @return reference to the wheel
+     **/
+    public Wheel getWheel(){ return wheel; }
 
 	/**
 	 * Returns true if the currently active player is alive.
