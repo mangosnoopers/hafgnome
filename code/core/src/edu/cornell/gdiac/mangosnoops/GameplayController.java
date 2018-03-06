@@ -223,6 +223,7 @@ public class GameplayController {
 		yonda.getPosition().set(x,y);
 		gnomez = level.getGnomez();
 		*/
+		wheel = new Wheel(400,20);
 		wheel.setWheelSprite(wheelTexture);
 		Gnome newGnome = new Gnome(400, 2000);
 		Gnome newGnome2 = new Gnome(500, 1000);
@@ -248,8 +249,11 @@ public class GameplayController {
 	 * Resets the game, deleting all objects.
 	 */
 	public void reset() {
+		rotationMagnitude = 0;
 		yonda = null;
+		wheel = null;
 		gnomez.clear();
+		backing.clear();
 	}
 
 	/**
@@ -290,6 +294,14 @@ public class GameplayController {
 	 */
 	protected void destroy(GameObject o) {
 	    // TODO: carry out actions that occur on death of object o
+		switch(o.getType()) {
+			case CAR:
+				break;
+			case GNOME:
+				break;
+			default:
+				break;
+		}
 	}
 	
 	/**
