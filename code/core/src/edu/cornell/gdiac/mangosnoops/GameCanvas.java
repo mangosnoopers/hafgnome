@@ -39,6 +39,11 @@ import java.util.List;
  * in future labs.
  */
 public class GameCanvas {
+    /** TODO: add to mode7? Limit for driving off right side of road */
+    private static final float RIGHT_LIMIT = 150.0f;
+    /** TODO: add to mode7? Limit for driving off left side of road */
+    private static final float LEFT_LIMIT = 500.0f;
+
 	/** While we are not drawing polygons (yet), this spritebatch is more reliable */
 	private PolygonSpriteBatch spriteBatch;
 	
@@ -384,6 +389,14 @@ public class GameCanvas {
 		cam.x -= 15 * -Math.cos(angle);
 		cam.y -= 15 * -Math.sin(angle);
 		cam.x += xOff;
+
+		// Limit how far off the road car can go
+        // TODO: could move this to wherever rest of logic goes
+		if (cam.x > LEFT_LIMIT) {
+		    cam.x = LEFT_LIMIT;
+        } else if (cam.x < RIGHT_LIMIT) {
+		    cam.x = RIGHT_LIMIT;
+        }
 
 		int h = getHeight(); int w = getWidth();
 
