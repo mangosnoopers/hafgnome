@@ -347,7 +347,7 @@ public class GameCanvas {
     // TODO: move this to some mode7 class or something?
     class SortByY implements Comparator<Gnome> {
     	public int compare(Gnome a, Gnome b) {
-    		return a.getY() > b.getY() ? 1 : a.getY() < b.getY() ? -1 : 0;
+    		return a.getY() > b.getY() ? -1 : a.getY() < b.getY() ? 1 : 0;
 		}
 	}
 
