@@ -34,6 +34,10 @@ public class InputController {
     private static final float WINDOW_HEIGHT = 600;
 
 	// Fields to manage game state
+	/** Whether the reset button was pressed. */
+	protected boolean resetPressed;
+	/** Whether the exit button was pressed. */
+	protected boolean exitPressed;
 	/** Whether the left mouse button was clicked. */
 	private boolean mouseClicked;
     /** Vector location of first click */
@@ -55,6 +59,29 @@ public class InputController {
 	 * Returns the amount of sideways movement. 
 	 */
 	public float getMovement() { return movement; }
+
+	/**
+	 * Sets movement to zero.
+	 */
+	public void resetMovement() { movement = 0; }
+
+	/**
+	 * Returns true if the reset button was pressed.
+	 *
+	 * @return true if the reset button was pressed.
+	 */
+	public boolean didReset() {
+		return resetPressed;
+	}
+
+	/**
+	 * Returns true if the exit button was pressed.
+	 *
+	 * @return true if the exit button was pressed.
+	 */
+	public boolean didExit() {
+		return exitPressed;
+	}
 
     /**
      * Set the wheel used for input controls.
@@ -105,6 +132,8 @@ public class InputController {
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
+		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
+		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (mouseClicked) {
             firstClick = new Vector2(Gdx.input.getX(), Gdx.input.getY());

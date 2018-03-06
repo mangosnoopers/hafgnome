@@ -366,6 +366,13 @@ public class GameCanvas {
 
     }
 
+    /**
+	 * Resets camera.
+	 * */
+    public void resetCam() {
+		cam = new Vector3(309, 19, 60);
+	}
+
 	/**
 	 * Draw the road, projected to a pseudo-3D perspective.
 	 * Sources:

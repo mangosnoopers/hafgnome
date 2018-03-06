@@ -248,18 +248,16 @@ public class GameMode implements Screen {
 			gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			break;
 		case OVER:
-		    /* TODO: commenting out to get game 2 run
 			if (inputController.didReset()) {
 				gameState = GameState.PLAY;
 				gameplayController.reset();
+				//TODO: Make the next two lines less sketch
+				canvas.resetCam();
+				inputController.resetMovement();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			} else {
 				play(delta);
 			}
-			*/
-		    // TODO: change this -- gameplay prototype only
-            gameplayController.reset();
-            canvas.drawGnomez(gameplayController.getGnomez(), 0.0f);
             break;
 		case PLAY:
 			play(delta);
@@ -285,6 +283,7 @@ public class GameMode implements Screen {
 		// TODO: only for gameplay prototype
 		if (!gameplayController.getWheel().isActive()) {
             gameState = GameState.OVER;
+            System.out.println("REACHED");
         }
 
 		// Update objects.
@@ -359,11 +358,9 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
-			/* TODO: commentin out 2 get game 2 run
 			if (inputController.didExit() && listener != null) {
 				listener.exitScreen(this, 0);
 			}
-			*/
 		}
 	}
 
