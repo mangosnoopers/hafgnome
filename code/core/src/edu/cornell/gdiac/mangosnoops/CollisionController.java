@@ -19,6 +19,8 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import edu.cornell.gdiac.mangosnoops.entity.*;
 
@@ -29,7 +31,9 @@ import edu.cornell.gdiac.mangosnoops.entity.*;
  * how to make it more efficient.
  */
 public class CollisionController {
-	
+	/** TODO: Maybe delete? Window height */
+	private static final float WINDOW_HEIGHT = 600;
+
 	// These cannot be modified after the controller is constructed.
 	// If these change, make a new constructor.
 	/** Width of the collision geometry */
@@ -82,7 +86,8 @@ public class CollisionController {
 			handleCollision(yonda, g);
 		}
 	}
-	
+
+
 	/**
 	 * Check if a GameObject is out of bounds and take action.
 	 *
@@ -103,6 +108,32 @@ public class CollisionController {
 		 *throw new java.lang.UnsupportedOperationException();
 		 */
 
+	}
+
+	/** TODO: delete this, janky stuff used for gameplay prototype
+	 */
+	public void processCollisions(Array<Gnome> gnomez, Wheel w) {
+		for (Gnome g : gnomez) {
+			handleCollision(w, g);
+		}
+	}
+
+	/** TODO: probably delete this for final, used for gameplay prototype
+	 *  Collide a gnome with the steering wheel.
+	 */
+	private void handleCollision(Wheel w, Gnome g) {
+		float gx = g.getPosition().x;
+		float gy = g.getPosition().y;
+		Vector2 cen = w.getCenter();
+		Texture wsprite = w.getWheelSprite();
+		if(gx > cen.x - wsprite.getWidth()/2.0f
+			&& gx < cen.x + wsprite.getWidth()/2.0f
+			&& WINDOW_HEIGHT - gy > cen.y - wsprite.getHeight()/2.0f
+			&& WINDOW_HEIGHT - gy < cen.y + wsprite.getHeight()/2.0f) {
+			// end game
+			System.out.println("GAME OVER");
+			System.exit(0);
+		}
 	}
 	
 	//#endregion
