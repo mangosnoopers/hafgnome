@@ -23,6 +23,8 @@ public class Wheel {
     private Car car;
     /** True if the wheel is active TODO: DELETE AFTER GAMEPLAY PROTOTYPE*/
     private boolean active;
+    /** Health of the wheel TODO: DELETE AFTER GAMEPLAY PROTOTYPE */
+    private int health;
     /** The texture sprite of this wheel */
     private Texture wheelSprite;
 
@@ -53,14 +55,27 @@ public class Wheel {
     public Vector2 getCenter() { return center; }
 
     /**
-     * Returns true if the wheel is currently active.
+     * Returns true if the wheel is currently active. TODO: DELETE LATER
      */
     public boolean isActive() { return active; }
 
     /**
-     * Sets the active status of the wheel.
+     * Sets the active status of the wheel. TODO: DELETE LATER
      */
     public void setActive(boolean b) { active = b; }
+
+    /** TODO: delete all these later */
+    public void setHealth(int i) { health = i; }
+    public int getHealth() { return health; }
+    public String getHealthStr() {
+        if (health == 2)
+            return "==";
+        else if (health == 1)
+            return "=";
+        else
+            return "";
+    }
+
 
     /** Creates a Wheel with a center at screen coordinates (x,y).
      *
@@ -73,7 +88,10 @@ public class Wheel {
         outerRadius = new Vector2();
         innerRadius = new Vector2();
         center = new Vector2(x,y);
+
+        // TODO: delete these later
         active = true;
+        health = 2;
     }
 
     /**

@@ -127,7 +127,9 @@ public class CollisionController {
 				&& gx < cen.x + wsprite.getWidth()/2.0f - WHEEL_SAFE_AREA
 		   		&& gy > cen.y - wsprite.getHeight()/2.0f + WHEEL_SAFE_AREA
 				&& gy < cen.y + wsprite.getHeight()/2.0f - WHEEL_SAFE_AREA*2.0f) {
-			w.setActive(false);
+			w.setHealth(w.getHealth() - 1);
+			if (w.getHealth() == 0)
+				w.setActive(false);
 		}
 	}
 }

@@ -326,6 +326,10 @@ public class GameMode implements Screen {
 			canvas.drawTextCentered("Game Over!",displayFont, GAME_OVER_OFFSET);
 		}
 
+		// car health TODO: change to not be wheel
+        canvas.drawText("HEALTH: " + gameplayController.getWheel().getHealthStr(),
+                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
+
 		// Flush information to the graphic buffer.
 		canvas.end();
 	}
