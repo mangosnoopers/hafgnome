@@ -67,14 +67,6 @@ public class Wheel {
     /** TODO: delete all these later */
     public void setHealth(int i) { health = i; }
     public int getHealth() { return health; }
-    public String getHealthStr() {
-        if (health == 2)
-            return "==";
-        else if (health == 1)
-            return "=";
-        else
-            return "";
-    }
 
 
     /** Creates a Wheel with a center at screen coordinates (x,y).

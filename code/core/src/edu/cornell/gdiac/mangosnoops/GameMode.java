@@ -327,7 +327,7 @@ public class GameMode implements Screen {
 		}
 
 		// car health TODO: change to not be wheel
-        canvas.drawText("HEALTH: " + gameplayController.getWheel().getHealthStr(),
+        canvas.drawText("HEALTH: " + gameplayController.getWheel().getHealth(),
                         displayFont, 10.0f, canvas.getHeight() - 10.0f);
 
 		// Flush information to the graphic buffer.
