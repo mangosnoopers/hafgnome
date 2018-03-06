@@ -26,13 +26,13 @@ import edu.cornell.gdiac.mangosnoops.entity.*;
 
 /**
  * Controller implementing simple game physics.
- *
- * This is a very inefficient physics engine.  Part of this lab is determining
- * how to make it more efficient.
  */
 public class CollisionController {
 	/** TODO: Maybe delete? Window height */
 	private static final float WINDOW_HEIGHT = 600;
+	/** TODO: Maybe delete? */
+	/** A factor to determine the area of the wheel a gnome is allowed to hit */
+	private static final float WHEEL_SAFE_AREA = 100.0f;
 
 	// These cannot be modified after the controller is constructed.
 	// If these change, make a new constructor.
@@ -40,9 +40,7 @@ public class CollisionController {
 	private float width;
 	/** Height of the collision geometry */
 	private float height;
-	
-	/// ACCESSORS
-	
+
 	/**
 	 * Returns width of the game window (necessary to detect out of bounds)
 	 *
@@ -60,9 +58,7 @@ public class CollisionController {
 	public float getHeight() {
 		return height;
 	}
-	
-	//#region Initialization
-	
+
 	/**
 	 * Creates a CollisionController for the given screen dimensions.
 	 *
@@ -107,7 +103,6 @@ public class CollisionController {
 		/** TODO: commenting this out to get game 2 run
 		 *throw new java.lang.UnsupportedOperationException();
 		 */
-
 	}
 
 	/** TODO: delete this, janky stuff used for gameplay prototype
@@ -122,19 +117,18 @@ public class CollisionController {
 	 *  Collide a gnome with the steering wheel.
 	 */
 	private void handleCollision(Wheel w, Gnome g) {
-		float gx = g.getPosition().x;
-		float gy = g.getPosition().y;
+		float gx = g.getDrawCoords().x;
+		float gy = g.getDrawCoords().y;
 		Vector2 cen = w.getCenter();
 		Texture wsprite = w.getWheelSprite();
-		if(gx > cen.x - wsprite.getWidth()/2.0f
-			&& gx < cen.x + wsprite.getWidth()/2.0f
-			&& WINDOW_HEIGHT - gy > cen.y - wsprite.getHeight()/2.0f
-			&& WINDOW_HEIGHT - gy < cen.y + wsprite.getHeight()/2.0f) {
-			// end game
+
+		// end game upon collision
+		if(gx > cen.x - wsprite.getWidth()/2.0f + WHEEL_SAFE_AREA
+				&& gx < cen.x + wsprite.getWidth()/2.0f - WHEEL_SAFE_AREA
+		   		&& gy > cen.y - wsprite.getHeight()/2.0f + WHEEL_SAFE_AREA
+				&& gy < cen.y + wsprite.getHeight()/2.0f - WHEEL_SAFE_AREA*2.0f) {
 			System.out.println("GAME OVER");
 			System.exit(0);
 		}
 	}
-	
-	//#endregion
 }

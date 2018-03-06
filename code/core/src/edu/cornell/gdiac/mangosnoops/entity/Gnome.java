@@ -18,6 +18,8 @@ public class Gnome extends GameObject{
     private float animeframe;
     /** The type of Gnome this is */
     private GnomeType gtype;
+    /** The actual screen coordinate the gnome is drawn on */
+    private Vector2 drawCoords;
 
     /**
      * Enum specifying the type of gnome this is.
@@ -39,6 +41,11 @@ public class Gnome extends GameObject{
     public ObjectType getType() {
         return ObjectType.GNOME;
     }
+
+    /**
+     * Return the y screen coordinate that this gnome is drawn at.
+     */
+    public Vector2 getDrawCoords() { return drawCoords; }
 
     /**
      * Returns the Gnome type of this gnome.
@@ -120,6 +127,7 @@ public class Gnome extends GameObject{
         // 4.) Scale x/y based on position, scaling
         int drawX = (int) (scale.x / rotatedX * rotatedY + screenWidth / 2) - scaledWidth / 2;
         int drawY = (int) ((camera.z * scale.y) / rotatedX) + (int) screenHeight - 200 - scaledHeight;
+        drawCoords = new Vector2(drawX,drawY);
 
         if (drawX > 0) {
             // 5.) draw sprite with x,y,width, height

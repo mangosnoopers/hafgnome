@@ -286,7 +286,8 @@ public class GameMode implements Screen {
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
-		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
+		// TODO: changed this to wheel instead of car for gameplay prototype
+		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getWheel());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
