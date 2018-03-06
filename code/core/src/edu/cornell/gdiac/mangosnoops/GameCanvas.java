@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class GameCanvas {
     /** TODO: add to mode7? Limit for driving off right side of road */
-    private static final float RIGHT_LIMIT = 150.0f;
+    private static final float RIGHT_LIMIT = 125.0f;
     /** TODO: add to mode7? Limit for driving off left side of road */
     private static final float LEFT_LIMIT = 500.0f;
 
