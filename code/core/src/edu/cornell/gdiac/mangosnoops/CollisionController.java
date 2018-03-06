@@ -122,12 +122,14 @@ public class CollisionController {
 		Vector2 cen = w.getCenter();
 		Texture wsprite = w.getWheelSprite();
 
-		// make wheel inactive if it collides with gnome
+		// reduce wheel health if it collides with gnome
 		if(gx > cen.x - wsprite.getWidth()/2.0f + WHEEL_SAFE_AREA
 				&& gx < cen.x + wsprite.getWidth()/2.0f - WHEEL_SAFE_AREA
 		   		&& gy > cen.y - wsprite.getHeight()/2.0f + WHEEL_SAFE_AREA
 				&& gy < cen.y + wsprite.getHeight()/2.0f - WHEEL_SAFE_AREA*2.0f) {
 			w.setHealth(w.getHealth() - 1);
+
+			// inactivate wheel if health is 0
 			if (w.getHealth() == 0)
 				w.setActive(false);
 		}

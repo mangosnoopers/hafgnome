@@ -48,7 +48,7 @@ public class GameMode implements Screen {
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
 	/** The font file to use for scores */
-	private static String FONT_FILE = "fonts/TimesRoman.ttf";
+	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
 	/** The file for the road image */
 	private static String ROAD_FILE = "images/road.png";
