@@ -257,7 +257,10 @@ public class GameMode implements Screen {
 				play(delta);
 			}
 			*/
-			break;
+		    // TODO: change this -- gameplay prototype only
+            gameplayController.reset();
+            canvas.drawGnomez(gameplayController.getGnomez(), 0.0f);
+            break;
 		case PLAY:
 			play(delta);
 			break;
@@ -279,6 +282,10 @@ public class GameMode implements Screen {
 			gameState = GameState.OVER;
 		}
 		*/
+		// TODO: only for gameplay prototype
+		if (!gameplayController.getWheel().isActive()) {
+            gameState = GameState.OVER;
+        }
 
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
@@ -317,7 +324,6 @@ public class GameMode implements Screen {
 
 		if (gameState == GameState.OVER) {
 			canvas.drawTextCentered("Game Over!",displayFont, GAME_OVER_OFFSET);
-			canvas.drawTextCentered("Press R to Restart", displayFont, 0);
 		}
 
 		// Flush information to the graphic buffer.

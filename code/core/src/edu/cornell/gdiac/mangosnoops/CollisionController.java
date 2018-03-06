@@ -122,13 +122,12 @@ public class CollisionController {
 		Vector2 cen = w.getCenter();
 		Texture wsprite = w.getWheelSprite();
 
-		// end game upon collision
+		// make wheel inactive if it collides with gnome
 		if(gx > cen.x - wsprite.getWidth()/2.0f + WHEEL_SAFE_AREA
 				&& gx < cen.x + wsprite.getWidth()/2.0f - WHEEL_SAFE_AREA
 		   		&& gy > cen.y - wsprite.getHeight()/2.0f + WHEEL_SAFE_AREA
 				&& gy < cen.y + wsprite.getHeight()/2.0f - WHEEL_SAFE_AREA*2.0f) {
-			System.out.println("GAME OVER");
-			System.exit(0);
+			w.setActive(false);
 		}
 	}
 }
