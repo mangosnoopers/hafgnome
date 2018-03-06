@@ -305,9 +305,7 @@ public class GameMode implements Screen {
 		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
 		canvas.draw(clouds,200 , 400);
 		// Draw the game objects
-		for (GameObject o : gameplayController.getGnomez()) {
-			o.draw(canvas);
-		}
+		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 		inputController.setWheel(gameplayController.getWheel());
 		gameplayController.getWheel().drawWheel(canvas);
 

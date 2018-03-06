@@ -56,7 +56,9 @@ public class Gnome extends GameObject{
         gtype = type;
     }
 
-    public Gnome() {
+    public Gnome(float x, float y) {
+        this.setX(x);
+        this.setY(y);
         animeframe = 0.0f;
         gtype = GnomeType.BASIC;
     }
@@ -84,6 +86,8 @@ public class Gnome extends GameObject{
         if (animeframe >= NUM_ANIM_FRAMES) {
             animeframe -= NUM_ANIM_FRAMES;
         }
+
+        setY(this.getY()-60*delta);
     }
 
     /**
@@ -94,10 +98,34 @@ public class Gnome extends GameObject{
      *
      * @param canvas The drawing context
      */
-    public void draw(GameCanvas canvas) {
+    public void draw(GameCanvas canvas, Vector3 camera, Vector2 scale, float angle, float screenWidth, float screenHeight) {
         float x = animator.getRegionWidth()/2.0f;
         float y = animator.getRegionHeight()/2.0f;
         animator.setFrame((int)animeframe);
-        canvas.draw(animator, Color.WHITE, x, y, position.x, position.y, 0.0f, 1.0f, 1.f);
+
+        // Project to 3d perspective here
+
+        // 1.) Get position relative to camera
+        double posX = getX() - camera.x;
+        double posY = getY() - camera.y;
+
+        // 2.) Rotate based on angle
+        double rotatedX = Math.cos(angle) * posX + Math.sin(angle) * posY;
+        double rotatedY = Math.cos(angle) * posY - Math.sin(angle) * posX;
+
+        // 3.) Scale width/height based on position, scaling
+        int scaledWidth = (int) (animator.getRegionWidth() * scale.x / rotatedX);
+        int scaledHeight = (int) (animator.getRegionHeight() * scale.y / rotatedX);
+
+        // 4.) Scale x/y based on position, scaling
+        int drawX = (int) (scale.x / rotatedX * rotatedY + screenWidth / 2) - scaledWidth / 2;
+        int drawY = (int) ((camera.z * scale.y) / rotatedX) + (int) screenHeight - 200 - scaledHeight;
+
+        if (drawX > 0) {
+            // 5.) draw sprite with x,y,width, height
+            canvas.draw(animator, drawX, drawY, scaledWidth, scaledHeight);
+        } else {
+            this.setDestroyed(true);
+        }
     }
 }
