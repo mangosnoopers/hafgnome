@@ -22,8 +22,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Sort;
+import edu.cornell.gdiac.mangosnoops.entity.Gnome;
 
 import javax.swing.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.
@@ -56,7 +62,7 @@ public class GameCanvas {
 	// 3D PERSPECTIVE STUFF
 	private Pixmap projectedRoad;
 	private Texture roadTex;
-	private Vector3 cam = new Vector3(309, 19, 30	);
+	private Vector3 cam = new Vector3(309, 19, 60);
 	private final Vector2 scale = new Vector2(150, 150);
 	private final int HORIZON = 200;
 
@@ -332,6 +338,29 @@ public class GameCanvas {
         spriteBatch.draw(image, x+w, y);
     }
 
+
+    // TODO: move this to some mode7 class or something?
+    class SortByY implements Comparator<Gnome> {
+    	public int compare(Gnome a, Gnome b) {
+    		return a.getY() > b.getY() ? 1 : a.getY() < b.getY() ? -1 : 0;
+		}
+	}
+
+
+	// TODO: move 2 another mode7 class or something
+    public void drawGnomez(Array<Gnome> gnomez, float angle) {
+
+    	// Sort gnomes by y
+        // TODO: probably better idea to use a heap or something so we don't have to sort so much
+		Sort.instance().sort(gnomez, new SortByY());
+
+        // Project gnome coordinates to 3d perspective
+		for (Gnome g : gnomez) {
+			g.draw(this, cam, scale, angle, getWidth(), getHeight());
+		}
+
+    }
+
 	/**
 	 * Draw the road, projected to a pseudo-3D perspective.
 	 */
@@ -345,6 +374,7 @@ public class GameCanvas {
 			cam.x -= 10;
 		}
 
+
 		/* TODO: cam.x, cam.y should come from Car state
 		 * (just put this here to show scrolling road) */
 		cam.x -= 15 * -Math.cos(angle);
@@ -353,6 +383,7 @@ public class GameCanvas {
 
 		int h = getHeight(); int w = getWidth();
 
+		// TODO: move this logic to sep class?
 	    for (int y = HORIZON; y < h; y++) {
 
 	    	float z = y - HORIZON;

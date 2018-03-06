@@ -66,6 +66,8 @@ public class GameplayController {
 	private static final String STAR_FILE = "images/star.png";
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/wheelard_straight.png";
+    /** The texture file for the gnome */
+	private static final String GNOME_FILE = "images/gnome.png";
 
     /** Texture for all ships, as they look the same */
 	private Texture beetleTexture;
@@ -79,6 +81,8 @@ public class GameplayController {
 	private Texture redTexture;
 	/** Texture for the wheel**/
 	private Texture wheelTexture;
+	/** Texture for the wheel**/
+	private Texture gnomeTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -107,6 +111,8 @@ public class GameplayController {
 		assets.add(RSHELL_FILE);
 		manager.load(WHEEL_FILE,Texture.class);
 		assets.add(WHEEL_FILE);
+		manager.load(GNOME_FILE, Texture.class);
+		assets.add(GNOME_FILE);
 	}
 	
 	/** 
@@ -126,6 +132,7 @@ public class GameplayController {
 		redTexture = createTexture(manager,RSHELL_FILE);
 		greenTexture = createTexture(manager,GSHELL_FILE);
 		wheelTexture = createTexture(manager,WHEEL_FILE);
+		gnomeTexture = createTexture(manager, GNOME_FILE);
 	}
 	
 	
@@ -217,6 +224,24 @@ public class GameplayController {
 		gnomez = level.getGnomez();
 		*/
 		wheel.setWheelSprite(wheelTexture);
+		Gnome newGnome = new Gnome(400, 2000);
+		Gnome newGnome2 = new Gnome(500, 1000);
+		Gnome newGnome3 = new Gnome(300, 3000);
+		Gnome newGnome4 = new Gnome(400, 4000);
+		Gnome newGnome5 = new Gnome(200, 5000);
+		Gnome newGnome6 = new Gnome(100, 7000);
+		newGnome.setTexture(gnomeTexture);
+		newGnome2.setTexture(gnomeTexture);
+		newGnome3.setTexture(gnomeTexture);
+		newGnome4.setTexture(gnomeTexture);
+		newGnome5.setTexture(gnomeTexture);
+		newGnome6.setTexture(gnomeTexture);
+		gnomez.add(newGnome);
+		gnomez.add(newGnome2);
+		gnomez.add(newGnome3);
+		gnomez.add(newGnome4);
+		gnomez.add(newGnome5);
+		gnomez.add(newGnome6);
 	}
 
 	/**
@@ -277,6 +302,9 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 	    // TODO: update object states based on input
+		for (Gnome g : gnomez) {
+			g.update(delta);
+		}
 	}
 
 	/**

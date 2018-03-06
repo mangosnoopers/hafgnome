@@ -99,7 +99,10 @@ public class CollisionController {
 	 * Collide a gnome with a car.
 	 */
 	private void handleCollision(Car c, Gnome g) {
-		throw new java.lang.UnsupportedOperationException();
+		/** TODO: commenting this out to get game 2 run
+		 *throw new java.lang.UnsupportedOperationException();
+		 */
+
 	}
 	
 	//#endregion
