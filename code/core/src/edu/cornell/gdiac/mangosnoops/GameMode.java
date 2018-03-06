@@ -283,7 +283,6 @@ public class GameMode implements Screen {
 		// TODO: only for gameplay prototype
 		if (!gameplayController.getWheel().isActive()) {
             gameState = GameState.OVER;
-            System.out.println("REACHED");
         }
 
 		// Update objects.
@@ -322,11 +321,12 @@ public class GameMode implements Screen {
 		//canvas.drawText(message, displayFont, COUNTER_OFFSET, canvas.getHeight()-COUNTER_OFFSET);
 
 		if (gameState == GameState.OVER) {
-			canvas.drawTextCentered("Game Over!",displayFont, GAME_OVER_OFFSET);
+			canvas.drawTextCentered("GAME OVER",displayFont, GAME_OVER_OFFSET);
+			canvas.drawTextCentered("Press R to restart",displayFont, GAME_OVER_OFFSET-40);
 		}
 
 		// car health TODO: change to not be wheel
-        canvas.drawText("HEALTH: " + gameplayController.getWheel().getHealth(),
+        canvas.drawText("HEALTH: " + Math.max(gameplayController.getWheel().getHealth(), 0),
                         displayFont, 10.0f, canvas.getHeight() - 10.0f);
 
 		// Flush information to the graphic buffer.
