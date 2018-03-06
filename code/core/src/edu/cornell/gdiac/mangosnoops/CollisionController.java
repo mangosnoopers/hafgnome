@@ -127,9 +127,10 @@ public class CollisionController {
 		if(gx > cen.x - wsprite.getWidth()/2.0f + WHEEL_SAFE_AREA
 				&& gx < cen.x + wsprite.getWidth()/2.0f - WHEEL_SAFE_AREA
 		   		&& gy > cen.y - wsprite.getHeight()/2.0f + WHEEL_SAFE_AREA
-				&& gy < cen.y + wsprite.getHeight()/2.0f - WHEEL_SAFE_AREA*2.0f) {
-			g.setDestroyed(true);
+				&& gy < cen.y + wsprite.getHeight()/2.0f - WHEEL_SAFE_AREA*2.0f
+				&& !g.isDestroyed()) {
 			w.setHealth(w.getHealth() - 1);
+			g.setDestroyed(true);
 
 			// inactivate wheel if health is 0
 			if (w.getHealth() == 0)
