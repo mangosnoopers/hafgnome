@@ -321,7 +321,7 @@ public class GameMode implements Screen {
 		//canvas.drawText(message, displayFont, COUNTER_OFFSET, canvas.getHeight()-COUNTER_OFFSET);
 
 		if (gameState == GameState.OVER) {
-			canvas.drawTextCentered("GAME OVER",displayFont, GAME_OVER_OFFSET);
+			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);
 			canvas.drawTextCentered("Press R to restart",displayFont, GAME_OVER_OFFSET-40);
 		}
 
