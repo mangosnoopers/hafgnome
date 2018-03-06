@@ -363,6 +363,10 @@ public class GameCanvas {
 
 	/**
 	 * Draw the road, projected to a pseudo-3D perspective.
+	 * Sources:
+	 * 	- http://www.extentofthejam.com/pseudo/
+	 * 	- https://gamedev.stackexchange.com/questions/24957/doing-an-snes-mode-7-affine-transform-effect-in-pygame
+	 * 	- http://blog.supercookie.co.uk/post/124807296612/modeseven
 	 */
 	public void drawRoad(Pixmap roadMap, float angle, float xOff) {
 
