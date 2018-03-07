@@ -71,7 +71,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas);
-		
+
+		Gdx.graphics.setTitle("Gnomez");
+
+
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
 		setScreen(loading);
