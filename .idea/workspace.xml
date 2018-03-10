@@ -6,59 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c54e6ff-97ee-4362-b25d-8e16779790d3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/MangoSnoopers.iml" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/code/.gitignore" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/build.gradle" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/fonts/ComicSans.ttf" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/fonts/LucidaGrande.ttf" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/fonts/TimesRoman.ttf" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/background.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/beam.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/beetle.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/blue.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/bullet.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/clouds.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/gnome.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/green.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/loading.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/play.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/progressbar.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/red.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/road.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/sky.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/star.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/assets/images/wheelard_straight.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/build.gradle" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/CollisionController.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/GDXRoot.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/GameCanvas.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/GameMode.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/GameObject.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/GameplayController.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/InputController.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/LevelObject.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/LoadingMode.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/RandomController.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/entity/Car.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/entity/Gnome.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/mangosnoops/entity/Wheel.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/util/FilmStrip.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/util/ScreenListener.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/core/src/edu/cornell/gdiac/util/XBox360Controller.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/desktop/build.gradle" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/desktop/src/edu/cornell/gdiac/mangosnoops/desktop/DesktopLauncher.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/gradle.properties" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/gradle/wrapper/gradle-wrapper.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/gradle/wrapper/gradle-wrapper.properties" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/gradlew" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/gradlew.bat" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/code/settings.gradle" afterPath="" />
-    </list>
+    <list default="true" id="1c54e6ff-97ee-4362-b25d-8e16779790d3" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/core/.gradle/" />
     <ignored path="$PROJECT_DIR$/core/build/" />
     <ignored path="$PROJECT_DIR$/core/out/" />
