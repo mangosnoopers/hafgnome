@@ -1,3 +1,7 @@
+## JAR
+classes/
+core/resources/
+
 ## Java
 
 *.class
