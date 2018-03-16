@@ -117,13 +117,13 @@ public class Radio {
         }
         lastStation = currentStation;
         if(stationNumber>10 && stationNumber<100){
-            currentStation = Stations.get(0);
+            currentStation = Stations.get(4);
         }
         else if(stationNumber>120 && stationNumber<190){
-            currentStation = Stations.get(1);
+            currentStation = Stations.get(5);
         }
         else if(stationNumber>220 && stationNumber<300){
-            currentStation = Stations.get(2);
+            currentStation = Stations.get(6);
         }
         else{
             currentStation = null;
