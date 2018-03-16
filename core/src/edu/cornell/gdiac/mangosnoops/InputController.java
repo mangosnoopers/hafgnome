@@ -20,6 +20,7 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.*;
+import edu.cornell.gdiac.mangosnoops.entity.Radio;
 import edu.cornell.gdiac.mangosnoops.entity.Wheel;
 import edu.cornell.gdiac.util.*;
 
@@ -49,7 +50,10 @@ public class InputController {
 	/** The left/right movement of the player's view -- left is negative */
 	private float movement = 0.0f;
 
-    /**
+	// Radio controls
+	private Radio r;
+
+	/**
      * Creates a new input controller.
      */
     public InputController() {
@@ -88,13 +92,18 @@ public class InputController {
      */
     public void setWheel(Wheel w) { this.w = w; }
 
-    /**
+	/**
+	 * Set the radio used for input controls.
+	 */
+	public void setRadio(Radio r) { this.r = r; }
+
+	/**
      * Returns true if the mouse is positioned inside the area of the wheel.
      * The wheel must not be null.
      *
      * @param p the vector giving the mouse's (x,y) screen coordinates
      */
-	private boolean inWheelArea(Vector2 p) {
+    private boolean inWheelArea(Vector2 p) {
 	    // Position of wheel on screen
 	    Vector2 cen = w.getCenter();
 	    Texture wsprite = w.getWheelSprite();
@@ -102,6 +111,16 @@ public class InputController {
                 && p.x < cen.x + wsprite.getWidth()/2.0f
                 && WINDOW_HEIGHT - p.y > cen.y - wsprite.getHeight()/2.0f
                 && WINDOW_HEIGHT - p.y < cen.y + wsprite.getHeight()/2.0f;
+	}
+
+	private boolean inRadioArea(Vector2 p) {
+		// Position of wheel on screen
+		Vector2 cen = r.getKnobPos();
+		Texture rsprite = r.getKnobTexture();
+		return p.x > cen.x - rsprite.getWidth()*0.5f
+				&& p.x < cen.x + rsprite.getWidth()*0.5f
+				&& WINDOW_HEIGHT - p.y > cen.y - rsprite.getHeight()*0.5f
+				&& WINDOW_HEIGHT - p.y < cen.y + rsprite.getHeight()*0.5f;
 	}
 
     /**
@@ -122,11 +141,28 @@ public class InputController {
             }
 
             // otherwise change wheel angle and lateral screen movement
-            w.setAng(w.getAng() - Gdx.input.getDeltaX());
-	        movement = w.getAng() / ANGLE_TO_LR;
+           if(w.getAng()>=-90 && w.getAng()<=90) {
+			   w.setAng(w.getAng() - Gdx.input.getDeltaX());
+			   movement = w.getAng() / ANGLE_TO_LR;
+		   }
+		   if(w.getAng()<-90){
+	        	w.setAng(-90);
+		   }
+		   if(w.getAng()>90){
+	        	w.setAng(90);
+		   }
         }
-
     }
+
+	private void processRadioInput() {
+		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+
+
+			// otherwise change wheel angle and lateral screen movement
+			r.setknobAng(r.getknobAng() - Gdx.input.getDeltaX());
+		}
+		r.setStation();
+	}
 
 	/**
 	 * Reads the input for the player and converts the result into game logic.
@@ -145,6 +181,9 @@ public class InputController {
 		if (w != null && mouseClicked && inWheelArea(firstClick)) {
 		    processWheelTurn();
         }
+        if( r != null && mouseClicked &&inRadioArea(firstClick)){
+        	processRadioInput();
+		}
 	}
 
 }

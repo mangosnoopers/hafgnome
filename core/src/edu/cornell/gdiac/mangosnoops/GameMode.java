@@ -313,8 +313,9 @@ public class GameMode implements Screen {
 		// Draw the game objects
 		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 		inputController.setWheel(gameplayController.getWheel());
+		inputController.setRadio(gameplayController.getRadio());
 		gameplayController.getWheel().drawWheel(canvas);
-
+		gameplayController.getRadio().drawRadio(canvas);
 		// Output a simple debugging message stating the number of shells on the screen
         // TODO: commented this out to get game to run, car is null rn
 		//String message = "Current movement: "+gameplayController.getCar().getMovement();

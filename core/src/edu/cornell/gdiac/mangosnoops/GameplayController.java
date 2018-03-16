@@ -50,6 +50,9 @@ public class GameplayController {
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 
+	/** Location and animation information for the wheel **/
+	private Radio radio;
+
 	/** Data structure with level format */
 	private LevelObject level;
 
@@ -68,7 +71,10 @@ public class GameplayController {
     private static final String WHEEL_FILE = "images/wheelard_straight.png";
     /** The texture file for the gnome */
 	private static final String GNOME_FILE = "images/gnome.png";
-
+	/** The texture file for the gnome */
+	private static final String RADIO_FILE = "images/radio.png";
+	/** The texture file for the gnome */
+	private static final String RADIO_KNOB_FILE = "images/knob.png";
     /** Texture for all ships, as they look the same */
 	private Texture beetleTexture;
 	/** Texture for all stars, as they look the same */
@@ -83,6 +89,10 @@ public class GameplayController {
 	private Texture wheelTexture;
 	/** Texture for the wheel**/
 	private Texture gnomeTexture;
+	/** Texture for the radio**/
+	private Texture radioTexture;
+	/** Texture for the radio knob**/
+	private Texture radioknobTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -113,6 +123,10 @@ public class GameplayController {
 		assets.add(WHEEL_FILE);
 		manager.load(GNOME_FILE, Texture.class);
 		assets.add(GNOME_FILE);
+		manager.load(RADIO_FILE, Texture.class);
+		assets.add(RADIO_FILE);
+		manager.load(RADIO_KNOB_FILE, Texture.class);
+		assets.add(RADIO_KNOB_FILE);
 	}
 	
 	/** 
@@ -133,6 +147,8 @@ public class GameplayController {
 		greenTexture = createTexture(manager,GSHELL_FILE);
 		wheelTexture = createTexture(manager,WHEEL_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
+		radioTexture = createTexture(manager, RADIO_FILE);
+		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
 	}
 	
 	
@@ -166,7 +182,6 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
-        wheel = new Wheel(400,20);
 	}
 
 	/**
@@ -197,12 +212,19 @@ public class GameplayController {
     public Wheel getWheel(){ return wheel; }
 
 	/**
+	 * Returns a reference to the radio
+	 *
+	 * @return reference to the radio
+	 **/
+    public Radio getRadio(){ return radio; }
+	/**
 	 * Returns true if the currently active player is alive.
 	 *
 	 * This property needs to be modified if you want multiple players.
 	 *
 	 * @return true if the currently active player is alive.
 	 */
+
 	public boolean isAlive() {
 		return yonda != null;
 	}
@@ -223,8 +245,11 @@ public class GameplayController {
 		yonda.getPosition().set(x,y);
 		gnomez = level.getGnomez();
 		*/
-		wheel = new Wheel(400,20);
+		wheel = new Wheel(250,20);
 		wheel.setWheelSprite(wheelTexture);
+		radio = new Radio(650, 70);
+		radio.setRadioSprite(radioTexture);
+		radio.setKnobSprite(radioknobTexture);
 		Gnome newGnome = new Gnome(400, 2000);
 		Gnome newGnome2 = new Gnome(500, 1000);
 		Gnome newGnome3 = new Gnome(300, 3000);
@@ -252,6 +277,7 @@ public class GameplayController {
 		rotationMagnitude = 0;
 		yonda = null;
 		wheel = null;
+		radio = null;
 		gnomez.clear();
 		backing.clear();
 	}
