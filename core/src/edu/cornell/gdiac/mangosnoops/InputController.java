@@ -44,6 +44,8 @@ public class InputController {
     /** Vector location of first click */
     private Vector2 firstClick;
 
+    private Vector2 up = new Vector2(0,-1);
+
     // Wheel controls
     /** The wheel used for user control */
     private Wheel w;
@@ -156,9 +158,9 @@ public class InputController {
 
 	private void processRadioInput() {
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-
-
 			// otherwise change wheel angle and lateral screen movement
+            //Vector2 mouse = new Vector2(Gdx.input.getDeltaX(),Gdx.input.getDeltaY());
+            //r.setknobAng(r.getknobAng() + mouse.angle(up));
 			r.setknobAng(r.getknobAng() - Gdx.input.getDeltaX());
 		}
 		r.setStation();

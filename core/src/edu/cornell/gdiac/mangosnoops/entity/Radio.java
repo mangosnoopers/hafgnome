@@ -32,6 +32,8 @@ public class Radio {
 
     Station currentStation;
 
+    int stationNumber;
+
     private Texture radioTexture;
 
     private Texture knobTexture;
@@ -69,16 +71,33 @@ public class Radio {
      */
     public void setRadioSprite(Texture tex) { radioTexture = tex; }
 
+    /**
+     * Returns image texture for this
+     * radio's knob
+     * @return knobTexture
+     */
     public Texture getKnobTexture() {
         return knobTexture;
     }
 
+    /**
+     * Set Texture for this radio's knob
+     * @param tex
+     */
     public void setKnobSprite(Texture tex) { knobTexture = tex; }
 
+    /**
+     * Return texture for this radio
+     * @return radioTexture
+     */
     public Texture getRadioTexture() {
         return radioTexture;
     }
 
+    /**
+     * return name of the current playing station
+     * @return current station name
+     */
     public String getCurrentStationName() {
         if(currentStation != null) {
             return currentStation.toString();
@@ -86,8 +105,13 @@ public class Radio {
         return "";
     }
 
+    /**
+     * Sets the current station based on the setting of the knob
+     * Should the station change, the new audio is played and the old
+     * is shut off
+     */
     public void setStation(){
-        int stationNumber = -(int)knobAng;
+        stationNumber = -(int)knobAng;
         if(stationNumber <= 0){
             stationNumber = 0;
         }
@@ -104,19 +128,21 @@ public class Radio {
         else{
             currentStation = null;
         }
-        System.out.println(stationNumber);
-        System.out.println("last :" + lastStation);
-        System.out.println("current:" + currentStation);
 
         if(lastStation != currentStation){
-            System.out.println("entered da if1");
             playRadio();
         }
     }
 
+    /**
+     * Plays the audio of the current station given a change
+     * in station. Also responsible for stopping the audio
+     * of the previous station.
+     *
+     * Should the current station be null, nothing is played.
+     */
     public void playRadio(){
         if(lastStation != null){
-            System.out.println("entered da if2");
             lastStation.stopAudio();
         }
         if(currentStation == null){
@@ -127,7 +153,7 @@ public class Radio {
     }
     /** Creates a Radio with a center at screen coordinates (x,y).
      *
-     * Additionally initiallizes list of radio songs based on
+     * Additionally initializes the list of radio songs based on
      * those in asset folder
      *
      * @param x The screen x-coordinate of the center
@@ -136,6 +162,8 @@ public class Radio {
     public Radio(float x, float y) {
         this.pos = new Vector2(x,y);
         this.knobPos = new Vector2(x-75,y);
+
+        //Create Station list
         Stations = new ObjectMap<Integer, Station>();
         File[] radiosongs = new File("RadioSongs").listFiles();
         for(File f : radiosongs){
@@ -146,6 +174,10 @@ public class Radio {
         }
     }
 
+    /**
+     * Draws the radio and its knob on the given canvas
+     * @param canvas
+     */
     public void drawRadio(GameCanvas canvas){
         if(radioTexture == null || knobTexture == null) {
             return;
@@ -164,60 +196,66 @@ public class Radio {
 
     }
 
+    /**
+     * Inner Class for the individual stations of the
+     * radio
+     */
     private class Station{
+        /** The name of this station **/
         private String name;
-
+        /** The name of the file for the audio **/
         private String audioFile;
-
+        /** indicates whether the current station is playing or not **/
         private boolean playing;
-
+        /** Music class for the audio **/
         private Music audio;
-
+        /** volume at which to play the audio **/
         private float volume;
 
+        /**
+         * Class constructor
+         *
+         * Sets name of song to name of file, minus its filetype extension
+         * @param filename
+         */
         public Station(String filename) {
             this.name = filename.substring(0,filename.length()-4);
             this.audioFile = "RadioSongs/" + filename;
-
-
-        }
-        public void setName(String name){
-            this.name = name;
         }
 
-        public String getName(String name){
-            return name;
-        }
-
-        public void setAudioFile(String audioFile) {
-            this.audioFile = audioFile;
-        }
-
-        public String getAudioFile() {
-            return audioFile;
-        }
-
-        public void setPlaying(boolean playing){
-            this.playing = playing;
-        }
-
-        public boolean isPlaying() {
-            return playing;
-        }
-
+        /**
+         * Creates the music file for the song and plays it
+         **/
         public void playAudio(){
             playing = true;
             audio = Gdx.audio.newMusic(Gdx.files.internal(audioFile));
             audio.play();
         }
 
+        /**
+         * Stops the music file from playing
+         * as the music is a managed resource, once we are no longer playing it
+         * it is disposed of
+         **/
         public void stopAudio(){
-            System.out.println("stopping");
             playing = false;
             audio.stop();
             audio.dispose();
         }
 
+        /**
+         * Returns current playing volume
+         * @return volume
+         **/
+        public float getVolume() {
+            return volume;
+        }
+
+        /**
+         *Changes the volume of the currently playing audio to
+         * the specified value
+         * @param volume
+         **/
         public void changeVolume(float volume){
             this.volume = volume;
             if(playing){
