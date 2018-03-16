@@ -79,6 +79,13 @@ public class Radio {
         return radioTexture;
     }
 
+    public String getCurrentStationName() {
+        if(currentStation != null) {
+            return currentStation.toString();
+        }
+        return "";
+    }
+
     public void setStation(){
         int stationNumber = -(int)knobAng;
         if(stationNumber <= 0){
@@ -154,6 +161,7 @@ public class Radio {
 
         canvas.draw(radioTexture, Color.WHITE, oxr, oyr, pos.x, pos.y, 0, 0.5f, 0.5f);
         canvas.draw(knobTexture, Color.WHITE, oxk, oyk, knobPos.x, knobPos.y, knobAng, 0.33f, 0.33f);
+
     }
 
     private class Station{
