@@ -249,7 +249,7 @@ public class GameplayController {
 		*/
 		wheel = new Wheel(275,70);
 		wheel.setWheelSprite(wheelTexture);
-		radio = new Radio(535, 50);
+		radio = new Radio(545, 50);
 		radio.setRadioSprite(radioTexture);
 		radio.setKnobSprite(radioknobTexture);
 
