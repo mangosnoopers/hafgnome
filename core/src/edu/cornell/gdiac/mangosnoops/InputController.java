@@ -109,20 +109,21 @@ public class InputController {
 	    // Position of wheel on screen
 	    Vector2 cen = w.getCenter();
 	    Texture wsprite = w.getWheelSprite();
-        return p.x > cen.x - wsprite.getWidth()/2.0f
-                && p.x < cen.x + wsprite.getWidth()/2.0f
-                && WINDOW_HEIGHT - p.y > cen.y - wsprite.getHeight()/2.0f
-                && WINDOW_HEIGHT - p.y < cen.y + wsprite.getHeight()/2.0f;
+	    float controlBuffer = 60;
+        return p.x > cen.x - (wsprite.getWidth()*w.getWHEEL_SCALE()*0.5f-controlBuffer)
+                && p.x < cen.x + (wsprite.getWidth()*w.getWHEEL_SCALE()*0.5f+controlBuffer)
+                && WINDOW_HEIGHT - p.y > cen.y - wsprite.getHeight()*w.getWHEEL_SCALE()*0.5f
+                && WINDOW_HEIGHT - p.y < cen.y + wsprite.getHeight()*w.getWHEEL_SCALE()*0.5f;
 	}
 
 	private boolean inRadioArea(Vector2 p) {
 		// Position of wheel on screen
 		Vector2 cen = r.getKnobPos();
 		Texture rsprite = r.getKnobTexture();
-		return p.x > cen.x - rsprite.getWidth()*0.5f
-				&& p.x < cen.x + rsprite.getWidth()*0.5f
-				&& WINDOW_HEIGHT - p.y > cen.y - rsprite.getHeight()*0.5f
-				&& WINDOW_HEIGHT - p.y < cen.y + rsprite.getHeight()*0.5f;
+		return p.x > cen.x - rsprite.getWidth()*r.getKNOB_SCALE()*0.5f
+				&& p.x < cen.x + rsprite.getWidth()*r.getKNOB_SCALE()*0.5f
+				&& WINDOW_HEIGHT - p.y > cen.y - rsprite.getHeight()*r.getKNOB_SCALE()*0.5f
+				&& WINDOW_HEIGHT - p.y < cen.y + rsprite.getHeight()*r.getKNOB_SCALE()*0.5f;
 	}
 
     /**

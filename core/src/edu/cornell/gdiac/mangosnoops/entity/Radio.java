@@ -15,28 +15,28 @@ import com.badlogic.gdx.graphics.*;
 import java.io.File;
 
 public class Radio {
-
+    /** Coordinates of radio center */
     private Vector2 pos;
-
+    /** Coordinates of radioknob center */
     private Vector2 knobPos;
-
+    /** Current angle of the radioknob */
     private float knobAng;
-
-    private Car car;
-
+    /** Size of the list of stations **/
     private int stationListSize;
-
+    /** List of available stations **/
     private ObjectMap<Integer,Station> Stations;
-
+    /** The last played station **/
     Station lastStation;
-
+    /** The current playing station **/
     Station currentStation;
-
+    /** The number of the currently playing station **/
     int stationNumber;
-
+    /** The Texture for this radio **/
     private Texture radioTexture;
-
+    /** The Texture for this radio's knob **/
     private Texture knobTexture;
+    /** Scale for drawing of the radio **/
+    private final float KNOB_SCALE = 0.2f;
 
     /**
      * Return the current position of the radio.
@@ -105,6 +105,10 @@ public class Radio {
         return "";
     }
 
+    public float getKNOB_SCALE(){
+        return KNOB_SCALE;
+    }
+
     /**
      * Sets the current station based on the setting of the knob
      * Should the station change, the new audio is played and the old
@@ -160,8 +164,8 @@ public class Radio {
      * @param y The screen y-coordinate of the center
      */
     public Radio(float x, float y) {
-        this.pos = new Vector2(x,y);
-        this.knobPos = new Vector2(x-75,y);
+        this.pos = new Vector2(x+50,y+50);
+        this.knobPos = new Vector2(x,y);
 
         //Create Station list
         Stations = new ObjectMap<Integer, Station>();
@@ -191,8 +195,8 @@ public class Radio {
         float oxk = 0.5f * knobTexture.getWidth();
         float oyk = 0.5f * knobTexture.getHeight();
 
-        canvas.draw(radioTexture, Color.WHITE, oxr, oyr, pos.x, pos.y, 0, 0.5f, 0.5f);
-        canvas.draw(knobTexture, Color.WHITE, oxk, oyk, knobPos.x, knobPos.y, knobAng, 0.33f, 0.33f);
+        //canvas.draw(radioTexture, Color.WHITE, oxr, oyr, pos.x, pos.y, 0, 0.5f, 0.5f);
+        canvas.draw(knobTexture, Color.WHITE, oxk, oyk, knobPos.x, knobPos.y, knobAng, KNOB_SCALE, KNOB_SCALE);
 
     }
 
