@@ -56,7 +56,8 @@ public class GameMode implements Screen {
 	private static String CLOUDS_FILE = "images/clouds.png";
 
 	private static String SKY_FILE = "images/sky.png";
-
+	/** The texture file for the dash **/
+	private static final String DASH_FILE = "images/dash.png";
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -74,6 +75,8 @@ public class GameMode implements Screen {
 	private Texture clouds;
 
 	private Texture sky;
+	/** Texture of the dash **/
+	private Texture dash;
 
 
 	/** 
@@ -92,13 +95,13 @@ public class GameMode implements Screen {
 
 		// Load the road asset
 		manager.load(ROAD_FILE, Pixmap.class);
-
 		// Load the clouds
 		manager.load(CLOUDS_FILE, Texture.class);
-
 		// Load sky
 		manager.load(SKY_FILE, Texture.class);
-
+		// Load dash
+		manager.load(DASH_FILE,Texture.class);
+		assets.add(DASH_FILE);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -146,7 +149,9 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(SKY_FILE)) {
 			sky = manager.get(CLOUDS_FILE, Texture.class);
 		}
-
+		if(manager.isLoaded(DASH_FILE)){
+			dash = manager.get(DASH_FILE, Texture.class);
+		}
 
 		// Load gameplay content
 		gameplayController.loadContent(manager);
@@ -307,9 +312,15 @@ public class GameMode implements Screen {
 	 */
 	private void draw(float delta) {
 		float offset = -((totalTime * TIME_MODIFIER) % canvas.getWidth());
+		float WINDOW_WIDTH =(float)canvas.getWidth();
 		canvas.begin();
+
+		// Draw the road, clouds, and dash
 		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
 		canvas.draw(clouds,200 , 400);
+		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
+					WINDOW_WIDTH/dash.getWidth(),0.4f);
+
 		// Draw the game objects
 		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 		inputController.setWheel(gameplayController.getWheel());
@@ -317,7 +328,8 @@ public class GameMode implements Screen {
 		gameplayController.getWheel().drawWheel(canvas);
 		gameplayController.getRadio().drawRadio(canvas);
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
-				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
+			gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
+
 		// Output a simple debugging message stating the number of shells on the screen
         // TODO: commented this out to get game to run, car is null rn
 		//String message = "Current movement: "+gameplayController.getCar().getMovement();

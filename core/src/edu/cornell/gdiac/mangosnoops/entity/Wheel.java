@@ -19,6 +19,8 @@ public class Wheel {
     private static Vector2 innerRadius;
     /** Current angle of the wheel */
     private float ang = 0;
+    /** Scale for drawing of the wheel **/
+    private final float WHEEL_SCALE = 0.5f;
     /** The Car that this wheel belongs to */
     private Car car;
     /** True if the wheel is active TODO: DELETE AFTER GAMEPLAY PROTOTYPE*/
@@ -28,6 +30,7 @@ public class Wheel {
     /** The texture sprite of this wheel */
     private Texture wheelSprite;
 
+    public float getWHEEL_SCALE(){ return WHEEL_SCALE; }
     /**
      * Return the current angle of the wheel.
      */
@@ -103,7 +106,7 @@ public class Wheel {
         float ox = 0.5f * wheelSprite.getWidth();
         float oy = 0.5f * wheelSprite.getHeight();
 
-        canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, 1, 1);
+            canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, WHEEL_SCALE, WHEEL_SCALE);
     }
 
 

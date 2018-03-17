@@ -20,6 +20,8 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -68,13 +70,13 @@ public class GameplayController {
 	/** The texture file for a star */
 	private static final String STAR_FILE = "images/star.png";
     /** The texture file for the wheel **/
-    private static final String WHEEL_FILE = "images/wheelard_straight.png";
+    private static final String WHEEL_FILE = "images/Wheel.png";
     /** The texture file for the gnome */
 	private static final String GNOME_FILE = "images/gnome.png";
 	/** The texture file for the gnome */
 	private static final String RADIO_FILE = "images/radio.png";
 	/** The texture file for the gnome */
-	private static final String RADIO_KNOB_FILE = "images/knob.png";
+	private static final String RADIO_KNOB_FILE = "images/radioDial.png";
     /** Texture for all ships, as they look the same */
 	private Texture beetleTexture;
 	/** Texture for all stars, as they look the same */
@@ -245,11 +247,12 @@ public class GameplayController {
 		yonda.getPosition().set(x,y);
 		gnomez = level.getGnomez();
 		*/
-		wheel = new Wheel(250,20);
+		wheel = new Wheel(275,70);
 		wheel.setWheelSprite(wheelTexture);
-		radio = new Radio(650, 70);
+		radio = new Radio(535, 50);
 		radio.setRadioSprite(radioTexture);
 		radio.setKnobSprite(radioknobTexture);
+
 		Gnome newGnome = new Gnome(400, 2000);
 		Gnome newGnome2 = new Gnome(500, 1000);
 		Gnome newGnome3 = new Gnome(300, 3000);
@@ -280,6 +283,7 @@ public class GameplayController {
 		radio = null;
 		gnomez.clear();
 		backing.clear();
+
 	}
 
 	/**
