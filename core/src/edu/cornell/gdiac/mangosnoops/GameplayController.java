@@ -35,7 +35,6 @@ import edu.cornell.gdiac.mangosnoops.roadentity.*;
  */
 public class GameplayController {
 
-
 	/** The change in x, computed based on the wheel angle */
 	private float rotationMagnitude;
 
@@ -308,6 +307,14 @@ public class GameplayController {
 
 		nosh.poke(input.noshClicked);
 		ned.poke(input.nedClicked);
+
+		// Update the wheel angle
+		wheel.update(input.getClickPos(), input.getDX());
+
+		// Update the radio
+		radio.update(input.getClickPos(), input.getDX());
+
+
 	}
 
 	/**

@@ -45,6 +45,9 @@ public class GameMode implements Screen {
 	// LEVEL - TODO: Don't just hardcode the JSON url in lol
 	private static String LEVEL_JSON = "temp.json";
 
+	/** Factor to translate an angle to left/right movement */
+	private static final float ANGLE_TO_LR = 7.0f;
+
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
@@ -282,7 +285,6 @@ public class GameMode implements Screen {
 				gameplayController.reset();
 				//TODO: Make the next two lines less sketch
 				canvas.resetCam();
-				inputController.resetMovement();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			} else {
 				play(delta);
@@ -340,19 +342,17 @@ public class GameMode implements Screen {
 		canvas.begin();
 
 		// Draw the road, clouds, and dash
-		canvas.drawRoad(roadMap, 1.54f, inputController.getDX());
+		canvas.drawRoad(roadMap, 1.54f, gameplayController.getWheel().getAng() / ANGLE_TO_LR);
 		canvas.draw(clouds,200 , 400);
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
 
 		// Update and draw wheel
-		gameplayController.getWheel().update(inputController.getClickPos(), inputController.getDX());
 		gameplayController.getWheel().draw(canvas);
 
 		// Draw dash objects
 		// TODO: change these
-		inputController.setRadio(gameplayController.getRadio());
-		gameplayController.getRadio().drawRadio(canvas);
+		gameplayController.getRadio().draw(canvas);
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
 

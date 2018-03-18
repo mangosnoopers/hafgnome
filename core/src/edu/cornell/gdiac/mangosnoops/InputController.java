@@ -79,26 +79,6 @@ public class InputController {
 		return exitPressed;
 	}
 
-	private boolean inRadioArea(Vector2 p) {
-		// Position of wheel on screen
-		Vector2 cen = r.getKnobPos();
-		Texture rsprite = r.getKnobTexture();
-		return p.x > cen.x - rsprite.getWidth()*r.getKNOB_SCALE()*0.5f
-				&& p.x < cen.x + rsprite.getWidth()*r.getKNOB_SCALE()*0.5f
-				&& WINDOW_HEIGHT - p.y > cen.y - rsprite.getHeight()*r.getKNOB_SCALE()*0.5f
-				&& WINDOW_HEIGHT - p.y < cen.y + rsprite.getHeight()*r.getKNOB_SCALE()*0.5f;
-	}
-
-	private void processRadioInput() {
-		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-			// otherwise change wheel angle and lateral screen movement
-            //Vector2 mouse = new Vector2(Gdx.input.getDeltaX(),Gdx.input.getDeltaY());
-            //r.setknobAng(r.getknobAng() + mouse.angle(up));
-			r.setknobAng(r.getknobAng() - Gdx.input.getDeltaX());
-		}
-		r.setStation();
-	}
-
 	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
@@ -108,6 +88,7 @@ public class InputController {
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (mouseClicked) {
             clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            dx = Gdx.input.getDeltaX();
         } else {
             clickPos = null;
         }

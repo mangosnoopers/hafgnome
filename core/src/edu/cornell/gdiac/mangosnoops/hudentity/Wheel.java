@@ -1,9 +1,6 @@
 package edu.cornell.gdiac.mangosnoops.hudentity;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import edu.cornell.gdiac.mangosnoops.*;
-
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.Car;
@@ -31,7 +28,6 @@ public class Wheel extends HUDObject {
     /** The texture sprite of this wheel */
     private Texture wheelSprite;
 
-    public float getWHEEL_SCALE(){ return WHEEL_SCALE; }
     /**
      * Return the current angle of the wheel.
      */
@@ -92,10 +88,13 @@ public class Wheel extends HUDObject {
 
     /**
      * Updates the wheel based on the user's input.
+     *
+     * @param in where the mouse clicked (null if no click)
+     * @param dx the change in x in the user's input
      */
     public void update(Vector2 in, float dx) {
         // change wheel angle and lateral screen movement
-        if (inWheelArea(in)) {
+        if (in != null && inWheelArea(in)) {
             if (ang >= -90 && ang <= 90) {
                 ang -= dx;
             }
