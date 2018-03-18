@@ -63,8 +63,8 @@ public class GameMode implements Screen {
 	private static final String DASH_FILE = "images/dash.png";
 	/** The file for the health gauge */
 	private static final String HEALTH_GAUGE_FILE = "images/gauge.png";
-	/** The file for the health gauge dial */
-	private static final String HEALTH_DIAL_FILE = "images/pointer.png";
+	/** The file for the health gauge pointer */
+	private static final String HEALTH_POINTER_FILE = "images/pointer.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -87,8 +87,8 @@ public class GameMode implements Screen {
 	private Texture dash;
 	/** Texture of the health gauge */
 	private Texture healthGauge;
-	/** Texture of the health gauge's dial */
-	private Texture healthDial;
+	/** Texture of the health gauge's pointer */
+	private Texture healthPointer;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -116,8 +116,8 @@ public class GameMode implements Screen {
 		// Load health gauge and pointer
 		manager.load(HEALTH_GAUGE_FILE, Texture.class);
 		assets.add(HEALTH_GAUGE_FILE);
-		manager.load(HEALTH_DIAL_FILE, Texture.class);
-		assets.add(HEALTH_DIAL_FILE);
+		manager.load(HEALTH_POINTER_FILE, Texture.class);
+		assets.add(HEALTH_POINTER_FILE);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -174,8 +174,8 @@ public class GameMode implements Screen {
 			healthGauge = manager.get(HEALTH_GAUGE_FILE, Texture.class);
 		}
 
-		if (manager.isLoaded(HEALTH_DIAL_FILE)) {
-			healthDial = manager.get(HEALTH_DIAL_FILE, Texture.class);
+		if (manager.isLoaded(HEALTH_POINTER_FILE)) {
+			healthPointer = manager.get(HEALTH_POINTER_FILE, Texture.class);
 		}
 
 		// Load gameplay content
@@ -311,10 +311,10 @@ public class GameMode implements Screen {
 			gameState = GameState.OVER;
 		}
 		*/
-		// TODO: only for gameplay prototype
-		if (!gameplayController.getWheel().isActive()) {
-            gameState = GameState.OVER;
-        }
+		// TODO: update car
+//		if (!gameplayController.getCar().isActive()) {
+//            gameState = GameState.OVER;
+//        }
 
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
@@ -355,6 +355,10 @@ public class GameMode implements Screen {
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
 
+		// Draw the health gauge and pointer
+		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
+        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 44.0f, 21.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.35f);
+
 		// Draw the game objects
 		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 
@@ -369,8 +373,8 @@ public class GameMode implements Screen {
 		}
 
 		// car health TODO: change to not be wheel
-        canvas.drawText("HEALTH: " + Math.max(gameplayController.getWheel().getHealth(), 0),
-                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
+//        canvas.drawText("HEALTH: " + Math.max(gameplayController.getWheel().getHealth(), 0),
+//                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
 
 		// Flush information to the graphic buffer.
 		canvas.end();

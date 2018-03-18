@@ -20,11 +20,6 @@ public class Wheel extends HUDObject {
     private float ang = 0;
     /** Scale for drawing of the wheel **/
     private final float WHEEL_SCALE = 0.5f;
-
-    /** True if the wheel is active TODO: DELETE AFTER GAMEPLAY PROTOTYPE*/
-    private boolean active;
-    /** Health of the wheel TODO: DELETE AFTER GAMEPLAY PROTOTYPE */
-    private int health;
     /** The texture sprite of this wheel */
     private Texture wheelSprite;
 
@@ -32,12 +27,6 @@ public class Wheel extends HUDObject {
      * Return the current angle of the wheel.
      */
     public float getAng() { return ang; }
-
-    /**
-     * Set the angle of the wheel.
-     * @param a The angle to set the wheel to
-     */
-    public void setAng(float a) { ang = a; }
 
     /**
      * Return the wheel sprite texture.
@@ -54,21 +43,6 @@ public class Wheel extends HUDObject {
      */
     public Vector2 getCenter() { return center; }
 
-    /**
-     * Returns true if the wheel is currently active. TODO: DELETE LATER
-     */
-    public boolean isActive() { return active; }
-
-    /**
-     * Sets the active status of the wheel. TODO: DELETE LATER
-     */
-    public void setActive(boolean b) { active = b; }
-
-    /** TODO: delete all these later */
-    public void setHealth(int i) { health = i; }
-    public int getHealth() { return health; }
-
-
     /** Creates a Wheel with a center at screen coordinates (x,y).
      *
      * @param x The screen x-coordinate of the center
@@ -80,10 +54,6 @@ public class Wheel extends HUDObject {
         outerRadius = new Vector2();
         innerRadius = new Vector2();
         center = new Vector2(x,y);
-
-        // TODO: delete these later
-        active = true;
-        health = 2;
     }
 
     /**
@@ -123,7 +93,7 @@ public class Wheel extends HUDObject {
                 && WINDOW_HEIGHT - p.y < center.y + wheelSprite.getHeight()*WHEEL_SCALE*0.5f;
     }
 
-    public void snapBack(){
+    public void snapBack() {
         ang = 0;
         return;
     }
