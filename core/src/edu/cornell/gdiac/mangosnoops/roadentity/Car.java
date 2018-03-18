@@ -29,6 +29,8 @@ public class Car extends RoadObject {
     private boolean active;
     /** Health of the car, max health is 100 */
     private int health;
+    /** Angle of the health pointer */
+    private float healthPointerAng;
 
     //PARTY MEMBERS
     /** Noshy boi */
@@ -42,6 +44,7 @@ public class Car extends RoadObject {
         health = 100;
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
+        healthPointerAng = 0.0f;
     }
 
     /**
@@ -62,6 +65,9 @@ public class Car extends RoadObject {
      */
     public float getMovement() { return movement; }
 
+    /**
+     * Returns the angle of the car.
+     */
     public float getAngle() { return angle; }
 
     public int getHealth() { return health; }
@@ -73,7 +79,21 @@ public class Car extends RoadObject {
     public void setHealth(int newHealth) { health = newHealth; }
 
     /**
-     * Updates the position of the car, and the party members.
+     * Returns the angle of the health gauge pointer.
+     */
+    public float getHealthPointerAng() { return healthPointerAng; }
+
+    /**
+     * Returns the car's current health.
+     */
+    public float getHealth() { return health; }
+
+    /**
+     * Updates the animation frame and position of this ship.
+     *
+     * Notice how little this method does.  It does not actively fire the weapon.  It
+     * only manages the cooldown and indicates whether the weapon is currently firing.
+     * The result of weapon fire is managed by the GameplayController.
      *
      * @param delta Number of seconds since last animation frame
      */
@@ -87,6 +107,10 @@ public class Car extends RoadObject {
 
         nosh.update(clickPos);
         ned.update(clickPos);
+
+        // Update health angle
+        healthPointerAng = Math.max((float) (health - 100), -90.0f);
+
     }
 
 }
