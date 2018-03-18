@@ -54,6 +54,12 @@ public class InputController {
 	// Radio controls
 	private Radio r;
 
+	// Child controls
+	/** Whether Nosh has been clicked. */
+	protected boolean noshClicked;
+	/** Whether Ned has been clicked. */
+	protected boolean nedClicked;
+
 	/**
      * Creates a new input controller.
      */

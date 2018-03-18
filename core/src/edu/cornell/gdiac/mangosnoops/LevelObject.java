@@ -21,7 +21,7 @@ public class LevelObject {
      *
      * @param fileName name of JSON File with level information. */
     public LevelObject(String fileName) {
-        //throw new java.lang.UnsupportedOperationException();
+        yonda = new Car();
     }
 
     /**
@@ -30,4 +30,5 @@ public class LevelObject {
     public LevelObject() {
         throw new java.lang.UnsupportedOperationException();
     }
+
 }
