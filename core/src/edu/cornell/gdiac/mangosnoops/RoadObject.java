@@ -154,9 +154,7 @@ public abstract class RoadObject {
     }
 
     /**
-     * Sets the y-coordinate of the object velocity.
-     *
-     * @param value the y-coordinate of the object velocity.
+     * Gets the y-coordinate of the object velocity.
      */
     public float getVY() {
         return velocity.y;

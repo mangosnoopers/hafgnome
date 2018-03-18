@@ -5,13 +5,14 @@ import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 
 public class Car extends RoadObject {
     //CONSTANTS
+    /** Factor to translate an angle to left/right movement */
+    private static final float ANGLE_TO_LR = 7.0f;
     /** Horizontal speed in X direction -- multiply by movement **/
     private static final float CAR_XSPEED = 4.0f;
-    /** Horizontal speed in Y direction -- always update by this constant **/
-    private static final float CAR_YSPEED = 4.0f;
     /** How fast we change frames (one frame per 4 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** The number of animation frames in our filmstrip */
@@ -23,7 +24,28 @@ public class Car extends RoadObject {
     /** Current animation frame for this ship */
     private float animeframe;
     /** Angle of car */
-    private float angle = 0.0f;
+    private float angle;
+    /** True if the car is active */
+    private boolean active;
+    /** Health of the car, max health is 100 */
+    private int health;
+    /** Angle of the health pointer */
+    private float healthPointerAng;
+
+    //PARTY MEMBERS
+    /** Noshy boi */
+    private Child nosh;
+    /** Neddy boi */
+    private Child ned;
+
+    public Car() {
+        angle = 0.0f;
+        active = true;
+        health = 100;
+        nosh = new Child(Child.ChildType.NOSH);
+        ned = new Child(Child.ChildType.NED);
+        healthPointerAng = 0.0f;
+    }
 
     /**
      * Returns the type of this object.
@@ -43,17 +65,26 @@ public class Car extends RoadObject {
      */
     public float getMovement() { return movement; }
 
+    /**
+     * Returns the angle of the car.
+     */
     public float getAngle() { return angle; }
 
-    public Car() {
-        animeframe = 0.0f;
-    }
+    public boolean noshAwake() { return nosh.isAwake(); }
 
-    public void setTexture(Texture texture) {
-        animator = new FilmStrip(texture,1,2,2);
-        radius = animator.getRegionHeight() / 2.0f;
-        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
-    }
+    public boolean nedAwake() { return ned.isAwake(); }
+
+    public void setHealth(int newHealth) { health = newHealth; }
+
+    /**
+     * Returns the angle of the health gauge pointer.
+     */
+    public float getHealthPointerAng() { return healthPointerAng; }
+
+    /**
+     * Returns the car's current health.
+     */
+    public int getHealth() { return health; }
 
     /**
      * Updates the animation frame and position of this ship.
@@ -64,15 +95,20 @@ public class Car extends RoadObject {
      *
      * @param delta Number of seconds since last animation frame
      */
-    public void update(float delta) {
+    public void update(Vector2 clickPos, float delta) {
         // Call superclass's update
         super.update(delta);
 
-        // Increase animation frame, but only if trying to move
         if (movement != 0.0f) {
             position.x += movement * CAR_XSPEED;
         }
-        position.y += CAR_YSPEED;
+
+        nosh.update(clickPos);
+        ned.update(clickPos);
+
+        // Update health angle
+        healthPointerAng = Math.max((float) (health - 100), -90.0f);
+
     }
 
 }

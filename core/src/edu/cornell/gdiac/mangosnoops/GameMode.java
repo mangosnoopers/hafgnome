@@ -12,6 +12,7 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
@@ -44,20 +45,27 @@ public class GameMode implements Screen {
 	// LEVEL - TODO: Don't just hardcode the JSON url in lol
 	private static String LEVEL_JSON = "temp.json";
 
+	/** Factor to translate an angle to left/right movement */
+	private static final float ANGLE_TO_LR = 7.0f;
+
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
-
 	/** The file for the road image */
 	private static String ROAD_FILE = "images/road.png";
-
+	/** The file for the cloud image */
 	private static String CLOUDS_FILE = "images/clouds.png";
-
+	/** The file for the sky image */
 	private static String SKY_FILE = "images/sky.png";
-	/** The texture file for the dash **/
+	/** The texture file for the dash */
 	private static final String DASH_FILE = "images/dash.png";
+	/** The file for the health gauge */
+	private static final String HEALTH_GAUGE_FILE = "images/gauge.png";
+	/** The file for the health gauge pointer */
+	private static final String HEALTH_POINTER_FILE = "images/pointer.png";
+
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -71,13 +79,16 @@ public class GameMode implements Screen {
 	/** A pixel map of the original road image, to be mapped to the
 	 * pseudo-3d view */
 	private Pixmap roadMap;
-
+	/** Texture of the clouds */
 	private Texture clouds;
-
+	/** Texture of the sky */
 	private Texture sky;
 	/** Texture of the dash **/
 	private Texture dash;
-
+	/** Texture of the health gauge */
+	private Texture healthGauge;
+	/** Texture of the health gauge's pointer */
+	private Texture healthPointer;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -102,6 +113,11 @@ public class GameMode implements Screen {
 		// Load dash
 		manager.load(DASH_FILE,Texture.class);
 		assets.add(DASH_FILE);
+		// Load health gauge and pointer
+		manager.load(HEALTH_GAUGE_FILE, Texture.class);
+		assets.add(HEALTH_GAUGE_FILE);
+		manager.load(HEALTH_POINTER_FILE, Texture.class);
+		assets.add(HEALTH_POINTER_FILE);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -132,7 +148,7 @@ public class GameMode implements Screen {
 			displayFont = null;
 		}
 
-		// Allocate the background
+		// Allocate assets
 		if (manager.isLoaded(BKGD_FILE)) {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -149,8 +165,17 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(SKY_FILE)) {
 			sky = manager.get(CLOUDS_FILE, Texture.class);
 		}
-		if(manager.isLoaded(DASH_FILE)){
+
+		if (manager.isLoaded(DASH_FILE)){
 			dash = manager.get(DASH_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(HEALTH_GAUGE_FILE)) {
+			healthGauge = manager.get(HEALTH_GAUGE_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(HEALTH_POINTER_FILE)) {
+			healthPointer = manager.get(HEALTH_POINTER_FILE, Texture.class);
 		}
 
 		// Load gameplay content
@@ -181,6 +206,8 @@ public class GameMode implements Screen {
 	private static final float COUNTER_OFFSET   = 5.0f;
 	/** Offset for the game over message on the screen */
 	private static final float GAME_OVER_OFFSET = 40.0f;
+	/** Origin of health gauge */
+	private static final Vector2 HEALTH_GAUGE_ORIGIN = new Vector2(0.0f,0.0f);
 	
 	/** Reference to drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
@@ -258,7 +285,6 @@ public class GameMode implements Screen {
 				gameplayController.reset();
 				//TODO: Make the next two lines less sketch
 				canvas.resetCam();
-				inputController.resetMovement();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			} else {
 				play(delta);
@@ -285,10 +311,10 @@ public class GameMode implements Screen {
 			gameState = GameState.OVER;
 		}
 		*/
-		// TODO: only for gameplay prototype
-		if (!gameplayController.getWheel().isActive()) {
-            gameState = GameState.OVER;
-        }
+		// TODO: update car
+//		if (!gameplayController.getCar().isActive()) {
+//            gameState = GameState.OVER;
+//        }
 
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
@@ -297,7 +323,7 @@ public class GameMode implements Screen {
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
 		// TODO: changed this to wheel instead of car for gameplay prototype
-		//collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getWheel());
+		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
@@ -318,17 +344,26 @@ public class GameMode implements Screen {
 		canvas.begin();
 
 		// Draw the road, clouds, and dash
-		canvas.draw(clouds,200 , 500);
+		canvas.drawRoad(roadMap, 1.54f, gameplayController.getWheel().getAng() / ANGLE_TO_LR);
+		canvas.draw(clouds,200 , 400);
+    
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
 
-		// Draw the game objects
-		inputController.setWheel(gameplayController.getWheel());
-		inputController.setRadio(gameplayController.getRadio());
-		gameplayController.getWheel().drawWheel(canvas);
-		gameplayController.getRadio().drawRadio(canvas);
+		// Draw wheel
+		gameplayController.getWheel().draw(canvas);
+
+		// Draw radio
+		gameplayController.getRadio().draw(canvas);
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
-			gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
+				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
+
+		// Draw the health gauge and pointer
+		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
+        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 44.0f, 21.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.35f);
+
+		// Draw the game objects
+		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 
 		// Output a simple debugging message stating the number of shells on the screen
         // TODO: commented this out to get game to run, car is null rn
@@ -341,8 +376,8 @@ public class GameMode implements Screen {
 		}
 
 		// car health TODO: change to not be wheel
-        canvas.drawText("HEALTH: " + Math.max(gameplayController.getWheel().getHealth(), 0),
-                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
+//        canvas.drawText("HEALTH: " + Math.max(gameplayController.getWheel().getHealth(), 0),
+//                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
 
 		// Flush information to the graphic buffer.
 		canvas.end();
