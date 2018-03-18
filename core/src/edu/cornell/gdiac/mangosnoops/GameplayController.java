@@ -295,7 +295,7 @@ public class GameplayController {
 
 		// Update the radio
 		radio.update(input.getClickPos(), input.getDX());
-
+		
 		yonda.update(input.getClickPos(), delta);
 	}
 }
