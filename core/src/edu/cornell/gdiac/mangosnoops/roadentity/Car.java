@@ -51,10 +51,6 @@ public class Car extends RoadObject {
 
     public float getAngle() { return angle; }
 
-    public Car() {
-        animeframe = 0.0f;
-    }
-
     public void setTexture(Texture texture) {
         animator = new FilmStrip(texture,1,2,2);
         radius = animator.getRegionHeight() / 2.0f;
@@ -74,7 +70,6 @@ public class Car extends RoadObject {
         // Call superclass's update
         super.update(delta);
 
-        // Increase animation frame, but only if trying to move
         if (movement != 0.0f) {
             position.x += movement * CAR_XSPEED;
         }
