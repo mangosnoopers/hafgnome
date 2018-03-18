@@ -35,7 +35,6 @@ import edu.cornell.gdiac.mangosnoops.roadentity.*;
  */
 public class GameplayController {
 
-
 	/** The change in x, computed based on the wheel angle */
 	private float rotationMagnitude;
 
@@ -290,6 +289,12 @@ public class GameplayController {
 	public void resolveActions(InputController input, float delta) {
 	    // TODO: update object states based on input
 		for (Gnome g : gnomez) { g.update(delta); }
+
+		// Update the wheel angle
+		wheel.update(input.getClickPos(), input.getDX());
+
+		// Update the radio
+		radio.update(input.getClickPos(), input.getDX());
 
 		yonda.update(input.getClickPos(), delta);
 	}
