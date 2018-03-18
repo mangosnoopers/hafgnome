@@ -39,9 +39,9 @@ public class Child extends HUDObject {
      * @param p the vector giving the mouse's (x,y) screen coordinates
      */
     private boolean inChildArea(Vector2 p) {
-        return (p!=null) &&
-                ((ctype == ChildType.NOSH) //add isNoshArea
-                || (ctype == ChildType.NED)); //add isNedArea
+        return (p!=null) && false;
+//                ((ctype == ChildType.NOSH) //add isNoshArea
+//                || (ctype == ChildType.NED)); //add isNedArea
     }
 
     /**
