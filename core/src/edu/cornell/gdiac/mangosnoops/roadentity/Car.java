@@ -13,8 +13,6 @@ public class Car extends RoadObject {
     private static final float ANGLE_TO_LR = 7.0f;
     /** Horizontal speed in X direction -- multiply by movement **/
     private static final float CAR_XSPEED = 4.0f;
-    /** Horizontal speed in Y direction -- always update by this constant **/
-    private static final float CAR_YSPEED = 4.0f;
     /** How fast we change frames (one frame per 4 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** The number of animation frames in our filmstrip */
@@ -29,8 +27,8 @@ public class Car extends RoadObject {
     private float angle;
     /** True if the car is active */
     private boolean active;
-    /** Health of the car, max health is 1.0 */
-    private float health;
+    /** Health of the car, max health is 100 */
+    private int health;
 
     //PARTY MEMBERS
     /** Noshy boi */
@@ -41,7 +39,7 @@ public class Car extends RoadObject {
     public Car() {
         angle = 0.0f;
         active = true;
-        health = 0.0f;
+        health = 100;
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
     }
@@ -66,12 +64,16 @@ public class Car extends RoadObject {
 
     public float getAngle() { return angle; }
 
+    public int getHealth() { return health; }
+
+    public boolean noshAwake() { return nosh.isAwake(); }
+
+    public boolean nedAwake() { return ned.isAwake(); }
+
+    public void setHealth(int newHealth) { health = newHealth; }
+
     /**
-     * Updates the animation frame and position of this ship.
-     *
-     * Notice how little this method does.  It does not actively fire the weapon.  It
-     * only manages the cooldown and indicates whether the weapon is currently firing.
-     * The result of weapon fire is managed by the GameplayController.
+     * Updates the position of the car, and the party members.
      *
      * @param delta Number of seconds since last animation frame
      */
@@ -82,7 +84,6 @@ public class Car extends RoadObject {
         if (movement != 0.0f) {
             position.x += movement * CAR_XSPEED;
         }
-        position.y += CAR_YSPEED;
 
         nosh.update(clickPos);
         ned.update(clickPos);
