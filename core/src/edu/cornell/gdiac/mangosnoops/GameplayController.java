@@ -20,16 +20,13 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 
-import edu.cornell.gdiac.mangosnoops.entity.*;
-import edu.cornell.gdiac.mangosnoops.GameObject.ObjectType;
-
-import java.util.HashSet;
+import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
+import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
+import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
 /**
  * Controller to handle gameplay interactions.
@@ -77,16 +74,6 @@ public class GameplayController {
 	private static final String RADIO_FILE = "images/radio.png";
 	/** The texture file for the gnome */
 	private static final String RADIO_KNOB_FILE = "images/radioDial.png";
-    /** Texture for all ships, as they look the same */
-	private Texture beetleTexture;
-	/** Texture for all stars, as they look the same */
-	private Texture starTexture;
-	/** Texture for all bullets, as they look the same */
-	private Texture bulletTexture;
-	/** Texture for green shells, as they look the same */
-	private Texture greenTexture;
-	/** Texture for red shells, as they look the same */
-	private Texture redTexture;
 	/** Texture for the wheel**/
 	private Texture wheelTexture;
 	/** Texture for the wheel**/
@@ -111,16 +98,6 @@ public class GameplayController {
 	 * @param assets  Asset list to track which assets where loaded
 	 */
 	public void preLoadContent(AssetManager manager, Array<String> assets) {
-		manager.load(BEETLE_FILE,Texture.class);
-		assets.add(BEETLE_FILE);		
-		manager.load(BULLET_FILE,Texture.class);
-		assets.add(BULLET_FILE);		
-		manager.load(STAR_FILE,Texture.class);
-		assets.add(STAR_FILE);		
-		manager.load(GSHELL_FILE,Texture.class);
-		assets.add(GSHELL_FILE);			
-		manager.load(RSHELL_FILE,Texture.class);
-		assets.add(RSHELL_FILE);
 		manager.load(WHEEL_FILE,Texture.class);
 		assets.add(WHEEL_FILE);
 		manager.load(GNOME_FILE, Texture.class);
@@ -142,11 +119,6 @@ public class GameplayController {
 	 * @param manager Reference to global asset manager.
 	 */
 	public void loadContent(AssetManager manager) {
-		beetleTexture = createTexture(manager,BEETLE_FILE);
-		bulletTexture = createTexture(manager,BULLET_FILE);
-		starTexture = createTexture(manager,STAR_FILE);
-		redTexture = createTexture(manager,RSHELL_FILE);
-		greenTexture = createTexture(manager,GSHELL_FILE);
 		wheelTexture = createTexture(manager,WHEEL_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
 		radioTexture = createTexture(manager, RADIO_FILE);
@@ -322,7 +294,7 @@ public class GameplayController {
 	 *
 	 * @param o Object to destroy
 	 */
-	protected void destroy(GameObject o) {
+	protected void destroy(RoadObject o) {
 	    // TODO: carry out actions that occur on death of object o
 		switch(o.getType()) {
 			case CAR:

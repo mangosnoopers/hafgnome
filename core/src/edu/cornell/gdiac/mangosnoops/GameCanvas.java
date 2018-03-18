@@ -24,12 +24,9 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Sort;
-import edu.cornell.gdiac.mangosnoops.entity.Gnome;
+import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 
-import javax.swing.*;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.

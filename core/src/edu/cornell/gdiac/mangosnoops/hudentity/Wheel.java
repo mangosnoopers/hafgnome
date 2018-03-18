@@ -1,13 +1,12 @@
-package edu.cornell.gdiac.mangosnoops.entity;
+package edu.cornell.gdiac.mangosnoops.hudentity;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import edu.cornell.gdiac.mangosnoops.*;
-import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
+import edu.cornell.gdiac.mangosnoops.roadentity.Car;
 
-public class Wheel {
+public class Wheel extends HUDObject {
 
     /** Coordinates of wheel center */
     private static Vector2 center;

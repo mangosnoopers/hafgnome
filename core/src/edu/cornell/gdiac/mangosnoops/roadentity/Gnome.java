@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.mangosnoops.entity;
+package edu.cornell.gdiac.mangosnoops.roadentity;
 
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.*;
@@ -6,7 +6,7 @@ import edu.cornell.gdiac.util.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 
-public class Gnome extends GameObject{
+public class Gnome extends RoadObject{
     //CONSTANTS
     /** How fast we change frames (one frame per 4 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
