@@ -22,7 +22,8 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
-import edu.cornell.gdiac.mangosnoops.entity.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
+import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
 /**
  * Controller implementing simple game physics.

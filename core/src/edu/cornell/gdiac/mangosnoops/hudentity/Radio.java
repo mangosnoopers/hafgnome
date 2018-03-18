@@ -1,20 +1,16 @@
-package edu.cornell.gdiac.mangosnoops.entity;
+package edu.cornell.gdiac.mangosnoops.hudentity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.mangosnoops.*;
-import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 
 import java.io.File;
 
-public class Radio {
+public class Radio extends HUDObject {
     /** Coordinates of radio center */
     private Vector2 pos;
     /** Coordinates of radioknob center */

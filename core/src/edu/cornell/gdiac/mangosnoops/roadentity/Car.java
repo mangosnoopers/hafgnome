@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.mangosnoops.entity;
+package edu.cornell.gdiac.mangosnoops.roadentity;
 
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.*;
@@ -6,7 +6,7 @@ import edu.cornell.gdiac.util.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 
-public class Car extends GameObject {
+public class Car extends RoadObject {
     //CONSTANTS
     /** Horizontal speed in X direction -- multiply by movement **/
     private static final float CAR_XSPEED = 4.0f;

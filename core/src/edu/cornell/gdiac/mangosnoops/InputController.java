@@ -20,9 +20,8 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.*;
-import edu.cornell.gdiac.mangosnoops.entity.Radio;
-import edu.cornell.gdiac.mangosnoops.entity.Wheel;
-import edu.cornell.gdiac.util.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
+import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 
 /**
  * Class for reading player keyboard input.

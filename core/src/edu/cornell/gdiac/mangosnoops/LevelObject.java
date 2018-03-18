@@ -1,7 +1,7 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.utils.*;
-import edu.cornell.gdiac.mangosnoops.entity.*;
+import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
 public class LevelObject {
     /** All the objects at the beginning of the level. */
