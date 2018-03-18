@@ -35,7 +35,7 @@ public class CollisionController {
 	/** A factor to determine the area of the wheel a gnome is allowed to hit */
 	private static final float WHEEL_SAFE_AREA = 100.0f;
 	/** A factor to determine the gnome is close enough for Ned to shoot. */
-	private static final float GNOME_INRANGE = 25.0f;
+	private static final float GNOME_INRANGE = .01235f;
 	/** A factor to determine the gnome and car have collided. */
 	private static final float HIT_RANGE = 5.0f;
 
@@ -106,14 +106,14 @@ public class CollisionController {
 	private void handleCollision(Car c, Gnome g) {
 	    /*
 		if(c.nedAwake()) {
-			if(g.getY() < GNOME_INRANGE) {
+			if(Math.abs(g.getY()) < GNOME_INRANGE) {
 				g.setDestroyed(true);
 			}
 		} else {
-			if(Math.abs(g.getX() - c.getX()) < HIT_RANGE) {
-				c.setHealth(c.getHealth() - 10);
-				g.setDestroyed(true);
-			}
+//			if(Math.abs(g.getX() - c.getX()) < HIT_RANGE) {
+//				c.setHealth(c.getHealth() - 10);
+//				g.setDestroyed(true);
+//			}
 		}
 		*/
 	}
