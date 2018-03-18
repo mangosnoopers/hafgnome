@@ -63,22 +63,17 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
-	// 3D PERSPECTIVE STUFF
-	private Pixmap projectedRoad;
-	private Texture roadTex;
-	private Vector3 cam = new Vector3(309, 19, 60);
-	private final Vector2 scale = new Vector2(150, 150);
-	private final int HORIZON = 200;
 
-	// New 3D perspective stuff
+	// HUD stuff
 	PerspectiveCamera camera;
-	PerspectiveCamera rearviewCam;
 	DecalBatch batch;
-	DecalBatch batch2;
-	TextureRegion textureRegion;
+
 	Array<Decal> roadDecals;
-	Array<Decal> gnomeDecals;
+
+	TextureRegion textureRegion;
 	int NUM_ROAD_DECALS = 30;
+
+	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 
 
 	/**
@@ -100,7 +95,7 @@ public class GameCanvas {
 		local  = new Affine2();
 
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(0f, -10f, 4.32f);
+		camera.position.set(CAM_START_POS);
 		camera.direction.set(0, 0, 0);
 		camera.lookAt(0, 0, 0);
 		camera.near = 0.0001f;
@@ -375,7 +370,7 @@ public class GameCanvas {
 	 * Resets camera.
 	 * */
     public void resetCam() {
-		cam = new Vector3(309, 19, 60);
+        camera.position.set(CAM_START_POS);
 	}
 
 	/**
