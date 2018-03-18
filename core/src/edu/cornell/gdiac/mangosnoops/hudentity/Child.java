@@ -47,7 +47,7 @@ public class Child extends HUDObject {
     /**
      * Returns true if the child is the awake.
      */
-    public boolean checkAwake() { return isAwake; }
+    public boolean isAwake() { return isAwake; }
 
     /**
      * Returns the type of the child.
