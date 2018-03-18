@@ -84,7 +84,6 @@ public class CollisionController {
 		}
 	}
 
-
 	/**
 	 * Check if a GameObject is out of bounds and take action.
 	 *

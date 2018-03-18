@@ -38,8 +38,10 @@ public class Child extends HUDObject {
      *
      * @param p the vector giving the mouse's (x,y) screen coordinates
      */
-    private boolean inChildArea(ChildType type, Vector2 p) {
-        return false;
+    private boolean inChildArea(Vector2 p) {
+        return (p!=null) &&
+                ((ctype == ChildType.NOSH) //add isNoshArea
+                || (ctype == ChildType.NED)); //add isNedArea
     }
 
     /**
@@ -53,13 +55,13 @@ public class Child extends HUDObject {
     public ChildType getType() { return ctype; }
 
     /**
-     * Pokes the child once, if poked is true.
+     * Pokes the child once, if the player has clicked the child.
      *
-     * @param poked whether or not to poke the child.
+     * @param clickPos
      * @return True if the child is the awake.
      */
-    public boolean poke(boolean poked) {
-        if(poked) {
+    public boolean update(Vector2 clickPos) {
+        if(inChildArea(clickPos)) {
             numPokes++;
 
             if(ctype == ChildType.NOSH) isAwake = (numPokes == NOSH_NUMCLICKS);
