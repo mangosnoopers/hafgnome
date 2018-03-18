@@ -1,3 +1,4 @@
+
 /*
  * GameplayController.java
  *
@@ -113,7 +114,6 @@ public class GameplayController {
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
 	}
 	
-	
 	private Texture createTexture(AssetManager manager, String file) {
 		if (manager.isLoaded(file)) {
 			Texture texture = manager.get(file, Texture.class);
@@ -122,7 +122,7 @@ public class GameplayController {
 		}
 		return null;
 	}
-
+  
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
@@ -200,12 +200,12 @@ public class GameplayController {
 		radio.setRadioSprite(radioTexture);
 		radio.setKnobSprite(radioknobTexture);
 
-		Gnome newGnome = new Gnome(400, 2000);
-		Gnome newGnome2 = new Gnome(500, 1000);
-		Gnome newGnome3 = new Gnome(300, 3000);
-		Gnome newGnome4 = new Gnome(400, 4000);
-		Gnome newGnome5 = new Gnome(200, 5000);
-		Gnome newGnome6 = new Gnome(100, 7000);
+		Gnome newGnome = new Gnome(-0.1f, 50);
+		Gnome newGnome2 = new Gnome(0.1f, 100);
+		Gnome newGnome3 = new Gnome(0, 120);
+		Gnome newGnome4 = new Gnome(-0.1f, 150);
+		Gnome newGnome5 = new Gnome(0.1f,170);
+		Gnome newGnome6 = new Gnome(-0.1f, 200);
 		newGnome.setTexture(gnomeTexture);
 		newGnome2.setTexture(gnomeTexture);
 		newGnome3.setTexture(gnomeTexture);

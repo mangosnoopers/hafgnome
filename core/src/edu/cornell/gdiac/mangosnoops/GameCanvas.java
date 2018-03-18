@@ -19,6 +19,9 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -34,13 +37,12 @@ import java.util.Comparator;
  * This version of GameCanvas only supports (rectangular) Sprite drawing.
  * support for polygonal textures and drawing primitives will be present
  * in future labs.
+ *
+ * TODO: Re-organize GameCanvas to better support:
+ * 	- First, world drawing with "3d stuff", done with PerspectiveCamera, Decals, etc
+ * 	- Then HUD drawing with OrthographicCamera, SpriteBatch
  */
 public class GameCanvas {
-    /** TODO: add to mode7? Limit for driving off right side of road */
-    private static final float RIGHT_LIMIT = 125.0f;
-    /** TODO: add to mode7? Limit for driving off left side of road */
-    private static final float LEFT_LIMIT = 500.0f;
-
 	/** While we are not drawing polygons (yet), this spritebatch is more reliable */
 	private PolygonSpriteBatch spriteBatch;
 	
@@ -61,12 +63,17 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
-	// 3D PERSPECTIVE STUFF
-	private Pixmap projectedRoad;
-	private Texture roadTex;
-	private Vector3 cam = new Vector3(309, 19, 60);
-	private final Vector2 scale = new Vector2(150, 150);
-	private final int HORIZON = 200;
+
+	// HUD stuff
+	PerspectiveCamera camera;
+	DecalBatch batch;
+
+	Array<Decal> roadDecals;
+
+	TextureRegion textureRegion;
+	int NUM_ROAD_DECALS = 30;
+
+	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 
 
 	/**
@@ -87,16 +94,22 @@ public class GameCanvas {
 		holder = new TextureRegion();
 		local  = new Affine2();
 
-		// Initalize projected road, color blue initially (this is dumb, just for prototype)
-		projectedRoad = new Pixmap(getWidth(), getHeight(), Pixmap.Format.RGB888);
-		projectedRoad.setColor(Color.BLUE);
-		for (int i = 0; i < projectedRoad.getWidth(); i++) {
-			for (int j = 0; j < projectedRoad.getHeight(); j++) {
-			    projectedRoad.drawPixel(i, j);
-			}
-		}
-		roadTex = new Texture(projectedRoad, projectedRoad.getFormat(), true);
+		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.position.set(CAM_START_POS);
+		camera.direction.set(0, 0, 0);
+		camera.lookAt(0, 0, 0);
+		camera.near = 0.0001f;
 
+		batch = new DecalBatch(new CameraGroupStrategy(camera));
+		/* FIXME: Get texture from asset manager */
+		textureRegion = new TextureRegion(new Texture(Gdx.files.internal("images/road.png")));
+
+		roadDecals = new Array<Decal>(7);
+		for (int i = 0; i < NUM_ROAD_DECALS; i++) {
+			Decal newDecal = Decal.newDecal(1, 1, textureRegion);
+			newDecal.setPosition(0, -1f*i, 1);
+			roadDecals.add(newDecal);
+		}
 	}
 		
     /**
@@ -303,9 +316,6 @@ public class GameCanvas {
     	spriteBatch.begin();
     	active = true;
     	
-    	// Clear the screen
-		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
 	/**
@@ -341,25 +351,18 @@ public class GameCanvas {
     }
 
 
-    // TODO: move this to some mode7 class or something?
-    class SortByY implements Comparator<Gnome> {
-    	public int compare(Gnome a, Gnome b) {
-    		return a.getY() > b.getY() ? -1 : a.getY() < b.getY() ? 1 : 0;
-		}
-	}
-
-
-	// TODO: move 2 another mode7 class or something
     public void drawGnomez(Array<Gnome> gnomez, float angle) {
 
-    	// Sort gnomes by y
-        // TODO: probably better idea to use a heap or something so we don't have to sort so much
-		Sort.instance().sort(gnomez, new SortByY());
-
-        // Project gnome coordinates to 3d perspective
-		for (Gnome g : gnomez) {
-			g.draw(this, cam, scale, angle, getWidth(), getHeight());
+        for (Gnome g : gnomez) {
+            /* TODO: optimize this */
+        	Decal gnomeDecal = Decal.newDecal(0.15f, 0.15f, new TextureRegion(g.getTexture()));
+        	gnomeDecal.setPosition(g.getX(), g.getY(), 4.34f);
+        	gnomeDecal.rotateX(90);
+        	System.out.println(gnomeDecal.getPosition());
+        	batch.add(gnomeDecal);
 		}
+
+		batch.flush();
 
     }
 
@@ -367,7 +370,7 @@ public class GameCanvas {
 	 * Resets camera.
 	 * */
     public void resetCam() {
-		cam = new Vector3(309, 19, 60);
+        camera.position.set(CAM_START_POS);
 	}
 
 	/**
@@ -379,65 +382,25 @@ public class GameCanvas {
 	 */
 	public void drawRoad(Pixmap roadMap, float angle, float xOff) {
 
-	    // TODO: delete these, just 4 testing stuff
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			cam.x += 10;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			cam.x -= 10;
-		}
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+		camera.position.set(camera.position.x + xOff*-0.001f, camera.position.y, camera.position.z);
 
-		/* TODO: cam.x, cam.y should come from Car state
-		 * (just put this here to show scrolling road) */
-		cam.x -= 15 * -Math.cos(angle);
-		cam.y -= 15 * -Math.sin(angle);
-		cam.x += xOff;
-
-		// Limit how far off the road car can go
-        // TODO: could move this to wherever rest of logic goes
-		if (cam.x > LEFT_LIMIT) {
-		    cam.x = LEFT_LIMIT;
-        } else if (cam.x < RIGHT_LIMIT) {
-		    cam.x = RIGHT_LIMIT;
-        }
-
-		int h = getHeight(); int w = getWidth();
-
-		// TODO: move this logic to sep class?
-	    for (int y = HORIZON; y < h; y++) {
-
-	    	float z = y - HORIZON;
-	    	float scaling = cam.z * scale.y / scale.x / z;
-
-	    	double s = Math.sin(angle);
-	    	double c = Math.cos(angle);
-
-			double scaledCX = -w / 2 * scaling;
-			double scaledCY = -h / 2 * scaling;
-
-			double scaledCamZ = cam.z * scale.y / z;
-
-	    	double offsetX = -s * scaledCX + c * scaledCamZ + cam.x;
-	    	double offsetY = c * scaledCY + s * scaledCamZ + cam.y;
-
-	    	for (int x = 0; x < w; x++) {
-
-	    		projectedRoad.setColor(Color.GREEN);
-	    		projectedRoad.drawPixel(x, y);
-
-	    		int pX = (int) (-s * x * scaling + offsetX);
-				int pY = (int) (c * y * scaling + offsetY) % roadMap.getHeight();
-
-	    		projectedRoad.setColor(roadMap.getPixel(pX, pY));
-				projectedRoad.drawPixel(x, y);
-
+		for (Decal d : roadDecals) {
+			float newY = (float) (d.getY() - 0.05);
+			if (newY < -13) {
+				newY = 0;
 			}
+			d.setPosition(0, newY, 4.25f);
+			batch.add(d);
 
 		}
 
-		roadTex.draw(projectedRoad, 0, 0);
-		draw(roadTex, 0, 0);
+		camera.update();
+		batch.flush();
+
 
 	}
 
