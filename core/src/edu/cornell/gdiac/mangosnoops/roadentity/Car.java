@@ -70,8 +70,6 @@ public class Car extends RoadObject {
      */
     public float getAngle() { return angle; }
 
-    public int getHealth() { return health; }
-
     public boolean noshAwake() { return nosh.isAwake(); }
 
     public boolean nedAwake() { return ned.isAwake(); }
@@ -86,7 +84,7 @@ public class Car extends RoadObject {
     /**
      * Returns the car's current health.
      */
-    public float getHealth() { return health; }
+    public int getHealth() { return health; }
 
     /**
      * Updates the animation frame and position of this ship.
