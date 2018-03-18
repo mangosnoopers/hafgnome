@@ -91,20 +91,22 @@ public class Wheel extends HUDObject {
     }
 
     /**
-     * Rotates the wheel based on a given delta x.
+     * Updates the wheel based on the user's input.
      */
-    public void rotate(float dx) {
+    public void update(Vector2 in, float dx) {
         // change wheel angle and lateral screen movement
-        if(ang >= -90 && ang <= 90) {
-            ang -= dx;
-        }
+        if (inWheelArea(in)) {
+            if (ang >= -90 && ang <= 90) {
+                ang -= dx;
+            }
 
-        if(ang < -90){
-            ang = -90;
-        }
+            if (ang < -90) {
+                ang = -90;
+            }
 
-        if(ang > 90){
-            ang = 90;
+            if (ang > 90) {
+                ang = 90;
+            }
         }
     }
 
