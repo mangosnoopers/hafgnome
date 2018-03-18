@@ -94,7 +94,7 @@ public class CollisionController {
 	 */
 	private void processBounds(Car c) {
 		// TODO: commented this out to get game to run, car is null rn
-		//if(c.getX() < 0 || c.getX() > width ) c.setDestroyed(true);
+		// if(c.getX() < 0 || c.getX() > width ) c.setDestroyed(true);
 	}
 
 	/**

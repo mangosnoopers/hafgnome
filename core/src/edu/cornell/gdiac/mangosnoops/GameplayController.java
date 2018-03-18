@@ -24,8 +24,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 
-import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
-import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
+import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
 /**
@@ -46,6 +45,12 @@ public class GameplayController {
 	/** Car instance, containing information about the wheel, */
 	private Car yonda;
 
+	/** Noshy boi */
+	private Child nosh;
+
+	/** Neddy boi */
+	private Child ned;
+
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 
@@ -56,16 +61,6 @@ public class GameplayController {
 	private LevelObject level;
 
 	// Graphics assets for the entities
-	/** The texture file for a ship object*/
-	private static final String BEETLE_FILE = "images/beetle.png";
-	/** The texture file for a bullet object*/
-	private static final String BULLET_FILE = "images/bullet.png";
-	/** The texture file for a green shell */
-	private static final String GSHELL_FILE = "images/green.png";
-	/** The texture file for a red shell */
-	private static final String RSHELL_FILE = "images/red.png";
-	/** The texture file for a star */
-	private static final String STAR_FILE = "images/star.png";
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/Wheel.png";
     /** The texture file for the gnome */
@@ -135,17 +130,6 @@ public class GameplayController {
 		return null;
 	}
 
-
-
-	/**
-	 * Creates a new GameplayController with no active elements.
-	 */
-	public GameplayController() {
-		yonda = null;
-		gnomez = new Array<Gnome>();
-		backing = new Array<Gnome>();
-	}
-
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
@@ -156,6 +140,8 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
+		nosh = null;
+		ned = null;
 	}
 
 	/**
@@ -215,8 +201,6 @@ public class GameplayController {
 		// Create the player's ship
         yonda = level.getCar();
         /* TODO: commented this out to get game to run, car is null rn
-		yonda.setTexture(beetleTexture);
-		yonda.getPosition().set(x,y);
 		gnomez = level.getGnomez();
 		*/
 		wheel = new Wheel(275,70);
@@ -243,6 +227,9 @@ public class GameplayController {
 		gnomez.add(newGnome4);
 		gnomez.add(newGnome5);
 		gnomez.add(newGnome6);
+
+		nosh = new Child(Child.ChildType.NOSH);
+		ned = new Child(Child.ChildType.NED);
 	}
 
 	/**
@@ -255,7 +242,8 @@ public class GameplayController {
 		radio = null;
 		gnomez.clear();
 		backing.clear();
-
+		nosh = null;
+		ned = null;
 	}
 
 	/**
@@ -307,9 +295,7 @@ public class GameplayController {
 	}
 	
 	/**
-	 * Resolve the actions of all game objects (player and shells)
-	 *
-	 * You will probably want to modify this heavily in Part 2.
+	 * Resolve the actions of all game objects
 	 *
 	 * @param input  Reference to the input controller
 	 * @param delta  Number of seconds since last animation frame
@@ -319,13 +305,13 @@ public class GameplayController {
 		for (Gnome g : gnomez) {
 			g.update(delta);
 		}
+
+		nosh.poke(input.noshClicked);
+		ned.poke(input.nedClicked);
 	}
 
 	/**
 	 * Process the player's actions.
-	 *
-	 * Notice that firing bullets allocates memory to the heap.  If we were REALLY 
-	 * worried about performance, we would use a memory pool here.
 	 *
 	 * @param input  Reference to the input controller
 	 * @param delta  Number of seconds since last animation frame
