@@ -338,7 +338,7 @@ public class GameMode implements Screen {
 	 */
 	private void draw(float delta) {
 		float WINDOW_WIDTH =(float)canvas.getWidth();
-		canvas.drawRoad(roadMap, 1.54f, gameplayController.getWheel().getAng() / ANGLE_TO_LR);
+		canvas.drawRoad(gameplayController.getWheel().getAng() / ANGLE_TO_LR);
 		canvas.draw(clouds,200 , 400);
 		canvas.begin();
 

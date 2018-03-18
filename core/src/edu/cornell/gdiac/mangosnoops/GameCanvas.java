@@ -380,7 +380,7 @@ public class GameCanvas {
 	 * 	- https://gamedev.stackexchange.com/questions/24957/doing-an-snes-mode-7-affine-transform-effect-in-pygame
 	 * 	- http://blog.supercookie.co.uk/post/124807296612/modeseven
 	 */
-	public void drawRoad(Pixmap roadMap, float angle, float xOff) {
+	public void drawRoad(float xOff) {
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
