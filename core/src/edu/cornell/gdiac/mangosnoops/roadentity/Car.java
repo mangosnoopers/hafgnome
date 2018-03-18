@@ -29,8 +29,10 @@ public class Car extends RoadObject {
     private float angle;
     /** True if the car is active */
     private boolean active;
-    /** Health of the car, max health is 1.0 */
-    private float health;
+    /** Health of the car, max health is 100 */
+    private int health;
+    /** Angle of the health pointer */
+    private float healthPointerAng;
 
     //PARTY MEMBERS
     /** Noshy boi */
@@ -41,9 +43,10 @@ public class Car extends RoadObject {
     public Car() {
         angle = 0.0f;
         active = true;
-        health = 0.0f;
+        health = 100;
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
+        healthPointerAng = 0.0f;
     }
 
     /**
@@ -64,7 +67,20 @@ public class Car extends RoadObject {
      */
     public float getMovement() { return movement; }
 
+    /**
+     * Returns the angle of the car.
+     */
     public float getAngle() { return angle; }
+
+    /**
+     * Returns the angle of the health gauge pointer.
+     */
+    public float getHealthPointerAng() { return healthPointerAng; }
+
+    /**
+     * Returns the car's current health.
+     */
+    public float getHealth() { return health; }
 
     /**
      * Updates the animation frame and position of this ship.
@@ -86,6 +102,10 @@ public class Car extends RoadObject {
 
         nosh.update(clickPos);
         ned.update(clickPos);
+
+        // Update health angle
+        healthPointerAng = Math.max((float) (health - 100), -90.0f);
+
     }
 
 }
