@@ -347,11 +347,10 @@ public class GameMode implements Screen {
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
 
-		// Update and draw wheel
+		// Draw wheel
 		gameplayController.getWheel().draw(canvas);
 
-		// Draw dash objects
-		// TODO: change these
+		// Draw radio
 		gameplayController.getRadio().draw(canvas);
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
