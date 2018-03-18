@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.mangosnoops.hudentity;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import edu.cornell.gdiac.mangosnoops.*;
 
 import com.badlogic.gdx.math.*;
@@ -7,7 +9,8 @@ import com.badlogic.gdx.graphics.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.Car;
 
 public class Wheel extends HUDObject {
-
+    /** Window height */
+    private static final float WINDOW_HEIGHT = 600;
     /** Coordinates of wheel center */
     private static Vector2 center;
     /** Dimensions of wheelzone */
@@ -20,8 +23,7 @@ public class Wheel extends HUDObject {
     private float ang = 0;
     /** Scale for drawing of the wheel **/
     private final float WHEEL_SCALE = 0.5f;
-    /** The Car that this wheel belongs to */
-    private Car car;
+
     /** True if the wheel is active TODO: DELETE AFTER GAMEPLAY PROTOTYPE*/
     private boolean active;
     /** Health of the wheel TODO: DELETE AFTER GAMEPLAY PROTOTYPE */
@@ -89,23 +91,50 @@ public class Wheel extends HUDObject {
     }
 
     /**
-     * Rotate wheel by an angle theta
-     * */
-    public void rotate(float theta){ return; }
+     * Rotates the wheel based on a given delta x.
+     */
+    public void rotate(float dx) {
+        // change wheel angle and lateral screen movement
+        if(ang >= -90 && ang <= 90) {
+            ang -= dx;
+        }
+
+        if(ang < -90){
+            ang = -90;
+        }
+
+        if(ang > 90){
+            ang = 90;
+        }
+    }
+
+    /**
+     * Returns true if the mouse is positioned inside the area of the wheel.
+     * The wheel must not be null.
+     *
+     * @param p the vector giving the mouse's (x,y) screen coordinates
+     */
+    private boolean inWheelArea(Vector2 p) {
+        float controlBuffer = 60.0f;
+        return p.x > center.x - (wheelSprite.getWidth()*WHEEL_SCALE-controlBuffer)
+                && p.x < center.x + (wheelSprite.getWidth()*WHEEL_SCALE*0.5f+controlBuffer)
+                && WINDOW_HEIGHT - p.y > center.y - wheelSprite.getHeight()*WHEEL_SCALE*0.5f
+                && WINDOW_HEIGHT - p.y < center.y + wheelSprite.getHeight()*WHEEL_SCALE*0.5f;
+    }
 
     public void snapBack(){
         ang = 0;
         return;
     }
 
-    public void drawWheel(GameCanvas canvas){
+    public void draw(GameCanvas canvas){
         if(wheelSprite == null) {
             return;
         }
         float ox = 0.5f * wheelSprite.getWidth();
         float oy = 0.5f * wheelSprite.getHeight();
 
-            canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, WHEEL_SCALE, WHEEL_SCALE);
+        canvas.draw(wheelSprite, Color.WHITE, ox, oy, center.x, center.y, ang, WHEEL_SCALE, WHEEL_SCALE);
     }
 
 

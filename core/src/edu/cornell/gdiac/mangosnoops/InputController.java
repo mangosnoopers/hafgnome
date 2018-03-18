@@ -27,12 +27,6 @@ import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
  * Class for reading player keyboard input.
  */
 public class InputController {
-    // Constants
-    /** Factor to translate an angle to left/right movement */
-    private static final float ANGLE_TO_LR = 7.0f;
-    /** Window height */
-    private static final float WINDOW_HEIGHT = 600;
-
 	// Fields to manage game state
 	/** Whether the reset button was pressed. */
 	protected boolean resetPressed;
@@ -43,32 +37,11 @@ public class InputController {
     /** Vector location of first click */
     private Vector2 firstClick;
 
-    private Vector2 up = new Vector2(0,-1);
-
-    // Wheel controls
-    /** The wheel used for user control */
-    private Wheel w;
-	/** The left/right movement of the player's view -- left is negative */
-	private float movement = 0.0f;
-
-	// Radio controls
-	private Radio r;
-
 	/**
      * Creates a new input controller.
      */
     public InputController() {
     }
-
-	/**
-	 * Returns the amount of sideways movement. 
-	 */
-	public float getMovement() { return movement; }
-
-	/**
-	 * Sets movement to zero.
-	 */
-	public void resetMovement() { movement = 0; }
 
 	/**
 	 * Returns true if the reset button was pressed.
@@ -86,33 +59,6 @@ public class InputController {
 	 */
 	public boolean didExit() {
 		return exitPressed;
-	}
-
-    /**
-     * Set the wheel used for input controls.
-     */
-    public void setWheel(Wheel w) { this.w = w; }
-
-	/**
-	 * Set the radio used for input controls.
-	 */
-	public void setRadio(Radio r) { this.r = r; }
-
-	/**
-     * Returns true if the mouse is positioned inside the area of the wheel.
-     * The wheel must not be null.
-     *
-     * @param p the vector giving the mouse's (x,y) screen coordinates
-     */
-    private boolean inWheelArea(Vector2 p) {
-	    // Position of wheel on screen
-	    Vector2 cen = w.getCenter();
-	    Texture wsprite = w.getWheelSprite();
-	    float controlBuffer = 60;
-        return p.x > cen.x - (wsprite.getWidth()*w.getWHEEL_SCALE()*0.5f-controlBuffer)
-                && p.x < cen.x + (wsprite.getWidth()*w.getWHEEL_SCALE()*0.5f+controlBuffer)
-                && WINDOW_HEIGHT - p.y > cen.y - wsprite.getHeight()*w.getWHEEL_SCALE()*0.5f
-                && WINDOW_HEIGHT - p.y < cen.y + wsprite.getHeight()*w.getWHEEL_SCALE()*0.5f;
 	}
 
 	private boolean inRadioArea(Vector2 p) {

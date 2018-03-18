@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.*;
 
 public class Car extends RoadObject {
     //CONSTANTS
+    /** Factor to translate an angle to left/right movement */
+    private static final float ANGLE_TO_LR = 7.0f;
     /** Horizontal speed in X direction -- multiply by movement **/
     private static final float CAR_XSPEED = 4.0f;
     /** Horizontal speed in Y direction -- always update by this constant **/
@@ -24,6 +26,10 @@ public class Car extends RoadObject {
     private float animeframe;
     /** Angle of car */
     private float angle = 0.0f;
+    /** True if the car is active */
+    private boolean active;
+    /** Health of the car */
+    private int health;
 
     /**
      * Returns the type of this object.
