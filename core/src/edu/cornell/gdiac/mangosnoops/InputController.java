@@ -34,14 +34,26 @@ public class InputController {
 	protected boolean exitPressed;
 	/** Whether the left mouse button was clicked. */
 	private boolean mouseClicked;
-    /** Vector location of first click */
-    private Vector2 firstClick;
+    /** Vector location of click */
+    private Vector2 clickPos;
+    /** Change in x of the input */
+    private float dx;
 
 	/**
      * Creates a new input controller.
      */
     public InputController() {
     }
+
+	/**
+	 * Returns the change in x of the input.
+	 */
+	public float getDX() { return dx; }
+
+	/**
+	 * Returns the current mouse position.
+	 */
+	public Vector2 getClickPos() { return clickPos; }
 
 	/**
 	 * Returns true if the reset button was pressed.
@@ -71,37 +83,6 @@ public class InputController {
 				&& WINDOW_HEIGHT - p.y < cen.y + rsprite.getHeight()*r.getKNOB_SCALE()*0.5f;
 	}
 
-    /**
-     * Processes the player clicking and dragging on the wheel. The user must
-     * have already clicked on the wheel (i.e. firstClick is not null).
-     *
-     * This method sets the angle to turn the wheel by, and the left/right shift
-     * in the player's view.
-     */
-	private void processWheelTurn() {
-	    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-
-	        // bounce back to center if cursor leaves wheel
-	        if (!inWheelArea(new Vector2(Gdx.input.getX(), Gdx.input.getY()))) {
-	            w.setAng(0.0f);
-	            movement = 0.0f; //TODO: change this to smt that makes sense
-	            return;
-            }
-
-            // otherwise change wheel angle and lateral screen movement
-           if(w.getAng()>=-90 && w.getAng()<=90) {
-			   w.setAng(w.getAng() - Gdx.input.getDeltaX());
-			   movement = w.getAng() / ANGLE_TO_LR;
-		   }
-		   if(w.getAng()<-90){
-	        	w.setAng(-90);
-		   }
-		   if(w.getAng()>90){
-	        	w.setAng(90);
-		   }
-        }
-    }
-
 	private void processRadioInput() {
 		if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 			// otherwise change wheel angle and lateral screen movement
@@ -120,18 +101,10 @@ public class InputController {
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (mouseClicked) {
-            firstClick = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         } else {
-            firstClick = null;
+            clickPos = null;
         }
-
-		// player clicked the wheel
-		if (w != null && mouseClicked && inWheelArea(firstClick)) {
-		    processWheelTurn();
-        }
-        if( r != null && mouseClicked &&inRadioArea(firstClick)){
-        	processRadioInput();
-		}
 	}
 
 }

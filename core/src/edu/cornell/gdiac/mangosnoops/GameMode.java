@@ -340,15 +340,14 @@ public class GameMode implements Screen {
 		canvas.begin();
 
 		// Draw the road, clouds, and dash
-		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
+		canvas.drawRoad(roadMap, 1.54f, inputController.getDX());
 		canvas.draw(clouds,200 , 400);
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
 
-		// Draw wheel
-
+		// Update and draw wheel
+		gameplayController.getWheel().update(inputController.getClickPos(), inputController.getDX());
 		gameplayController.getWheel().draw(canvas);
-
 
 		// Draw dash objects
 		// TODO: change these
