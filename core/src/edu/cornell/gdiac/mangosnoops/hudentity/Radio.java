@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.*;
 import java.io.File;
 
 public class Radio extends HUDObject {
+    /** Window height */
+    private static final float WINDOW_HEIGHT = 600;
     /** Coordinates of radio center */
     private Vector2 pos;
     /** Coordinates of radioknob center */
@@ -101,10 +103,6 @@ public class Radio extends HUDObject {
         return "";
     }
 
-    public float getKNOB_SCALE(){
-        return KNOB_SCALE;
-    }
-
     /**
      * Sets the current station based on the setting of the knob
      * Should the station change, the new audio is played and the old
@@ -178,7 +176,7 @@ public class Radio extends HUDObject {
      * Draws the radio and its knob on the given canvas
      * @param canvas
      */
-    public void drawRadio(GameCanvas canvas){
+    public void draw(GameCanvas canvas){
         if(radioTexture == null || knobTexture == null) {
             return;
         }
@@ -194,6 +192,30 @@ public class Radio extends HUDObject {
         //canvas.draw(radioTexture, Color.WHITE, oxr, oyr, pos.x, pos.y, 0, 0.5f, 0.5f);
         canvas.draw(knobTexture, Color.WHITE, oxk, oyk, knobPos.x, knobPos.y, knobAng, KNOB_SCALE, KNOB_SCALE);
 
+    }
+
+    /** Returns true if the mouse is positioned inside the radio dial.
+     *
+     * @param p the vector giving where the mouse's (x,y) screen coordinates.
+     */
+    private boolean inRadioArea(Vector2 p) {
+        return p.x > knobPos.x - knobTexture.getWidth()*KNOB_SCALE*0.5f
+                && p.x < knobPos.x + knobTexture.getWidth()*KNOB_SCALE*0.5f
+                && WINDOW_HEIGHT - p.y > knobPos.y - knobTexture.getHeight()*KNOB_SCALE*0.5f
+                && WINDOW_HEIGHT - p.y < knobPos.y + knobTexture.getHeight()*KNOB_SCALE*0.5f;
+    }
+
+    /**
+     * Updates the radio based on the user's input.
+     *
+     * @param in where the mouse clicked (null if no click)
+     * @param dx the change in x in the user's input
+     */
+    public void update(Vector2 in, float dx) {
+        if (in != null && inRadioArea(in)) {
+            knobAng = knobAng - dx;
+            setStation();
+        }
     }
 
     /**
