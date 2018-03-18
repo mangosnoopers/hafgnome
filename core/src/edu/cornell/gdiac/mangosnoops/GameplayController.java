@@ -42,14 +42,8 @@ public class GameplayController {
 	/** Data structure containing gnome data */
 	private Array<Gnome> gnomez;
 
-	/** Car instance, containing information about the wheel, */
+	/** Car instance, containing information about the wheel and children */
 	private Car yonda;
-
-	/** Noshy boi */
-	private Child nosh;
-
-	/** Neddy boi */
-	private Child ned;
 
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
@@ -140,8 +134,6 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
-		nosh = null;
-		ned = null;
 	}
 
 	/**
@@ -227,9 +219,6 @@ public class GameplayController {
 		gnomez.add(newGnome4);
 		gnomez.add(newGnome5);
 		gnomez.add(newGnome6);
-
-		nosh = new Child(Child.ChildType.NOSH);
-		ned = new Child(Child.ChildType.NED);
 	}
 
 	/**
@@ -242,8 +231,6 @@ public class GameplayController {
 		radio = null;
 		gnomez.clear();
 		backing.clear();
-		nosh = null;
-		ned = null;
 	}
 
 	/**
@@ -302,21 +289,8 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 	    // TODO: update object states based on input
-		for (Gnome g : gnomez) {
-			g.update(delta);
-		}
+		for (Gnome g : gnomez) { g.update(delta); }
 
-		nosh.poke(input.noshClicked);
-		ned.poke(input.nedClicked);
-	}
-
-	/**
-	 * Process the player's actions.
-	 *
-	 * @param input  Reference to the input controller
-	 * @param delta  Number of seconds since last animation frame
-	 */
-	public void resolveCar(InputController input, float delta) {
-		// TODO: update car state based on input
+		yonda.update(input.getClickPos(), delta);
 	}
 }

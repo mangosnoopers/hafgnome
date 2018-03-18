@@ -39,12 +39,6 @@ public class InputController {
     /** Change in x of the input */
     private float dx;
 
-	// Child controls
-	/** Whether Nosh has been clicked. */
-	protected boolean noshClicked;
-	/** Whether Ned has been clicked. */
-	protected boolean nedClicked;
-
 	/**
      * Creates a new input controller.
      */

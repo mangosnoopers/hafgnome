@@ -282,7 +282,6 @@ public class GameMode implements Screen {
 				gameplayController.reset();
 				//TODO: Make the next two lines less sketch
 				canvas.resetCam();
-				inputController.resetMovement();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
 			} else {
 				play(delta);
@@ -351,7 +350,6 @@ public class GameMode implements Screen {
 
 		// Draw dash objects
 		// TODO: change these
-		inputController.setRadio(gameplayController.getRadio());
 		gameplayController.getRadio().drawRadio(canvas);
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);

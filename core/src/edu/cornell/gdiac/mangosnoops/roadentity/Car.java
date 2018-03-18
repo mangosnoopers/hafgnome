@@ -5,6 +5,7 @@ import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 
 public class Car extends RoadObject {
     //CONSTANTS
@@ -25,11 +26,25 @@ public class Car extends RoadObject {
     /** Current animation frame for this ship */
     private float animeframe;
     /** Angle of car */
-    private float angle = 0.0f;
+    private float angle;
     /** True if the car is active */
     private boolean active;
-    /** Health of the car */
-    private int health;
+    /** Health of the car, max health is 1.0 */
+    private float health;
+
+    //PARTY MEMBERS
+    /** Noshy boi */
+    private Child nosh;
+    /** Neddy boi */
+    private Child ned;
+
+    public Car() {
+        angle = 0.0f;
+        active = true;
+        health = 0.0f;
+        nosh = new Child(Child.ChildType.NOSH);
+        ned = new Child(Child.ChildType.NED);
+    }
 
     /**
      * Returns the type of this object.
@@ -51,12 +66,6 @@ public class Car extends RoadObject {
 
     public float getAngle() { return angle; }
 
-    public void setTexture(Texture texture) {
-        animator = new FilmStrip(texture,1,2,2);
-        radius = animator.getRegionHeight() / 2.0f;
-        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
-    }
-
     /**
      * Updates the animation frame and position of this ship.
      *
@@ -66,7 +75,7 @@ public class Car extends RoadObject {
      *
      * @param delta Number of seconds since last animation frame
      */
-    public void update(float delta) {
+    public void update(Vector2 clickPos, float delta) {
         // Call superclass's update
         super.update(delta);
 
@@ -74,6 +83,9 @@ public class Car extends RoadObject {
             position.x += movement * CAR_XSPEED;
         }
         position.y += CAR_YSPEED;
+
+        nosh.update(clickPos);
+        ned.update(clickPos);
     }
 
 }
