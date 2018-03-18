@@ -19,6 +19,9 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -68,6 +71,16 @@ public class GameCanvas {
 	private final Vector2 scale = new Vector2(150, 150);
 	private final int HORIZON = 200;
 
+	// New 3D perspective stuff
+	PerspectiveCamera camera;
+	PerspectiveCamera rearviewCam;
+	DecalBatch batch;
+	DecalBatch batch2;
+	TextureRegion textureRegion;
+	Array<Decal> roadDecals;
+	Array<Decal> gnomeDecals;
+	int NUM_ROAD_DECALS = 30;
+
 
 	/**
 	 * Creates a new GameCanvas determined by the application configuration.
@@ -97,6 +110,22 @@ public class GameCanvas {
 		}
 		roadTex = new Texture(projectedRoad, projectedRoad.getFormat(), true);
 
+
+		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.position.set(0f, -10f, 4.5f);
+		camera.direction.set(0, 0, 0);
+		camera.lookAt(0, 0, 0);
+		camera.near = 0.0001f;
+
+		batch = new DecalBatch(new CameraGroupStrategy(camera));
+		textureRegion = new TextureRegion(new Texture(Gdx.files.internal("images/road.png")));
+
+		roadDecals = new Array<Decal>(7);
+		for (int i = 0; i < NUM_ROAD_DECALS; i++) {
+			Decal newDecal = Decal.newDecal(1, 1, textureRegion);
+			newDecal.setPosition(0, -1f*i, 1);
+			roadDecals.add(newDecal);
+		}
 	}
 		
     /**
@@ -303,9 +332,6 @@ public class GameCanvas {
     	spriteBatch.begin();
     	active = true;
     	
-    	// Clear the screen
-		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
 	/**
@@ -379,65 +405,23 @@ public class GameCanvas {
 	 */
 	public void drawRoad(Pixmap roadMap, float angle, float xOff) {
 
-	    // TODO: delete these, just 4 testing stuff
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			cam.x += 10;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			cam.x -= 10;
-		}
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-
-		/* TODO: cam.x, cam.y should come from Car state
-		 * (just put this here to show scrolling road) */
-		cam.x -= 15 * -Math.cos(angle);
-		cam.y -= 15 * -Math.sin(angle);
-		cam.x += xOff;
-
-		// Limit how far off the road car can go
-        // TODO: could move this to wherever rest of logic goes
-		if (cam.x > LEFT_LIMIT) {
-		    cam.x = LEFT_LIMIT;
-        } else if (cam.x < RIGHT_LIMIT) {
-		    cam.x = RIGHT_LIMIT;
-        }
-
-		int h = getHeight(); int w = getWidth();
-
-		// TODO: move this logic to sep class?
-	    for (int y = HORIZON; y < h; y++) {
-
-	    	float z = y - HORIZON;
-	    	float scaling = cam.z * scale.y / scale.x / z;
-
-	    	double s = Math.sin(angle);
-	    	double c = Math.cos(angle);
-
-			double scaledCX = -w / 2 * scaling;
-			double scaledCY = -h / 2 * scaling;
-
-			double scaledCamZ = cam.z * scale.y / z;
-
-	    	double offsetX = -s * scaledCX + c * scaledCamZ + cam.x;
-	    	double offsetY = c * scaledCY + s * scaledCamZ + cam.y;
-
-	    	for (int x = 0; x < w; x++) {
-
-	    		projectedRoad.setColor(Color.GREEN);
-	    		projectedRoad.drawPixel(x, y);
-
-	    		int pX = (int) (-s * x * scaling + offsetX);
-				int pY = (int) (c * y * scaling + offsetY) % roadMap.getHeight();
-
-	    		projectedRoad.setColor(roadMap.getPixel(pX, pY));
-				projectedRoad.drawPixel(x, y);
-
+		for (Decal d : roadDecals) {
+			float newY = (float) (d.getY() - 0.05);
+			if (newY < -13) {
+				newY = 0;
 			}
+			d.setPosition(0, newY, 4.25f);
+			batch.add(d);
 
 		}
 
-		roadTex.draw(projectedRoad, 0, 0);
-		draw(roadTex, 0, 0);
+		camera.update();
+		batch.flush();
+
 
 	}
 

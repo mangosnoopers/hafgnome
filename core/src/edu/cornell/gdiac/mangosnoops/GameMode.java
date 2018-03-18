@@ -313,10 +313,10 @@ public class GameMode implements Screen {
 	private void draw(float delta) {
 		float offset = -((totalTime * TIME_MODIFIER) % canvas.getWidth());
 		float WINDOW_WIDTH =(float)canvas.getWidth();
+		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
 		canvas.begin();
 
 		// Draw the road, clouds, and dash
-		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
 		canvas.draw(clouds,200 , 400);
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
