@@ -104,6 +104,7 @@ public class CollisionController {
 	 * Collide a gnome with a car.
 	 */
 	private void handleCollision(Car c, Gnome g) {
+	    /*
 		if(c.nedAwake()) {
 			if(g.getY() < GNOME_INRANGE) {
 				g.setDestroyed(true);
@@ -114,5 +115,6 @@ public class CollisionController {
 				g.setDestroyed(true);
 			}
 		}
+		*/
 	}
 }
