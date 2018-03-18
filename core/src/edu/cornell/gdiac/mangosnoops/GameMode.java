@@ -297,7 +297,7 @@ public class GameMode implements Screen {
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
 		// TODO: changed this to wheel instead of car for gameplay prototype
-		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getWheel());
+		//collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getWheel());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
@@ -314,15 +314,15 @@ public class GameMode implements Screen {
 		float offset = -((totalTime * TIME_MODIFIER) % canvas.getWidth());
 		float WINDOW_WIDTH =(float)canvas.getWidth();
 		canvas.drawRoad(roadMap, 1.54f, inputController.getMovement());
+		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 		canvas.begin();
 
 		// Draw the road, clouds, and dash
-		canvas.draw(clouds,200 , 400);
+		canvas.draw(clouds,200 , 500);
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
 
 		// Draw the game objects
-		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 		inputController.setWheel(gameplayController.getWheel());
 		inputController.setRadio(gameplayController.getRadio());
 		gameplayController.getWheel().drawWheel(canvas);
