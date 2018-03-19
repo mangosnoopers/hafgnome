@@ -107,6 +107,11 @@ public class Radio extends HUDObject {
         return "";
     }
 
+    // TODO: maybe delete?
+    public Station getCurrentStation() { return currentStation; }
+    public boolean getCurrentStationNed() { return currentStation.nedHappy; }
+    public boolean getCurrentStationNosh() { return currentStation.noshHappy; }
+
     /**
      * Sets the current station based on the setting of the knob
      * Should the station change, the new audio is played and the old
@@ -260,7 +265,7 @@ public class Radio extends HUDObject {
             // TODO: make this not weird
             knobAng -= (in.angle(src) * ROTATION_SPEED);
 
-            if (knobAng == -360.0f) {
+            if (knobAng <= -360.0f) {
                 knobAng = 0.0f;
             }
             setStation();

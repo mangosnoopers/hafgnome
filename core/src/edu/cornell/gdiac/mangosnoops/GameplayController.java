@@ -417,19 +417,37 @@ public class GameplayController {
 
 	}
 
-	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP
+	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP also handles radio
 	 *
 	 * @param counter
 	 * @param ned
 	 * @param nosh
 	 */
-	public void resolveChildren(int counter, Child ned, Child nosh) {
+	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
+		// check radio for ned - either make him happy or decrease his happiness
+		if (r.getCurrentStation() != null) {
+			if (r.getCurrentStationNed()) {
+				ned.setHappy();
+			} else {
+				ned.decreaseHappiness();
+			}
+
+
+			// check radio for nosh
+			if (r.getCurrentStationNosh()) {
+				nosh.setHappy();
+			} else {
+				nosh.decreaseHappiness();
+			}
+		}
+
+
 		Random generator = new Random();
 		float ned_prob = 0.05f;
 		float nosh_prob = 0.05f;
 
 		// check every 10 frames
-		if (counter % 10 == 0) {
+		if (counter % 50 == 0) {
 			// make ned sleepy with given probability
 			if (generator.nextFloat() <= ned_prob) {
 				ned.setAwake(false);
