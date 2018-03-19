@@ -65,6 +65,7 @@ public class Wheel extends HUDObject {
     public void update(Vector2 in, float dx) {
         // change wheel angle and lateral screen movement
         if (in != null && inWheelArea(in)) {
+            System.out.println("Pressing wheel.");
             if (ang >= -90 && ang <= 90) {
                 ang -= dx;
             }
@@ -76,6 +77,8 @@ public class Wheel extends HUDObject {
             if (ang > 90) {
                 ang = 90;
             }
+        } else {
+            ang = ang + 0.2f * -ang;
         }
     }
 

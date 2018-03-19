@@ -339,6 +339,7 @@ public class GameMode implements Screen {
 	private void draw(float delta) {
 		float WINDOW_WIDTH =(float)canvas.getWidth();
 		canvas.drawRoad(gameplayController.getWheel().getAng() / ANGLE_TO_LR);
+		canvas.drawGnomez(gameplayController.getGnomez());
 		canvas.begin();
 		canvas.draw(clouds,200 , 500);
 
@@ -360,9 +361,6 @@ public class GameMode implements Screen {
 		// Draw the health gauge and pointer
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
         canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 44.0f, 21.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.35f);
-
-		// Draw the game objects
-		canvas.drawGnomez(gameplayController.getGnomez(), 1.54f);
 
 		// Output a simple debugging message stating the number of shells on the screen
         // TODO: commented this out to get game to run, car is null rn
