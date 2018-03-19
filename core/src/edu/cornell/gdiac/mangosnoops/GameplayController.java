@@ -425,7 +425,7 @@ public class GameplayController {
 	 */
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
 		// check radio for ned - either make him happy or decrease his happiness
-		if (r.getCurrentStation() != null) {
+		if (r.getCurrentStation() != null && r.getknobAng() <= 0) {
 			if (r.getCurrentStationNed()) {
 				ned.setHappy();
 			} else {
