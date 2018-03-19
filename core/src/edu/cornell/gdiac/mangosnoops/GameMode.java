@@ -335,9 +335,6 @@ public class GameMode implements Screen {
 
 		// Update child states TODO: idk
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
-		if (!gameplayController.getCar().getNed().isAwake()) {
-			System.out.println(counter + " ned asleep");
-		}
 
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
