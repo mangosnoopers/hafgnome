@@ -153,7 +153,7 @@ public class GameplayController {
 		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
 		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
 		nosh_sad = createTexture(manager, NOSH_SAD_FILE);
-		nosh_critical = createTexture(manager, NED_CRITICAL_FILE);
+		nosh_critical = createTexture(manager, NOSH_CRITICAL_FILE);
 		ned_happy = createTexture(manager,NED_HAPPY_FILE);
 		ned_neutral = createTexture(manager,NED_NEUTRAL_FILE);
 		ned_sad = createTexture(manager, NED_SAD_FILE);
