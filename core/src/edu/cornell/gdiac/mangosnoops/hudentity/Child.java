@@ -49,7 +49,7 @@ public class Child extends HUDObject {
      */
     public Child(ChildType type) {
         ctype = type;
-        isAwake = true;
+        isAwake = false;
         happiness = 1.0f;
         currentMood = Mood.HAPPY;
     }

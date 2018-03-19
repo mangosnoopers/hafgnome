@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.mangosnoops.roadentity;
 
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.*;
 
@@ -32,6 +33,18 @@ public class Car extends RoadObject {
     /** Angle of the health pointer */
     private float healthPointerAng;
 
+    /** Indicates whether or not to color screen red, visualizing
+     *  that the car has taken damage */
+    private boolean isDamaged;
+
+    private float timeToDisplayDamageIndicator;
+
+    /** How much to decrement timeToDisplayDamageIndicator each frame
+     *  (higher value => less time for damage indicator) */
+    private final float DISPLAY_DEPLETION = 26;
+
+    private float displayAlpha = 1.0f;
+
     //PARTY MEMBERS
     /** Noshy boi */
     private Child nosh;
@@ -46,6 +59,8 @@ public class Car extends RoadObject {
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
         healthPointerAng = 0.0f;
+
+        timeToDisplayDamageIndicator = 10;
     }
 
     /**
@@ -93,6 +108,12 @@ public class Car extends RoadObject {
 
     public void setHealth(int newHealth) { health = newHealth; }
 
+    public void setDamaged(boolean b) { isDamaged = b; timeToDisplayDamageIndicator = 10; }
+
+    public boolean getIsDamaged() { return isDamaged; }
+
+    public float getDamageDisplayAlpha() { return displayAlpha; }
+
     /**
      * Returns the angle of the health gauge pointer.
      */
@@ -125,6 +146,15 @@ public class Car extends RoadObject {
 
         // Update health angle
         healthPointerAng = Math.max((float) (health - 100), -90.0f);
+
+        if (isDamaged && timeToDisplayDamageIndicator > 0) {
+            timeToDisplayDamageIndicator -= delta * DISPLAY_DEPLETION;
+            displayAlpha -= delta * 2;
+        } else {
+            setDamaged(false);
+            timeToDisplayDamageIndicator = 10;
+            displayAlpha = 1.0f;
+        }
 
     }
 

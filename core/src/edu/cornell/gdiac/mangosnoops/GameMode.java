@@ -333,8 +333,8 @@ public class GameMode implements Screen {
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
-		// TODO: changed this to wheel instead of car for gameplay prototype
-		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
+		// TODO: Camera won't be public, use car position
+		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar(), canvas);
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
@@ -397,6 +397,10 @@ public class GameMode implements Screen {
 
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();
+
+		if (gameplayController.getCar().getIsDamaged()) {
+		    canvas.drawDamageIndicator(gameplayController.getCar().getDamageDisplayAlpha());
+        }
 	}
 	
 	/**
