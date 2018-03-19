@@ -351,14 +351,13 @@ public class GameCanvas {
     }
 
 
-    public void drawGnomez(Array<Gnome> gnomez, float angle) {
+    public void drawGnomez(Array<Gnome> gnomez) {
 
         for (Gnome g : gnomez) {
             /* TODO: optimize this */
         	Decal gnomeDecal = Decal.newDecal(0.15f, 0.15f, new TextureRegion(g.getTexture()));
         	gnomeDecal.setPosition(g.getX(), g.getY(), 4.34f);
         	gnomeDecal.rotateX(90);
-        	System.out.println(gnomeDecal.getPosition());
         	batch.add(gnomeDecal);
 		}
 
