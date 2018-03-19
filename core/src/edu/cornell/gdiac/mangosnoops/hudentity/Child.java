@@ -59,6 +59,13 @@ public class Child extends HUDObject {
     }
 
     /**
+     * Make the child happy.
+     */
+    public void setHappy() {
+        currentMood = Mood.HAPPY;
+    }
+
+    /**
      * set the Textures for each of this child's moods
      * @param happy
      * @param neutral
@@ -126,6 +133,29 @@ public class Child extends HUDObject {
     }
 
     /**
+     * Decreases the happiness of the child based on his current mood
+     * */
+    public void decreaseHappiness() {
+        //FSM to make child less happy
+        switch(currentMood) {
+            case HAPPY:
+                currentMood = Mood.NEUTRAL;
+                break;
+            case NEUTRAL:
+                currentMood = Mood.SAD;
+                break;
+            case SAD:
+                currentMood = Mood.CRITICAL;
+                break;
+            case CRITICAL:
+                break;
+            default: //asleep
+                currentMood = Mood.HAPPY;
+                break;
+        }
+    }
+
+    /**
      * Pokes the child once, if the player has clicked the child.
      *
      * @param clickPos
@@ -142,23 +172,7 @@ public class Child extends HUDObject {
             }
 
             if(isAwake) {
-                //FSM to make child less happy
-                switch(currentMood) {
-                    case HAPPY:
-                        currentMood = Mood.NEUTRAL;
-                        break;
-                    case NEUTRAL:
-                        currentMood = Mood.SAD;
-                        break;
-                    case SAD:
-                        currentMood = Mood.CRITICAL;
-                        break;
-                    case CRITICAL:
-                        break;
-                    default: //asleep
-                        currentMood = Mood.HAPPY;
-                        break;
-                }
+                decreaseHappiness();
             }
             if(numPokes >= NED_NUMCLICKS) {
                 isAwake = true;

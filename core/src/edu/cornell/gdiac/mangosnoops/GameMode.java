@@ -334,7 +334,8 @@ public class GameMode implements Screen {
 		gameplayController.resolveActions(inputController,delta);
 
 		// Update child states TODO: idk
-		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
+		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(),
+				gameplayController.getCar().getNosh(), gameplayController.getRadio());
 
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
