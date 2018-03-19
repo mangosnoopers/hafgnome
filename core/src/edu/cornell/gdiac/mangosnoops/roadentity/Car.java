@@ -39,6 +39,7 @@ public class Car extends RoadObject {
     private Child ned;
 
     public Car() {
+        super.setY(-10f);
         angle = 0.0f;
         active = true;
         health = 100;
