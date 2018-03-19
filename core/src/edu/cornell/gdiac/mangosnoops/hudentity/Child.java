@@ -90,6 +90,13 @@ public class Child extends HUDObject {
     public boolean isAwake() { return isAwake; }
 
     /**
+     * Sets the awake status of the child.
+     *
+     * @param b true to wake the child up, false to make them fall asleep
+     */
+    public void setAwake(boolean b) { isAwake = b; }
+
+    /**
      * Returns the type of the child.
      */
     public ChildType getType() { return ctype; }
