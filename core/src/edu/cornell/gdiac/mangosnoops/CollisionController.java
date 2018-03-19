@@ -118,6 +118,8 @@ public class CollisionController {
 			if(g.getY() < c.getY() && Math.abs(g.getX() - c.getX()) < HIT_RANGE) {
 				c.setHealth(c.getHealth() - 10);
 				g.setDestroyed(true);
+				if (c.getHealth() == 0)
+					c.setDestroyed(true);
 			}
 		}
 		*/
