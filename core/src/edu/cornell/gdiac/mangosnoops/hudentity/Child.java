@@ -20,9 +20,9 @@ public class Child extends HUDObject {
     private int numPokes;
 
     private Vector2 pos;
-    private mood currentMood;
-    private ObjectMap<mood,Texture> childTextures;
-    private static final float CHILD_SCALE = 1f;
+    private Mood currentMood;
+    private ObjectMap<Mood,Texture> childTextures;
+    private static final float CHILD_SCALE = 0.5f;
 
     /** How many clicks needed to wake up */
         private static final int NOSH_NUMCLICKS = 5;
@@ -40,25 +40,24 @@ public class Child extends HUDObject {
      * Enum specifying the possible moods
      * the child can have
      */
-    public enum mood {
-        happy, neutral, sad, critical
+    public enum Mood {
+        HAPPY, NEUTRAL, SAD, CRITICAL
     }
 
     /*
      * Constructor
      */
-    public Child(ChildType type, int x, int y) {
+    public Child(ChildType type) {
         ctype = type;
         isAwake = true;
         happiness = 1.0f;
-        pos = new Vector2(x,y);
-        currentMood = mood.happy;
+        currentMood = Mood.HAPPY;
     }
 
     /*
      * Returns the mood of the child
      */
-    public mood getCurrentMood(){
+    public Mood getCurrentMood(){
         return currentMood;
     }
 
@@ -70,13 +69,12 @@ public class Child extends HUDObject {
      * @param critical
      */
     public void setChildTextures(Texture happy, Texture neutral, Texture sad, Texture critical){
-        childTextures = new ObjectMap<mood, Texture>();
-        childTextures.put(mood.happy, happy);
-        childTextures.put(mood.neutral, neutral);
-        childTextures.put(mood.sad,sad);
-        childTextures.put(mood.critical,critical);
+        childTextures = new ObjectMap<Mood, Texture>();
+        childTextures.put(Mood.HAPPY, happy);
+        childTextures.put(Mood.NEUTRAL, neutral);
+        childTextures.put(Mood.SAD,sad);
+        childTextures.put(Mood.CRITICAL,critical);
     }
-
 
     /**
      * Returns true if the mouse is positioned inside the area of the wheel.
@@ -104,19 +102,24 @@ public class Child extends HUDObject {
      * draws the child on the given canvas
      * @param canvas
      */
-    public void draw(GameCanvas canvas){
-        if(currentMood == null) {
-            return;
-        }
-        else if(childTextures == null){
-            return;
-        }
+    public void draw(GameCanvas canvas, Texture rearviewMirror){
+        if(currentMood == null || childTextures == null) { return; }
+
+        float rearWidth = rearviewMirror.getWidth() * canvas.getHeight()/(rearviewMirror.getHeight()*3.5f);
 
         Texture currentTex = childTextures.get(currentMood);
-        float ox = 0.5f * currentTex.getWidth();
-        float oy = 0.5f * currentTex.getHeight();
+        float ox = 0.5f* currentTex.getWidth();
+        float oy = currentTex.getHeight();
 
-        canvas.draw(currentTex, Color.WHITE, ox, oy, pos.x, pos.y, 0, CHILD_SCALE, CHILD_SCALE);
+        if(ctype == ChildType.NOSH) {
+            canvas.draw(currentTex, Color.WHITE, ox, oy, canvas.getWidth() - rearWidth/3.5f,canvas.getHeight()*0.95f, 0,
+                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
+                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
+        } else {
+            canvas.draw(currentTex, Color.WHITE, ox, oy, canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f, 0,
+                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
+                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
+        }
     }
 
     /**

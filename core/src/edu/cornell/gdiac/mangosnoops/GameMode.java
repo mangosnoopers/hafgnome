@@ -65,6 +65,8 @@ public class GameMode implements Screen {
 	private static final String HEALTH_GAUGE_FILE = "images/gauge.png";
 	/** The file for the health gauge pointer */
 	private static final String HEALTH_POINTER_FILE = "images/pointer.png";
+	/** The file for the rear view mirror */
+	private static final String REARVIEW_MIRROR_FILE = "images/rearview.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -89,6 +91,8 @@ public class GameMode implements Screen {
 	private Texture healthGauge;
 	/** Texture of the health gauge's pointer */
 	private Texture healthPointer;
+	/** Texture of the rear view mirror */
+	private Texture rearviewMirror;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -118,6 +122,9 @@ public class GameMode implements Screen {
 		assets.add(HEALTH_GAUGE_FILE);
 		manager.load(HEALTH_POINTER_FILE, Texture.class);
 		assets.add(HEALTH_POINTER_FILE);
+		// Load rear view
+		manager.load(REARVIEW_MIRROR_FILE, Texture.class);
+		assets.add(REARVIEW_MIRROR_FILE);
 		
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -176,6 +183,10 @@ public class GameMode implements Screen {
 
 		if (manager.isLoaded(HEALTH_POINTER_FILE)) {
 			healthPointer = manager.get(HEALTH_POINTER_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(REARVIEW_MIRROR_FILE)) {
+			rearviewMirror = manager.get(REARVIEW_MIRROR_FILE, Texture.class);
 		}
 
 		// Load gameplay content
@@ -362,8 +373,14 @@ public class GameMode implements Screen {
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
 
-		// Nosh
-		gameplayController.getCar().getNosh().draw(canvas);
+		//Draw rearview mirror
+		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth(),rearviewMirror.getHeight(),
+					canvas.getWidth(),canvas.getHeight(),0,
+				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
+
+		//Draw nosh
+		gameplayController.getCar().getNosh().draw(canvas, rearviewMirror);
+        gameplayController.getCar().getNed().draw(canvas, rearviewMirror);
 
 		// Health gauge and pointer
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
