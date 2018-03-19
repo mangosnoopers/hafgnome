@@ -258,19 +258,46 @@ public class GameplayController {
 		Gnome newGnome3 = new Gnome(0, 120);
 		Gnome newGnome4 = new Gnome(-0.1f, 150);
 		Gnome newGnome5 = new Gnome(0.1f,170);
-		Gnome newGnome6 = new Gnome(-0.1f, 200);
+		Gnome newGnome6 = new Gnome(-0.1f, 10);
+		Gnome newGnome7 = new Gnome(-0.1f, 15);
+		Gnome newGnome8 = new Gnome(-0.1f, 30);
+		Gnome newGnome9 = new Gnome(0, 40);
+		Gnome newGnome10 = new Gnome(-0.1f,300);
+		Gnome newGnome11 = new Gnome(0.1f, 5);
+		Gnome newGnome12 = new Gnome(-0.1f, 15);
+		Gnome newGnome13 = new Gnome(0.1f, 80);
+		Gnome newGnome14 = new Gnome(-0.1f, 90);
+		Gnome newGnome15 = new Gnome(0.1f, 100);
 		newGnome.setTexture(gnomeTexture);
 		newGnome2.setTexture(gnomeTexture);
 		newGnome3.setTexture(gnomeTexture);
 		newGnome4.setTexture(gnomeTexture);
 		newGnome5.setTexture(gnomeTexture);
 		newGnome6.setTexture(gnomeTexture);
+		newGnome7.setTexture(gnomeTexture);
+		newGnome8.setTexture(gnomeTexture);
+		newGnome9.setTexture(gnomeTexture);
+		newGnome10.setTexture(gnomeTexture);
+		newGnome11.setTexture(gnomeTexture);
+		newGnome12.setTexture(gnomeTexture);
+		newGnome13.setTexture(gnomeTexture);
+		newGnome14.setTexture(gnomeTexture);
+		newGnome15.setTexture(gnomeTexture);
 		gnomez.add(newGnome);
 		gnomez.add(newGnome2);
 		gnomez.add(newGnome3);
 		gnomez.add(newGnome4);
 		gnomez.add(newGnome5);
 		gnomez.add(newGnome6);
+		gnomez.add(newGnome7);
+		gnomez.add(newGnome8);
+		gnomez.add(newGnome9);
+		gnomez.add(newGnome10);
+		gnomez.add(newGnome11);
+		gnomez.add(newGnome12);
+		gnomez.add(newGnome13);
+		gnomez.add(newGnome14);
+		gnomez.add(newGnome15);
 	}
 
 	/**
