@@ -165,17 +165,52 @@ public class Radio extends HUDObject {
         pos = new Vector2(x+50,y+50);
         knobPos = new Vector2(x,y);
 
-        //Create Station list
+        // Create Station list
         Stations = new ObjectMap<Integer, Station>();
-        File[] radiosongs = new File("RadioSongs").listFiles();
-        for(File f : radiosongs){
-            if(f.isFile()){
-                Stations.put(stationListSize,new Station(f.getName()));
-                stationListSize++;
-            }
-        }
 
-        clicks = 0;
+        // TODO: make this not trash and work with custom moods
+        // BENSOUND CREEPY
+        File creepy = new File("RadioSongs/bensound-creepy.mp3");
+        Stations.put(stationListSize, new Station(creepy.getName(), true, false));
+        stationListSize++;
+
+        // BENSOUND DANCE
+        File dance = new File("RadioSongs/bensound-dance.mp3");
+        Stations.put(stationListSize, new Station(dance.getName(), true, true));
+        stationListSize++;
+
+        // BENSOUND EXTREME ACTION
+        File action = new File("RadioSongs/bensound-extremeaction.mp3");
+        Stations.put(stationListSize, new Station(action.getName(), false, true));
+        stationListSize++;
+
+        // BENSOUND JAZZ COMEDY
+        File jazz = new File("RadioSongs/bensound-jazzcomedy.mp3");
+        Stations.put(stationListSize, new Station(jazz.getName(), true, true));
+        stationListSize++;
+
+        // TEST SONG 1
+        File dadada = new File("RadioSongs/testsong.wav");
+        Stations.put(stationListSize, new Station(dadada.getName(), false, true));
+        stationListSize++;
+
+        // TEST SONG 2
+        File no = new File("RadioSongs/testsong2.wav");
+        Stations.put(stationListSize, new Station(no.getName(), true, false));
+        stationListSize++;
+
+        // TEST SONG 3
+        File weirdAl = new File("RadioSongs/testsong3.wav");
+        Stations.put(stationListSize, new Station(weirdAl.getName(), true, true));
+        stationListSize++;
+
+//        File[] radiosongs = new File("RadioSongs").listFiles();
+//        for(File f : radiosongs){
+//            if(f.isFile()){
+//                Stations.put(stationListSize,new Station(f.getName()));
+//                stationListSize++;
+//            }
+//        }
 
     }
 
@@ -224,6 +259,10 @@ public class Radio extends HUDObject {
 //            knobAng = knobAng - dx;
             // TODO: make this not weird
             knobAng -= (in.angle(src) * ROTATION_SPEED);
+
+            if (knobAng == -360.0f) {
+                knobAng = 0.0f;
+            }
             setStation();
         }
     }
@@ -243,17 +282,34 @@ public class Radio extends HUDObject {
         private Music audio;
         /** volume at which to play the audio **/
         private float volume;
+        /** True if this station makes Ned happy */
+        private boolean nedHappy;
+        /** True if this station makes Nosh happy */
+        private boolean noshHappy;
 
         /**
-         * Class constructor
-         *
-         * Sets name of song to name of file, minus its filetype extension
-         * @param filename
+         * Class constructor. Sets name of song to name of file, minus its
+         * filetype extension
+         * @param filename the string of the path to the file
+         * @param ned true if this station will make Ned happy
+         * @param nosh true if this station will make Nosh happy
          */
-        public Station(String filename) {
-            this.name = filename.substring(0,filename.length()-4);
-            this.audioFile = "RadioSongs/" + filename;
+        public Station(String filename, boolean ned, boolean nosh) {
+            name = filename.substring(0,filename.length()-4);
+            audioFile = "RadioSongs/" + filename;
+            nedHappy = ned;
+            noshHappy = nosh;
         }
+
+        /**
+         * Returns true if this station makes Ned happy
+         */
+        public boolean nedHappy() { return nedHappy; }
+
+        /**
+         * Returns true if this station makes Nosh happy
+         */
+        public boolean noshHappy() { return noshHappy; }
 
         /**
          * Creates the music file for the song and plays it
