@@ -22,6 +22,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -71,6 +72,10 @@ public class GameCanvas {
 	TextureRegion roadTextureRegion;
 	int NUM_ROAD_DECALS = 30;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
+
+	// Damage-indicator stuff
+	private ShapeRenderer shapeRenderer = new ShapeRenderer();
+	private float damageIndicatorAlpha = 1.0f;
 
 
 	/**
@@ -652,6 +657,15 @@ public class GameCanvas {
 
 	public void drawWorld() {
 		batch.flush();
+	}
+
+	public void drawDamageIndicator(float alpha) {
+	    Gdx.gl.glEnable(GL20.GL_BLEND);
+	    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+	    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+	    shapeRenderer.setColor(new Color(1, 0, 0, alpha));
+	    shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	    shapeRenderer.end();
 	}
 
 }

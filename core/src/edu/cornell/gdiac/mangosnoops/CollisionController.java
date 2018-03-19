@@ -19,6 +19,7 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
@@ -37,7 +38,7 @@ public class CollisionController {
 	/** A factor to determine the gnome is close enough for Ned to shoot. */
 	private static final float GNOME_INRANGE = -9.0f;
 	/** A factor to determine the gnome and car have collided. */
-	private static final float HIT_RANGE = 5.0f;
+	private static final float HIT_RANGE = 0.05f;
 
 	// These cannot be modified after the controller is constructed.
 	// If these change, make a new constructor.
@@ -78,13 +79,14 @@ public class CollisionController {
 	/**
 	 * This is the main (incredibly unoptimized) collision detetection method.
 	 *
+	 * FIXME: remove camera, canvas params, oh god, what a mess
 	 * @param gnomez List of live gnomes to check
 	 * @param yonda  Player's car
 	 */
-	public void processCollisions(Array<Gnome> gnomez, Car yonda) {
+	public void processCollisions(Array<Gnome> gnomez, Car yonda, GameCanvas canvas) {
 		processBounds(yonda);
 		for (Gnome g : gnomez) {
-			handleCollision(yonda, g);
+			handleCollision(yonda, g, canvas);
 		}
 	}
 
@@ -102,17 +104,31 @@ public class CollisionController {
 
 	/**
 	 * Collide a gnome with a car.
+	 * FIXME: remove canvas param
 	 */
-	private void handleCollision(Car c, Gnome g) {
+	private void handleCollision(Car c, Gnome g, GameCanvas canvas) {
 		if(c.nedAwake()) {
 			if(g.getY() < GNOME_INRANGE) {
 				g.setDestroyed(true);
 			}
-		} else {
+		}
+
+		/* FIXME: Associate car coords and cam coords
+		else {
 			if(g.getY() < c.getY() && Math.abs(g.getX() - c.getX()) < HIT_RANGE) {
 				c.setHealth(c.getHealth() - 10);
 				g.setDestroyed(true);
 			}
+		}
+		*/
+
+		else {
+			if (g.getY() < -10 && Math.abs(g.getX() - canvas.camera.position.x) < HIT_RANGE) {
+				c.setHealth(c.getHealth() - 10);
+				c.setDamaged(true);
+				g.setDestroyed(true);
+			}
+
 		}
 	}
 }
