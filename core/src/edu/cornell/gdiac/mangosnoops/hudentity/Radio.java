@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.*;
 import java.io.File;
 
 public class Radio extends HUDObject {
+    /** Rotation speed */
+    private static final float ROTATION_SPEED = 0.05f;
     /** Window height */
     private static final float WINDOW_HEIGHT = 600;
     /** Coordinates of radio center */
@@ -35,6 +37,8 @@ public class Radio extends HUDObject {
     private Texture knobTexture;
     /** Scale for drawing of the radio **/
     private final float KNOB_SCALE = 0.2f;
+    /** TODO: delete */
+    private int clicks;
 
     /**
      * Return the current position of the radio.
@@ -158,8 +162,8 @@ public class Radio extends HUDObject {
      * @param y The screen y-coordinate of the center
      */
     public Radio(float x, float y) {
-        this.pos = new Vector2(x+50,y+50);
-        this.knobPos = new Vector2(x,y);
+        pos = new Vector2(x+50,y+50);
+        knobPos = new Vector2(x,y);
 
         //Create Station list
         Stations = new ObjectMap<Integer, Station>();
@@ -170,6 +174,9 @@ public class Radio extends HUDObject {
                 stationListSize++;
             }
         }
+
+        clicks = 0;
+
     }
 
     /**
@@ -210,10 +217,14 @@ public class Radio extends HUDObject {
      *
      * @param in where the mouse clicked (null if no click)
      * @param dx the change in x in the user's input
+     * @param dy the change in y in the user's input
      */
     public void update(Vector2 in, float dx) {
+        Vector2 src = new Vector2(0.0f,5.0f);
         if (in != null && inRadioArea(in)) {
-            knobAng = knobAng - dx;
+//            knobAng = knobAng - dx;
+            // TODO: make this not weird
+            knobAng -= (in.angle(src) * ROTATION_SPEED);
             setStation();
         }
     }
