@@ -315,6 +315,7 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
+
 	    // TODO: update object states based on input
 		for (Gnome g : gnomez) { g.update(delta); }
 
