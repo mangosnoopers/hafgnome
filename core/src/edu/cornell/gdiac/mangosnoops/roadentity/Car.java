@@ -125,6 +125,21 @@ public class Car extends RoadObject {
     public int getHealth() { return health; }
 
     /**
+     * Reset the car to restart the game.
+     */
+    public void reset() {
+        super.setY(-10f);
+        angle = 0.0f;
+        active = true;
+        health = 100;
+        nosh = new Child(Child.ChildType.NOSH);
+        ned = new Child(Child.ChildType.NED);
+        healthPointerAng = 0.0f;
+
+        timeToDisplayDamageIndicator = 10;
+    }
+
+    /**
      * Updates the animation frame and position of this ship.
      *
      * Notice how little this method does.  It does not actively fire the weapon.  It

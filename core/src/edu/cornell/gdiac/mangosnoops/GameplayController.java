@@ -315,7 +315,8 @@ public class GameplayController {
 	 */
 	public void reset() {
 		rotationMagnitude = 0;
-		yonda = null;
+//		yonda = null; TODO: prob make this less sus
+		yonda.reset();
 		wheel = null;
 		radio = null;
 		gnomez.clear();
