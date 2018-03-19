@@ -612,12 +612,12 @@ public class GameCanvas {
 
 		camera.position.set(camera.position.x + camOffset, camera.position.y, camera.position.z);
 
-		if (camera.position.x > 0.15f) {
-			camera.position.x = 0.15f;
+		if (camera.position.x > 0.25f) {
+			camera.position.x = 0.25f;
 		}
 
-		if (camera.position.x < -0.15f) {
-			camera.position.x = -0.15f;
+		if (camera.position.x < -0.25f) {
+			camera.position.x = -0.25f;
 		}
 
 		for (Decal d : roadDecals) {
