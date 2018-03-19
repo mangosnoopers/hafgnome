@@ -129,6 +129,8 @@ public class CollisionController {
 				c.setHealth(c.getHealth() - 10);
 				c.setDamaged(true);
 				g.setDestroyed(true);
+				if (c.getHealth() == 0)
+					c.setDestroyed(true);
 			}
 
 		}
