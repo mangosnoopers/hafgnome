@@ -94,6 +94,9 @@ public class GameMode implements Screen {
 	/** Texture of the rear view mirror */
 	private Texture rearviewMirror;
 
+	/** Counter for the game TODO: REMOVE */
+	private int counter;
+
 	/** 
 	 * Preloads the assets for this game.
 	 * 
@@ -330,6 +333,15 @@ public class GameMode implements Screen {
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
 
+		// Update child states TODO: idk
+		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
+		if (!gameplayController.getCar().getNed().isAwake()) {
+			System.out.println(counter + " ned asleep");
+		}
+		if (!gameplayController.getCar().getNosh().isAwake()) {
+			System.out.println(counter + " nosh asleep");
+		}
+
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
@@ -338,6 +350,9 @@ public class GameMode implements Screen {
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
+
+		// Update the counter
+		counter += 1;
 	}
 	
 	/**
@@ -390,10 +405,6 @@ public class GameMode implements Screen {
 			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);
 			canvas.drawTextCentered("Press R to restart",displayFont, GAME_OVER_OFFSET-40);
 		}
-
-		// car health TODO: change to not be wheel
-//        canvas.drawText("HEALTH: " + Math.max(gameplayController.getWheel().getHealth(), 0),
-//                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
 
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();

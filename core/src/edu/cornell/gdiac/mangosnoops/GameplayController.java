@@ -28,6 +28,8 @@ import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
+import java.util.Random;
+
 /**
  * Controller to handle gameplay interactions.
  * </summary>
@@ -153,7 +155,7 @@ public class GameplayController {
 		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
 		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
 		nosh_sad = createTexture(manager, NOSH_SAD_FILE);
-		nosh_critical = createTexture(manager, NED_CRITICAL_FILE);
+		nosh_critical = createTexture(manager, NOSH_CRITICAL_FILE);
 		ned_happy = createTexture(manager,NED_HAPPY_FILE);
 		ned_neutral = createTexture(manager,NED_NEUTRAL_FILE);
 		ned_sad = createTexture(manager, NED_SAD_FILE);
@@ -347,5 +349,31 @@ public class GameplayController {
 		radio.update(input.getClickPos(), input.getDX());
 
 		yonda.update(input.getClickPos(), delta);
+	}
+
+	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP
+	 *
+	 * @param counter
+	 * @param ned
+	 * @param nosh
+	 */
+	public void resolveChildren(int counter, Child ned, Child nosh) {
+		Random generator = new Random();
+		float ned_prob = 0.5f;
+		float nosh_prob = 0.3f;
+
+		// check every 10 frames
+		if (counter % 10 == 0) {
+			// make ned sleepy with given probability
+			if (generator.nextFloat() <= ned_prob) {
+				ned.setAwake(false);
+			}
+			// make nosh sleepy with given probability
+			if (generator.nextFloat() <= nosh_prob) {
+				nosh.setAwake(false);
+			}
+
+		}
+
 	}
 }
