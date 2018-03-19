@@ -424,20 +424,24 @@ public class GameplayController {
 	 * @param nosh
 	 */
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
+		System.out.println("ned: " + ned.getCurrentMood());
 		// check radio for ned - either make him happy or decrease his happiness
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0) {
-			if (r.getCurrentStationNed()) {
-				ned.setHappy();
-			} else {
-				ned.decreaseHappiness();
+			if (ned.isAwake()) {
+				if (r.getCurrentStationNed()) {
+					ned.setHappy();
+				} else {
+					ned.decreaseHappiness();
+				}
 			}
 
-
 			// check radio for nosh
-			if (r.getCurrentStationNosh()) {
-				nosh.setHappy();
-			} else {
-				nosh.decreaseHappiness();
+			if (nosh.isAwake()) {
+				if (r.getCurrentStationNosh()) {
+					nosh.setHappy();
+				} else {
+					nosh.decreaseHappiness();
+				}
 			}
 		}
 

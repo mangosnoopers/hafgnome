@@ -110,6 +110,11 @@ public class Child extends HUDObject {
     public ChildType getType() { return ctype; }
 
     /**
+     * TODO: idk
+     */
+    public int getNumPokes() { return numPokes; }
+
+    /**
      * draws the child on the given canvas
      * @param canvas
      */
@@ -149,8 +154,11 @@ public class Child extends HUDObject {
                 break;
             case CRITICAL:
                 break;
-            default: //asleep
-                currentMood = Mood.HAPPY;
+            default: //asleep TODO
+                if (isAwake)
+                    currentMood = Mood.HAPPY;
+                else
+                    currentMood = Mood.SLEEP;
                 break;
         }
     }
@@ -165,16 +173,16 @@ public class Child extends HUDObject {
         if(inChildArea(clickPos)) {
             numPokes++;
 
-            if(ctype == ChildType.NED) {
-                System.out.println("Ned is clicked " + numPokes);
-            } else {
-                System.out.println("Nosh is clicked " + numPokes);
-            }
+//            if(ctype == ChildType.NED) {
+//                System.out.println("Ned is clicked " + numPokes);
+//            } else {
+//                System.out.println("Nosh is clicked " + numPokes);
+//            }
 
             if(isAwake) {
                 decreaseHappiness();
             }
-            if(numPokes >= NED_NUMCLICKS) {
+            if(numPokes >= NED_NUMCLICKS && !isAwake) {
                 isAwake = true;
                 numPokes = 0;
             }
