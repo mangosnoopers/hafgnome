@@ -12,8 +12,6 @@ public class Child extends HUDObject {
 
     /** The type of Gnome this is */
     private ChildType ctype;
-    /** How happy the child is right now */
-    private float happiness;
     /** If the child is asleep */
     private boolean isAwake;
     /** Number of pokes this child has had. (Zero if awake) */
@@ -22,10 +20,10 @@ public class Child extends HUDObject {
     private Vector2 pos;
     private Mood currentMood;
     private ObjectMap<Mood,Texture> childTextures;
-    private static final float CHILD_SCALE = 0.5f;
+    private static final int SLACK = 30;
 
     /** How many clicks needed to wake up */
-        private static final int NOSH_NUMCLICKS = 5;
+    private static final int NOSH_NUMCLICKS = 5;
     private static final int NED_NUMCLICKS = 5;
 
     /**
@@ -50,7 +48,6 @@ public class Child extends HUDObject {
     public Child(ChildType type) {
         ctype = type;
         isAwake = true;
-        happiness = 1.0f;
         currentMood = Mood.HAPPY;
     }
 
@@ -83,9 +80,8 @@ public class Child extends HUDObject {
      * @param p the vector giving the mouse's (x,y) screen coordinates
      */
     private boolean inChildArea(Vector2 p) {
-        return (p!=null) && false;
-//                ((ctype == ChildType.NOSH) //add isNoshArea
-//                || (ctype == ChildType.NED)); //add isNedArea
+        //TODO: make the y calculation better
+        return (p!=null) && (Math.abs(pos.x-p.x) < SLACK) && (Math.abs(100-p.y) < SLACK);
     }
 
     /**
@@ -106,20 +102,19 @@ public class Child extends HUDObject {
         if(currentMood == null || childTextures == null) { return; }
 
         float rearWidth = rearviewMirror.getWidth() * canvas.getHeight()/(rearviewMirror.getHeight()*3.5f);
+        if(ctype == ChildType.NOSH) {
+            pos = new Vector2(canvas.getWidth() - rearWidth/3.5f,canvas.getHeight()*0.95f);
+        } else {
+            pos = new Vector2(canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f);
+        }
 
         Texture currentTex = childTextures.get(currentMood);
         float ox = 0.5f* currentTex.getWidth();
         float oy = currentTex.getHeight();
 
-        if(ctype == ChildType.NOSH) {
-            canvas.draw(currentTex, Color.WHITE, ox, oy, canvas.getWidth() - rearWidth/3.5f,canvas.getHeight()*0.95f, 0,
-                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
-                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
-        } else {
-            canvas.draw(currentTex, Color.WHITE, ox, oy, canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f, 0,
-                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
-                    0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
-        }
+        canvas.draw(currentTex, Color.WHITE, ox, oy, pos.x, pos.y, 0,
+                0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
+                0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
     }
 
     /**
@@ -130,7 +125,25 @@ public class Child extends HUDObject {
      */
     public boolean update(Vector2 clickPos) {
         if(inChildArea(clickPos)) {
+            System.out.println("REACHED");
             numPokes++;
+
+            if(isAwake) {
+                //FSM to make child less happy
+                switch(currentMood) {
+                    case HAPPY:
+                        currentMood = Mood.NEUTRAL;
+                        break;
+                    case NEUTRAL:
+                        currentMood = Mood.SAD;
+                        break;
+                    case SAD:
+                        currentMood = Mood.CRITICAL;
+                        break;
+                    default: //don't do anything for critical
+                        break;
+                }
+            }
 
             if(ctype == ChildType.NOSH) isAwake = (numPokes == NOSH_NUMCLICKS);
             else isAwake = (numPokes == NED_NUMCLICKS);
@@ -138,7 +151,7 @@ public class Child extends HUDObject {
             if(isAwake) numPokes = 0;
         }
 
-        return isAwake;
+        return isAwake; //TODO: decide if this is useful or should just be void
     }
 
 }
