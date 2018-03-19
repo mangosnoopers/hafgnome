@@ -384,7 +384,7 @@ public class GameMode implements Screen {
 
 		// Health gauge and pointer
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
-        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 44.0f, 21.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.35f);
+        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 43.0f, 23.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.3f);
 
 		if (gameState == GameState.OVER) {
 			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);
