@@ -607,6 +607,14 @@ public class GameCanvas {
 
 		camera.position.set(camera.position.x + camOffset, camera.position.y, camera.position.z);
 
+		if (camera.position.x > 0.4) {
+			camera.position.x = 0.4f;
+		}
+
+		if (camera.position.x < -0.4) {
+			camera.position.x = -0.4f;
+		}
+
 		for (Decal d : roadDecals) {
 			float newY = (float) (d.getY() - 2 * delta);
 			if (newY < -13) {
