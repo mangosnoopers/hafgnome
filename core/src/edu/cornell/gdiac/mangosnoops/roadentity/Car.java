@@ -42,8 +42,8 @@ public class Car extends RoadObject {
         angle = 0.0f;
         active = true;
         health = 100;
-        nosh = new Child(Child.ChildType.NOSH);
-        ned = new Child(Child.ChildType.NED);
+        nosh = new Child(Child.ChildType.NOSH, 300,300);
+        ned = new Child(Child.ChildType.NED, 0, 0);
         healthPointerAng = 0.0f;
     }
 
@@ -69,6 +69,22 @@ public class Car extends RoadObject {
      * Returns the angle of the car.
      */
     public float getAngle() { return angle; }
+
+    /**
+     * Returns one Nosh
+     * @return reference to Nosh
+     */
+    public Child getNosh() {
+        return nosh;
+    }
+
+    /**
+     * Returns a reference to Ned
+     * @return Ned
+     */
+    public Child getNed() {
+        return ned;
+    }
 
     public boolean noshAwake() { return nosh.isAwake(); }
 

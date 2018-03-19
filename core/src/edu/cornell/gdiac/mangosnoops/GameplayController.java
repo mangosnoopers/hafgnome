@@ -54,6 +54,7 @@ public class GameplayController {
 	/** Data structure with level format */
 	private LevelObject level;
 
+
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/Wheel.png";
@@ -63,6 +64,12 @@ public class GameplayController {
 	private static final String RADIO_FILE = "images/radio.png";
 	/** The texture file for the gnome */
 	private static final String RADIO_KNOB_FILE = "images/radioDial.png";
+	/** The texture files for Nosh's moods */
+	private static final String NOSH_HAPPY_FILE = "images/NoshTextures/nosh_happy.png";
+	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
+	private static final String NOSH_SAD_FILE = "images/NoshTextures/nosh_sad.png";
+	private static final String NOSH_CRITICAL_FILE = "images/NoshTextures/nosh_critical.png";
+
 	/** Texture for the wheel**/
 	private Texture wheelTexture;
 	/** Texture for the wheel**/
@@ -71,6 +78,11 @@ public class GameplayController {
 	private Texture radioTexture;
 	/** Texture for the radio knob**/
 	private Texture radioknobTexture;
+	/** Textures for nosh **/
+	private Texture nosh_happy;
+	private Texture nosh_neutral;
+	private Texture nosh_sad;
+	private Texture nosh_critical;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -95,6 +107,14 @@ public class GameplayController {
 		assets.add(RADIO_FILE);
 		manager.load(RADIO_KNOB_FILE, Texture.class);
 		assets.add(RADIO_KNOB_FILE);
+		manager.load(NOSH_HAPPY_FILE, Texture.class);
+		assets.add(NOSH_HAPPY_FILE);
+		manager.load(NOSH_NEUTRAL_FILE, Texture.class);
+		assets.add(NOSH_NEUTRAL_FILE);
+		manager.load(NOSH_SAD_FILE, Texture.class);
+		assets.add(NOSH_SAD_FILE);
+		manager.load(NOSH_CRITICAL_FILE, Texture.class);
+		assets.add(NOSH_CRITICAL_FILE);
 	}
 	
 	/** 
@@ -112,6 +132,10 @@ public class GameplayController {
 		gnomeTexture = createTexture(manager, GNOME_FILE);
 		radioTexture = createTexture(manager, RADIO_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
+		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
+		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
+		nosh_sad = createTexture(manager, NOSH_SAD_FILE);
+		nosh_critical = createTexture(manager, NOSH_CRITICAL_FILE);
 	}
 	
 	private Texture createTexture(AssetManager manager, String file) {
@@ -168,6 +192,8 @@ public class GameplayController {
 	 * @return reference to the radio
 	 **/
     public Radio getRadio(){ return radio; }
+
+
 	/**
 	 * Returns true if the currently active player is alive.
 	 *
@@ -199,6 +225,8 @@ public class GameplayController {
 		radio = new Radio(545, 50);
 		radio.setRadioSprite(radioTexture);
 		radio.setKnobSprite(radioknobTexture);
+
+		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical);
 
 		Gnome newGnome = new Gnome(-0.1f, 50);
 		Gnome newGnome2 = new Gnome(0.1f, 100);
