@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
@@ -107,22 +108,12 @@ public class CollisionController {
 	 * FIXME: remove canvas param
 	 */
 	private void handleCollision(Car c, Gnome g, GameCanvas canvas) {
-		if(c.nedAwake()) {
+		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
+							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
 			if(g.getY() < GNOME_INRANGE) {
 				g.setDestroyed(true);
 			}
 		}
-
-		/* FIXME: Associate car coords and cam coords
-		else {
-			if(g.getY() < c.getY() && Math.abs(g.getX() - c.getX()) < HIT_RANGE) {
-				c.setHealth(c.getHealth() - 10);
-				g.setDestroyed(true);
-				if (c.getHealth() == 0)
-					c.setDestroyed(true);
-			}
-		}
-		*/
 
 		else {
 			if (g.getY() < -10 && Math.abs(g.getX() - canvas.camera.position.x) < HIT_RANGE) {
