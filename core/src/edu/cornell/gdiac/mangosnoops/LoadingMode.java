@@ -268,7 +268,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * prefer this in lecture.
 	 */
 	private void draw() {
-		canvas.begin();
+		canvas.beginHUDDrawing();
 		canvas.draw(background, 0, -100);
 		if (playButton == null) {
 			drawProgress(canvas);
@@ -277,7 +277,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
 						centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 		}
-		canvas.end();
+		canvas.endHUDDrawing();
 	}
 	
 	/**

@@ -94,7 +94,12 @@ public class Gnome extends RoadObject{
             animeframe -= NUM_ANIM_FRAMES;
         }
 
-        setY(this.getY()-5*delta);
+        setY(getY()-5*delta);
+        if (getY() < -12) {
+            setY(14);
+        }
+
+
     }
 
     /**

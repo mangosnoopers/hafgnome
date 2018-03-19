@@ -64,15 +64,12 @@ public class GameCanvas {
 	private TextureRegion holder;
 
 
-	// HUD stuff
+	// World drawing
 	PerspectiveCamera camera;
 	DecalBatch batch;
-
 	Array<Decal> roadDecals;
-
-	TextureRegion textureRegion;
+	TextureRegion roadTextureRegion;
 	int NUM_ROAD_DECALS = 30;
-
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 
 
@@ -94,6 +91,7 @@ public class GameCanvas {
 		holder = new TextureRegion();
 		local  = new Affine2();
 
+		// Initialize game world drawing stuff
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.set(CAM_START_POS);
 		camera.direction.set(0, 0, 0);
@@ -102,12 +100,12 @@ public class GameCanvas {
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
 		/* FIXME: Get texture from asset manager */
-		textureRegion = new TextureRegion(new Texture(Gdx.files.internal("images/road.png")));
+		roadTextureRegion = new TextureRegion(new Texture(Gdx.files.internal("images/road.png")));
 
 		roadDecals = new Array<Decal>(7);
 		for (int i = 0; i < NUM_ROAD_DECALS; i++) {
-			Decal newDecal = Decal.newDecal(1, 1, textureRegion);
-			newDecal.setPosition(0, -1f*i, 1);
+			Decal newDecal = Decal.newDecal(1, 1, roadTextureRegion);
+			newDecal.setPosition(0, -0.8f*i, 1);
 			roadDecals.add(newDecal);
 		}
 	}
@@ -312,7 +310,7 @@ public class GameCanvas {
 	 *
 	 * Nothing is flushed to the graphics card until the method end() is called.
 	 */
-    public void begin() {
+    public void beginHUDDrawing() {
     	spriteBatch.begin();
     	active = true;
     	
@@ -321,7 +319,7 @@ public class GameCanvas {
 	/**
 	 * Ends a drawing sequence, flushing textures to the graphics card.
 	 */
-    public void end() {
+    public void endHUDDrawing() {
     	spriteBatch.end();
     	active = false;
     }
@@ -351,56 +349,21 @@ public class GameCanvas {
     }
 
 
-    public void drawGnomez(Array<Gnome> gnomez) {
 
-        for (Gnome g : gnomez) {
-            /* TODO: optimize this */
-        	Decal gnomeDecal = Decal.newDecal(0.15f, 0.15f, new TextureRegion(g.getTexture()));
-        	gnomeDecal.setPosition(g.getX(), g.getY(), 4.34f);
-        	gnomeDecal.rotateX(90);
-        	batch.add(gnomeDecal);
-		}
-
-		batch.flush();
-
-    }
-
-    /**
-	 * Resets camera.
-	 * */
-    public void resetCam() {
+	/**
+	 * Reset camera to original coordinates.
+	 */
+	public void resetCam() {
         camera.position.set(CAM_START_POS);
 	}
 
 	/**
-	 * Draw the road, projected to a pseudo-3D perspective.
-	 * Sources:
-	 * 	- http://www.extentofthejam.com/pseudo/
-	 * 	- https://gamedev.stackexchange.com/questions/24957/doing-an-snes-mode-7-affine-transform-effect-in-pygame
-	 * 	- http://blog.supercookie.co.uk/post/124807296612/modeseven
+	 * Clear the screen. Call this before starting any drawing.
 	 */
-	public void drawRoad(float xOff) {
-
+	public void clearScreen() {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-		camera.position.set(camera.position.x + xOff*-0.001f, camera.position.y, camera.position.z);
-
-		for (Decal d : roadDecals) {
-			float newY = (float) (d.getY() - 0.05);
-			if (newY < -13) {
-				newY = 0;
-			}
-			d.setPosition(0, newY, 4.25f);
-			batch.add(d);
-
-		}
-
-		camera.update();
-		batch.flush();
-
-
 	}
 
 	/**
@@ -629,5 +592,58 @@ public class GameCanvas {
 		ADDITIVE,
 		/** Color values are draw on top of one another with no transparency support */
 		OPAQUE
-	}	
+	}
+
+	/**
+     * Draw road with infinite scrolling effect, with PerspectiveCamera.
+	 *
+	 * The calls are buffered. Must call drawWorld() to draw to screen.
+	 *
+	 * PerspectiveCamera used for 3D perspective.
+	 */
+	public void drawRoad(float xOff, float delta) {
+
+		float camOffset = xOff * -0.1f * delta;
+
+		camera.position.set(camera.position.x + camOffset, camera.position.y, camera.position.z);
+
+		for (Decal d : roadDecals) {
+			float newY = (float) (d.getY() - 2 * delta);
+			if (newY < -13) {
+				newY = 0;
+			}
+			d.setPosition(0, newY, 4.25f);
+			batch.add(d);
+
+		}
+
+		camera.update();
+
+	}
+
+	/**
+	 * Draw each Gnome given their current position and Texture.
+	 * PerspectiveCamera is used for 3D perspective.
+	 *
+	 * The calls are buffered. Must call drawWorld() to draw to screen.
+     *
+	 * @param gnomez The gnomez to draw
+	 */
+	public void drawGnomez(Array<Gnome> gnomez) {
+
+		for (Gnome g : gnomez) {
+			/* TODO: optimize this */
+			Decal gnomeDecal = Decal.newDecal(0.08f, 0.1f, new TextureRegion(g.getTexture()));
+			gnomeDecal.setPosition(g.getX(), g.getY(), 4.32f);
+			gnomeDecal.setBlending(1, 0	);
+			gnomeDecal.rotateX(90);
+			batch.add(gnomeDecal);
+		}
+
+	}
+
+	public void drawWorld() {
+		batch.flush();
+	}
+
 }

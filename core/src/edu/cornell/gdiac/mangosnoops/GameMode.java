@@ -338,34 +338,36 @@ public class GameMode implements Screen {
 	 */
 	private void draw(float delta) {
 		float WINDOW_WIDTH =(float)canvas.getWidth();
-		canvas.drawRoad(gameplayController.getWheel().getAng() / ANGLE_TO_LR);
-		canvas.drawGnomez(gameplayController.getGnomez());
-		canvas.begin();
-		canvas.draw(clouds,200 , 500);
 
-		// Draw the road, clouds, and dash
+		canvas.clearScreen();
+
+        // ** Draw world with 3D perspective **
+		canvas.drawRoad(gameplayController.getWheel().getAng() / ANGLE_TO_LR, delta);
+		canvas.drawGnomez(gameplayController.getGnomez());
+		canvas.drawWorld();
+
+		// ** Draw HUD stuff **
+		canvas.beginHUDDrawing();
+
+		// Road, clouds, and dash
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
+        canvas.draw(clouds,200 , 500);
 
-		// Draw wheel
+		// Wheel
 		gameplayController.getWheel().draw(canvas);
 
-		// Draw radio
+		// Radio
 		gameplayController.getRadio().draw(canvas);
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
 
-		//Draw nosh
+		// Nosh
 		gameplayController.getCar().getNosh().draw(canvas);
 
-		// Draw the health gauge and pointer
+		// Health gauge and pointer
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
         canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 44.0f, 21.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.35f);
-
-		// Output a simple debugging message stating the number of shells on the screen
-        // TODO: commented this out to get game to run, car is null rn
-		//String message = "Current movement: "+gameplayController.getCar().getMovement();
-		//canvas.drawText(message, displayFont, COUNTER_OFFSET, canvas.getHeight()-COUNTER_OFFSET);
 
 		if (gameState == GameState.OVER) {
 			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);
@@ -377,7 +379,7 @@ public class GameMode implements Screen {
 //                        displayFont, 10.0f, canvas.getHeight() - 10.0f);
 
 		// Flush information to the graphic buffer.
-		canvas.end();
+		canvas.endHUDDrawing();
 	}
 	
 	/**
