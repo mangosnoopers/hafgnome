@@ -21,6 +21,7 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -371,6 +372,26 @@ public class GameplayController {
 		}
 	}
 	
+//	/**
+//	 * Resolve the actions of all game objects
+//	 *
+//	 * @param input  Reference to the input controller
+//	 * @param delta  Number of seconds since last animation frame
+//	 */
+//	public void resolveActions(InputController input, float delta) {
+//		for (Gnome g : gnomez) { g.update(delta); }
+//
+//		// Update the wheel angle
+//		wheel.update(input.getClickPos(), input.getDX());
+//
+//		// Update the radio
+//		radio.update(input.getClickPos(), input.getDX());
+//
+//		yonda.update(input.getClickPos(), delta);
+//	}
+
+	private Vector2 prevClick = null;
+
 	/**
 	 * Resolve the actions of all game objects
 	 *
@@ -380,13 +401,20 @@ public class GameplayController {
 	public void resolveActions(InputController input, float delta) {
 		for (Gnome g : gnomez) { g.update(delta); }
 
+		if(prevClick != null && input.getClickPos() == null) {
+			yonda.update(prevClick, delta);
+			prevClick = null;
+		} else {
+			prevClick = input.getClickPos();
+			yonda.update(null, delta);
+		}
+
 		// Update the wheel angle
 		wheel.update(input.getClickPos(), input.getDX());
 
 		// Update the radio
 		radio.update(input.getClickPos(), input.getDX());
 
-		yonda.update(input.getClickPos(), delta);
 	}
 
 	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP
@@ -397,8 +425,8 @@ public class GameplayController {
 	 */
 	public void resolveChildren(int counter, Child ned, Child nosh) {
 		Random generator = new Random();
-		float ned_prob = 0.1f;
-		float nosh_prob = 0.1f;
+		float ned_prob = 0.05f;
+		float nosh_prob = 0.05f;
 
 		// check every 10 frames
 		if (counter % 10 == 0) {
