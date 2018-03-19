@@ -326,9 +326,9 @@ public class GameMode implements Screen {
 		}
 		*/
 		// TODO: update car
-//		if (!gameplayController.getCar().isActive()) {
-//            gameState = GameState.OVER;
-//        }
+		if (gameplayController.getCar().isDestroyed()) {
+            gameState = GameState.OVER;
+        }
 
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
@@ -337,9 +337,6 @@ public class GameMode implements Screen {
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
 		if (!gameplayController.getCar().getNed().isAwake()) {
 			System.out.println(counter + " ned asleep");
-		}
-		if (!gameplayController.getCar().getNosh().isAwake()) {
-			System.out.println(counter + " nosh asleep");
 		}
 
 		// Check for collisions
