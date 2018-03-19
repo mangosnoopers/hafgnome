@@ -354,6 +354,9 @@ public class GameMode implements Screen {
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
 
+		//Draw nosh
+		gameplayController.getCar().getNosh().draw(canvas);
+
 		// Draw the health gauge and pointer
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
         canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 44.0f, 21.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.35f);
