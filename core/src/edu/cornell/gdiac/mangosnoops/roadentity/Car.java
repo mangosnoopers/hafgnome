@@ -43,8 +43,8 @@ public class Car extends RoadObject {
         angle = 0.0f;
         active = true;
         health = 100;
-        nosh = new Child(Child.ChildType.NOSH, 300,300);
-        ned = new Child(Child.ChildType.NED, 0, 0);
+        nosh = new Child(Child.ChildType.NOSH);
+        ned = new Child(Child.ChildType.NED);
         healthPointerAng = 0.0f;
     }
 

@@ -69,6 +69,11 @@ public class GameplayController {
 	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
 	private static final String NOSH_SAD_FILE = "images/NoshTextures/nosh_sad.png";
 	private static final String NOSH_CRITICAL_FILE = "images/NoshTextures/nosh_critical.png";
+	/** The texture files for Ned's moods */
+	private static final String NED_HAPPY_FILE = "images/NedTextures/ned_happy.png";
+	private static final String NED_NEUTRAL_FILE = "images/NedTextures/ned_neutral.png";
+	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
+	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
 
 	/** Texture for the wheel**/
 	private Texture wheelTexture;
@@ -83,6 +88,11 @@ public class GameplayController {
 	private Texture nosh_neutral;
 	private Texture nosh_sad;
 	private Texture nosh_critical;
+	/** Textures for ned **/
+	private Texture ned_happy;
+	private Texture ned_neutral;
+	private Texture ned_sad;
+	private Texture ned_critical;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -115,6 +125,14 @@ public class GameplayController {
 		assets.add(NOSH_SAD_FILE);
 		manager.load(NOSH_CRITICAL_FILE, Texture.class);
 		assets.add(NOSH_CRITICAL_FILE);
+		manager.load(NED_HAPPY_FILE, Texture.class);
+		assets.add(NED_HAPPY_FILE);
+		manager.load(NED_NEUTRAL_FILE, Texture.class);
+		assets.add(NED_NEUTRAL_FILE);
+		manager.load(NED_SAD_FILE, Texture.class);
+		assets.add(NED_SAD_FILE);
+		manager.load(NED_CRITICAL_FILE, Texture.class);
+		assets.add(NED_CRITICAL_FILE);
 	}
 	
 	/** 
@@ -135,7 +153,11 @@ public class GameplayController {
 		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
 		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
 		nosh_sad = createTexture(manager, NOSH_SAD_FILE);
-		nosh_critical = createTexture(manager, NOSH_CRITICAL_FILE);
+		nosh_critical = createTexture(manager, NED_CRITICAL_FILE);
+		ned_happy = createTexture(manager,NED_HAPPY_FILE);
+		ned_neutral = createTexture(manager,NED_NEUTRAL_FILE);
+		ned_sad = createTexture(manager, NED_SAD_FILE);
+		ned_critical = createTexture(manager, NED_CRITICAL_FILE);
 	}
 	
 	private Texture createTexture(AssetManager manager, String file) {
@@ -227,6 +249,7 @@ public class GameplayController {
 		radio.setKnobSprite(radioknobTexture);
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical);
+		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical);
 
 		Gnome newGnome = new Gnome(-0.1f, 50);
 		Gnome newGnome2 = new Gnome(0.1f, 100);
@@ -315,8 +338,6 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
-
-	    // TODO: update object states based on input
 		for (Gnome g : gnomez) { g.update(delta); }
 
 		// Update the wheel angle
