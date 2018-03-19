@@ -132,7 +132,6 @@ public class Child extends HUDObject {
      */
     public boolean update(Vector2 clickPos) {
         if(inChildArea(clickPos)) {
-            System.out.println("REACHED");
             numPokes++;
 
             if(isAwake) {
@@ -150,12 +149,12 @@ public class Child extends HUDObject {
                     default: //don't do anything for critical
                         break;
                 }
+            } else {
+                if(ctype == ChildType.NOSH) isAwake = (numPokes == NOSH_NUMCLICKS);
+                else isAwake = (numPokes == NED_NUMCLICKS);
+
+                if(isAwake) numPokes = 0;
             }
-
-            if(ctype == ChildType.NOSH) isAwake = (numPokes == NOSH_NUMCLICKS);
-            else isAwake = (numPokes == NED_NUMCLICKS);
-
-            if(isAwake) numPokes = 0;
         }
 
         return isAwake; //TODO: decide if this is useful or should just be void
