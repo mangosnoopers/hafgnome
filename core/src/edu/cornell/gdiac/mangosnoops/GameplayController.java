@@ -28,6 +28,8 @@ import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
+import java.util.Random;
+
 /**
  * Controller to handle gameplay interactions.
  * </summary>
@@ -347,5 +349,31 @@ public class GameplayController {
 		radio.update(input.getClickPos(), input.getDX());
 
 		yonda.update(input.getClickPos(), delta);
+	}
+
+	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP
+	 *
+	 * @param counter
+	 * @param ned
+	 * @param nosh
+	 */
+	public void resolveChildren(int counter, Child ned, Child nosh) {
+		Random generator = new Random();
+		float ned_prob = 0.5f;
+		float nosh_prob = 0.3f;
+
+		// check every 10 frames
+		if (counter % 10 == 0) {
+			// make ned sleepy with given probability
+			if (generator.nextFloat() <= ned_prob) {
+				ned.setAwake(false);
+			}
+			// make nosh sleepy with given probability
+			if (generator.nextFloat() <= nosh_prob) {
+				nosh.setAwake(false);
+			}
+
+		}
+
 	}
 }
