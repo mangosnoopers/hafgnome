@@ -217,7 +217,6 @@ public class Radio extends HUDObject {
      *
      * @param in where the mouse clicked (null if no click)
      * @param dx the change in x in the user's input
-     * @param dy the change in y in the user's input
      */
     public void update(Vector2 in, float dx) {
         Vector2 src = new Vector2(0.0f,5.0f);
