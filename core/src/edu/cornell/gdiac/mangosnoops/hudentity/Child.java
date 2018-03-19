@@ -39,7 +39,7 @@ public class Child extends HUDObject {
      * the child can have
      */
     public enum Mood {
-        HAPPY, NEUTRAL, SAD, CRITICAL
+        HAPPY, NEUTRAL, SAD, CRITICAL, SLEEP //TODO: this versus bool
     }
 
     /*
@@ -65,12 +65,13 @@ public class Child extends HUDObject {
      * @param sad
      * @param critical
      */
-    public void setChildTextures(Texture happy, Texture neutral, Texture sad, Texture critical){
+    public void setChildTextures(Texture happy, Texture neutral, Texture sad, Texture critical, Texture sleep){
         childTextures = new ObjectMap<Mood, Texture>();
         childTextures.put(Mood.HAPPY, happy);
         childTextures.put(Mood.NEUTRAL, neutral);
         childTextures.put(Mood.SAD,sad);
         childTextures.put(Mood.CRITICAL,critical);
+        childTextures.put(Mood.SLEEP,sleep);
     }
 
     /**
@@ -146,16 +147,20 @@ public class Child extends HUDObject {
                     case SAD:
                         currentMood = Mood.CRITICAL;
                         break;
-                    default: //don't do anything for critical
+                    case CRITICAL:
+                        break;
+                    default: //asleep
+                        currentMood = Mood.HAPPY;
                         break;
                 }
-            } else {
-                if(ctype == ChildType.NOSH) isAwake = (numPokes == NOSH_NUMCLICKS);
-                else isAwake = (numPokes == NED_NUMCLICKS);
-
-                if(isAwake) numPokes = 0;
+            }
+            if(numPokes > NED_NUMCLICKS) {
+                isAwake = true;
+                numPokes = 0;
             }
         }
+
+        if(!isAwake) currentMood = Mood.SLEEP;
 
         return isAwake; //TODO: decide if this is useful or should just be void
     }

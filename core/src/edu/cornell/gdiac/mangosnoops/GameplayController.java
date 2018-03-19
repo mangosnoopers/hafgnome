@@ -71,11 +71,13 @@ public class GameplayController {
 	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
 	private static final String NOSH_SAD_FILE = "images/NoshTextures/nosh_sad.png";
 	private static final String NOSH_CRITICAL_FILE = "images/NoshTextures/nosh_critical.png";
+	private static final String NOSH_SLEEP_FILE = "images/NoshTextures/nosh_sleep.png";
 	/** The texture files for Ned's moods */
 	private static final String NED_HAPPY_FILE = "images/NedTextures/ned_happy.png";
 	private static final String NED_NEUTRAL_FILE = "images/NedTextures/ned_neutral.png";
 	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
 	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
+	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
 
 	/** Texture for the wheel**/
 	private Texture wheelTexture;
@@ -90,11 +92,13 @@ public class GameplayController {
 	private Texture nosh_neutral;
 	private Texture nosh_sad;
 	private Texture nosh_critical;
+	private Texture nosh_sleep;
 	/** Textures for ned **/
 	private Texture ned_happy;
 	private Texture ned_neutral;
 	private Texture ned_sad;
 	private Texture ned_critical;
+	private Texture ned_sleep;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -127,6 +131,8 @@ public class GameplayController {
 		assets.add(NOSH_SAD_FILE);
 		manager.load(NOSH_CRITICAL_FILE, Texture.class);
 		assets.add(NOSH_CRITICAL_FILE);
+		manager.load(NOSH_SLEEP_FILE, Texture.class);
+		assets.add(NOSH_SLEEP_FILE);
 		manager.load(NED_HAPPY_FILE, Texture.class);
 		assets.add(NED_HAPPY_FILE);
 		manager.load(NED_NEUTRAL_FILE, Texture.class);
@@ -135,6 +141,8 @@ public class GameplayController {
 		assets.add(NED_SAD_FILE);
 		manager.load(NED_CRITICAL_FILE, Texture.class);
 		assets.add(NED_CRITICAL_FILE);
+		manager.load(NED_SLEEP_FILE, Texture.class);
+		assets.add(NED_SLEEP_FILE);
 	}
 	
 	/** 
@@ -156,10 +164,12 @@ public class GameplayController {
 		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
 		nosh_sad = createTexture(manager, NOSH_SAD_FILE);
 		nosh_critical = createTexture(manager, NOSH_CRITICAL_FILE);
+		nosh_sleep= createTexture(manager, NOSH_SLEEP_FILE);
 		ned_happy = createTexture(manager,NED_HAPPY_FILE);
 		ned_neutral = createTexture(manager,NED_NEUTRAL_FILE);
 		ned_sad = createTexture(manager, NED_SAD_FILE);
 		ned_critical = createTexture(manager, NED_CRITICAL_FILE);
+		ned_sleep = createTexture(manager, NED_SLEEP_FILE);
 	}
 	
 	private Texture createTexture(AssetManager manager, String file) {
@@ -250,8 +260,8 @@ public class GameplayController {
 		radio.setRadioSprite(radioTexture);
 		radio.setKnobSprite(radioknobTexture);
 
-		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical);
-		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical);
+		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
+		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 
 		Gnome newGnome = new Gnome(-0.1f, 50);
 		Gnome newGnome2 = new Gnome(0.1f, 100);
@@ -386,8 +396,8 @@ public class GameplayController {
 	 */
 	public void resolveChildren(int counter, Child ned, Child nosh) {
 		Random generator = new Random();
-		float ned_prob = 0.5f;
-		float nosh_prob = 0.3f;
+		float ned_prob = 0.1f;
+		float nosh_prob = 0.1f;
 
 		// check every 10 frames
 		if (counter % 10 == 0) {
