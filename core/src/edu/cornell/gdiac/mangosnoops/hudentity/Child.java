@@ -135,6 +135,12 @@ public class Child extends HUDObject {
         if(inChildArea(clickPos)) {
             numPokes++;
 
+            if(ctype == ChildType.NED) {
+                System.out.println("Ned is clicked " + numPokes);
+            } else {
+                System.out.println("Nosh is clicked " + numPokes);
+            }
+
             if(isAwake) {
                 //FSM to make child less happy
                 switch(currentMood) {
@@ -154,13 +160,14 @@ public class Child extends HUDObject {
                         break;
                 }
             }
-            if(numPokes > NED_NUMCLICKS) {
+            if(numPokes >= NED_NUMCLICKS) {
                 isAwake = true;
                 numPokes = 0;
             }
         }
 
         if(!isAwake) currentMood = Mood.SLEEP;
+        else numPokes = 0;
 
         return isAwake; //TODO: decide if this is useful or should just be void
     }
