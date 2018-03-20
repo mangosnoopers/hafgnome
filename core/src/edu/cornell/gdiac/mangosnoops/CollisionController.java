@@ -19,6 +19,8 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -26,6 +28,8 @@ import com.badlogic.gdx.utils.*;
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
+
+import java.io.File;
 
 /**
  * Controller implementing simple game physics.
@@ -120,8 +124,15 @@ public class CollisionController {
 				c.setHealth(c.getHealth() - 10);
 				c.setDamaged(true);
 				g.setDestroyed(true);
+
+				File dadada = new File("canoneffectz/male_death.wav");
+				Music audio = Gdx.audio.newMusic(Gdx.files.internal("canoneffectz/male_death.wav"));
+				audio.play();
+
 				if (c.getHealth() == 0)
 					c.setDestroyed(true);
+
+
 			}
 
 		}
