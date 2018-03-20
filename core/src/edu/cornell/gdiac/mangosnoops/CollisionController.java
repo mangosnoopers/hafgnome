@@ -116,6 +116,9 @@ public class CollisionController {
 							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
 			if(g.getY() < GNOME_INRANGE) {
 				g.setDestroyed(true);
+				Music audio = Gdx.audio.newMusic(Gdx.files.internal("canoneffectz/male_death_new.wav"));
+				audio.play();
+
 			}
 		}
 
@@ -125,7 +128,6 @@ public class CollisionController {
 				c.setDamaged(true);
 				g.setDestroyed(true);
 
-				File dadada = new File("canoneffectz/male_death.wav");
 				Music audio = Gdx.audio.newMusic(Gdx.files.internal("canoneffectz/male_death.wav"));
 				audio.play();
 
