@@ -195,17 +195,17 @@ public class Radio extends HUDObject {
         stationListSize++;
 
         // TEST SONG 1
-        File dadada = new File("RadioSongs/testsong.wav");
+        File dadada = new File("RadioSongs/testsong.mp3");
         Stations.put(stationListSize, new Station(dadada.getName(), false, true));
         stationListSize++;
 
         // TEST SONG 2
-        File no = new File("RadioSongs/testsong2.wav");
+        File no = new File("RadioSongs/testsong2.mp3");
         Stations.put(stationListSize, new Station(no.getName(), true, false));
         stationListSize++;
 
         // TEST SONG 3
-        File weirdAl = new File("RadioSongs/testsong3.wav");
+        File weirdAl = new File("RadioSongs/testsong3.mp3");
         Stations.put(stationListSize, new Station(weirdAl.getName(), true, true));
         stationListSize++;
 
