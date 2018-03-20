@@ -424,7 +424,6 @@ public class GameplayController {
 	 * @param nosh
 	 */
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
-		System.out.println("ned: " + ned.getCurrentMood());
 		// check radio for ned - either make him happy or decrease his happiness
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0) {
 			if (ned.isAwake()) {
@@ -447,11 +446,11 @@ public class GameplayController {
 
 
 		Random generator = new Random();
-		float ned_prob = 0.05f;
+		float ned_prob = 0.3f;
 		float nosh_prob = 0.05f;
 
-		// check every 10 frames
-		if (counter % 50 == 0) {
+		// check every 100 frames
+		if (counter % 100 == 0) {
 			// make ned sleepy with given probability
 			if (generator.nextFloat() <= ned_prob) {
 				ned.setAwake(false);
