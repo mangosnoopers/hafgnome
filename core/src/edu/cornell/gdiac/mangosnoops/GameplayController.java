@@ -424,30 +424,59 @@ public class GameplayController {
 	 * @param nosh
 	 */
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
-		// check radio for ned - either make him happy or decrease his happiness
-		if (r.getCurrentStation() != null && r.getknobAng() <= 0) {
-			if (ned.isAwake()) {
-				if (r.getCurrentStationNed()) {
-					ned.setHappy();
-				} else {
-					ned.decreaseHappiness();
-				}
+		// check radio station and update each child's happiness based on it,
+		// checks this every 200 frames (may need to adjust)
+		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
+			switch (r.getCurrentStationGenre()){
+				case POP:
+					if(ned.isAwake()){
+						ned.setHappy();
+					}
+					if(nosh.isAwake()){
+						nosh.setHappy();
+					}
+					break;
+				case THUG:
+					if(ned.isAwake()){
+						ned.setHappy();
+					}
+					if(nosh.isAwake()){
+						nosh.decreaseHappiness();
+					}
+					break;
+				case COMEDY:
+					if(ned.isAwake()){
+						ned.decreaseHappiness();
+					}
+					if(nosh.isAwake()){
+						nosh.setHappy();
+					}
+					break;
+				default:
+					break;
 			}
-
-			// check radio for nosh
-			if (nosh.isAwake()) {
-				if (r.getCurrentStationNosh()) {
-					nosh.setHappy();
-				} else {
-					nosh.decreaseHappiness();
-				}
-			}
+//			if (ned.isAwake()) {
+//				if (r.getCurrentStationNed()) {
+//					ned.setHappy();
+//				} else {
+//					ned.decreaseHappiness();
+//				}
+//			}
+//
+//			// check radio for nosh
+//			if (nosh.isAwake()) {
+//				if (r.getCurrentStationNosh()) {
+//					nosh.setHappy();
+//				} else {
+//					nosh.decreaseHappiness();
+//				}
+//			}
 		}
 
 
 		Random generator = new Random();
-		float ned_prob = 0.3f;
-		float nosh_prob = 0.05f;
+		float ned_prob = 0.01f;
+		float nosh_prob = 0.01f;
 
 		// check every 100 frames
 		if (counter % 100 == 0) {
