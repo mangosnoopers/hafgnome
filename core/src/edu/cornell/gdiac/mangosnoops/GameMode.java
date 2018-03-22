@@ -232,7 +232,8 @@ public class GameMode implements Screen {
 	private CollisionController collisionController;
 	/** Constructs the game models and handle basic gameplay (CONTROLLER CLASS) */
 	private GameplayController gameplayController;
-	
+		/** Handles all sound Output **/
+	private SoundController soundController;
 	/** Variable to track the game state (SIMPLE FIELDS) */
 	private GameState gameState;
 	/** Variable to track total time played in milliseconds (SIMPLE FIELDS) */
@@ -261,6 +262,7 @@ public class GameMode implements Screen {
 		gameplayController = new GameplayController(new LevelObject(LEVEL_JSON));
 		// YOU WILL NEED TO MODIFY THIS NEXT LINE
 		collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
+		soundController = new SoundController();
 	}
 	
 	/**
@@ -297,6 +299,7 @@ public class GameMode implements Screen {
 			if (inputController.didReset()) {
 				gameState = GameState.PLAY;
 				gameplayController.reset();
+				soundController.reset();
 				//TODO: Make the next two lines less sketch
 				canvas.resetCam();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
@@ -330,8 +333,10 @@ public class GameMode implements Screen {
             gameState = GameState.OVER;
         }
 
+
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
+		soundController.playRadio(gameplayController.getRadio());
 
 		// Update child states TODO: idk
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(),
