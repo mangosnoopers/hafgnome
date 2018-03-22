@@ -2,6 +2,7 @@ package edu.cornell.gdiac.mangosnoops.hudentity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
 
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 
 import java.io.File;
+import java.util.List;
 
 public class Radio extends HUDObject {
     /** Rotation speed */
@@ -37,8 +39,24 @@ public class Radio extends HUDObject {
     private Texture knobTexture;
     /** Scale for drawing of the radio **/
     private final float KNOB_SCALE = 0.2f;
+
+    /** Enum for song genres **/
+    public enum Genre{
+        CREEPY, DANCE, ACTION, JAZZ,
+        POP, THUG, COMEDY, NONE
+    }
     /** TODO: delete */
     private int clicks;
+
+    //
+    private ObjectMap<String,String> testMap;
+    private void genTestMap(){
+        testMap = new ObjectMap<String, String>();
+        testMap.put("POP", "testsong.mp3");
+        testMap.put("THUG", "testsong2.mp3");
+        testMap.put("COMEDY", "testsong3.mp3");
+    }
+
 
     /**
      * Return the current position of the radio.
@@ -107,6 +125,30 @@ public class Radio extends HUDObject {
         return "";
     }
 
+    public Genre getCurrentStationGenre(){
+        if(currentStation != null) {
+            return currentStation.getGenre();
+        }
+        return Genre.NONE;
+    }
+
+    /**
+     * Sets current list of songs for this radio, mp3 link format
+     * (name in assets)
+     * @param genreMP3Map
+     */
+    public void updateStations(ObjectMap<String,String> genreMP3Map){
+        if(Stations != null){
+            Stations.clear();
+            stationListSize = 0;
+        }
+        for(String g : genreMP3Map.keys()){
+            Station s = new Station(Genre.valueOf(g), genreMP3Map.get(g));
+            Stations.put(stationListSize,s);
+            stationListSize++;
+        }
+    }
+
     // TODO: maybe delete?
     public Station getCurrentStation() { return currentStation; }
     public boolean getCurrentStationNed() { return currentStation.nedHappy; }
@@ -124,13 +166,13 @@ public class Radio extends HUDObject {
         }
         lastStation = currentStation;
         if(stationNumber>10 && stationNumber<100){
-            currentStation = Stations.get(4);
+            currentStation = Stations.get(0);
         }
         else if(stationNumber>120 && stationNumber<190){
-            currentStation = Stations.get(5);
+            currentStation = Stations.get(1);
         }
         else if(stationNumber>220 && stationNumber<300){
-            currentStation = Stations.get(6);
+            currentStation = Stations.get(2);
         }
         else{
             currentStation = null;
@@ -169,45 +211,46 @@ public class Radio extends HUDObject {
     public Radio(float x, float y) {
         pos = new Vector2(x+50,y+50);
         knobPos = new Vector2(x,y);
-
         // Create Station list
         Stations = new ObjectMap<Integer, Station>();
+        genTestMap();
+        updateStations(testMap);
+
 
         // TODO: make this not trash and work with custom moods
-        // BENSOUND CREEPY
-        File creepy = new File("RadioSongs/bensound-creepy.mp3");
-        Stations.put(stationListSize, new Station(creepy.getName(), true, false));
-        stationListSize++;
-
-        // BENSOUND DANCE
-        File dance = new File("RadioSongs/bensound-dance.mp3");
-        Stations.put(stationListSize, new Station(dance.getName(), true, true));
-        stationListSize++;
-
-        // BENSOUND EXTREME ACTION
-        File action = new File("RadioSongs/bensound-extremeaction.mp3");
-        Stations.put(stationListSize, new Station(action.getName(), false, true));
-        stationListSize++;
-
-        // BENSOUND JAZZ COMEDY
-        File jazz = new File("RadioSongs/bensound-jazzcomedy.mp3");
-        Stations.put(stationListSize, new Station(jazz.getName(), true, true));
-        stationListSize++;
-
-        // TEST SONG 1
-        File dadada = new File("RadioSongs/testsong.mp3");
-        Stations.put(stationListSize, new Station(dadada.getName(), false, true));
-        stationListSize++;
-
-        // TEST SONG 2
-        File no = new File("RadioSongs/testsong2.mp3");
-        Stations.put(stationListSize, new Station(no.getName(), true, false));
-        stationListSize++;
-
-        // TEST SONG 3
-        File weirdAl = new File("RadioSongs/testsong3.mp3");
-        Stations.put(stationListSize, new Station(weirdAl.getName(), true, true));
-        stationListSize++;
+//        // BENSOUND CREEPY
+//        Stations.put(stationListSize, new Station("bensound-creepy.mp3", true, false));
+//        stationListSize++;
+//
+//        // BENSOUND DANCE
+//        File dance = new File("RadioSongs/bensound-dance.mp3");
+//        Stations.put(stationListSize, new Station(dance.getName(), true, true));
+//        stationListSize++;
+//
+//        // BENSOUND EXTREME ACTION
+//        File action = new File("RadioSongs/bensound-extremeaction.mp3");
+//        Stations.put(stationListSize, new Station(action.getName(), false, true));
+//        stationListSize++;
+//
+//        // BENSOUND JAZZ COMEDY
+//        File jazz = new File("RadioSongs/bensound-jazzcomedy.mp3");
+//        Stations.put(stationListSize, new Station(jazz.getName(), true, true));
+//        stationListSize++;
+//
+//        // TEST SONG 1
+//        File dadada = new File("RadioSongs/testsong.mp3");
+//        Stations.put(stationListSize, new Station(dadada.getName(), false, true));
+//        stationListSize++;
+//
+//        // TEST SONG 2
+//        File no = new File("RadioSongs/testsong2.mp3");
+//        Stations.put(stationListSize, new Station(no.getName(), true, false));
+//        stationListSize++;
+//
+//        // TEST SONG 3
+//        File weirdAl = new File("RadioSongs/testsong3.mp3");
+//        Stations.put(stationListSize, new Station(weirdAl.getName(), true, true));
+//        stationListSize++;
 
 //        File[] radiosongs = new File("RadioSongs").listFiles();
 //        for(File f : radiosongs){
@@ -292,18 +335,17 @@ public class Radio extends HUDObject {
         /** True if this station makes Nosh happy */
         private boolean noshHappy;
 
+        private Genre genre;
         /**
          * Class constructor. Sets name of song to name of file, minus its
          * filetype extension
          * @param filename the string of the path to the file
-         * @param ned true if this station will make Ned happy
-         * @param nosh true if this station will make Nosh happy
+         * @param g the genre of the radio station
          */
-        public Station(String filename, boolean ned, boolean nosh) {
+        public Station(Genre g, String filename) {
             name = filename.substring(0,filename.length()-4);
             audioFile = "RadioSongs/" + filename;
-            nedHappy = ned;
-            noshHappy = nosh;
+            genre = g;
         }
 
         /**
@@ -315,6 +357,12 @@ public class Radio extends HUDObject {
          * Returns true if this station makes Nosh happy
          */
         public boolean noshHappy() { return noshHappy; }
+
+        /**
+         * Returns genre of the station
+         * @return genre of the station
+         */
+        public Genre getGenre() { return genre; }
 
         /**
          * Creates the music file for the song and plays it

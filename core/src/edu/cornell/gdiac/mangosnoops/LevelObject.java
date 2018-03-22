@@ -16,6 +16,11 @@ public class LevelObject {
 
     public Car getCar() { return yonda; }
 
+    /** A mapping between the level's song genres and its
+     * song mp3 files
+     */
+    private ObjectMap<String,String> stationGenreMP3Mapping;
+
     /**
      * Loads in JSON File to create a Level Object.
      *
