@@ -52,6 +52,7 @@ public class Radio extends HUDObject {
     private ObjectMap<String,String> testMap;
     private void genTestMap(){
         testMap = new ObjectMap<String, String>();
+        testMap.put("CREEPY", "bensound-creepy.mp3");
         testMap.put("POP", "testsong.mp3");
         testMap.put("THUG", "testsong2.mp3");
         testMap.put("COMEDY", "testsong3.mp3");
@@ -124,7 +125,10 @@ public class Radio extends HUDObject {
         }
         return "";
     }
-
+    /**
+     * return genre of the current playing station
+     * @return current station genre
+     */
     public Genre getCurrentStationGenre(){
         if(currentStation != null) {
             return currentStation.getGenre();
@@ -142,6 +146,7 @@ public class Radio extends HUDObject {
             Stations.clear();
             stationListSize = 0;
         }
+        //System.out.println(genreMP3Map.keys().toArray());
         for(String g : genreMP3Map.keys()){
             Station s = new Station(Genre.valueOf(g), genreMP3Map.get(g));
             Stations.put(stationListSize,s);
@@ -149,10 +154,7 @@ public class Radio extends HUDObject {
         }
     }
 
-    // TODO: maybe delete?
     public Station getCurrentStation() { return currentStation; }
-    public boolean getCurrentStationNed() { return currentStation.nedHappy; }
-    public boolean getCurrentStationNosh() { return currentStation.noshHappy; }
 
     /**
      * Sets the current station based on the setting of the knob
@@ -211,8 +213,11 @@ public class Radio extends HUDObject {
     public Radio(float x, float y) {
         pos = new Vector2(x+50,y+50);
         knobPos = new Vector2(x,y);
+
         // Create Station list
         Stations = new ObjectMap<Integer, Station>();
+
+        //T TODO Take this out, it is only here for testing until JSON parser is complete
         genTestMap();
         updateStations(testMap);
 
@@ -330,11 +335,7 @@ public class Radio extends HUDObject {
         private Music audio;
         /** volume at which to play the audio **/
         private float volume;
-        /** True if this station makes Ned happy */
-        private boolean nedHappy;
-        /** True if this station makes Nosh happy */
-        private boolean noshHappy;
-
+        /**Station genre **/
         private Genre genre;
         /**
          * Class constructor. Sets name of song to name of file, minus its
@@ -347,16 +348,6 @@ public class Radio extends HUDObject {
             audioFile = "RadioSongs/" + filename;
             genre = g;
         }
-
-        /**
-         * Returns true if this station makes Ned happy
-         */
-        public boolean nedHappy() { return nedHappy; }
-
-        /**
-         * Returns true if this station makes Nosh happy
-         */
-        public boolean noshHappy() { return noshHappy; }
 
         /**
          * Returns genre of the station
