@@ -427,6 +427,8 @@ public class GameplayController {
 		// check radio station and update each child's happiness based on it,
 		// checks this every 200 frames (may need to adjust)
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
+
+			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
 				case POP:
 					if(ned.isAwake()){

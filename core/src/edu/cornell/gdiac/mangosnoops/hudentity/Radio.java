@@ -45,19 +45,23 @@ public class Radio extends HUDObject {
         CREEPY, DANCE, ACTION, JAZZ,
         POP, THUG, COMEDY, NONE
     }
+
     /** TODO: delete */
     private int clicks;
 
-    //
+    //TODO delete, this is only here to test until JSON parser is completed
     private ObjectMap<String,String> testMap;
     private void genTestMap(){
         testMap = new ObjectMap<String, String>();
-        testMap.put("CREEPY", "bensound-creepy.mp3");
         testMap.put("POP", "testsong.mp3");
         testMap.put("THUG", "testsong2.mp3");
         testMap.put("COMEDY", "testsong3.mp3");
     }
 
+
+    public Station getLastStation(){ return lastStation; }
+
+    public Station getCurrentStation(){ return currentStation; }
 
     /**
      * Return the current position of the radio.
@@ -154,8 +158,6 @@ public class Radio extends HUDObject {
         }
     }
 
-    public Station getCurrentStation() { return currentStation; }
-
     /**
      * Sets the current station based on the setting of the knob
      * Should the station change, the new audio is played and the old
@@ -179,29 +181,30 @@ public class Radio extends HUDObject {
         else{
             currentStation = null;
         }
-
-        if(lastStation != currentStation){
-            playRadio();
-        }
+//        if (lastStation != currentStation){
+//            playRadio();
+//        }
     }
 
-    /**
-     * Plays the audio of the current station given a change
-     * in station. Also responsible for stopping the audio
-     * of the previous station.
-     *
-     * Should the current station be null, nothing is played.
-     */
-    public void playRadio(){
-        if(lastStation != null){
-            lastStation.stopAudio();
-        }
-        if(currentStation == null){
-            return;
-        }
+//    /**
+//     * Plays the audio of the current station given a change
+//     * in station. Also responsible for stopping the audio
+//     * of the previous station.
+//     *
+//     * Should the current station be null, nothing is played.
+//     */
+//    public void playRadio() {
+//        if (lastStation != null) {
+//            lastStation.stopAudio();
+//        }
+//        if (currentStation == null) {
+//            return;
+//        }
+//
+//        currentStation.playAudio();
+//    }
 
-        currentStation.playAudio();
-    }
+
     /** Creates a Radio with a center at screen coordinates (x,y).
      *
      * Additionally initializes the list of radio songs based on
@@ -217,7 +220,7 @@ public class Radio extends HUDObject {
         // Create Station list
         Stations = new ObjectMap<Integer, Station>();
 
-        //T TODO Take this out, it is only here for testing until JSON parser is complete
+        // TODO Take this out, it is only here for testing until JSON parser is complete
         genTestMap();
         updateStations(testMap);
 
@@ -324,19 +327,24 @@ public class Radio extends HUDObject {
      * Inner Class for the individual stations of the
      * radio
      */
-    private class Station{
+
+    public class Station{
         /** The name of this station **/
         private String name;
         /** The name of the file for the audio **/
         private String audioFile;
-        /** indicates whether the current station is playing or not **/
-        private boolean playing;
-        /** Music class for the audio **/
-        private Music audio;
-        /** volume at which to play the audio **/
-        private float volume;
         /**Station genre **/
         private Genre genre;
+
+//        /** Indicates whether the current station is playing or not **/
+//        private boolean playing;
+//        /** Music class for the audio **/
+//        private Music audio;
+
+        /** volume at which to play the audio **/
+        private float volume;
+
+
         /**
          * Class constructor. Sets name of song to name of file, minus its
          * filetype extension
@@ -356,24 +364,30 @@ public class Radio extends HUDObject {
         public Genre getGenre() { return genre; }
 
         /**
-         * Creates the music file for the song and plays it
-         **/
-        public void playAudio(){
-            playing = true;
-            audio = Gdx.audio.newMusic(Gdx.files.internal(audioFile));
-            audio.play();
-        }
+         * Returns a reference to the audio file string
+         * @return reference to station's audiofile string
+         */
+        public String getAudioFile(){ return audioFile; }
 
         /**
-         * Stops the music file from playing
-         * as the music is a managed resource, once we are no longer playing it
-         * it is disposed of
+         * Creates the music file for the song and plays it
          **/
-        public void stopAudio(){
-            playing = false;
-            audio.stop();
-            audio.dispose();
-        }
+//        public void playAudio(){
+//            playing = true;
+//            audio = Gdx.audio.newMusic(Gdx.files.internal(audioFile));
+//            audio.play();
+//        }
+
+//        /**
+//         * Stops the music file from playing
+//         * as the music is a managed resource, once we are no longer playing it
+//         * it is disposed of
+//         **/
+//        public void stopAudio(){
+//            playing = false;
+//            audio.stop();
+//            audio.dispose();
+//        }
 
         /**
          * Returns current playing volume
@@ -383,17 +397,17 @@ public class Radio extends HUDObject {
             return volume;
         }
 
-        /**
-         *Changes the volume of the currently playing audio to
-         * the specified value
-         * @param volume
-         **/
-        public void changeVolume(float volume){
-            this.volume = volume;
-            if(playing){
-                audio.setVolume(volume);
-            }
-        }
+//        /**
+//         *Changes the volume of the currently playing audio to
+//         * the specified value
+//         * @param volume
+//         **/
+//        public void changeVolume(float volume){
+//            this.volume = volume;
+//            if(playing){
+//                audio.setVolume(volume);
+//            }
+//        }
 
         @Override
         public String toString(){
