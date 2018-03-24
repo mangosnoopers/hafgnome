@@ -303,7 +303,8 @@ public class GameMode implements Screen {
 				//TODO: Make the next two lines less sketch
 				canvas.resetCam();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
-			} else {
+			}
+			else {
 				play(delta);
 			}
             break;

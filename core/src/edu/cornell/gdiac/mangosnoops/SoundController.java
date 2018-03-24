@@ -21,18 +21,25 @@ public class SoundController {
     public void playRadio(Radio r) {
         Radio.Station lastStation = r.getLastStation();
         Radio.Station currentStation = r.getCurrentStation();
+
+
+        //System.out.println("lastStation: " + lastStation);
+        //System.out.println("currentStation: " + currentStation);
+
         if (lastStation != currentStation) {
+            System.out.println("first if statement");
             if (lastStation != null) {
+                System.out.println("stopping laststation");
                 stopAudio(stationToMusic.get(lastStation));
                 stationToMusic.remove(lastStation);
             }
-            if (currentStation == null) {
-                return;
+            if (currentStation != null) {
+                System.out.println("Playing new currentstation");
+                Music audio = Gdx.audio.newMusic(Gdx.files.internal(currentStation.getAudioFile()));
+                stationToMusic.put(currentStation, audio);
+                stationToMusic.get(currentStation).play();
+                stationToMusic.get(currentStation).setLooping(true);
             }
-            Music audio = Gdx.audio.newMusic(Gdx.files.internal(currentStation.getAudioFile()));
-            stationToMusic.put(currentStation, audio);
-            stationToMusic.get(currentStation).play();
-            stationToMusic.get(currentStation).setLooping(true);
             //r.getCurrentStation().playAudio();
         }
         return;
