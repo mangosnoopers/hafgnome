@@ -12,6 +12,7 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
@@ -333,7 +334,6 @@ public class GameMode implements Screen {
             gameState = GameState.OVER;
         }
 
-
 		// Update objects.
 		gameplayController.resolveActions(inputController,delta);
 		soundController.playRadio(gameplayController.getRadio());
@@ -368,7 +368,8 @@ public class GameMode implements Screen {
 		canvas.clearScreen();
 
         // ** Draw world with 3D perspective **
-		canvas.drawRoad(gameplayController.getWheel().getAng() / ANGLE_TO_LR, delta);
+        // TODO: change this
+        gameplayController.getRoad().draw(canvas, gameplayController.getWheel().getAng() / ANGLE_TO_LR);
 		canvas.drawGnomez(gameplayController.getGnomez());
 		canvas.drawWorld();
 
