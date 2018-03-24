@@ -45,6 +45,9 @@ public class GameplayController {
 	/** Data structure containing gnome data */
 	private Array<Gnome> gnomez;
 
+	/** Road instance, contains road "conveyor belt" logic */
+	private Road road;
+
 	/** Car instance, containing information about the wheel and children */
 	private Car yonda;
 
@@ -192,6 +195,7 @@ public class GameplayController {
 		yonda = null;
 		gnomez = new Array<Gnome>();
 		backing = new Array<Gnome>();
+		road = new Road();
 	}
 
 	/**
@@ -212,6 +216,10 @@ public class GameplayController {
 	 */
 	public Car getCar() {
 		return yonda;
+	}
+
+	public Road getRoad() {
+		return road;
 	}
 
     /**
@@ -399,6 +407,9 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
+
+		// Update world objects
+        road.update(delta);
 		for (Gnome g : gnomez) { g.update(delta); }
 
 		if(prevClick != null && input.getClickPos() == null) {

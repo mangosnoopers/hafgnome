@@ -29,6 +29,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Sort;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
+import edu.cornell.gdiac.mangosnoops.roadentity.Road;
 
 import java.util.Comparator;
 
@@ -69,8 +70,6 @@ public class GameCanvas {
 	PerspectiveCamera camera;
 	DecalBatch batch;
 	Array<Decal> roadDecals;
-	TextureRegion roadTextureRegion;
-	int NUM_ROAD_DECALS = 30;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 
 	// Damage-indicator stuff
@@ -104,17 +103,9 @@ public class GameCanvas {
 		camera.near = 0.0001f;
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
-		/* FIXME: Get texture from asset manager */
-		roadTextureRegion = new TextureRegion(new Texture(Gdx.files.internal("images/road.png")));
 
-		roadDecals = new Array<Decal>(7);
-		for (int i = 0; i < NUM_ROAD_DECALS; i++) {
-			Decal newDecal = Decal.newDecal(1, 1, roadTextureRegion);
-			newDecal.setPosition(0, -0.8f*i, 1);
-			roadDecals.add(newDecal);
-		}
 	}
-		
+
     /**
      * Eliminate any resources that should be garbage collected manually.
      */
@@ -606,9 +597,9 @@ public class GameCanvas {
 	 *
 	 * PerspectiveCamera used for 3D perspective.
 	 */
-	public void drawRoad(float xOff, float delta) {
+	public void drawRoad(float xOff, Decal d) {
 
-		float camOffset = xOff * -0.1f * delta;
+		float camOffset = xOff * -0.0003f;
 
 		camera.position.set(camera.position.x + camOffset, camera.position.y, camera.position.z);
 
@@ -620,17 +611,10 @@ public class GameCanvas {
 			camera.position.x = -0.20f;
 		}
 
-		for (Decal d : roadDecals) {
-			float newY = (float) (d.getY() - 2 * delta);
-			if (newY < -13) {
-				newY = 0;
-			}
-			d.setPosition(0, newY, 4.25f);
-			batch.add(d);
-
-		}
-
 		camera.update();
+		batch.add(d);
+
+
 
 	}
 
