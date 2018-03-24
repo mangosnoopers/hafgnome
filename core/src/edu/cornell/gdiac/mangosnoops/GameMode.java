@@ -304,7 +304,8 @@ public class GameMode implements Screen {
 				//TODO: Make the next two lines less sketch
 				canvas.resetCam();
 				gameplayController.start(canvas.getWidth() / 2.0f, 0);
-			} else {
+			}
+			else {
 				play(delta);
 			}
             break;
@@ -400,7 +401,7 @@ public class GameMode implements Screen {
 
 		// Health gauge and pointer
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
-        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 43.0f, 23.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.3f);
+        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 60.0f, 20.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
 
 		if (gameState == GameState.OVER) {
 			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);

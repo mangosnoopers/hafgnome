@@ -58,7 +58,7 @@ public class Car extends RoadObject {
         health = 100;
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
-        healthPointerAng = 0.0f;
+        healthPointerAng = 50.0f;
 
         timeToDisplayDamageIndicator = 10;
     }
@@ -134,7 +134,7 @@ public class Car extends RoadObject {
         health = 100;
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
-        healthPointerAng = 0.0f;
+        healthPointerAng = 50.0f;
 
         timeToDisplayDamageIndicator = 10;
     }
@@ -160,7 +160,7 @@ public class Car extends RoadObject {
         ned.update(clickPos);
 
         // Update health angle
-        healthPointerAng = Math.max((float) (health - 100), -90.0f);
+        healthPointerAng = Math.max((float) (health - 50), -50.0f);
 
         if (isDamaged && timeToDisplayDamageIndicator > 0) {
             timeToDisplayDamageIndicator -= delta * DISPLAY_DEPLETION;
