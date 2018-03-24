@@ -430,7 +430,7 @@ public class GameplayController {
 
 			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
-				case POP:
+				case DANCE:
 					if(ned.isAwake()){
 						ned.setHappy();
 					}
@@ -438,7 +438,7 @@ public class GameplayController {
 						nosh.setHappy();
 					}
 					break;
-				case THUG:
+				case CREEPY:
 					if(ned.isAwake()){
 						ned.setHappy();
 					}
@@ -446,7 +446,7 @@ public class GameplayController {
 						nosh.decreaseHappiness();
 					}
 					break;
-				case COMEDY:
+				case JAZZ:
 					if(ned.isAwake()){
 						ned.decreaseHappiness();
 					}

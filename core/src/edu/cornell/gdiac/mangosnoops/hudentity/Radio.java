@@ -53,9 +53,9 @@ public class Radio extends HUDObject {
     private ObjectMap<String,String> testMap;
     private void genTestMap(){
         testMap = new ObjectMap<String, String>();
-        testMap.put("POP", "testsong.mp3");
-        testMap.put("THUG", "testsong2.mp3");
-        testMap.put("COMEDY", "testsong3.mp3");
+        testMap.put("CREEPY", "bensound-creepy.mp3");
+        testMap.put("DANCE", "bensound-dance.mp3");
+        testMap.put("JAZZ", "bensound-jazzcomedy.mp3");
     }
 
 
@@ -181,6 +181,11 @@ public class Radio extends HUDObject {
         else{
             currentStation = null;
         }
+
+//        System.out.println(stationNumber);
+//        System.out.println("lastStation: " + lastStation);
+//        System.out.println("currentStation: " + currentStation);
+
 //        if (lastStation != currentStation){
 //            playRadio();
 //        }
@@ -341,8 +346,8 @@ public class Radio extends HUDObject {
 //        /** Music class for the audio **/
 //        private Music audio;
 
-        /** volume at which to play the audio **/
-        private float volume;
+//        /** volume at which to play the audio **/
+//        private float volume;
 
 
         /**
@@ -355,6 +360,7 @@ public class Radio extends HUDObject {
             name = filename.substring(0,filename.length()-4);
             audioFile = "RadioSongs/" + filename;
             genre = g;
+//            System.out.println(this + " " + this.name + " " + this.audioFile + " " + this.genre);
         }
 
         /**
@@ -393,9 +399,9 @@ public class Radio extends HUDObject {
          * Returns current playing volume
          * @return volume
          **/
-        public float getVolume() {
-            return volume;
-        }
+//        public float getVolume() {
+//            return volume;
+//        }
 
 //        /**
 //         *Changes the volume of the currently playing audio to
