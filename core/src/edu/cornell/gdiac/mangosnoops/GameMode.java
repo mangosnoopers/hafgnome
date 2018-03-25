@@ -310,7 +310,17 @@ public class GameMode implements Screen {
 			}
             break;
 		case PLAY:
-			play(delta);
+			if (inputController.didReset()) {
+				gameState = GameState.PLAY;
+				gameplayController.reset();
+				soundController.reset();
+				//TODO: Make the next two lines less sketch
+				canvas.resetCam();
+				gameplayController.start(canvas.getWidth() / 2.0f, 0);
+			}
+			else {
+				play(delta);
+			}
 			break;
 		default:
 			break;
