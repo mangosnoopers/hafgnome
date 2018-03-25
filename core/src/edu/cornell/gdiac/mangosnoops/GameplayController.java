@@ -484,12 +484,16 @@ public class GameplayController {
 //					nosh.decreaseHappiness();
 //				}
 //			}
-		}
+		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
+            ned.decreaseHappiness();
+        } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
+            nosh.decreaseHappiness();
+        }
 
 
 		Random generator = new Random();
-		float ned_prob = 0.01f;
-		float nosh_prob = 0.01f;
+		float ned_prob = 0.07f;
+		float nosh_prob = 0.07f;
 
 		// check every 100 frames
 		if (counter % 100 == 0) {
