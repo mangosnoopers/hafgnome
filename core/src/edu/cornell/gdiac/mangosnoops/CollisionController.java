@@ -88,10 +88,10 @@ public class CollisionController {
 	 * @param gnomez List of live gnomes to check
 	 * @param yonda  Player's car
 	 */
-	public void processCollisions(Array<Gnome> gnomez, Car yonda, GameCanvas canvas) {
+	public void processCollisions(Array<Gnome> gnomez, Car yonda) {
 		processBounds(yonda);
 		for (Gnome g : gnomez) {
-			handleCollision(yonda, g, canvas);
+			handleCollision(yonda, g);
 		}
 	}
 
@@ -103,15 +103,15 @@ public class CollisionController {
 	 * @param c      Player's car
 	 */
 	private void processBounds(Car c) {
-		if(c.getX() < 0) c.setX(0);
-		if(c.getX() > width) c.setY(width);
+		//if(c.getX() < 0) c.setX(0);
+		//if(c.getX() > width) c.setY(width);
 	}
 
 	/**
 	 * Collide a gnome with a car.
 	 * FIXME: remove canvas param
 	 */
-	private void handleCollision(Car c, Gnome g, GameCanvas canvas) {
+	private void handleCollision(Car c, Gnome g) {
 		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
 							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
 			if(g.getY() < GNOME_INRANGE) {
@@ -123,7 +123,7 @@ public class CollisionController {
 		}
 
 		else {
-			if (g.getY() < -10 && Math.abs(g.getX() - canvas.camera.position.x) < HIT_RANGE) {
+			if (g.getY() < -10 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
 				c.setHealth(c.getHealth() - 10);
 				c.setDamaged(true);
 				g.setDestroyed(true);

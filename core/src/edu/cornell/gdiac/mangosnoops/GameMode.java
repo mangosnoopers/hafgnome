@@ -46,9 +46,6 @@ public class GameMode implements Screen {
 	// LEVEL - TODO: Don't just hardcode the JSON url in lol
 	private static String LEVEL_JSON = "temp.json";
 
-	/** Factor to translate an angle to left/right movement */
-	private static final float ANGLE_TO_LR = 7.0f;
-
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
@@ -334,13 +331,7 @@ public class GameMode implements Screen {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	protected void play(float delta) {
-		// if no player is alive, declare game over
-		/* TODO: commented this out to get game to run, car is null rn
-		if (gameplayController.getCar().isDestroyed()) {
-			gameState = GameState.OVER;
-		}
-		*/
-		// TODO: update car
+
 		if (gameplayController.getCar().isDestroyed()) {
             gameState = GameState.OVER;
         }
@@ -357,10 +348,12 @@ public class GameMode implements Screen {
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
 		// TODO: Camera won't be public, use car position
-		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar(), canvas);
+		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
+
+		canvas.setCameraXY(gameplayController.getCar().getPosition());
 
 		// Update the counter
 		counter += 1;
@@ -380,7 +373,7 @@ public class GameMode implements Screen {
 
         // ** Draw world with 3D perspective **
         // TODO: change this
-        gameplayController.getRoad().draw(canvas, gameplayController.getWheel().getAng() / ANGLE_TO_LR);
+        gameplayController.getRoad().draw(canvas, 0);
 		canvas.drawGnomez(gameplayController.getGnomez());
 		canvas.drawWorld();
 

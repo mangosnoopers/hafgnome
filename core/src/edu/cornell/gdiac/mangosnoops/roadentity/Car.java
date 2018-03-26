@@ -2,6 +2,7 @@ package edu.cornell.gdiac.mangosnoops.roadentity;
 
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import edu.cornell.gdiac.mangosnoops.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.math.*;
@@ -13,7 +14,7 @@ public class Car extends RoadObject {
     /** Factor to translate an angle to left/right movement */
     private static final float ANGLE_TO_LR = 7.0f;
     /** Horizontal speed in X direction -- multiply by movement **/
-    private static final float CAR_XSPEED = 4.0f;
+    private static final float CAR_XSPEED = 0.1f;
     /** How fast we change frames (one frame per 4 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** The number of animation frames in our filmstrip */
@@ -32,6 +33,13 @@ public class Car extends RoadObject {
     private int health;
     /** Angle of the health pointer */
     private float healthPointerAng;
+
+    /** Start position of car. */
+    private Vector2 CAR_START_POS = new Vector2(0, -10f);
+
+    /** Bounds for the car. */
+    private float LEFT_X_BOUND = -0.25f;
+    private float RIGHT_X_BOUND = 0.25f;
 
     /** Indicates whether or not to color screen red, visualizing
      *  that the car has taken damage */
@@ -52,7 +60,6 @@ public class Car extends RoadObject {
     private Child ned;
 
     public Car() {
-        super.setY(-10f);
         angle = 0.0f;
         active = true;
         health = 100;
@@ -61,6 +68,8 @@ public class Car extends RoadObject {
         healthPointerAng = 50.0f;
 
         timeToDisplayDamageIndicator = 10;
+
+        position = CAR_START_POS;
     }
 
     /**
@@ -128,7 +137,6 @@ public class Car extends RoadObject {
      * Reset the car to restart the game.
      */
     public void reset() {
-        super.setY(-10f);
         angle = 0.0f;
         active = true;
         health = 100;
@@ -148,12 +156,17 @@ public class Car extends RoadObject {
      *
      * @param delta Number of seconds since last animation frame
      */
-    public void update(Vector2 clickPos, float delta) {
+    public void update(Vector2 clickPos, Wheel wheel, float delta) {
         // Call superclass's update
         super.update(delta);
 
-        if (movement != 0.0f) {
-            position.x += movement * CAR_XSPEED;
+        position.x += wheel.getHorizontalMovement() * delta * -1 * CAR_XSPEED;
+
+        if (position.x < LEFT_X_BOUND) {
+            position.x = LEFT_X_BOUND;
+        }
+        if (position.x > RIGHT_X_BOUND) {
+            position.x = RIGHT_X_BOUND;
         }
 
         nosh.update(clickPos);
