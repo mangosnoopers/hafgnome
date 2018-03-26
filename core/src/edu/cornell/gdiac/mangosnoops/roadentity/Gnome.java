@@ -21,6 +21,12 @@ public class Gnome extends RoadObject{
     /** The actual screen coordinate the gnome is drawn on */
     private Vector2 drawCoords;
 
+    /** speed of road */
+    private float currSpeed;
+
+    /** speed of gnome relative to road, FIXME: change this prob */
+    private float gnomeSpeed = 2f;
+
     /**
      * Enum specifying the type of gnome this is.
      *
@@ -85,7 +91,7 @@ public class Gnome extends RoadObject{
      *
      * @param delta Number of seconds since last animation frame
      */
-    public void update(float delta) {
+    public void update(float delta, float newSpeed) {
         // Call superclass's update
         super.update(delta);
 
@@ -94,10 +100,12 @@ public class Gnome extends RoadObject{
             animeframe -= NUM_ANIM_FRAMES;
         }
 
-        setY(getY()-5*delta);
+        setY(getY()-currSpeed * gnomeSpeed * delta);
         if (getY() < -12) {
             setY(14);
         }
+
+        setSpeed(newSpeed);
     }
 
     /**
@@ -138,5 +146,9 @@ public class Gnome extends RoadObject{
         } else {
             this.setDestroyed(true);
         }
+    }
+
+    public void setSpeed (float s) {
+        currSpeed = s;
     }
 }
