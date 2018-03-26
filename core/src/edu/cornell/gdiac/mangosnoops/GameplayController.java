@@ -277,7 +277,7 @@ public class GameplayController {
 		*/
 		wheel = new Wheel(275,70);
 		wheel.setWheelSprite(wheelTexture);
-		vroomStick = new VroomStick(320, 60);
+		vroomStick = new VroomStick(310, 50);
 		vroomStick.setVroomStickSprite(vroomStickTexture);
 		radio = new Radio(545, 50);
 		radio.setRadioSprite(radioTexture);
@@ -424,10 +424,14 @@ public class GameplayController {
 
 		// Update world objects
         road.update(delta);
-		for (Gnome g : gnomez) { g.update(delta); }
+		for (Gnome g : gnomez) { g.update(delta, road.getSpeed()); }
 
 		// Update the wheel angle
 		wheel.update(input.getClickPos(), input.getDX());
+
+		vroomStick.update(input.getClickPos(), input.getDY());
+
+		if (vroomStick.isEngaged()) { road.setVrooming(); }
 
 		if(prevClick != null && input.getClickPos() == null) {
 			yonda.update(prevClick, wheel, delta);

@@ -38,6 +38,8 @@ public class InputController {
     private Vector2 clickPos;
     /** Change in x of the input */
     private float dx;
+    /** Change in y of the input */
+	private float dy;
 
 	/**
      * Creates a new input controller.
@@ -49,6 +51,11 @@ public class InputController {
 	 * Returns the change in x of the input.
 	 */
 	public float getDX() { return dx; }
+
+	/**
+	 * Returns the change in x of the input.
+	 */
+	public float getDY() { return dy; }
 
 	/**
 	 * Returns the current mouse position.
@@ -83,6 +90,7 @@ public class InputController {
         if (mouseClicked) {
             clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             dx = Gdx.input.getDeltaX();
+            dy = Gdx.input.getDeltaY();
         } else {
             clickPos = null;
         }
