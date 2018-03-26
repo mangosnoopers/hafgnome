@@ -83,6 +83,7 @@ public class Wheel extends HUDObject {
                 ang = 90;
             }
         } else {
+            // Move back to original angle
             ang = ang + 0.2f * -ang;
         }
     }
@@ -99,11 +100,6 @@ public class Wheel extends HUDObject {
                 && p.x < center.x + (wheelSprite.getWidth()*WHEEL_SCALE*0.5f+controlBuffer)
                 && WINDOW_HEIGHT - p.y > center.y - wheelSprite.getHeight()*WHEEL_SCALE*0.5f
                 && WINDOW_HEIGHT - p.y < center.y + wheelSprite.getHeight()*WHEEL_SCALE*0.5f;
-    }
-
-    public void snapBack() {
-        ang = 0;
-        return;
     }
 
     public void draw(GameCanvas canvas){
