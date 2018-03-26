@@ -70,6 +70,8 @@ public class GameCanvas {
 	PerspectiveCamera camera;
 	DecalBatch batch;
 	Array<Decal> roadDecals;
+
+	private float CAM_HEIGHT = 4.32f;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 
 	// Damage-indicator stuff
@@ -97,9 +99,7 @@ public class GameCanvas {
 
 		// Initialize game world drawing stuff
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(CAM_START_POS);
-		camera.direction.set(0, 0, 0);
-		camera.lookAt(0, 0, 0);
+		camera.position.z = CAM_HEIGHT;
 		camera.near = 0.0001f;
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
@@ -591,6 +591,15 @@ public class GameCanvas {
 	}
 
 	/**
+	 * Set camera x, y values.
+	 * @param newXY
+	 */
+	public void setCameraXY(Vector2 newXY) {
+		camera.position.set(newXY.x, newXY.y, camera.position.z);
+		camera.lookAt(0, 0, 0);
+	}
+
+	/**
      * Draw road with infinite scrolling effect, with PerspectiveCamera.
 	 *
 	 * The calls are buffered. Must call drawWorld() to draw to screen.
@@ -598,24 +607,10 @@ public class GameCanvas {
 	 * PerspectiveCamera used for 3D perspective.
 	 */
 	public void drawRoad(float xOff, Decal d) {
-
-		float camOffset = xOff * -0.0003f;
-
-		camera.position.set(camera.position.x + camOffset, camera.position.y, camera.position.z);
-
-		if (camera.position.x > 0.20f) {
-			camera.position.x = 0.20f;
-		}
-
-		if (camera.position.x < -0.20f) {
-			camera.position.x = -0.20f;
-		}
+		//System.out.println(camera.position);
 
 		camera.update();
 		batch.add(d);
-
-
-
 	}
 
 	/**

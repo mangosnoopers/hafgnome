@@ -412,16 +412,16 @@ public class GameplayController {
         road.update(delta);
 		for (Gnome g : gnomez) { g.update(delta); }
 
+		// Update the wheel angle
+		wheel.update(input.getClickPos(), input.getDX());
+
 		if(prevClick != null && input.getClickPos() == null) {
-			yonda.update(prevClick, delta);
+			yonda.update(prevClick, wheel, delta);
 			prevClick = null;
 		} else {
 			prevClick = input.getClickPos();
-			yonda.update(null, delta);
+			yonda.update(null, wheel, delta);
 		}
-
-		// Update the wheel angle
-		wheel.update(input.getClickPos(), input.getDX());
 
 		// Update the radio
 		radio.update(input.getClickPos(), input.getDX());

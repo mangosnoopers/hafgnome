@@ -22,11 +22,17 @@ public class Wheel extends HUDObject {
     private final float WHEEL_SCALE = 0.5f;
     /** The texture sprite of this wheel */
     private Texture wheelSprite;
+    /** Factor to translate an angle to left/right movement */
+    private static final float ANGLE_TO_LR = 7.0f;
 
     /**
      * Return the current angle of the wheel.
      */
     public float getAng() { return ang; }
+
+    public float getHorizontalMovement() {
+        return ang / ANGLE_TO_LR;
+    }
 
     /**
      * Return the wheel sprite texture.
