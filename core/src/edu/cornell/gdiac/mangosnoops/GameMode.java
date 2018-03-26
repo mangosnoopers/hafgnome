@@ -385,6 +385,9 @@ public class GameMode implements Screen {
 					WINDOW_WIDTH/dash.getWidth(),0.4f);
         canvas.draw(clouds,200 , 500);
 
+        // Vroom stick
+		gameplayController.getVroomStick().draw(canvas);
+
 		// Wheel
 		gameplayController.getWheel().draw(canvas);
 

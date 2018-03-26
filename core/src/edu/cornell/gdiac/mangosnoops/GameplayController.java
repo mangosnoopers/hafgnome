@@ -54,6 +54,9 @@ public class GameplayController {
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 
+	/** Location, animation information for vroomstick */
+	private VroomStick vroomStick;
+
 	/** Location and animation information for the wheel **/
 	private Radio radio;
 
@@ -64,6 +67,8 @@ public class GameplayController {
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/Wheel.png";
+    /** The texture file for the vroom stick*/
+	private static final String VROOM_STICK_FILE = "images/vroomstick.png";
     /** The texture file for the gnome */
 	private static final String GNOME_FILE = "images/gnome.png";
 	/** The texture file for the gnome */
@@ -85,6 +90,8 @@ public class GameplayController {
 
 	/** Texture for the wheel**/
 	private Texture wheelTexture;
+	/** Texture for the vroomstick */
+	private Texture vroomStickTexture;
 	/** Texture for the wheel**/
 	private Texture gnomeTexture;
 	/** Texture for the radio**/
@@ -121,6 +128,8 @@ public class GameplayController {
 	public void preLoadContent(AssetManager manager, Array<String> assets) {
 		manager.load(WHEEL_FILE,Texture.class);
 		assets.add(WHEEL_FILE);
+		manager.load(VROOM_STICK_FILE, Texture.class);
+		assets.add(VROOM_STICK_FILE);
 		manager.load(GNOME_FILE, Texture.class);
 		assets.add(GNOME_FILE);
 		manager.load(RADIO_FILE, Texture.class);
@@ -161,6 +170,7 @@ public class GameplayController {
 	 */
 	public void loadContent(AssetManager manager) {
 		wheelTexture = createTexture(manager,WHEEL_FILE);
+		vroomStickTexture = createTexture(manager, VROOM_STICK_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
 		radioTexture = createTexture(manager, RADIO_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
@@ -229,6 +239,8 @@ public class GameplayController {
      **/
     public Wheel getWheel(){ return wheel; }
 
+	public VroomStick getVroomStick() { return vroomStick; }
+
 	/**
 	 * Returns a reference to the radio
 	 *
@@ -265,6 +277,8 @@ public class GameplayController {
 		*/
 		wheel = new Wheel(275,70);
 		wheel.setWheelSprite(wheelTexture);
+		vroomStick = new VroomStick(320, 60);
+		vroomStick.setVroomStickSprite(vroomStickTexture);
 		radio = new Radio(545, 50);
 		radio.setRadioSprite(radioTexture);
 		radio.setKnobSprite(radioknobTexture);
