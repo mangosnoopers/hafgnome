@@ -12,19 +12,14 @@ public class Child extends HUDObject {
 
     /** The type of Gnome this is */
     private ChildType ctype;
-    /** If the child is asleep */
-    private boolean isAwake;
-    /** Number of pokes this child has had. (Zero if awake) */
-    private int numPokes;
 
     private Vector2 pos;
-    private Mood currentMood;
     private ObjectMap<Mood,Texture> childTextures;
-    private static final int SLACK = 30;
+    private static final int SLACK = 30; //pixel leeway in inChildArea TODO maybe remove
 
-    /** How many clicks needed to wake up */
-    private static final int NOSH_NUMCLICKS = 5;
-    private static final int NED_NUMCLICKS = 5;
+    private boolean gettingSad; //is gradually getting happier
+    private boolean gettingHappy; //is gradually getting sadder
+    private static final int MOOD_DELTA = 1; //how much happiness changes each step
 
     /**
      * Enum specifying the type of child this is.
@@ -34,7 +29,15 @@ public class Child extends HUDObject {
         NOSH,
         NED,
     }
-    /*
+
+    /** Represents the current mood. 0-100 means they are awake, -100 they are asleep.*/
+    private int happiness;
+    /** Lower bounds of happiness states before they change (exclusive) */
+    private static final int HAPPY_UBOUND = 1000;
+    private static final int HAPPY_LBOUND = 750;
+    private static final int NEUTRAL_LBOUND = 500;
+    private static final int SAD_LBOUND = 250;
+    /**
      * Enum specifying the possible moods
      * the child can have
      */
@@ -42,28 +45,90 @@ public class Child extends HUDObject {
         HAPPY, NEUTRAL, SAD, CRITICAL, SLEEP //TODO: this versus bool
     }
 
-    /*
+    /**
      * Constructor
      */
     public Child(ChildType type) {
         ctype = type;
-        isAwake = true;
-        currentMood = Mood.HAPPY;
-    }
-
-    /*
-     * Returns the mood of the child
-     */
-    public Mood getCurrentMood(){
-        return currentMood;
+        happiness = HAPPY_UBOUND;
     }
 
     /**
-     * Make the child happy.
+     * Returns the mood of the child
      */
-    public void setHappy() {
-        currentMood = Mood.HAPPY;
+    public Mood getCurrentMood() {
+        if(happiness > HAPPY_LBOUND) return Mood.HAPPY;
+        else if(happiness > NEUTRAL_LBOUND) return Mood.NEUTRAL;
+        else if(happiness > SAD_LBOUND) return Mood.SAD;
+        else if(happiness >= 0) return Mood.CRITICAL;
+        else return Mood.SLEEP;
     }
+
+    /**
+     * Returns true if the child is the awake.
+     */
+    public boolean isAwake() { return happiness >= 0; }
+
+    /**
+     * Sets the mood of the child, which also entails setting awake/not awake;
+     *
+     * @param m what Mood they'll be in when awoken
+     *          TODO: should this be upper/lower bound of mood? rn upper
+     */
+    public void setMood(Mood m) {
+        switch(m){
+            case HAPPY:
+                happiness = HAPPY_UBOUND;
+                break;
+            case NEUTRAL:
+                happiness = HAPPY_LBOUND;
+                break;
+            case SAD:
+                happiness = NEUTRAL_LBOUND;
+                break;
+            case CRITICAL:
+                happiness = SAD_LBOUND;
+                break;
+            default: //asleep
+                setAsleep();
+                break;
+        }
+    }
+
+    /**
+     * Changes whether or not the mood is shifting, and if so if it's getting
+     * happier/sadder.
+     *
+     * @param set is true if you want to have dynamic happiness change, false if static
+     *        happier is true if they are getting happier, false getting angrier
+     */
+    public void setMoodShifting(boolean set, boolean happier) {
+        if(set && isAwake()) {
+            if(happier) {
+                gettingHappy = true;
+                gettingSad = false;
+            } else {
+                gettingSad = true;
+                gettingHappy = false;
+            }
+        } else {
+            gettingSad = false;
+            gettingHappy = false;
+        }
+    }
+
+    /**
+     *  Sets the child to catch some zzzz's.
+     */
+    public void setAsleep() {
+        happiness = -HAPPY_UBOUND;
+    }
+
+    /**
+     * Returns the type of the child.
+     * TODO: might remove cause the ned/nosh instantiations are already distinguished
+     */
+    public ChildType getType() { return ctype; }
 
     /**
      * set the Textures for each of this child's moods
@@ -82,44 +147,35 @@ public class Child extends HUDObject {
     }
 
     /**
-     * Returns true if the mouse is positioned inside the area of the wheel.
-     * The wheel must not be null.
      *
-     * @param p the vector giving the mouse's (x,y) screen coordinates
+     *
+     * @param clickPos
+     * @return True if the child is the awake.
      */
-    private boolean inChildArea(Vector2 p) {
-        //TODO: make the y calculation better
-        return (p!=null) && (Math.abs(pos.x-p.x) < SLACK) && (Math.abs(100-p.y) < SLACK);
+    public void update(Vector2 clickPos) {
+        if(isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
+            if(gettingHappy) {
+                happiness += MOOD_DELTA;
+                if(happiness > HAPPY_UBOUND) {
+                    happiness = HAPPY_UBOUND;
+                    gettingHappy = false;
+                }
+            } else if(gettingSad) {
+                happiness -= MOOD_DELTA;
+                if(happiness < 0) {
+                    happiness = 0;
+                    gettingSad = false;
+                }
+            }
+        }
     }
-
-    /**
-     * Returns true if the child is the awake.
-     */
-    public boolean isAwake() { return isAwake; }
-
-    /**
-     * Sets the awake status of the child.
-     *
-     * @param b true to wake the child up, false to make them fall asleep
-     */
-    public void setAwake(boolean b) { isAwake = b; }
-
-    /**
-     * Returns the type of the child.
-     */
-    public ChildType getType() { return ctype; }
-
-    /**
-     * TODO: idk
-     */
-    public int getNumPokes() { return numPokes; }
 
     /**
      * draws the child on the given canvas
      * @param canvas
      */
     public void draw(GameCanvas canvas, Texture rearviewMirror){
-        if(currentMood == null || childTextures == null) { return; }
+        if(childTextures == null) { return; }
 
         float rearWidth = rearviewMirror.getWidth() * canvas.getHeight()/(rearviewMirror.getHeight()*3.5f);
         if(ctype == ChildType.NOSH) {
@@ -128,7 +184,7 @@ public class Child extends HUDObject {
             pos = new Vector2(canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f);
         }
 
-        Texture currentTex = childTextures.get(currentMood);
+        Texture currentTex = childTextures.get(getCurrentMood());
         float ox = 0.5f* currentTex.getWidth();
         float oy = currentTex.getHeight();
 
@@ -138,60 +194,14 @@ public class Child extends HUDObject {
     }
 
     /**
-     * Decreases the happiness of the child based on his current mood
-     * */
-    public void decreaseHappiness() {
-        //FSM to make child less happy
-        switch(currentMood) {
-            case HAPPY:
-                currentMood = Mood.NEUTRAL;
-                break;
-            case NEUTRAL:
-                currentMood = Mood.SAD;
-                break;
-            case SAD:
-                currentMood = Mood.CRITICAL;
-                break;
-            case CRITICAL:
-                break;
-            default: //asleep TODO
-                if (isAwake)
-                    currentMood = Mood.HAPPY;
-                else
-                    currentMood = Mood.SLEEP;
-                break;
-        }
-    }
-
-    /**
-     * Pokes the child once, if the player has clicked the child.
+     * Returns true if the mouse is positioned inside the area of the wheel.
+     * The wheel must not be null.
      *
-     * @param clickPos
-     * @return True if the child is the awake.
+     * @param p the vector giving the mouse's (x,y) screen coordinates
      */
-    public boolean update(Vector2 clickPos) {
-        if(inChildArea(clickPos)) {
-            numPokes++;
-
-//            if(ctype == ChildType.NED) {
-//                System.out.println("Ned is clicked " + numPokes);
-//            } else {
-//                System.out.println("Nosh is clicked " + numPokes);
-//            }
-
-            if(isAwake) {
-                decreaseHappiness();
-            }
-            if(numPokes >= NED_NUMCLICKS && !isAwake) {
-                isAwake = true;
-                numPokes = 0;
-            }
-        }
-
-        if(!isAwake) currentMood = Mood.SLEEP;
-        else numPokes = 0;
-
-        return isAwake; //TODO: decide if this is useful or should just be void
+    public boolean inChildArea(Vector2 p) {
+        //TODO: do we need this? Currently cannot click on children
+        return (p!=null) && (Math.abs(pos.x-p.x) < SLACK) && (Math.abs(100-p.y) < SLACK);
     }
 
 }
