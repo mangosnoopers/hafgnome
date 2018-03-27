@@ -461,26 +461,26 @@ public class GameplayController {
 			switch (r.getCurrentStationGenre()){
 				case DANCE:
 					if(ned.isAwake()){
-						ned.setHappy();
+						ned.setMood(Child.Mood.HAPPY);
 					}
 					if(nosh.isAwake()){
-						nosh.setHappy();
+						nosh.setMood(Child.Mood.HAPPY);
 					}
 					break;
 				case CREEPY:
 					if(ned.isAwake()){
-						ned.setHappy();
+						ned.setMood(Child.Mood.HAPPY);
 					}
 					if(nosh.isAwake()){
-						nosh.decreaseHappiness();
+						nosh.setMoodShifting(true, false);
 					}
 					break;
 				case JAZZ:
 					if(ned.isAwake()){
-						ned.decreaseHappiness();
+						ned.setMoodShifting(true, false);
 					}
 					if(nosh.isAwake()){
-						nosh.setHappy();
+						nosh.setMood(Child.Mood.HAPPY);
 					}
 					break;
 				default:
@@ -510,18 +510,19 @@ public class GameplayController {
 
 
 		Random generator = new Random();
-		float ned_prob = 0.07f;
-		float nosh_prob = 0.07f;
+		float ned_prob = 0.3f;
+		float nosh_prob = 0.3f;
 
 		// check every 100 frames
 		if (counter % 100 == 0) {
 			// make ned sleepy with given probability
 			if (generator.nextFloat() <= ned_prob) {
-				ned.setAwake(false);
+//				ned.setAsleep();
+				ned.setMoodShifting(true, false);
 			}
 			// make nosh sleepy with given probability
 			if (generator.nextFloat() <= nosh_prob) {
-				nosh.setAwake(false);
+				nosh.setAsleep();
 			}
 
 		}
