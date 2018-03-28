@@ -197,7 +197,7 @@ public class Child extends HUDObject {
      * Returns true if the mouse is positioned inside the area of the wheel.
      * The wheel must not be null.
      *
-     * @param p the vector giving the mouse's (x,y) screen coordinates
+     * @param p the vector giving the mouse click's (x,y) screen coordinates
      */
     public boolean inChildArea(Vector2 p) {
         //TODO: do we need this? Currently cannot click on children
