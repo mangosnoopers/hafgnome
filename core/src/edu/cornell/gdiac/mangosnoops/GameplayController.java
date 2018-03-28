@@ -503,9 +503,9 @@ public class GameplayController {
 //				}
 //			}
 		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-            ned.decreaseHappiness();
+			ned.setMoodShifting(true, false);
         } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-            nosh.decreaseHappiness();
+			ned.setMoodShifting(true, false);
         }
 
 
