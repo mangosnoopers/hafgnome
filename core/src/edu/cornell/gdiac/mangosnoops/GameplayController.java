@@ -33,36 +33,26 @@ import java.util.Random;
 
 /**
  * Controller to handle gameplay interactions.
- * </summary>
- * <remarks>
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
 
 	/** The change in x, computed based on the wheel angle */
 	private float rotationMagnitude;
-
 	/** Data structure containing gnome data */
 	private Array<Gnome> gnomez;
-
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
-
 	/** Car instance, containing information about the wheel and children */
 	private Car yonda;
-
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
-
 	/** Location, animation information for vroomstick */
 	private VroomStick vroomStick;
-
 	/** Location and animation information for the wheel **/
 	private Radio radio;
-
 	/** Data structure with level format */
 	private LevelObject level;
-
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -88,23 +78,23 @@ public class GameplayController {
 	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
 	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
 
-	/** Texture for the wheel**/
+	/** Texture for the wheel */
 	private Texture wheelTexture;
 	/** Texture for the vroomstick */
 	private Texture vroomStickTexture;
-	/** Texture for the wheel**/
+	/** Texture for the gnomes */
 	private Texture gnomeTexture;
-	/** Texture for the radio**/
+	/** Texture for the radio */
 	private Texture radioTexture;
-	/** Texture for the radio knob**/
+	/** Texture for the radio knob */
 	private Texture radioknobTexture;
-	/** Textures for nosh **/
+	/** Textures for nosh */
 	private Texture nosh_happy;
 	private Texture nosh_neutral;
 	private Texture nosh_sad;
 	private Texture nosh_critical;
 	private Texture nosh_sleep;
-	/** Textures for ned **/
+	/** Textures for ned */
 	private Texture ned_happy;
 	private Texture ned_neutral;
 	private Texture ned_sad;
@@ -114,6 +104,11 @@ public class GameplayController {
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
 	private Array<Gnome> backing;
+
+	/** Enum specifying the region this level takes place in. */
+	public enum Region {
+		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
+	}
 
 	/** 
 	 * Preloads the assets for this game.
@@ -503,9 +498,9 @@ public class GameplayController {
 //				}
 //			}
 		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-            ned.decreaseHappiness();
+            ned.setMoodShifting(true, false);
         } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-            nosh.decreaseHappiness();
+            nosh.setMoodShifting(true, false);
         }
 
 
