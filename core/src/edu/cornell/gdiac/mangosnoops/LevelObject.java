@@ -35,14 +35,14 @@ public class LevelObject {
     /** Inventory */
     // TODO
 
-    /** Speed constants */
+    /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.0f;
     private static final float SLOW_SPEED = 0.0f;
     private static final float NORMAL_SPEED = 0.0f;
     private static final float FAST_SPEED = 0.0f;
     private static final float VERY_FAST_SPEED = 0.0f;
 
-    /** Padding constants */
+    /** Padding constants TODO */
     private static final float LESS_PADDING = 0.0f;
     private static final float NORMAL_PADDING = 0.0f;
     private static final float MORE_PADDING = 0.0f;
@@ -127,9 +127,21 @@ public class LevelObject {
      * Loads in a file to create a Level Object.
      *
      * @param file name of JSON or Excel file with level information.
+     * @throws Exception if one is raised while parsing the file
      */
-    public LevelObject(String file) {
+    public LevelObject(String file) throws Exception {
         yonda = new Car();
+
+        // if Excel file -- TODO
+        if (true) {
+            parseExcel(file);
+            // TODO: also make inventory empty
+        }
+
+        // if JSON file -- TODO
+        else if (true) {
+            parseJSON(file);
+        }
     }
 
     /**
@@ -143,6 +155,9 @@ public class LevelObject {
     /**
      * Parse an Excel file for information about a level.
      * @param file name of an Excel file (xlsx or xls)
+     * @throws RuntimeException if an invalid setting was given in the level
+     * @throws IOException if there is an error in opening/closing file
+     * @throws InvalidFormatException if not a proper Excel file
      */
     public void parseExcel(String file) throws Exception {
         try {
@@ -163,10 +178,40 @@ public class LevelObject {
             else if (regionStr.equals("colorado"))
                 region = Region.COLORADO;
             else
-                throw new RuntimeException("Not a valid region");
+                throw new RuntimeException("Invalid region");
+
+            // Speed information
+            String speedStr = sh.getRow(SPEED_ROW).getCell(SPEED_COL).getStringCellValue().toLowerCase();
+            if (speedStr.equals("very slow"))
+                speed = VERY_SLOW_SPEED;
+            else if (speedStr.equals("slow"))
+                speed = SLOW_SPEED;
+            else if (speedStr.equals("normal"))
+                speed = NORMAL_SPEED;
+            else if (speedStr.equals("fast"))
+                speed = FAST_SPEED;
+            else if (speedStr.equals("very fast"))
+                speed = VERY_FAST_SPEED;
+            else
+                throw new RuntimeException("Invalid speed setting");
 
             // Number of lanes - throws an IllegalStateException or NumberFormatException if error
             numLanes = (int) sh.getRow(LANE_ROW).getCell(LANE_COL).getNumericCellValue();
+
+            // Total number of blocks and number of blocks to use
+            totalBlocks = (int) sh.getRow(TOTAL_BLOCKS_ROW).getCell(TOTAL_BLOCKS_COL).getNumericCellValue();
+            useBlocks = (int) sh.getRow(USE_BLOCKS_ROW).getCell(USE_BLOCKS_COL).getNumericCellValue();
+
+            // Padding between enemies
+            String pStr = sh.getRow(PADDING_ROW).getCell(PADDING_COL).getStringCellValue().toLowerCase();
+            if (pStr.equals("less"))
+                padding = LESS_PADDING;
+            else if (pStr.equals("normal"))
+                padding = NORMAL_PADDING;
+            else if (pStr.equals("more"))
+                padding = MORE_PADDING;
+            else
+                throw new RuntimeException("Invalid padding setting");
 
             // Iterate through cells for songs
             for (int i = SONGS_START_ROW; i <= SONGS_END_ROW; i++) {
@@ -187,13 +232,28 @@ public class LevelObject {
                 else if (genreStr.equals("comedy"))
                     songs.put(Genre.COMEDY, songFile);
                 else
-                    throw new RuntimeException("Not a valid song genre");
+                    throw new RuntimeException("Invalid song genre");
             }
 
-            // Iterate through the cells for road layout until "ROAD END" is reached
-            int roadCell = ROAD_START_ROW;
-            while (!sh.getRow(roadCell).getCell(0).getStringCellValue().toUpperCase().equals("ROAD END")) {
-                roadCell += 1;
+            // Iterate through the cells for road layout until "END" is reached
+            int roadRow = ROAD_START_ROW;
+            int roadCol = ROAD_START_COL;
+            int blocksProcessed = 0;
+            while (blocksProcessed < totalBlocks) {
+                // Process each block -- there is only 1 long block for a deterministic level
+                while (!sh.getRow(roadRow).getCell(roadCol).getStringCellValue().toUpperCase().equals("END")) {
+                    // Get the time for this block
+
+                    // Read the events column
+
+                    // Check for enemies in each lane
+
+                    roadRow += 1;
+                }
+
+                // Move to the next block
+                blocksProcessed += 1;
+                roadCol += numLanes + 1;
             }
 
             // Close the file
