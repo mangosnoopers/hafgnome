@@ -257,7 +257,7 @@ public class GameMode implements Screen {
 
 		// Create the controllers.
 		inputController = new InputController();
-		gameplayController = new GameplayController(new LevelObject(LEVEL_JSON));
+		gameplayController = new GameplayController(new LevelObject());
 		// YOU WILL NEED TO MODIFY THIS NEXT LINE
 		collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
 		soundController = new SoundController();

@@ -46,6 +46,9 @@ public class LevelObject {
     private static final float LESS_PADDING = 0.0f;
     private static final float NORMAL_PADDING = 0.0f;
     private static final float MORE_PADDING = 0.0f;
+    private static final float LANE_SIZE = 0.0f;
+    private static final float ROAD_MIDDLE = 0.0f;
+    private static final float CONVERT_TO_PIXELS = 0.0f;
 
     /** Excel spreadsheet constants */
     /** Row and column of the cell containing region information */
@@ -144,6 +147,8 @@ public class LevelObject {
         }
     }
 
+    public LevelObject() { yonda = new Car(); }
+
     /**
      * Parse a JSON file for information about a level.
      * @param file name of a JSON file
@@ -235,19 +240,38 @@ public class LevelObject {
                     throw new RuntimeException("Invalid song genre");
             }
 
-            // Iterate through the cells for road layout until "END" is reached
-            int roadRow = ROAD_START_ROW;
-            int roadCol = ROAD_START_COL;
-            int blocksProcessed = 0;
-            while (blocksProcessed < totalBlocks) {
-                // Process each block -- there is only 1 long block for a deterministic level
-                while (!sh.getRow(roadRow).getCell(roadCol).getStringCellValue().toUpperCase().equals("END")) {
-                    // Get the time for this block
 
-                    // Read the events column
+            // Iterate through each block
+            int roadRow = ROAD_START_ROW;
+            int roadCol = ROAD_START_COL; // Always the first column of a block
+            int blocksProcessed = 0;
+            float miles = 0.0f;
+
+            while (blocksProcessed < totalBlocks) {
+                // Iterate through cells for a block until "END" is reached in first column
+
+                while (!sh.getRow(roadRow).getCell(roadCol).getStringCellValue().toUpperCase().equals("END")) {
+                    // Convert miles into the y-coordinate for this block
+                    float y = miles * CONVERT_TO_PIXELS;
+
+                    // Read the events column - first column of the block TODO
+                    String eventStr = sh.getRow(roadRow).getCell(roadCol).getStringCellValue();
 
                     // Check for enemies in each lane
+                    for (int i = 0; i < numLanes; i++) {
+                        float x = 0.0f; // TODO
+                        String enemyStr = sh.getRow(roadRow).getCell(roadCol + i).getStringCellValue().toLowerCase();
+                        if (enemyStr.equals("gnome"))
+                            gnomez.add(new Gnome(x, y, Gnome.GnomeType.BASIC));
+                        else if (enemyStr.equals("flamingo"))
+                            gnomez.add(new Gnome(x, y, Gnome.GnomeType.FLAMINGO));
+                        else if (enemyStr.equals("grill"))
+                            gnomez.add(new Gnome(x, y, Gnome.GnomeType.GRILL));
+                        else
+                            throw new RuntimeException("Invalid enemy type");
+                    }
 
+                    miles += padding;
                     roadRow += 1;
                 }
 
