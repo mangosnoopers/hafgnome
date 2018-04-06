@@ -117,7 +117,21 @@ public class Car extends RoadObject {
 
     public void setHealth(int newHealth) { health = newHealth; }
 
-    public void setDamaged(boolean b) { isDamaged = b; timeToDisplayDamageIndicator = 10; }
+    /**
+     * Damage the car. Only has an effect if the car isn't already
+     * being damaged.
+     *
+     * The car must display the entire damage animation before it can
+     * be damaged again (the "damage animation" refers to the red flash
+     * thing).
+     */
+    public void damage() {
+        if (!isDamaged) {
+            isDamaged = true;
+            timeToDisplayDamageIndicator = 10;
+            setHealth(getHealth() - 10);
+        }
+    }
 
     public boolean getIsDamaged() { return isDamaged; }
 
@@ -179,7 +193,7 @@ public class Car extends RoadObject {
             timeToDisplayDamageIndicator -= delta * DISPLAY_DEPLETION;
             displayAlpha -= delta * 2;
         } else {
-            setDamaged(false);
+            isDamaged = false;
             timeToDisplayDamageIndicator = 10;
             displayAlpha = 1.0f;
         }
