@@ -63,6 +63,10 @@ public class GameplayController {
 	/** Data structure with level format */
 	private LevelObject level;
 
+	/** Rearview enemy instance. The way it's handled right now, there is only
+	 *  one at a time. FIXME: could change that if necessary */
+	private RearviewEnemy rearviewEnemy;
+
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -228,9 +232,9 @@ public class GameplayController {
 		return yonda;
 	}
 
-	public Road getRoad() {
-		return road;
-	}
+	public Road getRoad() { return road; }
+
+	public RearviewEnemy getRearviewEnemy() { return rearviewEnemy; }
 
     /**
      * Returns a reference to the wheel
@@ -331,6 +335,11 @@ public class GameplayController {
 		gnomez.add(newGnome13);
 		gnomez.add(newGnome14);
 		gnomez.add(newGnome15);
+
+		// Rearview enemy
+		rearviewEnemy = new RearviewEnemy();
+		rearviewEnemy.setTexture(gnomeTexture); /** FIXME: use rearview enemy texture instead of gnome */
+
 	}
 
 	/**
@@ -431,7 +440,16 @@ public class GameplayController {
 
 		vroomStick.update(input.getClickPos(), input.getDY());
 
-		if (vroomStick.isEngaged()) { road.setVrooming(); }
+		rearviewEnemy.update(delta);
+
+		if (vroomStick.isEngaged()) {
+			rearviewEnemy.destroyIfAlive();
+			road.setVrooming();
+		}
+
+		if (rearviewEnemy.isAttackingCar()) {
+			getCar().damage();
+		}
 
 		if(prevClick != null && input.getClickPos() == null) {
 			yonda.update(prevClick, wheel, delta);
@@ -513,6 +531,8 @@ public class GameplayController {
 		float ned_prob = 0.3f;
 		float nosh_prob = 0.3f;
 
+		float rearviewProb = 0.3f;
+
 		// check every 100 frames
 		if (counter % 100 == 0) {
 			// make ned sleepy with given probability
@@ -523,6 +543,11 @@ public class GameplayController {
 			// make nosh sleepy with given probability
 			if (generator.nextFloat() <= nosh_prob) {
 				nosh.setAsleep();
+			}
+
+			// Create rearview enemy with given probability
+			if (generator.nextFloat() <= rearviewProb) {
+				rearviewEnemy.create();
 			}
 
 		}

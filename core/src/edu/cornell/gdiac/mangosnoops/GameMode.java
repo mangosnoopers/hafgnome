@@ -371,6 +371,14 @@ public class GameMode implements Screen {
 
 		canvas.clearScreen();
 
+		// Draw RearviewEnemy
+        canvas.beginHUDDrawing();
+
+		// Rearview enemy
+		gameplayController.getRearviewEnemy().draw(canvas);
+
+        canvas.endHUDDrawing();
+
         // ** Draw world with 3D perspective **
         // TODO: change this
         gameplayController.getRoad().draw(canvas, 0);

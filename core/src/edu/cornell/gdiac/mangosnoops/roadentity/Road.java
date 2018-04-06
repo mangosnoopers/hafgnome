@@ -63,7 +63,6 @@ public class Road extends RoadObject {
             currentSpeed = VROOM_SPEED;
             vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
         } else {
-            System.out.println(currentSpeed);
             currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
         }
         for (Decal d : roadDecals) {
