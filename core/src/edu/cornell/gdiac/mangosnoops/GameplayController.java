@@ -55,6 +55,9 @@ public class GameplayController {
 	/** Object containing all information about the current level. This includes
 	 *  everything specific to a level: the songs, enemies, events, etc. */
 	private LevelObject level;
+	/** Rearview enemy instance. The way it's handled right now, there is only
+	 *  one at a time. FIXME: could change that if necessary */
+	private RearviewEnemy rearviewEnemy;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -226,22 +229,27 @@ public class GameplayController {
 	/**
 	 * Returns a reference to the road.
 	 */
-	public Road getRoad() {
-		return road;
-	}
+	public Road getRoad() { return road; }
+
+  /**
+   * Returns a reference to a rearview enemy.
+   */
+	public RearviewEnemy getRearviewEnemy() { return rearviewEnemy; }
 
     /**
      * Returns a reference to the wheel.
      */
     public Wheel getWheel(){ return wheel; }
 
+  /**
+   * Returns a reference to the vroom stick.
+   */
 	public VroomStick getVroomStick() { return vroomStick; }
 
 	/**
 	 * Returns a reference to the radio
 	 */
     public Radio getRadio(){ return radio; }
-
 
 	/**
 	 * Returns true if the currently active player is alive.
@@ -272,7 +280,57 @@ public class GameplayController {
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
-	}
+
+		Gnome newGnome = new Gnome(-0.1f, 50);
+		Gnome newGnome2 = new Gnome(0.1f, 100);
+		Gnome newGnome3 = new Gnome(0, 120);
+		Gnome newGnome4 = new Gnome(0, 150);
+		Gnome newGnome5 = new Gnome(0.1f,170);
+		Gnome newGnome6 = new Gnome(-0.1f, 10);
+		Gnome newGnome7 = new Gnome(0f, 15);
+		Gnome newGnome8 = new Gnome(0.1f, 30);
+		Gnome newGnome9 = new Gnome(0, 40);
+		Gnome newGnome10 = new Gnome(-0.1f,300);
+		Gnome newGnome11 = new Gnome(0, 5);
+		Gnome newGnome12 = new Gnome(-0.1f, 15);
+		Gnome newGnome13 = new Gnome(0.1f, 80);
+		Gnome newGnome14 = new Gnome(-0.1f, 90);
+		Gnome newGnome15 = new Gnome(0.1f, 100);
+		newGnome.setTexture(gnomeTexture);
+		newGnome2.setTexture(gnomeTexture);
+		newGnome3.setTexture(gnomeTexture);
+		newGnome4.setTexture(gnomeTexture);
+		newGnome5.setTexture(gnomeTexture);
+		newGnome6.setTexture(gnomeTexture);
+		newGnome7.setTexture(gnomeTexture);
+		newGnome8.setTexture(gnomeTexture);
+		newGnome9.setTexture(gnomeTexture);
+		newGnome10.setTexture(gnomeTexture);
+		newGnome11.setTexture(gnomeTexture);
+		newGnome12.setTexture(gnomeTexture);
+		newGnome13.setTexture(gnomeTexture);
+		newGnome14.setTexture(gnomeTexture);
+		newGnome15.setTexture(gnomeTexture);
+		gnomez.add(newGnome);
+		gnomez.add(newGnome2);
+		gnomez.add(newGnome3);
+		gnomez.add(newGnome4);
+		gnomez.add(newGnome5);
+		gnomez.add(newGnome6);
+		gnomez.add(newGnome7);
+		gnomez.add(newGnome8);
+		gnomez.add(newGnome9);
+		gnomez.add(newGnome10);
+		gnomez.add(newGnome11);
+		gnomez.add(newGnome12);
+		gnomez.add(newGnome13);
+		gnomez.add(newGnome14);
+		gnomez.add(newGnome15);
+
+		// Rearview enemy
+		rearviewEnemy = new RearviewEnemy();
+		rearviewEnemy.setTexture(gnomeTexture); /** FIXME: use rearview enemy texture instead of gnome */
+  }
 
 	/**
 	 * Resets the game, deleting all objects.
@@ -351,7 +409,16 @@ public class GameplayController {
 
 		vroomStick.update(input.getClickPos(), input.getDY());
 
-		if (vroomStick.isEngaged()) { road.setVrooming(); }
+		rearviewEnemy.update(delta);
+
+		if (vroomStick.isEngaged()) {
+			rearviewEnemy.destroyIfAlive();
+			road.setVrooming();
+		}
+
+		if (rearviewEnemy.isAttackingCar()) {
+			getCar().damage();
+		}
 
 		if(prevClick != null && input.getClickPos() == null) {
 			yonda.update(prevClick, wheel, delta);
@@ -433,6 +500,8 @@ public class GameplayController {
 		float ned_prob = 0.3f;
 		float nosh_prob = 0.3f;
 
+		float rearviewProb = 0.3f;
+
 		// check every 100 frames
 		if (counter % 100 == 0) {
 			// make ned sleepy with given probability
@@ -443,6 +512,11 @@ public class GameplayController {
 			// make nosh sleepy with given probability
 			if (generator.nextFloat() <= nosh_prob) {
 				nosh.setAsleep();
+			}
+
+			// Create rearview enemy with given probability
+			if (generator.nextFloat() <= rearviewProb) {
+				rearviewEnemy.create();
 			}
 
 		}
