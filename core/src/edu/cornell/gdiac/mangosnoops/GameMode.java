@@ -71,8 +71,7 @@ public class GameMode implements Screen {
 	private Texture background;
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
-	private int FONT_SIZE = 24;
-
+	private static final int FONT_SIZE = 24;
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
@@ -92,8 +91,39 @@ public class GameMode implements Screen {
 	/** Texture of the rear view mirror */
 	private Texture rearviewMirror;
 
-	/** Counter for the game TODO: REMOVE */
+	/** Counter for the game */
 	private int counter;
+	/** Tracker for global miles traversed in story mode of game TODO do something w this */
+	private float globalMiles;
+
+	/** Factor used to compute where we are in scrolling process */
+	private static final float TIME_MODIFIER    = 0.06f;
+	/** Offset for the shell counter message on the screen */
+	private static final float COUNTER_OFFSET   = 5.0f;
+	/** Offset for the game over message on the screen */
+	private static final float GAME_OVER_OFFSET = 40.0f;
+	/** Origin of health gauge */
+	private static final Vector2 HEALTH_GAUGE_ORIGIN = new Vector2(0.0f,0.0f);
+
+	/** Reference to drawing context to display graphics (VIEW CLASS) */
+	private GameCanvas canvas;
+
+	/** Reads input from keyboard or game pad (CONTROLLER CLASS) */
+	private InputController inputController;
+	/** Handle collision and physics (CONTROLLER CLASS) */
+	private CollisionController collisionController;
+	/** Constructs the game models and handle basic gameplay (CONTROLLER CLASS) */
+	private GameplayController gameplayController;
+	/** Handles all sound Output **/
+	private SoundController soundController;
+	/** Variable to track the game state (SIMPLE FIELDS) */
+	private GameState gameState;
+	/** Variable to track total time played in milliseconds (SIMPLE FIELDS) */
+	private float totalTime = 0;
+	/** Whether or not this player mode is still active */
+	private boolean active;
+	/** Listener that will update the player mode when we are done */
+	private ScreenListener listener;
 
 	/** 
 	 * Preloads the assets for this game.
@@ -209,38 +239,7 @@ public class GameMode implements Screen {
     		}
     	}
 	}
-	
-	/// CONSTANTS
-	
-	/** Factor used to compute where we are in scrolling process */
-	private static final float TIME_MODIFIER    = 0.06f;
-	/** Offset for the shell counter message on the screen */
-	private static final float COUNTER_OFFSET   = 5.0f;
-	/** Offset for the game over message on the screen */
-	private static final float GAME_OVER_OFFSET = 40.0f;
-	/** Origin of health gauge */
-	private static final Vector2 HEALTH_GAUGE_ORIGIN = new Vector2(0.0f,0.0f);
-	
-	/** Reference to drawing context to display graphics (VIEW CLASS) */
-	private GameCanvas canvas;
-	
-	/** Reads input from keyboard or game pad (CONTROLLER CLASS) */
-	private InputController inputController;
-	/** Handle collision and physics (CONTROLLER CLASS) */
-	private CollisionController collisionController;
-	/** Constructs the game models and handle basic gameplay (CONTROLLER CLASS) */
-	private GameplayController gameplayController;
-		/** Handles all sound Output **/
-	private SoundController soundController;
-	/** Variable to track the game state (SIMPLE FIELDS) */
-	private GameState gameState;
-	/** Variable to track total time played in milliseconds (SIMPLE FIELDS) */
-	private float totalTime = 0;
-	/** Whether or not this player mode is still active */
-	private boolean active;
-	
-	/** Listener that will update the player mode when we are done */
-	private ScreenListener listener;
+
 
 	/**
 	 * Creates a new game with the given drawing context.
@@ -257,8 +256,7 @@ public class GameMode implements Screen {
 
 		// Create the controllers.
 		inputController = new InputController();
-		gameplayController = new GameplayController(new LevelObject(LEVEL_JSON));
-		// YOU WILL NEED TO MODIFY THIS NEXT LINE
+		gameplayController = new GameplayController(new LevelObject());
 		collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
 		soundController = new SoundController();
 	}
@@ -323,8 +321,7 @@ public class GameMode implements Screen {
 			break;
 		}
 	}
-	int done = 0;
-	
+
 	/**
 	 * This method processes a single step in the game loop.
 	 *
@@ -347,7 +344,6 @@ public class GameMode implements Screen {
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
-		// TODO: Camera won't be public, use car position
 		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
 
 		// Clean up destroyed objects
@@ -404,12 +400,12 @@ public class GameMode implements Screen {
 		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
 				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
 
-		//Draw rearview mirror
+		// Draw rearview mirror
 		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth(),rearviewMirror.getHeight(),
 					canvas.getWidth(),canvas.getHeight(),0,
 				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
 
-		//Draw nosh
+		// Draw Ned and Nosh
 		gameplayController.getCar().getNosh().draw(canvas, rearviewMirror);
         gameplayController.getCar().getNed().draw(canvas, rearviewMirror);
 

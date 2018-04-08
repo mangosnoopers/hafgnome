@@ -173,6 +173,7 @@ public class Car extends RoadObject {
     public void update(Vector2 clickPos, Wheel wheel, float delta) {
         // Call superclass's update
         super.update(delta);
+        System.out.println(position);
 
         position.x += wheel.getHorizontalMovement() * delta * -1 * CAR_XSPEED;
 
