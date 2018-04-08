@@ -36,8 +36,6 @@ public class LevelObject {
     /** A queue of events for the level.
      *  The first element in the queue is the event to happen the soonest. */
     private Queue<Event> events;
-    /** The car */
-    private Car yonda;
     /** Inventory */
     // TODO
     /** An internal tracker for number of miles traversed so far in the level */
@@ -147,11 +145,6 @@ public class LevelObject {
     public Queue<Event> getEvents() { return events; }
 
     /**
-     * Return the car for this level.
-     */
-    public Car getCar() { return yonda; }
-
-    /**
      * Loads in a file to create a Level Object.
      *
      * @param file name of JSON or Excel file with level information.
@@ -160,7 +153,6 @@ public class LevelObject {
      * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
      */
     public LevelObject(String file) throws IOException, InvalidFormatException, RuntimeException {
-        yonda = new Car();
         localMiles = 0.0f;
 
         // Initialize collections -- TODO: inventory
@@ -188,7 +180,6 @@ public class LevelObject {
 
     // TODO: delete
     public LevelObject() {
-        yonda = new Car();
         localMiles = 0.0f;
     }
 
