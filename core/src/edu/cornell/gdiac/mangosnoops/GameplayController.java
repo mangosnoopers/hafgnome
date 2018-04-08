@@ -36,11 +36,12 @@ import java.util.Random;
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
-
 	/** The change in x, computed based on the wheel angle */
 	private float rotationMagnitude;
 	/** Data structure containing gnome data */
 	private Array<Gnome> gnomez;
+	/** A queue containing events that will happen on the road */
+	private Queue<Event> events;
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -193,7 +194,7 @@ public class GameplayController {
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
-	 * @param level is the Level information (which was saved in a JSON file)
+	 * @param level is the Level information
 	 */
 	public GameplayController(LevelObject level) {
 		this.level = level;

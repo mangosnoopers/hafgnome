@@ -40,8 +40,8 @@ public class LevelObject {
     private Car yonda;
     /** Inventory */
     // TODO
-    /** An internal tracker for number of miles so far in the level */
-    private float localMiles = 0.0f;
+    /** An internal tracker for number of miles traversed so far in the level */
+    private float localMiles;
 
     /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.0f;
@@ -127,6 +127,11 @@ public class LevelObject {
     public float getPadding() { return padding; }
 
     /**
+     * Return the seed used to randomly generate this level.
+     */
+    public int getSeed() { return seed; }
+
+    /**
      * Return the songs for this level.
      */
     public ObjectMap<Genre,String> getSongs() { return songs; }
@@ -150,25 +155,42 @@ public class LevelObject {
      * Loads in a file to create a Level Object.
      *
      * @param file name of JSON or Excel file with level information.
-     * @throws Exception if one is raised while parsing the file
+     * @throws IOException if one is raised while opening or closing the file
+     * @throws InvalidFormatException if Excel input file format is invalid
+     * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
      */
-    public LevelObject(String file) throws Exception {
+    public LevelObject(String file) throws IOException, InvalidFormatException, RuntimeException {
         yonda = new Car();
+        localMiles = 0.0f;
 
-        // if Excel file -- TODO
-        if (true) {
+        // Initialize collections -- TODO: inventory
+        songs = new ObjectMap<Genre, String>();
+        gnomez = new Array<Gnome>();
+        events = new Queue<Event>();
+
+        // if Excel file
+        String ext = file.substring(file.lastIndexOf('.') + 1);
+        if (ext.equals("xlsx") || ext.equals("xls")) {
             parseExcel(file);
-            // TODO: also make inventory empty
         }
 
-        // if JSON file -- TODO
-        else if (true) {
+        // if JSON file
+        else if (ext.equals("json")) {
             parseJSON(file);
         }
+
+        // not a supported file type
+        else {
+            throw new RuntimeException("Unsupported file type");
+        }
+
     }
 
     // TODO: delete
-    public LevelObject() { yonda = new Car(); }
+    public LevelObject() {
+        yonda = new Car();
+        localMiles = 0.0f;
+    }
 
     /**
      * Parse a JSON file for information about a level.
@@ -185,7 +207,7 @@ public class LevelObject {
      * @throws IOException if there is an error in opening/closing file
      * @throws InvalidFormatException if not a proper Excel file
      */
-    public void parseExcel(String file) throws Exception {
+    public void parseExcel(String file) throws IOException, InvalidFormatException, RuntimeException {
         try {
             FileInputStream f = new FileInputStream(new File("levels/" + file));
 
@@ -314,7 +336,7 @@ public class LevelObject {
     private void processExcelBlock(Sheet sh, int roadStartCol) {
         DataFormatter df = new DataFormatter();
 
-        // Iterate through cells for a block until "END" is reached in first column
+        // Iterate through cells until "END" is reached in first column
         int roadCurrRow = ROAD_START_ROW;
         while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
             // Convert miles into the y-coordinate for this block
