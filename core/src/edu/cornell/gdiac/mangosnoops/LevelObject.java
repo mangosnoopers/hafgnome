@@ -40,6 +40,8 @@ public class LevelObject {
     private Car yonda;
     /** Inventory */
     // TODO
+    /** An internal tracker for number of miles so far in the level */
+    private float localMiles = 0.0f;
 
     /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.0f;
@@ -48,14 +50,14 @@ public class LevelObject {
     private static final float FAST_SPEED = 0.0f;
     private static final float VERY_FAST_SPEED = 0.0f;
 
-    /** Padding constants TODO */
-    private static final float LESS_PADDING = 0.0f;
-    private static final float NORMAL_PADDING = 0.0f;
-    private static final float MORE_PADDING = 0.0f;
-    private static final float LANE_SIZE = 0.0f;
-    private static final float ROAD_MIDDLE = 0.0f;
-    private static final float CONVERT_TO_PIXELS = 0.0f;
-    private static final float CONVERT_TO_PIXEL_OFFSET = 0.0f;
+    /** Padding constants. Converts each cell to a certain number of miles. */
+    private static final float LESS_PADDING_MILES = 2.0f;
+    private static final float NORMAL_PADDING_MILES = 5.0f;
+    private static final float MORE_PADDING_MILES = 8.0f;
+    /** Constant to help calculate x-coordinates of enemies */
+    private static final int LANE_X_OFFSET = 2;
+    /** A constant that gives the number of pixels per one in-game mile. */
+    private static final float MILES_TO_PIXELS = 10.0f;
 
     /** Excel spreadsheet constants */
     /** Row and column of the cell containing region information */
@@ -165,6 +167,7 @@ public class LevelObject {
         }
     }
 
+    // TODO: delete
     public LevelObject() { yonda = new Car(); }
 
     /**
@@ -240,11 +243,11 @@ public class LevelObject {
             // Padding between enemies
             String pStr = df.formatCellValue(sh.getRow(PADDING_ROW).getCell(PADDING_COL)).toLowerCase();
             if (pStr.equals("less"))
-                padding = LESS_PADDING;
+                padding = LESS_PADDING_MILES;
             else if (pStr.equals("normal"))
-                padding = NORMAL_PADDING;
+                padding = NORMAL_PADDING_MILES;
             else if (pStr.equals("more"))
-                padding = MORE_PADDING;
+                padding = MORE_PADDING_MILES;
             else
                 throw new RuntimeException("Invalid padding setting");
 
@@ -273,60 +276,21 @@ public class LevelObject {
                     throw new RuntimeException("Invalid song genre specified");
             }
 
-
-            // TODO: extend to work w/ random blocks
-
-            // Iterate through each block
-            int roadCurrRow = ROAD_START_ROW;
-            int roadStartCol = ROAD_START_COL; // Always the first column of a block
-            int blocksProcessed = 0;
-            float miles = 0.0f;
-
-            while (blocksProcessed < totalBlocks) {
-                // Iterate through cells for a block until "END" is reached in first column
-                while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
-                    // Convert miles into the y-coordinate for this block
-                    float y = miles * CONVERT_TO_PIXELS + CONVERT_TO_PIXEL_OFFSET;
-
-                    // Read the events column - first column of the block TODO
-                    String eventStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toLowerCase();
-                    if (eventStr.equals("rear enemy")) {
-                        events.addLast(new Event(y, Event.EventType.REAR_ENEMY));
-                    } else if (eventStr.equals("sun")) {
-                        events.addLast(new Event(y, Event.EventType.SUN));
-                    } else if (eventStr.equals("ned wakes up")) {
-                        events.addLast(new Event(y, Event.EventType.NED_WAKES_UP));
-                    } else if (eventStr.equals("nosh wakes up")) {
-                        events.addLast(new Event(y, Event.EventType.NOSH_WAKES_UP));
-                    } else if (eventStr.equals("sat question")) {
-                        events.addLast(new Event(y, Event.EventType.SAT_QUESTION));
-                    } else {
-                        throw new RuntimeException("Invalid event specified");
-                    }
-
-
-                    // Check for enemies in each lane
-                    for (int i = 0; i < numLanes; i++) {
-                        float x = 0.0f; // TODO
-                        String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
-                        if (enemyStr.equals("gnome"))
-                            gnomez.add(new Gnome(x, y, Gnome.GnomeType.BASIC));
-                        else if (enemyStr.equals("flamingo"))
-                            gnomez.add(new Gnome(x, y, Gnome.GnomeType.FLAMINGO));
-                        else if (enemyStr.equals("grill start"))
-                            gnomez.add(new Gnome(x, y, Gnome.GnomeType.GRILL));
-                            // TODO: grill end
-                        else
-                            throw new RuntimeException("Invalid enemy type specified");
-                    }
-
-                    miles += padding;
-                    roadCurrRow += 1;
+            // Iterate through desired number of blocks in order if randomSelect is false
+            if (!randomSelect) {
+                int roadStartCol = ROAD_START_COL; // Always the first column of a block
+                int blocksProcessed = 0;
+                while (blocksProcessed < useBlocks) {
+                    processExcelBlock(sh, roadStartCol);
+                    // Move to the next block
+                    blocksProcessed += 1;
+                    roadStartCol += numLanes + 1;
                 }
+            }
 
-                // Move to the next block
-                blocksProcessed += 1;
-                roadStartCol += numLanes + 1;
+            // Else randomly select desired number of blocks
+            else {
+                // TODO: extend to work w/ random blocks
             }
 
             // Close the file
@@ -338,6 +302,60 @@ public class LevelObject {
             throw new InvalidFormatException("Input file format invalid");
         } catch (RuntimeException e) {
             throw e;
+        }
+
+    }
+
+    /** Process a block of enemies and events in an Excel level.
+     *
+     * @param sh the Excel sheet containing the level
+     * @param roadStartCol The first column of the block
+     */
+    private void processExcelBlock(Sheet sh, int roadStartCol) {
+        DataFormatter df = new DataFormatter();
+
+        // Iterate through cells for a block until "END" is reached in first column
+        int roadCurrRow = ROAD_START_ROW;
+        while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
+            // Convert miles into the y-coordinate for this block
+            float y = localMiles * MILES_TO_PIXELS;
+
+            // Read the events column - first column of the block
+            String eventStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toLowerCase();
+            if (eventStr.equals("rear enemy")) {
+                events.addLast(new Event(y, Event.EventType.REAR_ENEMY));
+            } else if (eventStr.equals("sun")) {
+                events.addLast(new Event(y, Event.EventType.SUN));
+            } else if (eventStr.equals("ned wakes up")) {
+                events.addLast(new Event(y, Event.EventType.NED_WAKES_UP));
+            } else if (eventStr.equals("nosh wakes up")) {
+                events.addLast(new Event(y, Event.EventType.NOSH_WAKES_UP));
+            } else if (eventStr.equals("sat question")) {
+                events.addLast(new Event(y, Event.EventType.SAT_QUESTION));
+            } else {
+                throw new RuntimeException("Invalid event specified");
+            }
+
+            // Starting x-coordinate for rightmost lane
+            float x = 0.1f * (numLanes - LANE_X_OFFSET);
+            // Check for enemies in each lane
+            for (int i = 1; i <= numLanes; i++) {
+                // Calculate the x-coordinate for this enemy - decrease by 0.1 for each lane left
+                x -= 0.1f;
+                String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
+                if (enemyStr.equals("gnome"))
+                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.BASIC));
+                else if (enemyStr.equals("flamingo"))
+                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.FLAMINGO));
+                else if (enemyStr.equals("grill start"))
+                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.GRILL));
+                    // TODO: grill end
+                else
+                    throw new RuntimeException("Invalid enemy type specified");
+            }
+
+            localMiles += padding;
+            roadCurrRow += 1;
         }
 
     }
