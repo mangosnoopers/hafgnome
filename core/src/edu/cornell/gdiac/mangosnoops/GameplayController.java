@@ -38,10 +38,6 @@ import java.util.Random;
 public class GameplayController {
 	/** The change in x, computed based on the wheel angle */
 	private float rotationMagnitude;
-	/** Data structure containing gnome data */
-	private Array<Gnome> gnomez;
-	/** A queue containing events that will happen on the road */
-	private Queue<Event> events;
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -50,9 +46,14 @@ public class GameplayController {
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
 	private VroomStick vroomStick;
-	/** Location and animation information for the wheel **/
+	/** Location and animation information for the wheel */
 	private Radio radio;
-	/** Data structure with level format */
+	/** Contains location for the previous click, used for debouncing */
+	private Vector2 prevClick = null;
+	/** TODO: DELETE THIS its redundant */
+	private Array<Gnome> gnomez;
+	/** Object containing all information about the current level. This includes
+	 *  everything specific to a level: the songs, enemies, events, etc. */
 	private LevelObject level;
 
 	// Graphics assets for the entities
@@ -198,8 +199,8 @@ public class GameplayController {
 	 */
 	public GameplayController(LevelObject level) {
 		this.level = level;
-		yonda = null;
-		gnomez = new Array<Gnome>();
+		gnomez = level.getGnomez();
+		yonda = new Car();
 		backing = new Array<Gnome>();
 		road = new Road();
 	}
@@ -216,43 +217,35 @@ public class GameplayController {
 	public Array<Gnome> getGnomez() { return gnomez; }
 
 	/**
-	 * Returns a reference to the currently active car
-	 *
-	 * @return a reference to the currently active car.
+	 * Returns a reference to the car.
 	 */
 	public Car getCar() {
 		return yonda;
 	}
 
+	/**
+	 * Returns a reference to the road.
+	 */
 	public Road getRoad() {
 		return road;
 	}
 
     /**
-     * Returns a reference to the wheel
-     *
-     * @return reference to the wheel
-     **/
+     * Returns a reference to the wheel.
+     */
     public Wheel getWheel(){ return wheel; }
 
 	public VroomStick getVroomStick() { return vroomStick; }
 
 	/**
 	 * Returns a reference to the radio
-	 *
-	 * @return reference to the radio
-	 **/
+	 */
     public Radio getRadio(){ return radio; }
 
 
 	/**
 	 * Returns true if the currently active player is alive.
-	 *
-	 * This property needs to be modified if you want multiple players.
-	 *
-	 * @return true if the currently active player is alive.
 	 */
-
 	public boolean isAlive() {
 		return yonda != null;
 	}
@@ -266,8 +259,6 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		// Create the player's ship
-        yonda = level.getCar();
         /* TODO: commented this out to get game to run, car is null rn
 		gnomez = level.getGnomez();
 		*/
@@ -281,52 +272,6 @@ public class GameplayController {
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
-
-		Gnome newGnome = new Gnome(-0.1f, 50);
-		Gnome newGnome2 = new Gnome(0.1f, 100);
-		Gnome newGnome3 = new Gnome(0, 120);
-		Gnome newGnome4 = new Gnome(0, 150);
-		Gnome newGnome5 = new Gnome(0.1f,170);
-		Gnome newGnome6 = new Gnome(-0.1f, 10);
-		Gnome newGnome7 = new Gnome(0f, 15);
-		Gnome newGnome8 = new Gnome(0.1f, 30);
-		Gnome newGnome9 = new Gnome(0, 40);
-		Gnome newGnome10 = new Gnome(-0.1f,300);
-		Gnome newGnome11 = new Gnome(0, 5);
-		Gnome newGnome12 = new Gnome(-0.1f, 15);
-		Gnome newGnome13 = new Gnome(0.1f, 80);
-		Gnome newGnome14 = new Gnome(-0.1f, 90);
-		Gnome newGnome15 = new Gnome(0.1f, 100);
-		newGnome.setTexture(gnomeTexture);
-		newGnome2.setTexture(gnomeTexture);
-		newGnome3.setTexture(gnomeTexture);
-		newGnome4.setTexture(gnomeTexture);
-		newGnome5.setTexture(gnomeTexture);
-		newGnome6.setTexture(gnomeTexture);
-		newGnome7.setTexture(gnomeTexture);
-		newGnome8.setTexture(gnomeTexture);
-		newGnome9.setTexture(gnomeTexture);
-		newGnome10.setTexture(gnomeTexture);
-		newGnome11.setTexture(gnomeTexture);
-		newGnome12.setTexture(gnomeTexture);
-		newGnome13.setTexture(gnomeTexture);
-		newGnome14.setTexture(gnomeTexture);
-		newGnome15.setTexture(gnomeTexture);
-		gnomez.add(newGnome);
-		gnomez.add(newGnome2);
-		gnomez.add(newGnome3);
-		gnomez.add(newGnome4);
-		gnomez.add(newGnome5);
-		gnomez.add(newGnome6);
-		gnomez.add(newGnome7);
-		gnomez.add(newGnome8);
-		gnomez.add(newGnome9);
-		gnomez.add(newGnome10);
-		gnomez.add(newGnome11);
-		gnomez.add(newGnome12);
-		gnomez.add(newGnome13);
-		gnomez.add(newGnome14);
-		gnomez.add(newGnome15);
 	}
 
 	/**
@@ -334,7 +279,6 @@ public class GameplayController {
 	 */
 	public void reset() {
 		rotationMagnitude = 0;
-//		yonda = null; TODO: prob make this less sus
 		yonda.reset();
 		wheel = null;
 		radio = null;
@@ -389,26 +333,6 @@ public class GameplayController {
 				break;
 		}
 	}
-	
-//	/**
-//	 * Resolve the actions of all game objects
-//	 *
-//	 * @param input  Reference to the input controller
-//	 * @param delta  Number of seconds since last animation frame
-//	 */
-//	public void resolveActions(InputController input, float delta) {
-//		for (Gnome g : gnomez) { g.update(delta); }
-//
-//		// Update the wheel angle
-//		wheel.update(input.getClickPos(), input.getDX());
-//
-//		// Update the radio
-//		radio.update(input.getClickPos(), input.getDX());
-//
-//		yonda.update(input.getClickPos(), delta);
-//	}
-
-	private Vector2 prevClick = null;
 
 	/**
 	 * Resolve the actions of all game objects
