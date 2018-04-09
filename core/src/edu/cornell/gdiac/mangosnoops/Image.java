@@ -59,4 +59,10 @@ public abstract class Image {
                 relativeScale*canvas.getHeight());
     }
 
+    public void draw(GameCanvas canvas, Color tint) {
+        canvas.draw(texture, tint, 0, 0, position.x, position.y, 0,
+                relativeScale*canvas.getHeight(),
+                relativeScale*canvas.getHeight());
+    }
+
 }
