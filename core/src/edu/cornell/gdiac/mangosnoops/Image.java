@@ -3,44 +3,54 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
+import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 
 public abstract class Image {
 
     /** Texture center point relative to screen size
      *  i.e. (0.5f, 0.5f) would place asset in the middle of the screen */
     protected Vector2 position;
+    /** The object's texture asset **/
     protected Texture texture;
     /** Relative width and height divided by texture -- i.e. 0.5f will make the
      * height of the texture half of the canvas screen height (width would scale the same amount)*/
     protected float relativeScale;
+    /** An optional buffer given to the object in order to 'pad' its area of effectiveness**/
     protected float controlBuffer;
+    /** Dimensions of the screen **/
+    protected static Vector2 SCREEN_DIMENSIONS;
+
 
     public Image(float x, float y, float r, Texture t) {
         position = new Vector2(x,y);
-        relativeScale = r/(float)texture.getHeight();
+        relativeScale = r/(float)t.getHeight();
         texture = t;
         controlBuffer = 0;
     }
 
     public Image(float x, float y, float r, float cb, Texture t) {
         position = new Vector2(x,y);
-        relativeScale = r/(float)texture.getHeight();
+        relativeScale = r/(float)t.getHeight();
         texture = t;
         controlBuffer = cb;
     }
 
+    public static void updateScreenDimensions(GameCanvas canvas){
+        SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(), canvas.getHeight());
+    }
+
     /**
-     *  Returns whether or not position is on this object.
+     * Returns true if the mouse is positioned inside the area of the object
      *
-     *  @param p the vector giving (x,y) screen coordinates
+     *  @param p the vector giving the mouse's (x,y) screen coordinates
      */
-    public boolean inArea(Vector2 p, GameCanvas canvas) {
-        return (p.x > position.x - 0.5f*relativeScale*canvas.getHeight()
-                                    *((float)texture.getWidth()/(float)texture.getHeight()))
-                && (p.x < position.x + 0.5f*relativeScale*canvas.getHeight()
-                                        *(float)texture.getWidth()/(float)texture.getHeight())
-                && (p.y > position.y - 0.5f*relativeScale*canvas.getHeight())
-                && (p.y < position.y + 0.5f*relativeScale*canvas.getHeight());
+    protected boolean inArea(Vector2 p) {
+
+        return ((p.x > position.x*SCREEN_DIMENSIONS.x - (0.5*(float)texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
+                && (p.x < position.x*SCREEN_DIMENSIONS.x + (0.5*(float)texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
+                && (SCREEN_DIMENSIONS.y - p.y > position.y*SCREEN_DIMENSIONS.y - 0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y)
+                && (SCREEN_DIMENSIONS.y - p.y < position.y*SCREEN_DIMENSIONS.y + 0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y));
     }
 
     public void draw(GameCanvas canvas) {

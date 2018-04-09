@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.HUDObject;
 
-public class VroomStick extends HUDObject {
+public class VroomStick {
 
     private static Vector2 position;
     private static Texture vroomStickTexture;
@@ -45,8 +45,8 @@ public class VroomStick extends HUDObject {
         canvas.draw(vroomStickTexture, Color.WHITE, ox, oy, position.x-30, position.y+5, ang, SCALING.x, SCALING.y);
     }
 
-    public void update(Vector2 mousePos, float dy) {
-        if (mousePos != null && inVroomStickArea(mousePos)) {
+    public void update(Vector2 in, float dy) {
+        if (in != null && inVroomStickArea(in)) {
             ang -= dy;
             if (ang < ENGAGE_ANGLE) {
                 ang = ENGAGE_ANGLE;

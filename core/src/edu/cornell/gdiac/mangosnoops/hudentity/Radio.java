@@ -2,43 +2,34 @@ package edu.cornell.gdiac.mangosnoops.hudentity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
+import edu.cornell.gdiac.mangosnoops.Image;
 
+import java.awt.*;
 import java.io.File;
 import java.util.List;
 
-public class Radio extends HUDObject {
+public class Radio extends Image {
     /** Rotation speed */
     private static final float ROTATION_SPEED = 0.05f;
-    /** Window height */
-    private static final float WINDOW_HEIGHT = 600;
-    /** Coordinates of radio center */
-    private Vector2 pos;
-    /** Coordinates of radioknob center */
-    private Vector2 knobPos;
+
     /** Current angle of the radioknob */
     private float knobAng;
-    /** Size of the list of stations **/
-    private int stationListSize;
     /** List of available stations **/
-    private ObjectMap<Integer,Station> Stations;
+    private Array<Station> Stations;
     /** The last played station **/
     Station lastStation;
     /** The current playing station **/
     Station currentStation;
     /** The number of the currently playing station **/
     int stationNumber;
-    /** The Texture for this radio **/
-    private Texture radioTexture;
-    /** The Texture for this radio's knob **/
-    private Texture knobTexture;
-    /** Scale for drawing of the radio **/
-    private final float KNOB_SCALE = 0.2f;
 
     /** Enum for song genres **/
     public enum Genre{
@@ -59,6 +50,18 @@ public class Radio extends HUDObject {
     }
 
 
+    public Radio(float x, float y, float relSize, float cb, Texture tex) {
+        super(x, y, relSize, cb, tex);
+
+        // Create Station list
+        Stations = new Array<Station>();
+
+        // TODO Take this out, it is only here for testing until JSON parser is complete
+        genTestMap();
+        updateStations(testMap);
+
+    }
+
     public Station getLastStation(){ return lastStation; }
 
     public Station getCurrentStation(){ return currentStation; }
@@ -68,56 +71,14 @@ public class Radio extends HUDObject {
      * @return pos
      */
     public Vector2 getPos() {
-        return pos;
+        return position;
     }
-
-    /**
-     * Return the current position of the radio knob.
-     * @return knobPos
-     */
-    public Vector2 getKnobPos() {
-        return knobPos;
-    }
-
-    /**
-     * Set the angle of the radio knob.
-     * @param a The angle to set the wheel to
-     */
-    public void setknobAng(float a) { knobAng = a; }
 
     /**
      * Return the current angle of the radio knob.
      * @return knobAng
      */
     public float getknobAng() { return knobAng; }
-
-    /**
-     * Sets the image texture for this radio
-     */
-    public void setRadioSprite(Texture tex) { radioTexture = tex; }
-
-    /**
-     * Returns image texture for this
-     * radio's knob
-     * @return knobTexture
-     */
-    public Texture getKnobTexture() {
-        return knobTexture;
-    }
-
-    /**
-     * Set Texture for this radio's knob
-     * @param tex
-     */
-    public void setKnobSprite(Texture tex) { knobTexture = tex; }
-
-    /**
-     * Return texture for this radio
-     * @return radioTexture
-     */
-    public Texture getRadioTexture() {
-        return radioTexture;
-    }
 
     /**
      * return name of the current playing station
@@ -129,6 +90,7 @@ public class Radio extends HUDObject {
         }
         return "";
     }
+
     /**
      * return genre of the current playing station
      * @return current station genre
@@ -148,13 +110,10 @@ public class Radio extends HUDObject {
     public void updateStations(ObjectMap<String,String> genreMP3Map){
         if(Stations != null){
             Stations.clear();
-            stationListSize = 0;
         }
-        //System.out.println(genreMP3Map.keys().toArray());
         for(String g : genreMP3Map.keys()){
             Station s = new Station(Genre.valueOf(g), genreMP3Map.get(g));
-            Stations.put(stationListSize,s);
-            stationListSize++;
+            Stations.add(s);
         }
     }
 
@@ -163,150 +122,41 @@ public class Radio extends HUDObject {
      * Should the station change, the new audio is played and the old
      * is shut off
      */
-    public void setStation(){
-        stationNumber = -(int)knobAng;
-        if(stationNumber <= 0){
+    public void setStation() {
+        stationNumber = -(int) knobAng;
+        if (stationNumber <= 0) {
             stationNumber = 0;
         }
         lastStation = currentStation;
-        if(stationNumber>10 && stationNumber<100){
+        if (stationNumber > 10 && stationNumber < 100) {
             currentStation = Stations.get(0);
-        }
-        else if(stationNumber>120 && stationNumber<190){
+        } else if (stationNumber > 120 && stationNumber < 190) {
             currentStation = Stations.get(1);
-        }
-        else if(stationNumber>220 && stationNumber<300){
+        } else if (stationNumber > 220 && stationNumber < 300) {
             currentStation = Stations.get(2);
-        }
-        else{
+        } else {
             currentStation = null;
         }
-
-//        System.out.println(stationNumber);
-//        System.out.println("lastStation: " + lastStation);
-//        System.out.println("currentStation: " + currentStation);
-
-//        if (lastStation != currentStation){
-//            playRadio();
-//        }
-    }
-
-//    /**
-//     * Plays the audio of the current station given a change
-//     * in station. Also responsible for stopping the audio
-//     * of the previous station.
-//     *
-//     * Should the current station be null, nothing is played.
-//     */
-//    public void playRadio() {
-//        if (lastStation != null) {
-//            lastStation.stopAudio();
-//        }
-//        if (currentStation == null) {
-//            return;
-//        }
-//
-//        currentStation.playAudio();
-//    }
-
-
-    /** Creates a Radio with a center at screen coordinates (x,y).
-     *
-     * Additionally initializes the list of radio songs based on
-     * those in asset folder
-     *
-     * @param x The screen x-coordinate of the center
-     * @param y The screen y-coordinate of the center
-     */
-    public Radio(float x, float y) {
-        pos = new Vector2(x+50,y+50);
-        knobPos = new Vector2(x,y);
-
-        // Create Station list
-        Stations = new ObjectMap<Integer, Station>();
-
-        // TODO Take this out, it is only here for testing until JSON parser is complete
-        genTestMap();
-        updateStations(testMap);
-
-
-        // TODO: make this not trash and work with custom moods
-//        // BENSOUND CREEPY
-//        Stations.put(stationListSize, new Station("bensound-creepy.mp3", true, false));
-//        stationListSize++;
-//
-//        // BENSOUND DANCE
-//        File dance = new File("RadioSongs/bensound-dance.mp3");
-//        Stations.put(stationListSize, new Station(dance.getName(), true, true));
-//        stationListSize++;
-//
-//        // BENSOUND EXTREME ACTION
-//        File action = new File("RadioSongs/bensound-extremeaction.mp3");
-//        Stations.put(stationListSize, new Station(action.getName(), false, true));
-//        stationListSize++;
-//
-//        // BENSOUND JAZZ COMEDY
-//        File jazz = new File("RadioSongs/bensound-jazzcomedy.mp3");
-//        Stations.put(stationListSize, new Station(jazz.getName(), true, true));
-//        stationListSize++;
-//
-//        // TEST SONG 1
-//        File dadada = new File("RadioSongs/testsong.mp3");
-//        Stations.put(stationListSize, new Station(dadada.getName(), false, true));
-//        stationListSize++;
-//
-//        // TEST SONG 2
-//        File no = new File("RadioSongs/testsong2.mp3");
-//        Stations.put(stationListSize, new Station(no.getName(), true, false));
-//        stationListSize++;
-//
-//        // TEST SONG 3
-//        File weirdAl = new File("RadioSongs/testsong3.mp3");
-//        Stations.put(stationListSize, new Station(weirdAl.getName(), true, true));
-//        stationListSize++;
-
-//        File[] radiosongs = new File("RadioSongs").listFiles();
-//        for(File f : radiosongs){
-//            if(f.isFile()){
-//                Stations.put(stationListSize,new Station(f.getName()));
-//                stationListSize++;
-//            }
-//        }
-
     }
 
     /**
      * Draws the radio and its knob on the given canvas
      * @param canvas
      */
-    public void draw(GameCanvas canvas){
-        if(radioTexture == null || knobTexture == null) {
+    public void draw(GameCanvas canvas, BitmapFont displayFont){
+        if( texture == null) {
             return;
         }
 
-        //Radio chasis sprite draw origin
-        float oxr = 0.5f * radioTexture.getWidth();
-        float oyr = 0.5f * radioTexture.getHeight();
+        float oxk = 0.5f * texture.getWidth();
+        float oyk = 0.5f * texture.getHeight();
 
-        //knob draw positions
-        float oxk = 0.5f * knobTexture.getWidth();
-        float oyk = 0.5f * knobTexture.getHeight();
+        canvas.draw(texture, Color.WHITE, oxk, oyk, position.x*canvas.getWidth(), position.y*canvas.getHeight(), knobAng,
+                    relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
 
-        //canvas.draw(radioTexture, Color.WHITE, oxr, oyr, pos.x, pos.y, 0, 0.5f, 0.5f);
-        canvas.draw(knobTexture, Color.WHITE, oxk, oyk, knobPos.x, knobPos.y, knobAng, KNOB_SCALE, KNOB_SCALE);
-
+        canvas.drawText(getCurrentStationName(), displayFont, 0.75f*canvas.getWidth() ,0.2f*canvas.getHeight());
     }
 
-    /** Returns true if the mouse is positioned inside the radio dial.
-     *
-     * @param p the vector giving where the mouse's (x,y) screen coordinates.
-     */
-    private boolean inRadioArea(Vector2 p) {
-        return p.x > knobPos.x - knobTexture.getWidth()*KNOB_SCALE*0.5f
-                && p.x < knobPos.x + knobTexture.getWidth()*KNOB_SCALE*0.5f
-                && WINDOW_HEIGHT - p.y > knobPos.y - knobTexture.getHeight()*KNOB_SCALE*0.5f
-                && WINDOW_HEIGHT - p.y < knobPos.y + knobTexture.getHeight()*KNOB_SCALE*0.5f;
-    }
 
     /**
      * Updates the radio based on the user's input.
@@ -316,23 +166,21 @@ public class Radio extends HUDObject {
      */
     public void update(Vector2 in, float dx) {
         Vector2 src = new Vector2(0.0f,5.0f);
-        if (in != null && inRadioArea(in)) {
-//            knobAng = knobAng - dx;
+        if (in != null && inArea(in)) {
             // TODO: make this not weird
             knobAng -= (in.angle(src) * ROTATION_SPEED);
 
             if (knobAng <= -360.0f) {
                 knobAng = 0.0f;
             }
-            setStation();
         }
+        setStation();
     }
 
     /**
-     * Inner Class for the individual stations of the
-     * radio
+     * Inner Class for the individual stations of the radio
+     *
      */
-
     public class Station{
         /** The name of this station **/
         private String name;
@@ -340,14 +188,6 @@ public class Radio extends HUDObject {
         private String audioFile;
         /**Station genre **/
         private Genre genre;
-
-//        /** Indicates whether the current station is playing or not **/
-//        private boolean playing;
-//        /** Music class for the audio **/
-//        private Music audio;
-
-//        /** volume at which to play the audio **/
-//        private float volume;
 
 
         /**
@@ -360,7 +200,6 @@ public class Radio extends HUDObject {
             name = filename.substring(0,filename.length()-4);
             audioFile = "RadioSongs/" + filename;
             genre = g;
-//            System.out.println(this + " " + this.name + " " + this.audioFile + " " + this.genre);
         }
 
         /**
@@ -375,49 +214,14 @@ public class Radio extends HUDObject {
          */
         public String getAudioFile(){ return audioFile; }
 
-        /**
-         * Creates the music file for the song and plays it
-         **/
-//        public void playAudio(){
-//            playing = true;
-//            audio = Gdx.audio.newMusic(Gdx.files.internal(audioFile));
-//            audio.play();
-//        }
-
-//        /**
-//         * Stops the music file from playing
-//         * as the music is a managed resource, once we are no longer playing it
-//         * it is disposed of
-//         **/
-//        public void stopAudio(){
-//            playing = false;
-//            audio.stop();
-//            audio.dispose();
-//        }
-
-        /**
-         * Returns current playing volume
-         * @return volume
-         **/
-//        public float getVolume() {
-//            return volume;
-//        }
-
-//        /**
-//         *Changes the volume of the currently playing audio to
-//         * the specified value
-//         * @param volume
-//         **/
-//        public void changeVolume(float volume){
-//            this.volume = volume;
-//            if(playing){
-//                audio.setVolume(volume);
-//            }
-//        }
-
         @Override
         public String toString(){
             return name;
         }
+
+    }
+
+    public String toString(){
+        return "Radio";
     }
 }

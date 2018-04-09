@@ -275,13 +275,10 @@ public class GameplayController {
         /* TODO: commented this out to get game to run, car is null rn
 		gnomez = level.getGnomez();
 		*/
-		wheel = new Wheel(275,70);
-		wheel.setWheelSprite(wheelTexture);
+		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(310, 50);
 		vroomStick.setVroomStickSprite(vroomStickTexture);
-		radio = new Radio(545, 50);
-		radio.setRadioSprite(radioTexture);
-		radio.setKnobSprite(radioknobTexture);
+		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture);
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
@@ -426,10 +423,11 @@ public class GameplayController {
         road.update(delta);
 		for (Gnome g : gnomez) { g.update(delta, road.getSpeed()); }
 
-		// Update the wheel angle
-		wheel.update(input.getClickPos(), input.getDX());
+		// Update the HUD
 
+		wheel.update(input.getClickPos(), input.getDX());
 		vroomStick.update(input.getClickPos(), input.getDY());
+		radio.update(input.getClickPos(), input.getDX());
 
 		if (vroomStick.isEngaged()) { road.setVrooming(); }
 
@@ -440,10 +438,6 @@ public class GameplayController {
 			prevClick = input.getClickPos();
 			yonda.update(null, wheel, delta);
 		}
-
-		// Update the radio
-		radio.update(input.getClickPos(), input.getDX());
-
 	}
 
 	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP also handles radio

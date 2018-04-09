@@ -7,11 +7,16 @@ import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 
 public class SoundController {
 
+    /** Map between Station and its music file **/
     private ObjectMap<Radio.Station, Music> stationToMusic;
 
+    /**
+     * Object Constructor
+     */
     public SoundController(){
         stationToMusic = new ObjectMap<Radio.Station, Music>();
     }
+
     /**
      * Given a radio r, the SoundController creates Music files for its most current station
      * and plays them. Additionally, it will stop audio for and dispose of the Music files
@@ -22,19 +27,12 @@ public class SoundController {
         Radio.Station lastStation = r.getLastStation();
         Radio.Station currentStation = r.getCurrentStation();
 
-
-        //System.out.println("lastStation: " + lastStation);
-        //System.out.println("currentStation: " + currentStation);
-
-        if (lastStation != currentStation) {
-            System.out.println("first if statement");
+        if (lastStation != currentStation){
             if (lastStation != null) {
-                System.out.println("stopping laststation");
                 stopAudio(stationToMusic.get(lastStation));
                 stationToMusic.remove(lastStation);
             }
             if (currentStation != null) {
-                System.out.println("Playing new currentstation");
                 Music audio = Gdx.audio.newMusic(Gdx.files.internal(currentStation.getAudioFile()));
                 stationToMusic.put(currentStation, audio);
                 stationToMusic.get(currentStation).play();
@@ -45,6 +43,7 @@ public class SoundController {
         return;
     }
 
+    /** Stops audio and disposes the file **/
     private void stopAudio(Music m){
         if(m == null){
             return;
@@ -53,6 +52,12 @@ public class SoundController {
         m.dispose();
     }
 
+    /** Universal play method, plays all audio based on game updates **/
+    public void play(Radio radio){
+        playRadio(radio);
+    }
+
+    /** Rest method **/
     public void reset() {
         if (stationToMusic != null && stationToMusic.size > 0) {
             for (Radio.Station s : stationToMusic.keys()) {
@@ -63,6 +68,9 @@ public class SoundController {
         }
         stationToMusic = new ObjectMap<Radio.Station, Music>();
     }
+
+
 }
+
 
 
