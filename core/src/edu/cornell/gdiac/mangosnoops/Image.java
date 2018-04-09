@@ -13,6 +13,7 @@ public abstract class Image {
     /** Relative width and height divided by texture -- i.e. 0.5f will make the
      * height of the texture half of the canvas screen height (width would scale the same amount)*/
     protected float relativeScale;
+    /** Amount of slack allowed to be clickable */
     protected float controlBuffer;
 
     public Image(float x, float y, float r, Texture t) {
@@ -45,6 +46,12 @@ public abstract class Image {
 
     public void draw(GameCanvas canvas) {
         canvas.draw(texture, Color.WHITE, 0, 0, position.x, position.y, 0,
+                relativeScale*canvas.getHeight(),
+                relativeScale*canvas.getHeight());
+    }
+
+    public void draw(GameCanvas canvas, Color tint) {
+        canvas.draw(texture, tint, 0, 0, position.x, position.y, 0,
                 relativeScale*canvas.getHeight(),
                 relativeScale*canvas.getHeight());
     }
