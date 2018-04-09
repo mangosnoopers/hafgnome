@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 /**
  * Class for reading player keyboard input.
@@ -89,6 +90,7 @@ public class InputController {
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (mouseClicked) {
             clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            //System.out.println(clickPos);
             dx = Gdx.input.getDeltaX();
             dy = Gdx.input.getDeltaY();
         } else {

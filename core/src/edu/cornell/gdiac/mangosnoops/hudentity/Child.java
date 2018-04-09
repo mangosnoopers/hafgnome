@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
 
 
-public class Child extends HUDObject {
+public class Child {
 
     /** The type of Gnome this is */
     private ChildType ctype;
@@ -149,10 +149,10 @@ public class Child extends HUDObject {
     /**
      *
      *
-     * @param clickPos
+     * @param in
      * @return True if the child is the awake.
      */
-    public void update(Vector2 clickPos) {
+    public void update(Vector2 in) {
         if(isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
             if(gettingHappy) {
                 happiness += MOOD_DELTA;

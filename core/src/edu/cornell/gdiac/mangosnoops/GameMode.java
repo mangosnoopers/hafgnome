@@ -284,9 +284,10 @@ public class GameMode implements Screen {
 	 * @param delta Number of seconds since last animation frame
 	 */
 	private void update(float delta) {
+		//Ensure all images are properly drawn, scaled, and updated
+		Image.updateScreenDimensions(canvas);
 		// Process the game input
 		inputController.readInput();
-
 		// Test whether to reset the game.
 		switch (gameState) {
 		case INTRO:
@@ -332,17 +333,18 @@ public class GameMode implements Screen {
 	 */
 	protected void play(float delta) {
 
+		// Check if game is over
 		if (gameplayController.getCar().isDestroyed()) {
             gameState = GameState.OVER;
         }
 
-		// Update objects.
+		// Update
 		gameplayController.resolveActions(inputController,delta);
-		soundController.playRadio(gameplayController.getRadio());
+		soundController.play(gameplayController.getRadio());
 
 		// Update child states TODO: idk
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(),
-				gameplayController.getCar().getNosh(), gameplayController.getRadio());
+											gameplayController.getCar().getNosh(), gameplayController.getRadio());
 
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
@@ -356,6 +358,9 @@ public class GameMode implements Screen {
 		canvas.setCameraXY(gameplayController.getCar().getPosition());
 
 		// Update the counter
+		if(counter == Integer.MAX_VALUE){
+			counter = 0;
+		}
 		counter += 1;
 	}
 	
@@ -367,7 +372,6 @@ public class GameMode implements Screen {
 	 * prefer this in lecture.
 	 */
 	private void draw(float delta) {
-		float WINDOW_WIDTH =(float)canvas.getWidth();
 
 		canvas.clearScreen();
 
@@ -381,22 +385,27 @@ public class GameMode implements Screen {
 		canvas.beginHUDDrawing();
 
 		// Road, clouds, and dash
-		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
-					WINDOW_WIDTH/dash.getWidth(),0.4f);
-        canvas.draw(clouds,200 , 500);
 
-        // Vroom stick
+		// Dash
+		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
+					(float)canvas.getWidth()/(float)dash.getWidth(),
+					0.33f*(float)canvas.getHeight()/(float)dash.getHeight());
+
+        canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
+				(float)canvas.getHeight()/(float)clouds.getHeight(), (float)canvas.getHeight()/(float)clouds.getHeight());
+
+        ///**  Draw Interactive HUD Elements **///
+
+		// Vroom Stick
 		gameplayController.getVroomStick().draw(canvas);
 
 		// Wheel
 		gameplayController.getWheel().draw(canvas);
 
 		// Radio
-		gameplayController.getRadio().draw(canvas);
-		canvas.drawText(gameplayController.getRadio().getCurrentStationName(), displayFont,
-				gameplayController.getRadio().getPos().x, gameplayController.getRadio().getPos().y);
+		gameplayController.getRadio().draw(canvas, displayFont);
 
-		//Draw rearview mirror
+		//Rearview mirror
 		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth(),rearviewMirror.getHeight(),
 					canvas.getWidth(),canvas.getHeight(),0,
 				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
