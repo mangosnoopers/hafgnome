@@ -34,7 +34,7 @@ public class Gnome extends RoadObject{
      */
     public enum GnomeType {
         /** Default Type */
-        BASIC,
+        BASIC, FLAMINGO, GRILL
     }
 
     /**
@@ -70,10 +70,17 @@ public class Gnome extends RoadObject{
     }
 
     public Gnome(float x, float y) {
-        this.setX(x);
-        this.setY(y);
+        setX(x);
+        setY(y);
         animeframe = 0.0f;
         gtype = GnomeType.BASIC;
+    }
+
+    public Gnome(float x, float y, GnomeType type) {
+        setX(x);
+        setY(y);
+        animeframe = 0.0f;
+        gtype = type;
     }
 
     public void setTexture(Texture texture) {

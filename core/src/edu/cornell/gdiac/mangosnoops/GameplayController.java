@@ -33,36 +33,31 @@ import java.util.Random;
 
 /**
  * Controller to handle gameplay interactions.
- * </summary>
- * <remarks>
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
-
 	/** The change in x, computed based on the wheel angle */
 	private float rotationMagnitude;
-
-	/** Data structure containing gnome data */
-	private Array<Gnome> gnomez;
-
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
-
 	/** Car instance, containing information about the wheel and children */
 	private Car yonda;
-
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
-
 	/** Location, animation information for vroomstick */
 	private VroomStick vroomStick;
-
-	/** Location and animation information for the wheel **/
+	/** Location and animation information for the wheel */
 	private Radio radio;
-
-	/** Data structure with level format */
+	/** Contains location for the previous click, used for debouncing */
+	private Vector2 prevClick = null;
+	/** TODO: DELETE THIS its redundant */
+	private Array<Gnome> gnomez;
+	/** Object containing all information about the current level. This includes
+	 *  everything specific to a level: the songs, enemies, events, etc. */
 	private LevelObject level;
-
+	/** Rearview enemy instance. The way it's handled right now, there is only
+	 *  one at a time. FIXME: could change that if necessary */
+	private RearviewEnemy rearviewEnemy;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -88,23 +83,23 @@ public class GameplayController {
 	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
 	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
 
-	/** Texture for the wheel**/
+	/** Texture for the wheel */
 	private Texture wheelTexture;
 	/** Texture for the vroomstick */
 	private Texture vroomStickTexture;
-	/** Texture for the wheel**/
+	/** Texture for the gnomes */
 	private Texture gnomeTexture;
-	/** Texture for the radio**/
+	/** Texture for the radio */
 	private Texture radioTexture;
-	/** Texture for the radio knob**/
+	/** Texture for the radio knob */
 	private Texture radioknobTexture;
-	/** Textures for nosh **/
+	/** Textures for nosh */
 	private Texture nosh_happy;
 	private Texture nosh_neutral;
 	private Texture nosh_sad;
 	private Texture nosh_critical;
 	private Texture nosh_sleep;
-	/** Textures for ned **/
+	/** Textures for ned */
 	private Texture ned_happy;
 	private Texture ned_neutral;
 	private Texture ned_sad;
@@ -114,6 +109,11 @@ public class GameplayController {
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
 	private Array<Gnome> backing;
+
+	/** Enum specifying the region this level takes place in. */
+	public enum Region {
+		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
+	}
 
 	/** 
 	 * Preloads the assets for this game.
@@ -198,12 +198,12 @@ public class GameplayController {
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
-	 * @param level is the Level information (which was saved in a JSON file)
+	 * @param level is the Level information
 	 */
 	public GameplayController(LevelObject level) {
 		this.level = level;
-		yonda = null;
 		gnomez = new Array<Gnome>();
+		yonda = new Car();
 		backing = new Array<Gnome>();
 		road = new Road();
 	}
@@ -220,43 +220,40 @@ public class GameplayController {
 	public Array<Gnome> getGnomez() { return gnomez; }
 
 	/**
-	 * Returns a reference to the currently active car
-	 *
-	 * @return a reference to the currently active car.
+	 * Returns a reference to the car.
 	 */
 	public Car getCar() {
 		return yonda;
 	}
 
-	public Road getRoad() {
-		return road;
-	}
+	/**
+	 * Returns a reference to the road.
+	 */
+	public Road getRoad() { return road; }
+
+  /**
+   * Returns a reference to a rearview enemy.
+   */
+	public RearviewEnemy getRearviewEnemy() { return rearviewEnemy; }
 
     /**
-     * Returns a reference to the wheel
-     *
-     * @return reference to the wheel
-     **/
+     * Returns a reference to the wheel.
+     */
     public Wheel getWheel(){ return wheel; }
 
+  /**
+   * Returns a reference to the vroom stick.
+   */
 	public VroomStick getVroomStick() { return vroomStick; }
 
 	/**
 	 * Returns a reference to the radio
-	 *
-	 * @return reference to the radio
-	 **/
+	 */
     public Radio getRadio(){ return radio; }
-
 
 	/**
 	 * Returns true if the currently active player is alive.
-	 *
-	 * This property needs to be modified if you want multiple players.
-	 *
-	 * @return true if the currently active player is alive.
 	 */
-
 	public boolean isAlive() {
 		return yonda != null;
 	}
@@ -270,8 +267,6 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		// Create the player's ship
-        yonda = level.getCar();
         /* TODO: commented this out to get game to run, car is null rn
 		gnomez = level.getGnomez();
 		*/
@@ -328,14 +323,17 @@ public class GameplayController {
 		gnomez.add(newGnome13);
 		gnomez.add(newGnome14);
 		gnomez.add(newGnome15);
-	}
+
+		// Rearview enemy
+		rearviewEnemy = new RearviewEnemy();
+		rearviewEnemy.setTexture(gnomeTexture); /** FIXME: use rearview enemy texture instead of gnome */
+  }
 
 	/**
 	 * Resets the game, deleting all objects.
 	 */
 	public void reset() {
 		rotationMagnitude = 0;
-//		yonda = null; TODO: prob make this less sus
 		yonda.reset();
 		wheel = null;
 		radio = null;
@@ -390,26 +388,6 @@ public class GameplayController {
 				break;
 		}
 	}
-	
-//	/**
-//	 * Resolve the actions of all game objects
-//	 *
-//	 * @param input  Reference to the input controller
-//	 * @param delta  Number of seconds since last animation frame
-//	 */
-//	public void resolveActions(InputController input, float delta) {
-//		for (Gnome g : gnomez) { g.update(delta); }
-//
-//		// Update the wheel angle
-//		wheel.update(input.getClickPos(), input.getDX());
-//
-//		// Update the radio
-//		radio.update(input.getClickPos(), input.getDX());
-//
-//		yonda.update(input.getClickPos(), delta);
-//	}
-
-	private Vector2 prevClick = null;
 
 	/**
 	 * Resolve the actions of all game objects
@@ -429,7 +407,16 @@ public class GameplayController {
 		vroomStick.update(input.getClickPos(), input.getDY());
 		radio.update(input.getClickPos(), input.getDX());
 
-		if (vroomStick.isEngaged()) { road.setVrooming(); }
+		rearviewEnemy.update(delta);
+
+		if (vroomStick.isEngaged()) {
+			rearviewEnemy.destroyIfAlive();
+			road.setVrooming();
+		}
+
+		if (rearviewEnemy.isAttackingCar()) {
+			getCar().damage();
+		}
 
 		if(prevClick != null && input.getClickPos() == null) {
 			yonda.update(prevClick, wheel, delta);
@@ -497,15 +484,17 @@ public class GameplayController {
 //				}
 //			}
 		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-			ned.setMoodShifting(true, false);
+            ned.setMoodShifting(true, false);
         } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-			ned.setMoodShifting(true, false);
+            nosh.setMoodShifting(true, false);
         }
 
 
 		Random generator = new Random();
 		float ned_prob = 0.3f;
 		float nosh_prob = 0.3f;
+
+		float rearviewProb = 0.3f;
 
 		// check every 100 frames
 		if (counter % 100 == 0) {
@@ -517,6 +506,11 @@ public class GameplayController {
 			// make nosh sleepy with given probability
 			if (generator.nextFloat() <= nosh_prob) {
 				nosh.setAsleep();
+			}
+
+			// Create rearview enemy with given probability
+			if (generator.nextFloat() <= rearviewProb) {
+				rearviewEnemy.create();
 			}
 
 		}
