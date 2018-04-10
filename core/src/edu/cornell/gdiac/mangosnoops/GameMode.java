@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 
+import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.util.*;
 
 /**
@@ -381,8 +382,11 @@ public class GameMode implements Screen {
 
         // ** Draw world with 3D perspective **
         // TODO: change this
-        gameplayController.getRoad().draw(canvas, 0);
-		canvas.drawGnomez(gameplayController.getGnomez());
+        Array<Gnome> gnomez = gameplayController.getGnomez();
+        for (Gnome g : gnomez) {
+        	g.draw(canvas);
+		}
+        gameplayController.getRoad().draw(canvas);
 		canvas.drawWorld();
 
 		// ** Draw HUD stuff **
