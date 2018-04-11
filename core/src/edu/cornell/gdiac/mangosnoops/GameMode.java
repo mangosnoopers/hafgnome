@@ -45,8 +45,8 @@ public class GameMode implements Screen {
 		OVER
 	}
 
-	// LEVEL - TODO: Don't just hardcode the JSON url in lol
-	private static String LEVEL_JSON = "temp.json";
+	// LEVEL FILES TODO idk
+	private static String TEST_LEVEL_0_EXCEL = "test_level0.xlsx";
 
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
@@ -261,17 +261,22 @@ public class GameMode implements Screen {
 	 * view has already been initialized by the root class.
 	 */
 	public GameMode(GameCanvas canvas) {
-		this.canvas = canvas;
-		active = false;
-		// Null out all pointers, 0 out all ints, etc.
-		gameState = GameState.INTRO;
-		assets = new Array<String>();
+	    // TODO DO SOMETHING ELSE W THE EXCEPTIONS
+	    try {
+            this.canvas = canvas;
+            active = false;
+            // Null out all pointers, 0 out all ints, etc.
+            gameState = GameState.INTRO;
+            assets = new Array<String>();
 
-		// Create the controllers.
-		inputController = new InputController();
-		gameplayController = new GameplayController(new LevelObject());
-		collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
-		soundController = new SoundController();
+            // Create the controllers.
+            inputController = new InputController();
+            gameplayController = new GameplayController(new LevelObject(TEST_LEVEL_0_EXCEL));
+            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
+            soundController = new SoundController();
+        } catch (Exception e) {
+	        System.out.println(e.getMessage());
+        }
 	}
 	
 	/**
@@ -349,7 +354,8 @@ public class GameMode implements Screen {
         }
 
 		// Update
-		gameplayController.resolveActions(inputController,delta);
+        gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
+		gameplayController.resolveActions(inputController, delta);
 		soundController.play(gameplayController.getRadio());
 
 		// Update child states TODO: idk

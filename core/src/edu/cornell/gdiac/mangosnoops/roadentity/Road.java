@@ -40,6 +40,8 @@ public class Road extends RoadObject {
     private boolean vrooming = false;
     private float currentSpeed = NORMAL_SPEED;
 
+    public float getCurrentSpeed() { return currentSpeed; }
+
     @Override
     public ObjectType getType() {
         return null;
