@@ -43,19 +43,22 @@ public class LevelObject {
     private float localMiles;
 
     /** Speed constants TODO */
-    private static final float VERY_SLOW_SPEED = 0.0f;
-    private static final float SLOW_SPEED = 0.0f;
-    private static final float NORMAL_SPEED = 0.0f;
-    private static final float FAST_SPEED = 0.0f;
-    private static final float VERY_FAST_SPEED = 0.0f;
+    private static final float VERY_SLOW_SPEED = 0.25f;
+    private static final float SLOW_SPEED = 0.5f;
+    private static final float NORMAL_SPEED = 1.0f;
+    private static final float FAST_SPEED = 1.25f;
+    private static final float VERY_FAST_SPEED = 1.5f;
 
-    /** Padding constants. Converts each cell to a certain number of miles. */
+    /** Padding constants. Converts each cell to a certain number of miles.
+     *  Don't change these (the designers are going by them), but the miles
+     *  to pixels conversion can be changed */
     private static final float LESS_PADDING_MILES = 2.0f;
     private static final float NORMAL_PADDING_MILES = 5.0f;
     private static final float MORE_PADDING_MILES = 8.0f;
     /** Constant to help calculate x-coordinates of enemies */
     private static final int LANE_X_OFFSET = 2;
-    /** A constant that gives the number of pixels per one in-game mile. */
+    /** A constant that gives the number of pixels per one in-game mile.
+     *  This can be changed, but the padding miles should remain constant. */
     private static final float MILES_TO_PIXELS = 10.0f;
 
     /** Excel spreadsheet constants */
@@ -163,6 +166,7 @@ public class LevelObject {
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
+        System.out.println("ext: " + ext); // TODO delete
         if (ext.equals("xlsx") || ext.equals("xls")) {
             parseExcel(file);
         }
@@ -182,6 +186,10 @@ public class LevelObject {
     // TODO: delete
     public LevelObject() {
         localMiles = 0.0f;
+        // Initialize collections -- TODO: inventory
+        songs = new ObjectMap<Genre, String>();
+        gnomez = new Array<Gnome>();
+        events = new Queue<Event>();
     }
 
     /**
@@ -194,14 +202,14 @@ public class LevelObject {
 
     /**
      * Parse an Excel file for information about a level.
-     * @param file name of an Excel file (xlsx or xls)
+     * @param filepath relative path to an Excel file (xlsx or xls) stored in assets folder
      * @throws RuntimeException if an invalid setting was given in the level
      * @throws IOException if there is an error in opening/closing file
      * @throws InvalidFormatException if not a proper Excel file
      */
-    public void parseExcel(String file) throws IOException, InvalidFormatException, RuntimeException {
+    public void parseExcel(String filepath) throws IOException, InvalidFormatException, RuntimeException {
         try {
-            FileInputStream f = new FileInputStream(new File("levels/" + file));
+            FileInputStream f = new FileInputStream(new File(filepath));
 
             // Create a workbook and get the first sheet
             Workbook wb = WorkbookFactory.create(f);
@@ -222,6 +230,9 @@ public class LevelObject {
                 region = Region.COLORADO;
             else
                 throw new RuntimeException("Invalid region setting");
+            // TODO delete
+            System.out.println("region: " + regionStr);
+
 
             // Speed information
             String speedStr = df.formatCellValue(sh.getRow(SPEED_ROW).getCell(SPEED_COL)).toLowerCase();
@@ -237,9 +248,13 @@ public class LevelObject {
                 speed = VERY_FAST_SPEED;
             else
                 throw new RuntimeException("Invalid speed setting");
+            // TODO delete
+            System.out.println("speed: " + speedStr);
 
             // Number of lanes
             numLanes = Integer.parseInt(df.formatCellValue(sh.getRow(LANE_ROW).getCell(LANE_COL)));
+            // TODO delete
+            System.out.println("numLanes: " + numLanes);
 
             // Random selection of blocks
             String randomStr = df.formatCellValue(sh.getRow(RANDOM_SELECT_ROW).getCell(RANDOM_SELECT_COL)).toLowerCase();
@@ -270,8 +285,15 @@ public class LevelObject {
 
             // Iterate through cells for songs
             for (int i = SONGS_START_ROW; i <= SONGS_END_ROW; i++) {
-                String songFile = df.formatCellValue(sh.getRow(i).getCell(SONG_FILE_COL));
+                String songFile = "RadioSongs/" + df.formatCellValue(sh.getRow(i).getCell(SONG_FILE_COL));
                 String genreStr = df.formatCellValue(sh.getRow(i).getCell(SONG_GENRE_COL)).toLowerCase();
+
+                // Stop iterating if no more song files are listed
+                System.out.println(songFile);
+                if (songFile.equals("RadioSongs/")) {
+                    break;
+                }
+
                 if (genreStr.equals("pop"))
                     songs.put(Genre.POP, songFile);
                 else if (genreStr.equals("creepy"))
@@ -311,7 +333,7 @@ public class LevelObject {
             f.close();
 
         } catch (IOException e) {
-            throw new IOException("Error in closing the file");
+            throw new IOException(e.getMessage());
         } catch (InvalidFormatException e) {
             throw new InvalidFormatException("Input file format invalid");
         } catch (RuntimeException e) {
@@ -346,7 +368,7 @@ public class LevelObject {
                 events.addLast(new Event(y, Event.EventType.NOSH_WAKES_UP));
             } else if (eventStr.equals("sat question")) {
                 events.addLast(new Event(y, Event.EventType.SAT_QUESTION));
-            } else {
+            } else if (!eventStr.equals("")) {
                 throw new RuntimeException("Invalid event specified");
             }
 
@@ -364,7 +386,7 @@ public class LevelObject {
                 else if (enemyStr.equals("grill start"))
                     gnomez.add(new Gnome(x, y, Gnome.GnomeType.GRILL));
                     // TODO: grill end
-                else
+                else if (!enemyStr.equals(""))
                     throw new RuntimeException("Invalid enemy type specified");
             }
 

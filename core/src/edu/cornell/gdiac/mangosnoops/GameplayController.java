@@ -50,8 +50,10 @@ public class GameplayController {
 	private Radio radio;
 	/** Contains location for the previous click, used for debouncing */
 	private Vector2 prevClick = null;
-	/** TODO: DELETE THIS its redundant */
+	/** An array of enemies for this level */
 	private Array<Gnome> gnomez;
+	/** A queue of events for this level */
+	private Queue<Event> events;
 	/** Object containing all information about the current level. This includes
 	 *  everything specific to a level: the songs, enemies, events, etc. */
 	private LevelObject level;
@@ -203,6 +205,7 @@ public class GameplayController {
 	public GameplayController(LevelObject level) {
 		this.level = level;
 		gnomez = new Array<Gnome>();
+		events = new Queue<Event>();
 		yonda = new Car();
 		backing = new Array<Gnome>();
 		road = new Road();
@@ -267,9 +270,8 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-        /* TODO: commented this out to get game to run, car is null rn
 		gnomez = level.getGnomez();
-		*/
+		events = level.getEvents();
 		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(310, 50);
 		vroomStick.setVroomStickSprite(vroomStickTexture);
@@ -277,52 +279,6 @@ public class GameplayController {
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
-
-		Gnome newGnome = new Gnome(-0.1f, 50);
-		Gnome newGnome2 = new Gnome(0.1f, 100);
-		Gnome newGnome3 = new Gnome(0, 120);
-		Gnome newGnome4 = new Gnome(0, 150);
-		Gnome newGnome5 = new Gnome(0.1f,170);
-		Gnome newGnome6 = new Gnome(-0.1f, 10);
-		Gnome newGnome7 = new Gnome(0f, 15);
-		Gnome newGnome8 = new Gnome(0.1f, 30);
-		Gnome newGnome9 = new Gnome(0, 40);
-		Gnome newGnome10 = new Gnome(-0.1f,300);
-		Gnome newGnome11 = new Gnome(0, 5);
-		Gnome newGnome12 = new Gnome(-0.1f, 15);
-		Gnome newGnome13 = new Gnome(0.1f, 80);
-		Gnome newGnome14 = new Gnome(-0.1f, 90);
-		Gnome newGnome15 = new Gnome(0.1f, 100);
-		newGnome.setTexture(gnomeTexture);
-		newGnome2.setTexture(gnomeTexture);
-		newGnome3.setTexture(gnomeTexture);
-		newGnome4.setTexture(gnomeTexture);
-		newGnome5.setTexture(gnomeTexture);
-		newGnome6.setTexture(gnomeTexture);
-		newGnome7.setTexture(gnomeTexture);
-		newGnome8.setTexture(gnomeTexture);
-		newGnome9.setTexture(gnomeTexture);
-		newGnome10.setTexture(gnomeTexture);
-		newGnome11.setTexture(gnomeTexture);
-		newGnome12.setTexture(gnomeTexture);
-		newGnome13.setTexture(gnomeTexture);
-		newGnome14.setTexture(gnomeTexture);
-		newGnome15.setTexture(gnomeTexture);
-		gnomez.add(newGnome);
-		gnomez.add(newGnome2);
-		gnomez.add(newGnome3);
-		gnomez.add(newGnome4);
-		gnomez.add(newGnome5);
-		gnomez.add(newGnome6);
-		gnomez.add(newGnome7);
-		gnomez.add(newGnome8);
-		gnomez.add(newGnome9);
-		gnomez.add(newGnome10);
-		gnomez.add(newGnome11);
-		gnomez.add(newGnome12);
-		gnomez.add(newGnome13);
-		gnomez.add(newGnome14);
-		gnomez.add(newGnome15);
 
 		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy();
@@ -390,6 +346,56 @@ public class GameplayController {
 	}
 
 	/**
+	 * Checks to see if the given event should occur at this time.
+	 *
+	 * @param e The event to check
+	 * @param delta Number of seconds since the last animation frame
+	 * @returns true if the event should occur, false otherwise
+	 */
+	private boolean eventShouldOccur(Event e, float delta) {
+		float speed = road.getSpeed();
+
+		return false;
+	}
+
+	/**
+	 * Makes the first event in the event queue occur and removes it from the
+	 * queue if it should occur at the current time. Does nothing if the first
+	 * event in the queue should not occur at this time.
+	 *
+	 * @param delta Number of seconds since the last animation frame
+	 * @param ned Ned
+	 * @param nosh Nosh
+	 */
+	public void handleEvents(float delta, Child ned, Child nosh) {
+		Event first = events.get(0);
+		if (eventShouldOccur(first, delta)) {
+			switch (first.getType()) {
+				case REAR_ENEMY:
+					rearviewEnemy.create();
+					break;
+				case SUN:
+					// TODO
+					break;
+				case NED_WAKES_UP:
+					ned.setMood(Child.Mood.NEUTRAL);
+					ned.setMoodShifting(true, false);
+					break;
+				case NOSH_WAKES_UP:
+					nosh.setMood(Child.Mood.NEUTRAL);
+					nosh.setMoodShifting(true, false);
+					break;
+				case SAT_QUESTION:
+					// TODO
+					break;
+				default:
+					break;
+			}
+			events.removeFirst();
+		}
+	}
+
+	/**
 	 * Resolve the actions of all game objects
 	 *
 	 * @param input  Reference to the input controller
@@ -397,12 +403,11 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 
-		// Update world objects
+		// Update world objects (road and gnome positions)
         road.update(delta);
 		for (Gnome g : gnomez) { g.update(delta, road.getSpeed()); }
 
 		// Update the HUD
-
 		wheel.update(input.getClickPos(), input.getDX());
 		vroomStick.update(input.getClickPos(), input.getDY());
 		radio.update(input.getClickPos(), input.getDX());
