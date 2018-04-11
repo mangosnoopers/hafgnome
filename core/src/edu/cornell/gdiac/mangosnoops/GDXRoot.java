@@ -17,6 +17,7 @@
  * LibGDX version, 2/2/2015
  */
 package edu.cornell.gdiac.mangosnoops;
+import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.*;
@@ -44,7 +45,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	private LoadingMode loading;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
 	private GameMode    playing;
-	
+	private StartMenuMode start;
+
 	/**
 	 * Creates a new game from the configuration settings.
 	 *
@@ -71,9 +73,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas);
+		start = new StartMenuMode(canvas, manager);
 
 		Gdx.graphics.setTitle("Gnomez");
-
 
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
@@ -128,12 +130,19 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.app.exit();
 		} else if (screen == loading) {
 			playing.loadContent(manager);
-			playing.setScreenListener(this);
-			setScreen(playing);
-			
+			start.setScreenListener(this);
+			Gdx.input.setInputProcessor(start);
+			setScreen(start);
+
 			loading.dispose();
 			loading = null;
-		} else {
+		} else if (screen == start) {
+			playing.setScreenListener(this);
+			setScreen(playing);
+
+			start.dispose();
+			start = null;
+		}else {
 			// We quit the main application
 			Gdx.app.exit();
 		}
