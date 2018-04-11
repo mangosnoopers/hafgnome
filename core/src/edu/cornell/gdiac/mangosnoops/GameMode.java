@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 
+import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.util.*;
 
@@ -66,6 +67,8 @@ public class GameMode implements Screen {
 	private static final String HEALTH_POINTER_FILE = "images/pointer.png";
 	/** The file for the rear view mirror */
 	private static final String REARVIEW_MIRROR_FILE = "images/rearview.png";
+	/** The file for the angry speech bubble */
+	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -91,6 +94,8 @@ public class GameMode implements Screen {
 	private Texture healthPointer;
 	/** Texture of the rear view mirror */
 	private Texture rearviewMirror;
+	/** Texture of the angry speech bubble */
+	private Texture speechBubble;
 
 	/** Counter for the game */
 	private int counter;
@@ -157,7 +162,10 @@ public class GameMode implements Screen {
 		// Load rear view
 		manager.load(REARVIEW_MIRROR_FILE, Texture.class);
 		assets.add(REARVIEW_MIRROR_FILE);
-		
+		// Load speech bubble
+		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
+		assets.add(SPEECH_BUBBLE_FILE);
+
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
@@ -219,6 +227,10 @@ public class GameMode implements Screen {
 
 		if (manager.isLoaded(REARVIEW_MIRROR_FILE)) {
 			rearviewMirror = manager.get(REARVIEW_MIRROR_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(SPEECH_BUBBLE_FILE)) {
+			speechBubble = manager.get(SPEECH_BUBBLE_FILE, Texture.class);
 		}
 
 		// Load gameplay content
@@ -430,6 +442,14 @@ public class GameMode implements Screen {
 		if (gameState == GameState.OVER) {
 			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);
 			canvas.drawTextCentered("Press R to restart",displayFont, GAME_OVER_OFFSET-40);
+		}
+
+		// Draw speech bubbles, if necessary
+		Child nedRef = gameplayController.getCar().getNed();
+		float speechX = Child.NED_SPEECH_BUBBLE_COORDS.x + nedRef.getShakeX();
+		float speechY = Child.NED_SPEECH_BUBBLE_COORDS.y + nedRef.getShakeY();
+		if (nedRef.getCurrentMood() == Child.Mood.CRITICAL) {
+			canvas.draw(speechBubble, speechX, speechY, 700, 400);
 		}
 
 		// Flush information to the graphic buffer.
