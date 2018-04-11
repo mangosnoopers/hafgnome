@@ -461,30 +461,37 @@ public class GameplayController {
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
 
 			// TODO : ADD CASES FOR OTHER GENRES
-			// FIXME: shifting doesn't work bidirectionally?
 			switch (r.getCurrentStationGenre()){
-				case DANCE:
+				case DANCE: // ned likes, nosh dislikes
 					if(ned.isAwake()){
-                        nosh.setMoodShifting(true, true);
+                        ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-                        nosh.setMoodShifting(true, true);
+                        nosh.setMoodShifting(true, false);
 					}
 					break;
-				case CREEPY:
+				case CREEPY: // ned likes, nosh dislikes
 					if(ned.isAwake()){
-                        nosh.setMoodShifting(true, true);
+                        ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
 						nosh.setMoodShifting(true, false);
 					}
 					break;
-				case JAZZ:
+				case JAZZ: // ned likes, nosh dislikes
+					if(ned.isAwake()){
+						ned.setMoodShifting(true, true);
+					}
+					if(nosh.isAwake()){
+                        nosh.setMoodShifting(true, false);
+					}
+					break;
+				case COMEDY: // ned dislikes, nosh likes
 					if(ned.isAwake()){
 						ned.setMoodShifting(true, false);
 					}
 					if(nosh.isAwake()){
-                        nosh.setMoodShifting(true, true);
+						nosh.setMoodShifting(true, true);
 					}
 					break;
 				default:
