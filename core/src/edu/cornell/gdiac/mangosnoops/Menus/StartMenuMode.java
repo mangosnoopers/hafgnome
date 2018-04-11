@@ -337,17 +337,9 @@ public class StartMenuMode implements Screen, InputProcessor {
         // Flip to match graphics coordinates
         screenY = heightY-screenY;
 
-//        System.out.println("====");
-//        System.out.println(screenX);
-//        System.out.println(screenY);
-
-        // TODO: Fix scaling
-        // Play button is a circle.
         float radius = startbutton.getWidth()/4.0f;
         float distX = (screenX-(centerX-OFFSET_X))*(screenX-(centerX-OFFSET_X));
         float distY = (screenY-(centerY+OFFSET_Y))*(screenY-(centerY+OFFSET_Y));
-//        System.out.println("("+distX+","+distY+")");
-//        System.out.println(radius);
         if (distX < radius*radius && distY < radius*radius) {
             startButton  = 1;
         }
