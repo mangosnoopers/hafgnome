@@ -18,8 +18,8 @@ public class Gnome extends RoadObject{
     private float animeframe;
     /** The type of Gnome this is */
     private GnomeType gtype;
-    /** The actual screen coordinate the gnome is drawn on */
-    private Vector2 drawCoords;
+
+    private final float GNOME_HOVER_DISTANCE = 4.32f;
 
     /** speed of road */
     private float currSpeed;
@@ -47,11 +47,6 @@ public class Gnome extends RoadObject{
     public ObjectType getType() {
         return ObjectType.GNOME;
     }
-
-    /**
-     * Return the y screen coordinate that this gnome is drawn at.
-     */
-    public Vector2 getDrawCoords() { return drawCoords; }
 
     /**
      * Returns the Gnome type of this gnome.
@@ -115,44 +110,8 @@ public class Gnome extends RoadObject{
         setSpeed(newSpeed);
     }
 
-    /**
-     * Draws this shell to the canvas
-     *
-     * There is only one drawing pass in this application, so you can draw the objects
-     * in any order.
-     *
-     * @param canvas The drawing context
-     */
-    public void draw(GameCanvas canvas, Vector3 camera, Vector2 scale, float angle, float screenWidth, float screenHeight) {
-        float x = animator.getRegionWidth()/2.0f;
-        float y = animator.getRegionHeight()/2.0f;
-        animator.setFrame((int)animeframe);
-
-        // Project to 3d perspective here
-
-        // 1.) Get position relative to camera
-        double posX = getX() - camera.x;
-        double posY = getY() - camera.y;
-
-        // 2.) Rotate based on angle
-        double rotatedX = Math.cos(angle) * posX + Math.sin(angle) * posY;
-        double rotatedY = Math.cos(angle) * posY - Math.sin(angle) * posX;
-
-        // 3.) Scale width/height based on position, scaling
-        int scaledWidth = (int) (animator.getRegionWidth() * scale.x / rotatedX);
-        int scaledHeight = (int) (animator.getRegionHeight() * scale.y / rotatedX);
-
-        // 4.) Scale x/y based on position, scaling
-        int drawX = (int) (scale.x / rotatedX * rotatedY + screenWidth / 2) - scaledWidth / 2;
-        int drawY = (int) ((camera.z * scale.y) / rotatedX) + (int) screenHeight - 200 - scaledHeight;
-        drawCoords = new Vector2(drawX,drawY);
-
-        if (drawX > 0) {
-            // 5.) draw sprite with x,y,width, height
-            canvas.draw(animator, drawX, drawY, scaledWidth, scaledHeight);
-        } else {
-            this.setDestroyed(true);
-        }
+    public void draw(GameCanvas canvas) {
+        canvas.drawRoadObject(getTexture(), getX(), getY(), GNOME_HOVER_DISTANCE, 0.08f, 0.1f, 90, 0);
     }
 
     public void setSpeed (float s) {

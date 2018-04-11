@@ -66,6 +66,7 @@ public class GameplayController {
 	private static final String VROOM_STICK_FILE = "images/vroomstick.png";
     /** The texture file for the gnome */
 	private static final String GNOME_FILE = "images/gnome.png";
+	private static final String REARVIEW_GNOME_FILE = "images/rearview_gnome.png";
 	/** The texture file for the gnome */
 	private static final String RADIO_FILE = "images/radio.png";
 	/** The texture file for the gnome */
@@ -89,6 +90,7 @@ public class GameplayController {
 	private Texture vroomStickTexture;
 	/** Texture for the gnomes */
 	private Texture gnomeTexture;
+	private Texture rearviewGnomeTexture;
 	/** Texture for the radio */
 	private Texture radioTexture;
 	/** Texture for the radio knob */
@@ -132,6 +134,8 @@ public class GameplayController {
 		assets.add(VROOM_STICK_FILE);
 		manager.load(GNOME_FILE, Texture.class);
 		assets.add(GNOME_FILE);
+		manager.load(REARVIEW_GNOME_FILE, Texture.class);
+		assets.add(REARVIEW_GNOME_FILE);
 		manager.load(RADIO_FILE, Texture.class);
 		assets.add(RADIO_FILE);
 		manager.load(RADIO_KNOB_FILE, Texture.class);
@@ -172,6 +176,7 @@ public class GameplayController {
 		wheelTexture = createTexture(manager,WHEEL_FILE);
 		vroomStickTexture = createTexture(manager, VROOM_STICK_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
+		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioTexture = createTexture(manager, RADIO_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
 		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
@@ -325,6 +330,7 @@ public class GameplayController {
 
 		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy(0.815f, 0.68f, 0.15f,0, gnomeTexture);
+
   }
 
 	/**
