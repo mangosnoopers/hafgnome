@@ -45,7 +45,7 @@ public class GameMode implements Screen {
 	}
 
 	// LEVEL FILES TODO idk
-	private static String TEST_LEVEL_0_EXCEL = "levels/test_level0.xlsx";
+	private static String TEST_LEVEL_0_EXCEL = "test_level0.xlsx";
 
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */

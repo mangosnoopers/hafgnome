@@ -50,6 +50,7 @@ public class Radio extends Image {
     }
 
 
+    // TODO: shouldn't need this constructor?
     public Radio(float x, float y, float relSize, float cb, Texture tex) {
         super(x, y, relSize, cb, tex);
 
@@ -60,6 +61,16 @@ public class Radio extends Image {
         genTestMap();
         updateStations(testMap);
 
+    }
+
+    public Radio(float x, float y, float relSize, float cb, Texture tex, ObjectMap<String,Genre> songs) {
+        super(x, y, relSize, cb, tex);
+
+        // Create Station list
+        Stations = new Array<Station>();
+        for (String songname : songs.keys()) {
+            Stations.add(new Station(songs.get(songname), songname));
+        }
     }
 
     public Station getLastStation(){ return lastStation; }
@@ -123,6 +134,7 @@ public class Radio extends Image {
      * is shut off
      */
     public void setStation() {
+        // TODO: make this work for < 3 songs
         stationNumber = -(int) knobAng;
         if (stationNumber <= 0) {
             stationNumber = 0;
@@ -197,8 +209,8 @@ public class Radio extends Image {
          * @param g the genre of the radio station
          */
         public Station(Genre g, String filename) {
-            name = filename.substring(0,filename.length()-4);
-            audioFile = "RadioSongs/" + filename;
+            name = filename.substring(11,filename.length()-4);
+            audioFile = filename;
             genre = g;
         }
 

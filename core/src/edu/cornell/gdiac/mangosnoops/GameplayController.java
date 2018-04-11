@@ -279,7 +279,7 @@ public class GameplayController {
 		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(310, 50);
 		vroomStick.setVroomStickSprite(vroomStickTexture);
-		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture);
+		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture, level.getSongs());
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
@@ -450,18 +450,19 @@ public class GameplayController {
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
 
 			// TODO : ADD CASES FOR OTHER GENRES
+			// FIXME: shifting doesn't work bidirectionally?
 			switch (r.getCurrentStationGenre()){
 				case DANCE:
 					if(ned.isAwake()){
-						ned.setMood(Child.Mood.HAPPY);
+                        nosh.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-						nosh.setMood(Child.Mood.HAPPY);
+                        nosh.setMoodShifting(true, true);
 					}
 					break;
 				case CREEPY:
 					if(ned.isAwake()){
-						ned.setMood(Child.Mood.HAPPY);
+                        nosh.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
 						nosh.setMoodShifting(true, false);
@@ -472,7 +473,7 @@ public class GameplayController {
 						ned.setMoodShifting(true, false);
 					}
 					if(nosh.isAwake()){
-						nosh.setMood(Child.Mood.HAPPY);
+                        nosh.setMoodShifting(true, true);
 					}
 					break;
 				default:

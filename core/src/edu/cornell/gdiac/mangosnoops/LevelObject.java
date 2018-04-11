@@ -31,7 +31,7 @@ public class LevelObject {
     /** Random seed */
     private int seed;
     /** Mapping between the level's song genres and its song mp3 files */
-    private ObjectMap<Genre,String> songs;
+    private ObjectMap<String,Genre> songs;
     /** Array of enemies for the level */
     private Array<Gnome> gnomez;
     /** A queue of events for the level.
@@ -136,7 +136,7 @@ public class LevelObject {
     /**
      * Return the songs for this level.
      */
-    public ObjectMap<Genre,String> getSongs() { return songs; }
+    public ObjectMap<String,Genre> getSongs() { return songs; }
 
     /**
      * Return an array of enemies for this level.
@@ -151,7 +151,7 @@ public class LevelObject {
     /**
      * Loads in a file to create a Level Object.
      *
-     * @param file name of JSON or Excel file with level information.
+     * @param file filename of JSON or Excel file with level information.
      * @throws IOException if one is raised while opening or closing the file
      * @throws InvalidFormatException if Excel input file format is invalid
      * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
@@ -160,7 +160,7 @@ public class LevelObject {
         localMiles = 0.0f;
 
         // Initialize collections -- TODO: inventory
-        songs = new ObjectMap<Genre, String>();
+        songs = new ObjectMap<String,Genre>();
         gnomez = new Array<Gnome>();
         events = new Queue<Event>();
 
@@ -168,12 +168,12 @@ public class LevelObject {
         String ext = file.substring(file.lastIndexOf('.') + 1);
         System.out.println("ext: " + ext); // TODO delete
         if (ext.equals("xlsx") || ext.equals("xls")) {
-            parseExcel(file);
+            parseExcel("levels/" + file);
         }
 
         // if JSON file
         else if (ext.equals("json")) {
-            parseJSON(file);
+            parseJSON("levels/" + file);
         }
 
         // not a supported file type
@@ -187,7 +187,7 @@ public class LevelObject {
     public LevelObject() {
         localMiles = 0.0f;
         // Initialize collections -- TODO: inventory
-        songs = new ObjectMap<Genre, String>();
+        songs = new ObjectMap<String,Genre>();
         gnomez = new Array<Gnome>();
         events = new Queue<Event>();
     }
@@ -295,19 +295,19 @@ public class LevelObject {
                 }
 
                 if (genreStr.equals("pop"))
-                    songs.put(Genre.POP, songFile);
+                    songs.put(songFile, Genre.POP);
                 else if (genreStr.equals("creepy"))
-                    songs.put(Genre.CREEPY, songFile);
+                    songs.put(songFile, Genre.CREEPY);
                 else if (genreStr.equals("dance"))
-                    songs.put(Genre.DANCE, songFile);
+                    songs.put(songFile, Genre.DANCE);
                 else if (genreStr.equals("action"))
-                    songs.put(Genre.ACTION, songFile);
+                    songs.put(songFile, Genre.ACTION);
                 else if (genreStr.equals("jazz"))
-                    songs.put(Genre.JAZZ, songFile);
+                    songs.put(songFile, Genre.JAZZ);
                 else if (genreStr.equals("thug"))
-                    songs.put(Genre.THUG, songFile);
+                    songs.put(songFile, Genre.THUG);
                 else if (genreStr.equals("comedy"))
-                    songs.put(Genre.COMEDY, songFile);
+                    songs.put(songFile, Genre.COMEDY);
                 else
                     throw new RuntimeException("Invalid song genre specified");
             }
