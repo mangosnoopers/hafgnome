@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
@@ -38,6 +39,8 @@ public class StartMenuMode implements Screen, InputProcessor {
     private Texture settingbutton;
     private Texture startbutton;
     private Texture logo;
+
+    Music menuSong;
 
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
     private int   exitButton;
@@ -221,6 +224,8 @@ public class StartMenuMode implements Screen, InputProcessor {
         settingbutton.dispose();
         startbutton.dispose();
         logo.dispose();
+        menuSong.stop();
+        menuSong.dispose();
         background = null;
         exitbutton  = null;
         levelsbutton = null;
@@ -313,7 +318,11 @@ public class StartMenuMode implements Screen, InputProcessor {
      * The ScreenListener will respond to requests to quit.
      */
     public void setScreenListener(ScreenListener listener) {
+
         this.listener = listener;
+        menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
+        menuSong.play();
+        menuSong.setLooping(true);
     }
 
     // PROCESSING PLAYER INPUT
