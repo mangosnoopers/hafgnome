@@ -31,7 +31,7 @@ public class LevelObject {
     /** Random seed */
     private int seed;
     /** Mapping between the level's song genres and its song mp3 files */
-    private ObjectMap<Genre,String> songs;
+    private ObjectMap<String,Genre> songs;
     /** Array of enemies for the level */
     private Array<Gnome> gnomez;
     /** A queue of events for the level.
@@ -43,20 +43,24 @@ public class LevelObject {
     private float localMiles;
 
     /** Speed constants TODO */
-    private static final float VERY_SLOW_SPEED = 0.0f;
-    private static final float SLOW_SPEED = 0.0f;
-    private static final float NORMAL_SPEED = 0.0f;
-    private static final float FAST_SPEED = 0.0f;
-    private static final float VERY_FAST_SPEED = 0.0f;
+    private static final float VERY_SLOW_SPEED = 0.25f;
+    private static final float SLOW_SPEED = 0.5f;
+    private static final float NORMAL_SPEED = 1.0f;
+    private static final float FAST_SPEED = 1.25f;
+    private static final float VERY_FAST_SPEED = 1.5f;
 
-    /** Padding constants. Converts each cell to a certain number of miles. */
+    /** Padding constants. Converts each cell to a certain number of miles.
+     *  Don't change these (the designers are going by them), but the miles
+     *  to pixels conversion can be changed */
     private static final float LESS_PADDING_MILES = 2.0f;
     private static final float NORMAL_PADDING_MILES = 5.0f;
     private static final float MORE_PADDING_MILES = 8.0f;
-    /** Constant to help calculate x-coordinates of enemies */
-    private static final int LANE_X_OFFSET = 2;
-    /** A constant that gives the number of pixels per one in-game mile. */
-    private static final float MILES_TO_PIXELS = 10.0f;
+    /** Constants to help calculate x-coordinates of enemies */
+    private static final float LANE_X = 0.2f;
+    private static final int LANE_X_OFFSET = 1;
+    /** A constant that gives the number of pixels per one in-game mile.
+     *  This can be changed, but the padding miles should remain constant. */
+    private static final float MILES_TO_PIXELS = 1.15f;
 
     /** Excel spreadsheet constants */
     /** Row and column of the cell containing region information */
@@ -133,7 +137,7 @@ public class LevelObject {
     /**
      * Return the songs for this level.
      */
-    public ObjectMap<Genre,String> getSongs() { return songs; }
+    public ObjectMap<String,Genre> getSongs() { return songs; }
 
     /**
      * Return an array of enemies for this level.
@@ -148,7 +152,7 @@ public class LevelObject {
     /**
      * Loads in a file to create a Level Object.
      *
-     * @param file name of JSON or Excel file with level information.
+     * @param file filename of JSON or Excel file. does not need to include "levels/"
      * @throws IOException if one is raised while opening or closing the file
      * @throws InvalidFormatException if Excel input file format is invalid
      * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
@@ -157,19 +161,19 @@ public class LevelObject {
         localMiles = 0.0f;
 
         // Initialize collections -- TODO: inventory
-        songs = new ObjectMap<Genre, String>();
+        songs = new ObjectMap<String,Genre>();
         gnomez = new Array<Gnome>();
         events = new Queue<Event>();
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
         if (ext.equals("xlsx") || ext.equals("xls")) {
-            parseExcel(file);
+            parseExcel("levels/" + file);
         }
 
         // if JSON file
         else if (ext.equals("json")) {
-            parseJSON(file);
+            parseJSON("levels/" + file);
         }
 
         // not a supported file type
@@ -182,6 +186,10 @@ public class LevelObject {
     // TODO: delete
     public LevelObject() {
         localMiles = 0.0f;
+        // Initialize collections -- TODO: inventory
+        songs = new ObjectMap<String,Genre>();
+        gnomez = new Array<Gnome>();
+        events = new Queue<Event>();
     }
 
     /**
@@ -194,14 +202,14 @@ public class LevelObject {
 
     /**
      * Parse an Excel file for information about a level.
-     * @param file name of an Excel file (xlsx or xls)
+     * @param filepath relative path to an Excel file (xlsx or xls) stored in assets folder
      * @throws RuntimeException if an invalid setting was given in the level
      * @throws IOException if there is an error in opening/closing file
      * @throws InvalidFormatException if not a proper Excel file
      */
-    public void parseExcel(String file) throws IOException, InvalidFormatException, RuntimeException {
+    public void parseExcel(String filepath) throws IOException, InvalidFormatException, RuntimeException {
         try {
-            FileInputStream f = new FileInputStream(new File("levels/" + file));
+            FileInputStream f = new FileInputStream(new File(filepath));
 
             // Create a workbook and get the first sheet
             Workbook wb = WorkbookFactory.create(f);
@@ -270,22 +278,28 @@ public class LevelObject {
 
             // Iterate through cells for songs
             for (int i = SONGS_START_ROW; i <= SONGS_END_ROW; i++) {
-                String songFile = df.formatCellValue(sh.getRow(i).getCell(SONG_FILE_COL));
+                String songFile = "RadioSongs/" + df.formatCellValue(sh.getRow(i).getCell(SONG_FILE_COL));
                 String genreStr = df.formatCellValue(sh.getRow(i).getCell(SONG_GENRE_COL)).toLowerCase();
+
+                // Stop iterating if no more song files are listed
+                if (songFile.equals("RadioSongs/")) {
+                    break;
+                }
+
                 if (genreStr.equals("pop"))
-                    songs.put(Genre.POP, songFile);
+                    songs.put(songFile, Genre.POP);
                 else if (genreStr.equals("creepy"))
-                    songs.put(Genre.CREEPY, songFile);
+                    songs.put(songFile, Genre.CREEPY);
                 else if (genreStr.equals("dance"))
-                    songs.put(Genre.DANCE, songFile);
+                    songs.put(songFile, Genre.DANCE);
                 else if (genreStr.equals("action"))
-                    songs.put(Genre.ACTION, songFile);
+                    songs.put(songFile, Genre.ACTION);
                 else if (genreStr.equals("jazz"))
-                    songs.put(Genre.JAZZ, songFile);
+                    songs.put(songFile, Genre.JAZZ);
                 else if (genreStr.equals("thug"))
-                    songs.put(Genre.THUG, songFile);
+                    songs.put(songFile, Genre.THUG);
                 else if (genreStr.equals("comedy"))
-                    songs.put(Genre.COMEDY, songFile);
+                    songs.put(songFile, Genre.COMEDY);
                 else
                     throw new RuntimeException("Invalid song genre specified");
             }
@@ -311,7 +325,7 @@ public class LevelObject {
             f.close();
 
         } catch (IOException e) {
-            throw new IOException("Error in closing the file");
+            throw new IOException(e.getMessage());
         } catch (InvalidFormatException e) {
             throw new InvalidFormatException("Input file format invalid");
         } catch (RuntimeException e) {
@@ -346,26 +360,36 @@ public class LevelObject {
                 events.addLast(new Event(y, Event.EventType.NOSH_WAKES_UP));
             } else if (eventStr.equals("sat question")) {
                 events.addLast(new Event(y, Event.EventType.SAT_QUESTION));
-            } else {
+            } else if (!eventStr.equals("")) {
                 throw new RuntimeException("Invalid event specified");
             }
 
             // Starting x-coordinate for rightmost lane
-            float x = 0.1f * (numLanes - LANE_X_OFFSET);
+            float x = LANE_X * (numLanes - LANE_X_OFFSET);
             // Check for enemies in each lane
             for (int i = 1; i <= numLanes; i++) {
                 // Calculate the x-coordinate for this enemy - decrease by 0.1 for each lane left
-                x -= 0.1f;
+                x -= LANE_X;
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
-                if (enemyStr.equals("gnome"))
-                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.BASIC));
-                else if (enemyStr.equals("flamingo"))
-                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.FLAMINGO));
-                else if (enemyStr.equals("grill start"))
-                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.GRILL));
+                if (enemyStr.equals("gnome")) {
+                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.BASIC);
+                    gnomez.add(enemy);
+                    // TODO add texture here? maybe?
+
+                    // TODO DELETE:
+//                    System.out.println("enemy row: " + roadCurrRow + " / col: " + i);
+//                    System.out.println("enemy x: " + x + "enemy y: " + y);
+
+                } else if (enemyStr.equals("flamingo")) {
+                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.FLAMINGO);
+                    gnomez.add(enemy);
+                } else if (enemyStr.equals("grill start")) {
+                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
+                    gnomez.add(enemy);
                     // TODO: grill end
-                else
+                } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");
+                }
             }
 
             localMiles += padding;
