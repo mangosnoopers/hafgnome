@@ -449,7 +449,7 @@ public class GameMode implements Screen {
 		float speechX = Child.NED_SPEECH_BUBBLE_COORDS.x + nedRef.getShakeX();
 		float speechY = Child.NED_SPEECH_BUBBLE_COORDS.y + nedRef.getShakeY();
 		if (nedRef.getCurrentMood() == Child.Mood.CRITICAL) {
-			canvas.draw(speechBubble, speechX, speechY, 700, 400);
+			canvas.draw(speechBubble, speechX, speechY, 1000, 600);
 		}
 
 		// Flush information to the graphic buffer.
