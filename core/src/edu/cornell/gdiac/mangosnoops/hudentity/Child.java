@@ -39,7 +39,7 @@ public class Child {
 
     /** Coordinates of speech bubbles for Ned and Nosh */
     public static Vector2 NED_SPEECH_BUBBLE_COORDS = new Vector2(50, 210);
-    public static Vector2 NOSH_SPEECH_BUBBLE_COORDS = new Vector2(150, 350);
+    public static Vector2 NOSH_SPEECH_BUBBLE_COORDS = new Vector2(350, 350);
 
     /** Represents the current mood. 0-100 means they are awake, -100 they are asleep.*/
     private int happiness;

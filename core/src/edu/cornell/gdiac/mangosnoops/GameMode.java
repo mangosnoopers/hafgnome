@@ -305,40 +305,43 @@ public class GameMode implements Screen {
 		// Process the game input
 		inputController.readInput();
 		// Test whether to reset the game.
-		switch (gameState) {
-		case INTRO:
-			gameState = GameState.PLAY;
-			gameplayController.start(canvas.getWidth() / 2.0f, 0);
-			break;
-		case OVER:
-			if (inputController.didReset()) {
-				gameState = GameState.PLAY;
-				gameplayController.reset();
-				soundController.reset();
-				//TODO: Make the next two lines less sketch
-				canvas.resetCam();
-				gameplayController.start(canvas.getWidth() / 2.0f, 0);
+		try {
+			switch (gameState) {
+				case INTRO:
+					gameState = GameState.PLAY;
+					gameplayController.start(canvas.getWidth() / 2.0f, 0);
+					break;
+				case OVER:
+					if (inputController.didReset()) {
+						gameplayController.reset();
+						soundController.reset();
+						canvas.resetCam();
+						gameState = GameState.PLAY;
+						gameplayController.start(canvas.getWidth() / 2.0f, 0);
+					}
+					else {
+						play(delta);
+					}
+					break;
+				case PLAY:
+					if (inputController.didReset()) {
+						gameplayController.reset();
+						soundController.reset();
+						canvas.resetCam();
+						gameState = GameState.PLAY;
+						gameplayController.start(canvas.getWidth() / 2.0f, 0);
+					}
+					else {
+						play(delta);
+					}
+					break;
+				default:
+					break;
 			}
-			else {
-				play(delta);
-			}
-            break;
-		case PLAY:
-			if (inputController.didReset()) {
-				gameState = GameState.PLAY;
-				gameplayController.reset();
-				soundController.reset();
-				//TODO: Make the next two lines less sketch
-				canvas.resetCam();
-				gameplayController.start(canvas.getWidth() / 2.0f, 0);
-			}
-			else {
-				play(delta);
-			}
-			break;
-		default:
-			break;
+		} catch (Exception e) {
+			// TODO get rid of this block probably
 		}
+
 	}
 
 	/**
@@ -349,6 +352,7 @@ public class GameMode implements Screen {
 	protected void play(float delta) {
 
 		// Check if game is over
+		// TODO: also check if end of level
 		if (gameplayController.getCar().isDestroyed()) {
             gameState = GameState.OVER;
         }
@@ -390,8 +394,6 @@ public class GameMode implements Screen {
 
 		canvas.clearScreen();
 
-
-        // ** Draw world with 3D perspective **
         // TODO: change this
         Array<Gnome> gnomez = gameplayController.getGnomez();
         for (Gnome g : gnomez) {
@@ -441,17 +443,37 @@ public class GameMode implements Screen {
 		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
         canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 60.0f, 20.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
 
-		if (gameState == GameState.OVER) {
-			canvas.drawTextCentered("GNOME OVER",displayFont, GAME_OVER_OFFSET);
-			canvas.drawTextCentered("Press R to restart",displayFont, GAME_OVER_OFFSET-40);
-		}
-
 		// Draw speech bubbles, if necessary
 		Child nedRef = gameplayController.getCar().getNed();
+		Child noshRef = gameplayController.getCar().getNosh();
 		float speechX = Child.NED_SPEECH_BUBBLE_COORDS.x + nedRef.getShakeX();
 		float speechY = Child.NED_SPEECH_BUBBLE_COORDS.y + nedRef.getShakeY();
+		float speechXNosh = Child.NOSH_SPEECH_BUBBLE_COORDS.x + noshRef.getShakeX();
+		float speechYNosh = Child.NOSH_SPEECH_BUBBLE_COORDS.y + noshRef.getShakeY();
 		if (nedRef.getCurrentMood() == Child.Mood.CRITICAL) {
 			canvas.draw(speechBubble, speechX, speechY, 1000, 600);
+		}
+		if (noshRef.getCurrentMood() == Child.Mood.CRITICAL) {
+			canvas.draw(speechBubble, speechXNosh, speechYNosh, 1000, 600);
+		}
+
+		// Draw messages
+		switch (gameState) {
+			case INTRO:
+				break;
+			case OVER:
+				if (!gameplayController.getCar().isDestroyed()) {
+					canvas.drawTextCentered("YOU WON", displayFont, GAME_OVER_OFFSET);
+					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
+				} else {
+					canvas.drawTextCentered("GNOME OVER", displayFont, GAME_OVER_OFFSET);
+					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
+				}
+				break;
+			case PLAY:
+				break;
+			default:
+				break;
 		}
 
 		// Flush information to the graphic buffer.
