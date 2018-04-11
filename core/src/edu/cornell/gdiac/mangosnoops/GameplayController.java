@@ -66,7 +66,7 @@ public class GameplayController {
 	private static final String VROOM_STICK_FILE = "images/vroomstick.png";
     /** The texture file for the gnome */
 	private static final String GNOME_FILE = "images/gnome.png";
-	private static final String REARVIEW_GNOME_FILE = "images/rearview_gnome.png";
+	private static final String REARVIEW_GNOME_FILE = "images/gnome_rear.png";
 	/** The texture file for the gnome */
 	private static final String RADIO_FILE = "images/radio.png";
 	/** The texture file for the gnome */
@@ -276,7 +276,7 @@ public class GameplayController {
 		gnomez = level.getGnomez();
 		*/
 		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
-		vroomStick = new VroomStick(0.345f, 0.2f,0.4f, 0, vroomStickTexture);
+		vroomStick = new VroomStick(0.345f, 0.2f,0.3f, 0, vroomStickTexture);
 		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture);
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
@@ -329,7 +329,7 @@ public class GameplayController {
 		gnomez.add(newGnome15);
 
 		// Rearview enemy
-		rearviewEnemy = new RearviewEnemy(0.815f, 0.68f, 0.15f,0, gnomeTexture);
+		rearviewEnemy = new RearviewEnemy(0.844f, 0.8f, 0.18f,0, rearviewGnomeTexture);
 
   }
 
@@ -420,7 +420,7 @@ public class GameplayController {
 		radio.update(mouseCoords, dr.x);
 
 
-		rearviewEnemy.update(delta*0.002f);
+		rearviewEnemy.update(delta*0.0004f);
 
 		if (vroomStick.isEngaged()) {
 			rearviewEnemy.destroyIfAlive();
@@ -523,7 +523,9 @@ public class GameplayController {
 
 			// Create rearview enemy with given probability
 			if (generator.nextFloat() <= rearviewProb) {
-				rearviewEnemy.create();
+				if(!(vroomStick.isEngaged())) {
+					rearviewEnemy.create();
+				}
 			}
 
 		}
