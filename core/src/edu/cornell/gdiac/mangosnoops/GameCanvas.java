@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Sort;
+import edu.cornell.gdiac.mangosnoops.roadentity.Exit;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.mangosnoops.roadentity.Road;
 
@@ -614,24 +615,24 @@ public class GameCanvas {
 	}
 
 	/**
-	 * Draw each Gnome given their current position and Texture.
-	 * PerspectiveCamera is used for 3D perspective.
+	 * Draw a RoadObject
 	 *
-	 * The calls are buffered. Must call drawWorld() to draw to screen.
-     *
-	 * @param gnomez The gnomez to draw
+	 * @param t the texture to draw
+	 * @param x x coord
+	 * @param y y coord
+	 * @param width scaling of the object sprite width
+	 * @param height scaling of the object sprite height
+	 * @param xRotationAngle x rotation angle (in degrees)
+	 * @param yRotationAngle y rotation angle (in degrees)
 	 */
-	public void drawGnomez(Array<Gnome> gnomez) {
-
-		for (Gnome g : gnomez) {
-			/* TODO: optimize this */
-			Decal gnomeDecal = Decal.newDecal(0.08f, 0.1f, new TextureRegion(g.getTexture()));
-			gnomeDecal.setPosition(g.getX(), g.getY(), 4.32f);
-			gnomeDecal.setBlending(1, 0	);
-			gnomeDecal.rotateX(90);
-			batch.add(gnomeDecal);
-		}
-
+	public void drawRoadObject(Texture t, float x, float y, float z, float width, float height, float xRotationAngle, float yRotationAngle) {
+		camera.update();
+		Decal objectDecal = Decal.newDecal(width, height, new TextureRegion(t));
+		objectDecal.setPosition(x, y, z);
+		objectDecal.setBlending(1, 0	);
+		objectDecal.rotateX(xRotationAngle);
+		objectDecal.rotateY(yRotationAngle);
+		batch.add(objectDecal);
 	}
 
 	public void drawWorld() {
