@@ -78,6 +78,12 @@ public class Gnome extends RoadObject{
         gtype = type;
     }
 
+    public Gnome(Gnome g){
+        this.position = new Vector2(g.position);
+        animeframe = 0.0f;
+        gtype = g.gtype;
+    }
+
     public void setTexture(Texture texture) {
         animator = new FilmStrip(texture,1,2,2);
         radius = animator.getRegionHeight() / 2.0f;

@@ -274,7 +274,10 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		gnomez = level.getGnomez();
+		System.out.println("Recreating gnomez");
+		for(Gnome g: level.getGnomez()){
+			gnomez.add(new Gnome(g));
+		}
 		// TODO CHANGE THIS LOL
 		for (Gnome g : gnomez) {
 			g.setTexture(gnomeTexture);
@@ -300,7 +303,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-//		gnomez.clear();
+		gnomez = new Array<Gnome>(level.getGnomez().size);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -408,7 +411,10 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
-    
+
+		for(int i=0; i<gnomez.size; i++){
+			System.out.println("gnome["+i+"]: " + gnomez.get(i).getY());
+		}
 		// Update world objects (road and gnome positions)
         road.update(delta);
         for (Gnome g : gnomez) {
