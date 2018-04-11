@@ -112,14 +112,14 @@ public class CollisionController {
 	 * FIXME: remove canvas param
 	 */
 	private void handleCollision(Car c, Gnome g) {
-		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
-							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
-			if(g.getY() < GNOME_INRANGE) {
-				g.setDestroyed(true);
-			}
-		}
-
-		else {
+//		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
+//							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
+//			if(g.getY() < GNOME_INRANGE) {
+//				g.setDestroyed(true);
+//			}
+//		}
+//
+//		else {
 			if (g.getY() < -10 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
 				c.damage();
 				g.setDestroyed(true);
@@ -130,6 +130,6 @@ public class CollisionController {
 
 			}
 
-		}
+//		}
 	}
 }

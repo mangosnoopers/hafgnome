@@ -55,11 +55,12 @@ public class LevelObject {
     private static final float LESS_PADDING_MILES = 2.0f;
     private static final float NORMAL_PADDING_MILES = 5.0f;
     private static final float MORE_PADDING_MILES = 8.0f;
-    /** Constant to help calculate x-coordinates of enemies */
-    private static final int LANE_X_OFFSET = 2;
+    /** Constants to help calculate x-coordinates of enemies */
+    private static final float LANE_X = 0.2f;
+    private static final int LANE_X_OFFSET = 1;
     /** A constant that gives the number of pixels per one in-game mile.
      *  This can be changed, but the padding miles should remain constant. */
-    private static final float MILES_TO_PIXELS = 10.0f;
+    private static final float MILES_TO_PIXELS = 1.15f;
 
     /** Excel spreadsheet constants */
     /** Row and column of the cell containing region information */
@@ -151,7 +152,7 @@ public class LevelObject {
     /**
      * Loads in a file to create a Level Object.
      *
-     * @param file filename of JSON or Excel file with level information.
+     * @param file filename of JSON or Excel file. does not need to include "levels/"
      * @throws IOException if one is raised while opening or closing the file
      * @throws InvalidFormatException if Excel input file format is invalid
      * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
@@ -166,7 +167,6 @@ public class LevelObject {
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
-        System.out.println("ext: " + ext); // TODO delete
         if (ext.equals("xlsx") || ext.equals("xls")) {
             parseExcel("levels/" + file);
         }
@@ -230,9 +230,6 @@ public class LevelObject {
                 region = Region.COLORADO;
             else
                 throw new RuntimeException("Invalid region setting");
-            // TODO delete
-            System.out.println("region: " + regionStr);
-
 
             // Speed information
             String speedStr = df.formatCellValue(sh.getRow(SPEED_ROW).getCell(SPEED_COL)).toLowerCase();
@@ -248,13 +245,9 @@ public class LevelObject {
                 speed = VERY_FAST_SPEED;
             else
                 throw new RuntimeException("Invalid speed setting");
-            // TODO delete
-            System.out.println("speed: " + speedStr);
 
             // Number of lanes
             numLanes = Integer.parseInt(df.formatCellValue(sh.getRow(LANE_ROW).getCell(LANE_COL)));
-            // TODO delete
-            System.out.println("numLanes: " + numLanes);
 
             // Random selection of blocks
             String randomStr = df.formatCellValue(sh.getRow(RANDOM_SELECT_ROW).getCell(RANDOM_SELECT_COL)).toLowerCase();
@@ -289,7 +282,6 @@ public class LevelObject {
                 String genreStr = df.formatCellValue(sh.getRow(i).getCell(SONG_GENRE_COL)).toLowerCase();
 
                 // Stop iterating if no more song files are listed
-                System.out.println(songFile);
                 if (songFile.equals("RadioSongs/")) {
                     break;
                 }
@@ -373,16 +365,21 @@ public class LevelObject {
             }
 
             // Starting x-coordinate for rightmost lane
-            float x = 0.1f * (numLanes - LANE_X_OFFSET);
+            float x = LANE_X * (numLanes - LANE_X_OFFSET);
             // Check for enemies in each lane
             for (int i = 1; i <= numLanes; i++) {
                 // Calculate the x-coordinate for this enemy - decrease by 0.1 for each lane left
-                x -= 0.1f;
+                x -= LANE_X;
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
                 if (enemyStr.equals("gnome")) {
                     Gnome enemy = new Gnome(x, y, Gnome.GnomeType.BASIC);
                     gnomez.add(enemy);
                     // TODO add texture here? maybe?
+
+                    // TODO DELETE:
+//                    System.out.println("enemy row: " + roadCurrRow + " / col: " + i);
+//                    System.out.println("enemy x: " + x + "enemy y: " + y);
+
                 } else if (enemyStr.equals("flamingo")) {
                     Gnome enemy = new Gnome(x, y, Gnome.GnomeType.FLAMINGO);
                     gnomez.add(enemy);
