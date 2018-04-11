@@ -39,16 +39,19 @@ public class RearviewEnemy extends Image {
 
     private float currentHeight;
     private float currentSpeed;
+    private float ORIGINAL_SCALE;
 
     /** Whether or not the enemy is alive (which would entail that it's
      *  crawling up the back of the car) */
     private boolean isAlive;
+    private boolean isDying;
+
 
     /** Speed constants */
     private final float NORMAL_SPEED = 30f;
 
     /** The speed at which the enemy starts to damage the car */
-    private final float DAMAGE_HEIGHT = 0.233f;
+    private final float DAMAGE_HEIGHT = 0.05f;
 
     /**
      * Creates a new RearviewEnemy.
@@ -58,6 +61,7 @@ public class RearviewEnemy extends Image {
         currentHeight = 0;
         isAlive = false;
         currentSpeed = NORMAL_SPEED;
+        ORIGINAL_SCALE = relativeScale;
     }
 
     @Override
@@ -65,26 +69,13 @@ public class RearviewEnemy extends Image {
         if(texture == null){
             return;
         }
-        if (isAlive) {
+
+        if (isDying || isAlive) {
             float ox = 0.5f * texture.getWidth();
             float oy = 0.5f * texture.getHeight();
-            canvas.draw(texture,
-                        position.x*SCREEN_DIMENSIONS.x,
-                        position.y*SCREEN_DIMENSIONS.y,
-                        ox,
-                        oy,
-                        texture.getWidth(),
-                        texture.getHeight() - ((DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y)-currentHeight),
-                        relativeScale*SCREEN_DIMENSIONS.y,
-                        relativeScale*SCREEN_DIMENSIONS.y,
-                        0,
-                        (int)(0),
-                        (int)(0),
-                        texture.getWidth(),
-                        (int)(texture.getHeight() - ((DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y)-currentHeight) ),
-                        false,
-                        false);
-
+            canvas.draw(texture, Color.WHITE, ox, oy, position.x*SCREEN_DIMENSIONS.x, (position.y*SCREEN_DIMENSIONS.y + currentHeight), 0,
+                    relativeScale*canvas.getHeight(),
+                    relativeScale*canvas.getHeight());
         }
     }
 
@@ -94,6 +85,16 @@ public class RearviewEnemy extends Image {
         }
         if(currentHeight > DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y){
             currentHeight = DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y;
+        }
+
+        //Make gnome fly off
+        if(isDying) {
+            relativeScale -= ((ORIGINAL_SCALE - 0.6f*relativeScale)*0.04f);
+            if ((relativeScale - ORIGINAL_SCALE*0.01) <= 0) {
+                isDying = false;
+                isAlive = false;
+                relativeScale = ORIGINAL_SCALE;
+            }
         }
     }
 
@@ -107,14 +108,16 @@ public class RearviewEnemy extends Image {
 
     /** Creates a "new" rearview enemy, if there isn't already one. */
     public void create() {
-        if (!isAlive) {
+        if (!isAlive && !isDying) {
             isAlive = true;
             currentHeight = 0;
         }
     }
 
     public void destroyIfAlive() {
-        isAlive = false;
+        if(isAlive) {
+            isDying = true;
+        }
     }
 
 }
