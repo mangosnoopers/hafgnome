@@ -3,17 +3,12 @@ package edu.cornell.gdiac.mangosnoops.hudentity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
+import edu.cornell.gdiac.mangosnoops.Image;
 
-public class VroomStick {
-
-    private static Vector2 position;
-    private static Texture vroomStickTexture;
-    private static Vector2 SCALING = new Vector2(0.4f, 0.4f); /* FIXME: should this be in GameCanvas? */
-
-    private float WINDOW_WIDTH = Gdx.graphics.getWidth();
-    private float WINDOW_HEIGHT = Gdx.graphics.getHeight();
+public class VroomStick extends Image {
 
     /**
      * engaged indicates that the stick has been fully pulled, which
@@ -24,48 +19,73 @@ public class VroomStick {
      */
     private boolean engaged;
 
+    private Rectangle hitbox;
+
+    private double length;
     private float ang = 0;
     private float ENGAGE_ANGLE = -35;
 
-    public VroomStick(float x, float y) {
-        position = new Vector2(x, y);
+    public VroomStick(float x, float y, float relSca, float cb, Texture tex ) {
+        super(x,y,relSca,cb,tex);
         engaged = false;
+
+        hitbox = new Rectangle(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
+                                position.y*SCREEN_DIMENSIONS.y + 0.63f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale,
+                                0.28f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
+                                0.35f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale);
     }
 
-    public void setVroomStickSprite(Texture v) { vroomStickTexture = v; }
-
+    @Override
     public void draw(GameCanvas canvas) {
-        float width = vroomStickTexture.getWidth() * SCALING.x;
-        float height = vroomStickTexture.getHeight() * SCALING.y;
+        if(texture == null) {
+            return;
+        }
 
-        float ox = position.x - vroomStickTexture.getWidth() / 2;
-        float oy = position.y - vroomStickTexture.getHeight() / 2;
-
-        canvas.draw(vroomStickTexture, Color.WHITE, ox, oy, position.x-30, position.y+5, ang, SCALING.x, SCALING.y);
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), position.y*canvas.getHeight(),
+                        ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
     }
 
+    //@Override
+//    public void inArea(Vector2 in){
+//
+//    }
     public void update(Vector2 in, float dy) {
-        if (in != null && inVroomStickArea(in)) {
+//        System.out.println("hitbox:"+hitbox);
+
+        if(in != null){
+            in.y = SCREEN_DIMENSIONS.y-in.y;
+        }
+        if (in != null && hitbox.contains(in)) {
             ang -= dy;
+//            System.out.println("In rect");
+//            System.out.println("angle is: " + ang);
+//            System.out.println("dy is: " + dy);
+            hitbox.setPosition(hitbox.getX(),(hitbox.getY()- dy));
+//            System.out.println("hitbox is now:"+hitbox);
+
             if (ang < ENGAGE_ANGLE) {
                 ang = ENGAGE_ANGLE;
                 engaged = true;
             }
         } else {
             ang += 0.2f * -ang;
+            hitbox.setPosition(hitbox.getX(),hitbox.getY() + 0.02f*hitbox.getY());
             engaged = false;
         }
 
+        if(ang >= 0){
+            ang = 0;
+        }
+
+        if(hitbox.getY()+hitbox.getHeight() > position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale){
+            //System.out.println("thatboi numba 1: " + (hitbox.getY()));
+            //System.out.println("thatboi numba 2: " + (position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale));
+            hitbox.setPosition(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
+                                 position.y*SCREEN_DIMENSIONS.y + 0.652f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale);
+        }
     }
 
-    public boolean inVroomStickArea(Vector2 p) {
 
-        /* FIXME: magic numbers */
-        return WINDOW_WIDTH - p.x < position.x + 40
-                && WINDOW_WIDTH - p.x > position.x - 40
-                && WINDOW_HEIGHT - p.y < position.y + 150
-                && WINDOW_HEIGHT - p.y > position.y - 100;
-    }
 
     public boolean isEngaged() { return engaged; }
 

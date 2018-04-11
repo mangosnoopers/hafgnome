@@ -35,7 +35,7 @@ import edu.cornell.gdiac.mangosnoops.*;
  *  - garbage collection stuff
  *  - do we want there to be >1 rearview enemy at once?
  */
-public class RearviewEnemy {
+public class RearviewEnemy extends Image {
 
     private float currentHeight;
     private float currentSpeed;
@@ -44,43 +44,56 @@ public class RearviewEnemy {
      *  crawling up the back of the car) */
     private boolean isAlive;
 
-    /** FIXME: do this relative to screen width, height **/
-    private final float ENEMY_X = 600f;
-    private final float ENEMY_Y = 350f;
-
     /** Speed constants */
     private final float NORMAL_SPEED = 30f;
 
     /** The speed at which the enemy starts to damage the car */
-    private final float DAMAGE_HEIGHT = 100f;
-
-    private Texture texture;
+    private final float DAMAGE_HEIGHT = 0.233f;
 
     /**
      * Creates a new RearviewEnemy.
      */
-    public RearviewEnemy() {
+    public RearviewEnemy(float x, float y, float relScale, float cb, Texture tex) {
+        super(x,y,relScale,cb,tex);
         currentHeight = 0;
         isAlive = false;
         currentSpeed = NORMAL_SPEED;
-
     }
 
-    public void setTexture(Texture t) {
-        texture = t;
-    }
-
+    @Override
     public void draw(GameCanvas canvas) {
+        if(texture == null){
+            return;
+        }
         if (isAlive) {
-            float w = 0.5f * texture.getWidth();
-            float h = 0.5f * texture.getHeight();
-            canvas.draw(texture, ENEMY_X, ENEMY_Y + currentHeight, w, h);
+            float ox = 0.5f * texture.getWidth();
+            float oy = 0.5f * texture.getHeight();
+            canvas.draw(texture,
+                        position.x*SCREEN_DIMENSIONS.x,
+                        position.y*SCREEN_DIMENSIONS.y,
+                        ox,
+                        oy,
+                        texture.getWidth(),
+                        texture.getHeight() - ((DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y)-currentHeight),
+                        relativeScale*SCREEN_DIMENSIONS.y,
+                        relativeScale*SCREEN_DIMENSIONS.y,
+                        0,
+                        (int)(0),
+                        (int)(0),
+                        texture.getWidth(),
+                        (int)(texture.getHeight() - ((DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y)-currentHeight) ),
+                        false,
+                        false);
+
         }
     }
 
-    public void update(float delta) {
-        if (isAlive && currentHeight < DAMAGE_HEIGHT) {
-            currentHeight += currentSpeed * delta;
+    public void update(float deltaSpeed) {
+        if (isAlive && currentHeight < DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y) {
+            currentHeight += (currentSpeed * deltaSpeed * SCREEN_DIMENSIONS.y);
+        }
+        if(currentHeight > DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y){
+            currentHeight = DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y;
         }
     }
 
@@ -89,7 +102,7 @@ public class RearviewEnemy {
     }
 
     public boolean isAttackingCar() {
-        return isAlive && currentHeight >= DAMAGE_HEIGHT;
+        return isAlive && (currentHeight >= DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y);
     }
 
     /** Creates a "new" rearview enemy, if there isn't already one. */
@@ -97,7 +110,6 @@ public class RearviewEnemy {
         if (!isAlive) {
             isAlive = true;
             currentHeight = 0;
-
         }
     }
 

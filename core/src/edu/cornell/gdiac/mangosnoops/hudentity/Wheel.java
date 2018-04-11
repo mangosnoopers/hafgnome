@@ -54,6 +54,7 @@ public class Wheel extends Image {
         if(texture == null) {
             return;
         }
+
         float ox = 0.5f * texture.getWidth();
         float oy = 0.5f * texture.getHeight();
 
