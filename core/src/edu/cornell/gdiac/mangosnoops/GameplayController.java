@@ -359,7 +359,7 @@ public class GameplayController {
 	private boolean eventShouldOccur(Event e, float delta) {
 		float speed = road.getSpeed();
 
-		return false;
+		return true;
 	}
 
 	/**
