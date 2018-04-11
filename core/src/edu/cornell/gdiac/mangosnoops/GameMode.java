@@ -312,6 +312,7 @@ public class GameMode implements Screen {
 					gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					break;
 				case OVER:
+
 					if (inputController.didReset()) {
 						gameplayController.reset();
 						soundController.reset();
@@ -325,6 +326,7 @@ public class GameMode implements Screen {
 					break;
 				case PLAY:
 					if (inputController.didReset()) {
+						System.out.println("RESETTING");
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();

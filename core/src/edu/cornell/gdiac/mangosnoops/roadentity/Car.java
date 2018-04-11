@@ -35,7 +35,7 @@ public class Car extends RoadObject {
     private float healthPointerAng;
 
     /** Start position of car. */
-    private Vector2 CAR_START_POS = new Vector2(0, -10f);
+    private static final Vector2 CAR_START_POS = new Vector2(0, -10f);
 
     /** Bounds for the car. */
     private float LEFT_X_BOUND = -0.25f;
@@ -69,7 +69,7 @@ public class Car extends RoadObject {
 
         timeToDisplayDamageIndicator = 10;
 
-        position = CAR_START_POS;
+        position = new Vector2(CAR_START_POS);
     }
 
     /**
@@ -151,11 +151,19 @@ public class Car extends RoadObject {
      * Reset the car to restart the game.
      */
     public void reset() {
+        destroyed = false;
+        movement = 0.0f;
+
+        position = new Vector2(CAR_START_POS);
         angle = 0.0f;
         active = true;
-        health = 100;
+
+        //reset childs
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
+
+        //reset health
+        health = 100;
         healthPointerAng = 50.0f;
 
         timeToDisplayDamageIndicator = 10;
@@ -171,11 +179,11 @@ public class Car extends RoadObject {
      * @param delta Number of seconds since last animation frame
      */
     public void update(Vector2 clickPos, Wheel wheel, float delta) {
+
         // Call superclass's update
         super.update(delta);
         //System.out.println(position);
-
-        position.x += wheel.getHorizontalMovement() * delta * -1 * CAR_XSPEED;
+        position.x -= wheel.getHorizontalMovement() * delta * CAR_XSPEED;
 
         if (position.x < LEFT_X_BOUND) {
             position.x = LEFT_X_BOUND;
