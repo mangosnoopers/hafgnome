@@ -166,8 +166,8 @@ public class Radio extends Image {
      */
     public void update(Vector2 in, float dx) {
         Vector2 src = new Vector2(0.0f,5.0f);
+        //System.out.println("From update Radio: " + in);
         if (in != null && inArea(in)) {
-            // TODO: make this not weird
             knobAng -= (in.angle(src) * ROTATION_SPEED);
 
             if (knobAng <= -360.0f) {

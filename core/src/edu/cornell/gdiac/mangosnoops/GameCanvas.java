@@ -647,4 +647,13 @@ public class GameCanvas {
 	    shapeRenderer.end();
 	}
 
+	public void draw(Texture tex, float x, float y, float ox, float oy, float width, float height,
+					 	float sx, float sy, float ang, int srcX, int srcY, int srcWidth, int srcHeight, boolean fx, boolean fy){
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+		spriteBatch.setColor(Color.WHITE);
+		spriteBatch.draw(tex,x,y,ox,oy,width,height,sx,sy,ang,srcX,srcY,srcWidth,srcHeight,fx,fy);
+	}
 }

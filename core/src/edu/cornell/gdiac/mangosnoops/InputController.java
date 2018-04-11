@@ -90,9 +90,9 @@ public class InputController {
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (mouseClicked) {
             clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            //System.out.println(clickPos);
             dx = Gdx.input.getDeltaX();
             dy = Gdx.input.getDeltaY();
+            //System.out.println("Mouse at: "+ clickPos);
         } else {
             clickPos = null;
         }

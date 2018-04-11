@@ -22,17 +22,17 @@ public abstract class Image {
     protected static Vector2 SCREEN_DIMENSIONS;
 
 
-    public Image(float x, float y, float r, Texture t) {
+    public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);
-        relativeScale = r/(float)t.getHeight();
-        texture = t;
+        relativeScale = relSca/(float)tex.getHeight();
+        texture = tex;
         controlBuffer = 0;
     }
 
-    public Image(float x, float y, float r, float cb, Texture t) {
+    public Image(float x, float y, float relSca, float cb, Texture tex) {
         position = new Vector2(x,y);
-        relativeScale = r/(float)t.getHeight();
-        texture = t;
+        relativeScale = relSca/(float)tex.getHeight();
+        texture = tex;
         controlBuffer = cb;
     }
 
@@ -54,13 +54,13 @@ public abstract class Image {
     }
 
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x, position.y, 0,
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), position.y*canvas.getHeight(), 0,
                 relativeScale*canvas.getHeight(),
                 relativeScale*canvas.getHeight());
     }
 
     public void draw(GameCanvas canvas, Color tint) {
-        canvas.draw(texture, tint, 0, 0, position.x, position.y, 0,
+        canvas.draw(texture, tint, 0, 0, position.x*canvas.getWidth(), position.y*canvas.getHeight(), 0,
                 relativeScale*canvas.getHeight(),
                 relativeScale*canvas.getHeight());
     }

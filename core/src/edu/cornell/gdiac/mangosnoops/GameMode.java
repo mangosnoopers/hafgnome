@@ -371,13 +371,6 @@ public class GameMode implements Screen {
 
 		canvas.clearScreen();
 
-		// Draw RearviewEnemy
-        canvas.beginHUDDrawing();
-
-		// Rearview enemy
-		gameplayController.getRearviewEnemy().draw(canvas);
-
-        canvas.endHUDDrawing();
 
         // ** Draw world with 3D perspective **
         // TODO: change this
@@ -409,11 +402,14 @@ public class GameMode implements Screen {
 		// Radio
 		gameplayController.getRadio().draw(canvas, displayFont);
 
+		// Draw Rearview Enenmy
+		gameplayController.getRearviewEnemy().draw(canvas);
 
 		// Draw rearview mirror
 		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth(),rearviewMirror.getHeight(),
 					canvas.getWidth(),canvas.getHeight(),0,
 				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
+
 
 		// Draw Ned and Nosh
 		gameplayController.getCar().getNosh().draw(canvas, rearviewMirror);

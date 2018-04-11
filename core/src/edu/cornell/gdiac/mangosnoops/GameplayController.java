@@ -115,13 +115,13 @@ public class GameplayController {
 		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
 	}
 
-	/** 
+	/**
 	 * Preloads the assets for this game.
-	 * 
+	 *
 	 * The asset manager for LibGDX is asynchronous.  That means that you
-	 * tell it what to load and then wait while it loads them.  This is 
+	 * tell it what to load and then wait while it loads them.  This is
 	 * the first step: telling it what to load.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 * @param assets  Asset list to track which assets where loaded
 	 */
@@ -157,15 +157,15 @@ public class GameplayController {
 		manager.load(NED_SLEEP_FILE, Texture.class);
 		assets.add(NED_SLEEP_FILE);
 	}
-	
-	/** 
+
+	/**
 	 * Loads the assets for this game.
-	 * 
+	 *
 	 * The asset manager for LibGDX is asynchronous.  That means that you
-	 * tell it what to load and then wait while it loads them.  This is 
+	 * tell it what to load and then wait while it loads them.  This is
 	 * the second step: extracting assets from the manager after it has
 	 * finished loading them.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void loadContent(AssetManager manager) {
@@ -185,7 +185,7 @@ public class GameplayController {
 		ned_critical = createTexture(manager, NED_CRITICAL_FILE);
 		ned_sleep = createTexture(manager, NED_SLEEP_FILE);
 	}
-	
+
 	private Texture createTexture(AssetManager manager, String file) {
 		if (manager.isLoaded(file)) {
 			Texture texture = manager.get(file, Texture.class);
@@ -194,7 +194,7 @@ public class GameplayController {
 		}
 		return null;
 	}
-  
+
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
@@ -271,8 +271,7 @@ public class GameplayController {
 		gnomez = level.getGnomez();
 		*/
 		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
-		vroomStick = new VroomStick(310, 50);
-		vroomStick.setVroomStickSprite(vroomStickTexture);
+		vroomStick = new VroomStick(0.345f, 0.2f,0.4f, 0, vroomStickTexture);
 		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture);
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
@@ -325,8 +324,7 @@ public class GameplayController {
 		gnomez.add(newGnome15);
 
 		// Rearview enemy
-		rearviewEnemy = new RearviewEnemy();
-		rearviewEnemy.setTexture(gnomeTexture); /** FIXME: use rearview enemy texture instead of gnome */
+		rearviewEnemy = new RearviewEnemy(0.815f, 0.68f, 0.15f,0, gnomeTexture);
   }
 
 	/**
@@ -345,7 +343,7 @@ public class GameplayController {
 	 * Garbage collects all deleted objects.
 	 *
 	 * This method works on the principle that it is always cheaper to copy live objects
-	 * than to delete dead ones.  Deletion restructures the list and is O(n^2) if the 
+	 * than to delete dead ones.  Deletion restructures the list and is O(n^2) if the
 	 * number of deletions is high.  Since Add() is O(1), copying is O(n).
 	 */
 	public void garbageCollect() {
@@ -365,14 +363,14 @@ public class GameplayController {
 		gnomez = tmp;
 		backing.clear();
 	}
-	
+
 	/**
 	 * Process specialized destruction functionality
 	 *
-	 * Some objects do something special (e.g. explode) on destruction. That is handled 
+	 * Some objects do something special (e.g. explode) on destruction. That is handled
 	 * in this method.
 	 *
-	 * Notice that this allocates memory to the heap.  If we were REALLY worried about 
+	 * Notice that this allocates memory to the heap.  If we were REALLY worried about
 	 * performance, we would use a memory pool here.
 	 *
 	 * @param o Object to destroy
@@ -397,17 +395,26 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 
-		// Update world objects
+        // Update world objects
         road.update(delta);
-		for (Gnome g : gnomez) { g.update(delta, road.getSpeed()); }
+        for (Gnome g : gnomez) {
+            g.update(delta, road.getSpeed());
+        }
 
-		// Update the HUD
+        // Update the HUD
+        Vector2 in = input.getClickPos();
+        Vector2 mouseCoords = null;
+        Vector2 dr = new Vector2(input.getDX(), input.getDY());
+        if (in != null){
+            mouseCoords = new Vector2(in);
+        }
 
-		wheel.update(input.getClickPos(), input.getDX());
-		vroomStick.update(input.getClickPos(), input.getDY());
-		radio.update(input.getClickPos(), input.getDX());
+        wheel.update(mouseCoords, dr.x);
+		vroomStick.update(in, dr.y);
+		radio.update(mouseCoords, dr.x);
 
-		rearviewEnemy.update(delta);
+
+		rearviewEnemy.update(delta*0.002f);
 
 		if (vroomStick.isEngaged()) {
 			rearviewEnemy.destroyIfAlive();
