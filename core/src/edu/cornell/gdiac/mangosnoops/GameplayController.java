@@ -271,6 +271,10 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		gnomez = level.getGnomez();
+		// TODO CHANGE THIS LOL
+		for (Gnome g : gnomez) {
+			g.setTexture(gnomeTexture);
+		}
 		events = level.getEvents();
 		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(310, 50);
@@ -361,37 +365,39 @@ public class GameplayController {
 	/**
 	 * Makes the first event in the event queue occur and removes it from the
 	 * queue if it should occur at the current time. Does nothing if the first
-	 * event in the queue should not occur at this time.
+	 * event in the queue should not occur at this time or if the queue is empty.
 	 *
 	 * @param delta Number of seconds since the last animation frame
 	 * @param ned Ned
 	 * @param nosh Nosh
 	 */
 	public void handleEvents(float delta, Child ned, Child nosh) {
-		Event first = events.get(0);
-		if (eventShouldOccur(first, delta)) {
-			switch (first.getType()) {
-				case REAR_ENEMY:
-					rearviewEnemy.create();
-					break;
-				case SUN:
-					// TODO
-					break;
-				case NED_WAKES_UP:
-					ned.setMood(Child.Mood.NEUTRAL);
-					ned.setMoodShifting(true, false);
-					break;
-				case NOSH_WAKES_UP:
-					nosh.setMood(Child.Mood.NEUTRAL);
-					nosh.setMoodShifting(true, false);
-					break;
-				case SAT_QUESTION:
-					// TODO
-					break;
-				default:
-					break;
+		if (events.size != 0) {
+			Event first = events.get(0);
+			if (eventShouldOccur(first, delta)) {
+				switch (first.getType()) {
+					case REAR_ENEMY:
+						rearviewEnemy.create();
+						break;
+					case SUN:
+						// TODO
+						break;
+					case NED_WAKES_UP:
+						ned.setMood(Child.Mood.NEUTRAL);
+						ned.setMoodShifting(true, false);
+						break;
+					case NOSH_WAKES_UP:
+						nosh.setMood(Child.Mood.NEUTRAL);
+						nosh.setMoodShifting(true, false);
+						break;
+					case SAT_QUESTION:
+						// TODO
+						break;
+					default:
+						break;
+				}
+				events.removeFirst();
 			}
-			events.removeFirst();
 		}
 	}
 
@@ -495,30 +501,31 @@ public class GameplayController {
         }
 
 
-		Random generator = new Random();
-		float ned_prob = 0.3f;
-		float nosh_prob = 0.3f;
-
-		float rearviewProb = 0.3f;
-
-		// check every 100 frames
-		if (counter % 100 == 0) {
-			// make ned sleepy with given probability
-			if (generator.nextFloat() <= ned_prob) {
-//				ned.setAsleep();
-				ned.setMoodShifting(true, false);
-			}
-			// make nosh sleepy with given probability
-			if (generator.nextFloat() <= nosh_prob) {
-				nosh.setAsleep();
-			}
-
-			// Create rearview enemy with given probability
-			if (generator.nextFloat() <= rearviewProb) {
-				rearviewEnemy.create();
-			}
-
-		}
+        // TODO: eventually remove this random stuff, commenting out for testing
+//		Random generator = new Random();
+//		float ned_prob = 0.3f;
+//		float nosh_prob = 0.3f;
+//
+//		float rearviewProb = 0.3f;
+//
+//		// check every 100 frames
+//		if (counter % 100 == 0) {
+//			// make ned sleepy with given probability
+//			if (generator.nextFloat() <= ned_prob) {
+////				ned.setAsleep();
+//				ned.setMoodShifting(true, false);
+//			}
+//			// make nosh sleepy with given probability
+//			if (generator.nextFloat() <= nosh_prob) {
+//				nosh.setAsleep();
+//			}
+//
+//			// Create rearview enemy with given probability
+//			if (generator.nextFloat() <= rearviewProb) {
+//				rearviewEnemy.create();
+//			}
+//
+//		}
 
 	}
 }

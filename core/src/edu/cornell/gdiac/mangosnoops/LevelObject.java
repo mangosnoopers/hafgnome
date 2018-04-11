@@ -379,15 +379,20 @@ public class LevelObject {
                 // Calculate the x-coordinate for this enemy - decrease by 0.1 for each lane left
                 x -= 0.1f;
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
-                if (enemyStr.equals("gnome"))
-                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.BASIC));
-                else if (enemyStr.equals("flamingo"))
-                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.FLAMINGO));
-                else if (enemyStr.equals("grill start"))
-                    gnomez.add(new Gnome(x, y, Gnome.GnomeType.GRILL));
+                if (enemyStr.equals("gnome")) {
+                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.BASIC);
+                    gnomez.add(enemy);
+                    // TODO add texture here? maybe?
+                } else if (enemyStr.equals("flamingo")) {
+                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.FLAMINGO);
+                    gnomez.add(enemy);
+                } else if (enemyStr.equals("grill start")) {
+                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
+                    gnomez.add(enemy);
                     // TODO: grill end
-                else if (!enemyStr.equals(""))
+                } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");
+                }
             }
 
             localMiles += padding;
