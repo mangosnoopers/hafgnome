@@ -52,14 +52,18 @@ public class GameplayController {
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
 	private Array<Gnome> gnomez;
-	/** A queue of events for this level */
-	private Queue<Event> events;
+	/** An array of events for this level */
+	private Array<Event> events;
+	/** The next event to happen */
+	private int nextEvent;
 	/** Object containing all information about the current level. This includes
 	 *  everything specific to a level: the songs, enemies, events, etc. */
 	private LevelObject level;
 	/** Rearview enemy instance. The way it's handled right now, there is only
 	 *  one at a time. FIXME: could change that if necessary */
 	private RearviewEnemy rearviewEnemy;
+	/** The y-position player is driving over, used for checking for events */
+	private float ypos;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -210,10 +214,12 @@ public class GameplayController {
 	public GameplayController(LevelObject level) {
 		this.level = level;
 		gnomez = new Array<Gnome>();
-		events = new Queue<Event>();
+		events = new Array<Event>();
 		yonda = new Car();
 		backing = new Array<Gnome>();
 		road = new Road();
+		ypos = 0.0f;
+		nextEvent = 0;
 	}
 
 	/**
@@ -260,13 +266,6 @@ public class GameplayController {
     public Radio getRadio(){ return radio; }
 
 	/**
-	 * Returns true if the currently active player is alive.
-	 */
-	public boolean isAlive() {
-		return yonda != null;
-	}
-
-	/**
 	 * Starts a new game.
 	 *
 	 * This method creates a single player, but does nothing else.
@@ -301,8 +300,10 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		gnomez.clear();
+//		gnomez.clear();
 		backing.clear();
+		ypos = 0.0f;
+		nextEvent = 0;
 	}
 
 	/**
@@ -351,19 +352,7 @@ public class GameplayController {
 			default:
 				break;
 		}
-	}
 
-	/**
-	 * Checks to see if the given event should occur at this time.
-	 *
-	 * @param e The event to check
-	 * @param delta Number of seconds since the last animation frame
-	 * @returns true if the event should occur, false otherwise
-	 */
-	private boolean eventShouldOccur(Event e, float delta) {
-		float speed = road.getSpeed();
-
-		return true;
 	}
 
 	/**
@@ -377,8 +366,12 @@ public class GameplayController {
 	 */
 	public void handleEvents(float delta, Child ned, Child nosh) {
 		if (events.size != 0) {
-			Event first = events.get(0);
-			if (eventShouldOccur(first, delta)) {
+			float dy = road.getSpeed() * delta; // change in y position
+			ypos += dy; // add it to y position tracker
+			Event first = events.get(nextEvent);
+
+			// give some leeway in position for events to occur
+			if (Math.abs(first.getY() - ypos) < 0.1f) {
 				switch (first.getType()) {
 					case REAR_ENEMY:
 						rearviewEnemy.create();
@@ -387,12 +380,16 @@ public class GameplayController {
 						// TODO
 						break;
 					case NED_WAKES_UP:
-						ned.setMood(Child.Mood.NEUTRAL);
-						ned.setMoodShifting(true, false);
+						if (!ned.isAwake()) {
+							ned.setMood(Child.Mood.NEUTRAL);
+							ned.setMoodShifting(true, false);
+						}
 						break;
 					case NOSH_WAKES_UP:
-						nosh.setMood(Child.Mood.NEUTRAL);
-						nosh.setMoodShifting(true, false);
+						if (!nosh.isAwake()) {
+							nosh.setMood(Child.Mood.NEUTRAL);
+							nosh.setMoodShifting(true, false);
+						}
 						break;
 					case SAT_QUESTION:
 						// TODO
@@ -400,7 +397,6 @@ public class GameplayController {
 					default:
 						break;
 				}
-				events.removeFirst();
 			}
 		}
 	}
@@ -440,6 +436,8 @@ public class GameplayController {
 
 		if (rearviewEnemy.isAttackingCar()) {
 			getCar().damage();
+			if (getCar().getHealth() == 0)
+				getCar().setDestroyed(true);
 		}
 
 		if(prevClick != null && input.getClickPos() == null) {

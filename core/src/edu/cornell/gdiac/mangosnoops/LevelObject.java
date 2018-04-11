@@ -34,13 +34,17 @@ public class LevelObject {
     private ObjectMap<String,Genre> songs;
     /** Array of enemies for the level */
     private Array<Gnome> gnomez;
-    /** A queue of events for the level.
-     *  The first element in the queue is the event to happen the soonest. */
-    private Queue<Event> events;
+    /** An array of events for the level.
+     *  The first element in the array is the event to happen the soonest. */
+    private Array<Event> events;
     /** Inventory */
     // TODO
     /** An internal tracker for number of miles traversed so far in the level */
     private float localMiles;
+    /** Y-coordinate for end of the level */
+    private float levelEndY;
+    /** Constant for extra time before end of level */
+    private static final float LEVEL_END_EXTRA = 10.0f;
 
     /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.25f;
@@ -145,9 +149,14 @@ public class LevelObject {
     public Array<Gnome> getGnomez() { return gnomez; }
 
     /**
-     * Return a queue of events for this level.
+     * Return an array of events for this level.
      */
-    public Queue<Event> getEvents() { return events; }
+    public Array<Event> getEvents() { return events; }
+
+    /**
+     * Return the y-coordinate for the end of the level.
+     */
+    public float getLevelEndY() { return levelEndY; }
 
     /**
      * Loads in a file to create a Level Object.
@@ -163,12 +172,13 @@ public class LevelObject {
         // Initialize collections -- TODO: inventory
         songs = new ObjectMap<String,Genre>();
         gnomez = new Array<Gnome>();
-        events = new Queue<Event>();
+        events = new Array<Event>();
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
         if (ext.equals("xlsx") || ext.equals("xls")) {
             parseExcel("levels/" + file);
+            System.out.println(levelEndY);
         }
 
         // if JSON file
@@ -183,21 +193,12 @@ public class LevelObject {
 
     }
 
-    // TODO: delete
-    public LevelObject() {
-        localMiles = 0.0f;
-        // Initialize collections -- TODO: inventory
-        songs = new ObjectMap<String,Genre>();
-        gnomez = new Array<Gnome>();
-        events = new Queue<Event>();
-    }
-
     /**
      * Parse a JSON file for information about a level.
      * @param file name of a JSON file
      */
     public void parseJSON(String file) {
-
+        // TODO
     }
 
     /**
@@ -351,18 +352,22 @@ public class LevelObject {
             // Read the events column - first column of the block
             String eventStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toLowerCase();
             if (eventStr.equals("rear enemy")) {
-                events.addLast(new Event(y, Event.EventType.REAR_ENEMY));
+                events.add(new Event(y, Event.EventType.REAR_ENEMY));
             } else if (eventStr.equals("sun")) {
-                events.addLast(new Event(y, Event.EventType.SUN));
+                events.add(new Event(y, Event.EventType.SUN));
             } else if (eventStr.equals("ned wakes up")) {
-                events.addLast(new Event(y, Event.EventType.NED_WAKES_UP));
+                events.add(new Event(y, Event.EventType.NED_WAKES_UP));
             } else if (eventStr.equals("nosh wakes up")) {
-                events.addLast(new Event(y, Event.EventType.NOSH_WAKES_UP));
+                events.add(new Event(y, Event.EventType.NOSH_WAKES_UP));
             } else if (eventStr.equals("sat question")) {
-                events.addLast(new Event(y, Event.EventType.SAT_QUESTION));
+                events.add(new Event(y, Event.EventType.SAT_QUESTION));
             } else if (!eventStr.equals("")) {
                 throw new RuntimeException("Invalid event specified");
             }
+
+            //TODO DELETE:
+//            if (!eventStr.equals(""))
+//                System.out.println(eventStr + " at y: " + y);
 
             // Starting x-coordinate for rightmost lane
             float x = LANE_X * (numLanes - LANE_X_OFFSET);
@@ -394,6 +399,7 @@ public class LevelObject {
 
             localMiles += padding;
             roadCurrRow += 1;
+            levelEndY = y + LEVEL_END_EXTRA;
         }
 
     }
