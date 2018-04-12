@@ -446,18 +446,8 @@ public class GameMode implements Screen {
         canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 60.0f, 20.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
 
 		// Draw speech bubbles, if necessary
-		Child nedRef = gameplayController.getCar().getNed();
-		Child noshRef = gameplayController.getCar().getNosh();
-		float speechX = Child.NED_SPEECH_BUBBLE_COORDS.x + nedRef.getShakeX();
-		float speechY = Child.NED_SPEECH_BUBBLE_COORDS.y + nedRef.getShakeY();
-		float speechXNosh = Child.NOSH_SPEECH_BUBBLE_COORDS.x + noshRef.getShakeX();
-		float speechYNosh = Child.NOSH_SPEECH_BUBBLE_COORDS.y + noshRef.getShakeY();
-		if (nedRef.getCurrentMood() == Child.Mood.CRITICAL) {
-			canvas.draw(speechBubble, speechX, speechY, 1000, 600);
-		}
-		if (noshRef.getCurrentMood() == Child.Mood.CRITICAL) {
-			canvas.draw(speechBubble, speechXNosh, speechYNosh, 1000, 600);
-		}
+        gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
+		gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
 
 		// Draw messages
 		switch (gameState) {
