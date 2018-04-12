@@ -442,8 +442,7 @@ public class GameMode implements Screen {
         gameplayController.getCar().getNed().draw(canvas, rearviewMirror);
 
 		// Health gauge and pointer
-		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
-        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 60.0f, 20.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
+        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 495.0f, 50.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
 
 		// Draw speech bubbles, if necessary
         gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);

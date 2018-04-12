@@ -283,9 +283,9 @@ public class GameplayController {
 			g.setTexture(gnomeTexture);
 		}
 		events = level.getEvents();
-		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
-		vroomStick = new VroomStick(0.345f, 0.2f,0.3f, 0, vroomStickTexture);
-		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture, level.getSongs());
+		wheel = new Wheel(0.19f,0.2f, 0.5f, 60, wheelTexture);
+		vroomStick = new VroomStick(0.2f, 0.2f,0.3f, 0, vroomStickTexture);
+		radio = new Radio(0.663f, 0.055f, 0.1f, 0, radioknobTexture, level.getSongs());
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
