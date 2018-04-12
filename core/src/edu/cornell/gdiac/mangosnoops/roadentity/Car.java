@@ -192,8 +192,8 @@ public class Car extends RoadObject {
             position.x = RIGHT_X_BOUND;
         }
 
-        nosh.update(clickPos);
-        ned.update(clickPos);
+        nosh.update(delta, clickPos);
+        ned.update(delta, clickPos);
 
         // Update health angle
         healthPointerAng = Math.max((float) (health - 50), -50.0f);
