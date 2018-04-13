@@ -338,6 +338,7 @@ public class GameplayController {
 	 * Resets the game, deleting all objects.
 	 */
 	public void reset() {
+		road.reset();
 		rotationMagnitude = 0;
 		yonda.reset();
 		wheel = null;
