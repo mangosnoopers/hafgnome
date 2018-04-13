@@ -28,7 +28,13 @@ public class Road extends RoadObject {
      * "conveyor belt". */
     float END_OF_CONVEYOR_BELT = -13;
     /** The road texture. */
-    Texture texture;
+    Texture roadTexture;
+    /** The grass texture. */
+    Texture grassTexture;
+
+    float LEFT_GRASS_X = -1.5f;
+    float RIGHT_GRASS_X = 1.5f;
+    float ROAD_X = 0;
 
     /** max # frames to vroom */
     private float MAX_VROOM_TIME = 40;
@@ -58,7 +64,8 @@ public class Road extends RoadObject {
 
     public Road() {
         /* FIXME: Get texture from asset manager */
-        texture = new Texture(Gdx.files.internal("images/road.png"));
+        roadTexture = new Texture(Gdx.files.internal("images/road.png"));
+        grassTexture = new Texture(Gdx.files.internal("images/grass.png"));
 
         // Invariant: roadPositions[i+1] is closer to the camera than roadPositions[i]
         roadPositions = new LinkedList<Vector3>();
@@ -104,7 +111,14 @@ public class Road extends RoadObject {
     public void draw(GameCanvas canvas) {
 
         for (Vector3 p : roadPositions) {
-            canvas.drawRoadObject(texture, p.x, p.y, ROAD_HOVER_DISTANCE, 1, 1, 0, 0 );
+            // Draw road
+            canvas.drawRoadObject(roadTexture, ROAD_X, p.y, ROAD_HOVER_DISTANCE, 1, 1, 0, 0 );
+
+            // Draw grass on the left
+            canvas.drawRoadObject(grassTexture, LEFT_GRASS_X, p.y, ROAD_HOVER_DISTANCE, 2, 1, 0, 0 );
+
+            // Draw grass on the right
+            canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, p.y, ROAD_HOVER_DISTANCE, 2, 1, 0, 0 );
         }
     }
 
