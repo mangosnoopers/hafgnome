@@ -63,8 +63,12 @@ public class GameMode implements Screen {
 	private static final String HEALTH_GAUGE_FILE = "images/gauge.png";
 	/** The file for the health gauge pointer */
 	private static final String HEALTH_POINTER_FILE = "images/pointer.png";
-	/** The file for the rear view mirror */
-	private static final String REARVIEW_MIRROR_FILE = "images/rearview.png";
+
+	/** Rearview mirror stuff */
+	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
+	private static final String REARVIEW_COVER = "images/rearview_cover.png";
+	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
+
 	/** The file for the angry speech bubble */
 	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
 
@@ -88,7 +92,9 @@ public class GameMode implements Screen {
 	/** Texture of the health gauge's pointer */
 	private Texture healthPointer;
 	/** Texture of the rear view mirror */
-	private Texture rearviewMirror;
+	private Texture rearviewBackground;
+	private Texture rearviewSeats;
+	private Texture rearviewCover;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
 
@@ -153,9 +159,13 @@ public class GameMode implements Screen {
 		assets.add(HEALTH_GAUGE_FILE);
 		manager.load(HEALTH_POINTER_FILE, Texture.class);
 		assets.add(HEALTH_POINTER_FILE);
-		// Load rear view
-		manager.load(REARVIEW_MIRROR_FILE, Texture.class);
-		assets.add(REARVIEW_MIRROR_FILE);
+		// Load rear view stuff
+		manager.load(REARVIEW_BACKGROUND, Texture.class);
+		assets.add(REARVIEW_BACKGROUND);
+		manager.load(REARVIEW_COVER, Texture.class);
+		assets.add(REARVIEW_COVER);
+		manager.load(REARVIEW_SEATS, Texture.class);
+		assets.add(REARVIEW_SEATS);
 		// Load speech bubble
 		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
 		assets.add(SPEECH_BUBBLE_FILE);
@@ -215,8 +225,16 @@ public class GameMode implements Screen {
 			healthPointer = manager.get(HEALTH_POINTER_FILE, Texture.class);
 		}
 
-		if (manager.isLoaded(REARVIEW_MIRROR_FILE)) {
-			rearviewMirror = manager.get(REARVIEW_MIRROR_FILE, Texture.class);
+		if (manager.isLoaded(REARVIEW_SEATS)) {
+			rearviewSeats = manager.get(REARVIEW_SEATS, Texture.class);
+		}
+
+		if (manager.isLoaded(REARVIEW_COVER)) {
+			rearviewCover = manager.get(REARVIEW_COVER, Texture.class);
+		}
+
+		if (manager.isLoaded(REARVIEW_BACKGROUND)) {
+			rearviewBackground = manager.get(REARVIEW_BACKGROUND, Texture.class);
 		}
 
 		if (manager.isLoaded(SPEECH_BUBBLE_FILE)) {
@@ -418,18 +436,28 @@ public class GameMode implements Screen {
 		// Radio
 		gameplayController.getRadio().draw(canvas, displayFont);
 
+		// FIXME: this is a mess
+		// Draw rearview background
+		canvas.draw(rearviewBackground,Color.WHITE,rearviewBackground.getWidth(),rearviewBackground.getHeight(),
+					canvas.getWidth(),canvas.getHeight(),0,
+				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
+
 		// Draw Rearview Enenmy
 		gameplayController.getRearviewEnemy().draw(canvas);
 
-		// Draw rearview mirror
-		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth(),rearviewMirror.getHeight(),
-					canvas.getWidth(),canvas.getHeight(),0,
-				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
-
+		// Draw rearview seats
+		canvas.draw(rearviewSeats,Color.WHITE,rearviewBackground.getWidth(),rearviewBackground.getHeight(),
+				canvas.getWidth(),canvas.getHeight(),0,
+				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
 
 		// Draw Ned and Nosh
-		gameplayController.getCar().getNosh().draw(canvas, rearviewMirror);
-        gameplayController.getCar().getNed().draw(canvas, rearviewMirror);
+		gameplayController.getCar().getNosh().draw(canvas, rearviewBackground);
+        gameplayController.getCar().getNed().draw(canvas, rearviewBackground);
+
+		// Draw rearview cover
+		canvas.draw(rearviewCover,Color.WHITE,rearviewBackground.getWidth(),rearviewBackground.getHeight(),
+				canvas.getWidth(),canvas.getHeight(),0,
+				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
 
 		// Health gauge and pointer
         canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 495.0f, 50.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
