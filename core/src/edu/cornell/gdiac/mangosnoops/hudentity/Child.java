@@ -195,7 +195,7 @@ public class Child {
                if(this.ctype == ChildType.NED){
                   NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                   if(NOSH_SPEECH_BUBBLE_COORDS != null){
-                      while(Math.abs(NED_SPEECH_BUBBLE_COORDS.x-NOSH_SPEECH_BUBBLE_COORDS.x)<0.05f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y-NOSH_SPEECH_BUBBLE_COORDS.y)<0.05f ){
+                      while(Math.abs(NED_SPEECH_BUBBLE_COORDS.x-NOSH_SPEECH_BUBBLE_COORDS.x)<0.1f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y-NOSH_SPEECH_BUBBLE_COORDS.y)<0.1f ){
                           NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                       }
                   }
@@ -204,7 +204,7 @@ public class Child {
                if(this.ctype == ChildType.NOSH){
                    NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                    if(NED_SPEECH_BUBBLE_COORDS != null) {
-                       while (Math.abs(NED_SPEECH_BUBBLE_COORDS.x - NOSH_SPEECH_BUBBLE_COORDS.x) < 0.05f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y - NOSH_SPEECH_BUBBLE_COORDS.y) < 0.05f) {
+                       while (Math.abs(NED_SPEECH_BUBBLE_COORDS.x - NOSH_SPEECH_BUBBLE_COORDS.x) < 0.1f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y - NOSH_SPEECH_BUBBLE_COORDS.y) < 0.1f) {
                            NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
                        }
                    }
@@ -217,7 +217,7 @@ public class Child {
 
         deltaSum += delta;
 
-        scale = 1f + (float) (0.2*Math.sin(5*deltaSum));
+        scale = 1f + (float) (0.2*Math.sin(8*deltaSum));
 
     }
 
@@ -254,12 +254,12 @@ public class Child {
 
                 canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
                         Child.NED_SPEECH_BUBBLE_COORDS.x*canvas.getWidth(), Child.NED_SPEECH_BUBBLE_COORDS.y*canvas.getHeight(),
-                        0, 0.9f*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
+                        0, 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
             }
             else {
                 canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
                         Child.NOSH_SPEECH_BUBBLE_COORDS.x*canvas.getWidth(), Child.NOSH_SPEECH_BUBBLE_COORDS.y*canvas.getHeight(),
-                        0, 0.9f*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
+                        0, 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
             }
 
         }

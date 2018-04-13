@@ -620,6 +620,7 @@ public class GameCanvas {
 	 */
 	public void drawRoadObject(Texture t, float x, float y, float z, float width, float height, float xRotationAngle, float yRotationAngle) {
 		camera.update();
+		//System.out.println(t);
 		Decal objectDecal = Decal.newDecal(width, height, new TextureRegion(t));
 		objectDecal.setPosition(x, y, z);
 		objectDecal.setBlending(1, 0	);
