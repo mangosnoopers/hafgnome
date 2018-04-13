@@ -48,6 +48,8 @@ public class GameplayController {
 	private VroomStick vroomStick;
 	/** Location and animation information for the wheel */
 	private Radio radio;
+	/** Inventory */
+	private Inventory inventory;
 	/** Contains location for the previous click, used for debouncing */
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
@@ -65,18 +67,17 @@ public class GameplayController {
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 
+
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
-    private static final String WHEEL_FILE = "images/Wheel.png";
+    private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
     /** The texture file for the vroom stick*/
-	private static final String VROOM_STICK_FILE = "images/vroomstick.png";
-    /** The texture file for the gnome */
-	private static final String GNOME_FILE = "images/gnome.png";
-	private static final String REARVIEW_GNOME_FILE = "images/gnome_rear.png";
-	/** The texture file for the gnome */
-	private static final String RADIO_FILE = "images/radio.png";
-	/** The texture file for the gnome */
-	private static final String RADIO_KNOB_FILE = "images/radioDial.png";
+	private static final String VROOM_STICK_FILE = "images/DashHUD/vroomstick.png";
+    /** The texture file for the gnomes */
+	private static final String GNOME_FILE = "images/Enemies/gnome.png";
+	private static final String REARVIEW_GNOME_FILE = "images/Enemies/gnome_rear.png";
+	/** The texture file for the radio knob */
+	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
 	/** The texture files for Nosh's moods */
 	private static final String NOSH_HAPPY_FILE = "images/NoshTextures/nosh_happy.png";
 	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
@@ -89,6 +90,9 @@ public class GameplayController {
 	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
 	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
 	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
+	/** The texture files for all Items **/
+	private static final String DVD_FILE = "images/Items/dvd.png";
+	private static final String SNACK_FILE = "images/Items/snack.png";
 
 	/** Texture for the wheel */
 	private Texture wheelTexture;
@@ -113,6 +117,9 @@ public class GameplayController {
 	private Texture ned_sad;
 	private Texture ned_critical;
 	private Texture ned_sleep;
+	/** Textures for items **/
+	private Texture dvdTexture;
+	private Texture snackTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -142,8 +149,6 @@ public class GameplayController {
 		assets.add(GNOME_FILE);
 		manager.load(REARVIEW_GNOME_FILE, Texture.class);
 		assets.add(REARVIEW_GNOME_FILE);
-		manager.load(RADIO_FILE, Texture.class);
-		assets.add(RADIO_FILE);
 		manager.load(RADIO_KNOB_FILE, Texture.class);
 		assets.add(RADIO_KNOB_FILE);
 		manager.load(NOSH_HAPPY_FILE, Texture.class);
@@ -166,6 +171,10 @@ public class GameplayController {
 		assets.add(NED_CRITICAL_FILE);
 		manager.load(NED_SLEEP_FILE, Texture.class);
 		assets.add(NED_SLEEP_FILE);
+		manager.load(DVD_FILE,Texture.class);
+		assets.add(DVD_FILE);
+		manager.load(SNACK_FILE,Texture.class);
+		assets.add(SNACK_FILE);
 	}
 
 	/**
@@ -183,7 +192,6 @@ public class GameplayController {
 		vroomStickTexture = createTexture(manager, VROOM_STICK_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
-		radioTexture = createTexture(manager, RADIO_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
 		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
 		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
@@ -195,6 +203,8 @@ public class GameplayController {
 		ned_sad = createTexture(manager, NED_SAD_FILE);
 		ned_critical = createTexture(manager, NED_CRITICAL_FILE);
 		ned_sleep = createTexture(manager, NED_SLEEP_FILE);
+		dvdTexture = createTexture(manager,DVD_FILE);
+		snackTexture = createTexture(manager,SNACK_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -274,7 +284,6 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		System.out.println("Recreating gnomez");
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
 		}
@@ -283,15 +292,16 @@ public class GameplayController {
 			g.setTexture(gnomeTexture);
 		}
 		events = level.getEvents();
-		wheel = new Wheel(0.345f,0.2f, 0.5f, 60, wheelTexture);
-		vroomStick = new VroomStick(0.345f, 0.2f,0.3f, 0, vroomStickTexture);
-		radio = new Radio(0.68f, 0.07f, 0.1f, 0, radioknobTexture, level.getSongs());
-
+		wheel = new Wheel(0.193f,0.22f, 0.5f, 60, wheelTexture);
+		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
+		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+		Inventory.Item.setTexturesAndScales(dvdTexture,0.3f,snackTexture,0.3f);
 
 		// Rearview enemy
-		rearviewEnemy = new RearviewEnemy(0.844f, 0.8f, 0.18f,0, rearviewGnomeTexture);
+		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
 
   }
 
@@ -412,9 +422,9 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 
-		for(int i=0; i<gnomez.size; i++){
-			System.out.println("gnome["+i+"]: " + gnomez.get(i).getY());
-		}
+//		for(int i=0; i<gnomez.size; i++){
+//			System.out.println("gnome["+i+"]: " + gnomez.get(i).getY());
+//		}
 		// Update world objects (road and gnome positions)
         road.update(delta);
         for (Gnome g : gnomez) {
@@ -432,6 +442,7 @@ public class GameplayController {
         wheel.update(mouseCoords, dr.x);
 		vroomStick.update(in, dr.y);
 		radio.update(mouseCoords, dr.x);
+		inventory.update(in,input.mousePressed());
 
 		rearviewEnemy.update(delta*0.0004f);
 

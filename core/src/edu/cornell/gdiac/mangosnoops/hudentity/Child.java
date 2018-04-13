@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.mangosnoops.hudentity;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.mangosnoops.*;
 import com.badlogic.gdx.graphics.Color;
@@ -31,15 +32,15 @@ public class Child {
     }
 
     /** Speech bubble offset for shaky effect */
-    private float speechBubbleOffsetX = 5;
-    private float speechBubbleOffsetY = -6;
+    private float speechBubbleOffsetX = 3;
+    private float speechBubbleOffsetY = -2;
 
     public float getShakeX() { return speechBubbleOffsetX; }
     public float getShakeY() { return speechBubbleOffsetY; }
 
     /** Coordinates of speech bubbles for Ned and Nosh */
-    public static Vector2 NED_SPEECH_BUBBLE_COORDS = new Vector2(50, 210);
-    public static Vector2 NOSH_SPEECH_BUBBLE_COORDS = new Vector2(350, 350);
+    public static Vector2 NED_SPEECH_BUBBLE_COORDS;
+    public static Vector2 NOSH_SPEECH_BUBBLE_COORDS;
 
     /** Represents the current mood. 0-100 means they are awake, -100 they are asleep.*/
     private int happiness;
@@ -163,6 +164,7 @@ public class Child {
      * @param in
      * @return True if the child is the awake.
      */
+    private Mood prevMood;
     public void update(Vector2 in) {
         if(isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
             if(gettingHappy) {
@@ -180,8 +182,32 @@ public class Child {
             }
         }
 
-        speechBubbleOffsetX *= -1;
-        speechBubbleOffsetY *= -1;
+        if(getCurrentMood()==Mood.CRITICAL){
+            speechBubbleOffsetX *= -1;
+            speechBubbleOffsetY *= -1;
+           if(prevMood!=getCurrentMood()){
+               if(this.ctype == ChildType.NED){
+                  NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
+                  if(NOSH_SPEECH_BUBBLE_COORDS != null){
+                      while(Math.abs(NED_SPEECH_BUBBLE_COORDS.x-NOSH_SPEECH_BUBBLE_COORDS.x)<0.05f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y-NOSH_SPEECH_BUBBLE_COORDS.y)<0.05f ){
+                          NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
+                      }
+                  }
+                   System.out.println(NED_SPEECH_BUBBLE_COORDS);
+               }
+               if(this.ctype == ChildType.NOSH){
+                   NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
+                   if(NED_SPEECH_BUBBLE_COORDS != null) {
+                       while (Math.abs(NED_SPEECH_BUBBLE_COORDS.x - NOSH_SPEECH_BUBBLE_COORDS.x) < 0.05f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y - NOSH_SPEECH_BUBBLE_COORDS.y) < 0.05f) {
+                           NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
+                       }
+                   }
+                   System.out.println(NOSH_SPEECH_BUBBLE_COORDS);
+
+               }
+           }
+        }
+        prevMood = getCurrentMood();
     }
 
     /**
