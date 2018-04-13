@@ -14,7 +14,7 @@ import javax.xml.soap.Text;
 import java.util.LinkedList;
 
 /**
- * Contains road logic, in particular, the "conveyor belt" effect stuff
+ * Contains logic relating to the road and exit.
  */
 public class Road extends RoadObject {
 
@@ -31,16 +31,31 @@ public class Road extends RoadObject {
     Texture roadTexture;
     /** The grass texture. */
     Texture grassTexture;
+    /** The exit texture */
+    Texture exitTexture;
 
+    /** World x coordinates of grass */
     float LEFT_GRASS_X = -1.5f;
     float RIGHT_GRASS_X = 1.5f;
+
+    /** World x coordinates of road */
     float ROAD_X = 0;
 
+    /** World x,y coordinates of exit */
+    float EXIT_X = 1.5f;
+    float exitY;
+
+    /** Texture dimensions of road */
     float ROAD_WIDTH = 1;
     float ROAD_HEIGHT = 1;
 
+    /** Texture dimensions of grass */
     float GRASS_WIDTH = 2;
     float GRASS_HEIGHT = 1;
+
+    /** Texture dimensions of exit */
+    float EXIT_WIDTH = 2;
+    float EXIT_HEIGHT = 3;
 
     /** max # frames to vroom */
     private float MAX_VROOM_TIME = 40;
@@ -51,16 +66,20 @@ public class Road extends RoadObject {
     /** How quickly vroom time depreciates */
     private float VROOM_TIME_DEPRECIATION = 18f;
 
+    /** Speed constants */
     private float NORMAL_SPEED = 1.8f;
     private float VROOM_SPEED = 4f;
-
     private float SPEED_DAMPING = 0.8f;
 
+    /** How high the road/ground objects "hover" */
     private final float ROAD_HOVER_DISTANCE = 4.25f;
 
+    /** Whether or not the car is vrooming */
     private boolean vrooming = false;
+    /** The current speed of the car*/
     private float currentSpeed = NORMAL_SPEED;
 
+    /** Return the current speed */
     public float getCurrentSpeed() { return currentSpeed; }
 
     @Override
@@ -76,7 +95,14 @@ public class Road extends RoadObject {
         grassTexture = t;
     }
 
-    public Road() {
+    public void setExitTexture(Texture t) {
+        exitTexture = t;
+    }
+
+    public Road(float endY) {
+
+        // The exit will appear at the end of the level
+        exitY = endY;
 
         // Invariant: roadPositions[i+1] is closer to the camera than roadPositions[i]
         yPositions = new LinkedList<Float>();
@@ -91,12 +117,13 @@ public class Road extends RoadObject {
 
     public void update(float delta) {
 
-
+        // End vrooming if vroom time is over
         if (vroomTimeLeft < 0) {
             vrooming = false;
             vroomTimeLeft = MAX_VROOM_TIME;
         }
 
+        // Compute which speed to use
         if (vrooming) {
             currentSpeed = VROOM_SPEED;
             vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
@@ -104,10 +131,14 @@ public class Road extends RoadObject {
             currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
         }
 
+        // Move the road textures towards the camera
         for (int i = 0; i < yPositions.size(); i++) {
             /* FIXME: optimize this */
             yPositions.set(i, yPositions.get(i) - currentSpeed * delta);
         }
+
+        // Move the exit towards the camera
+        exitY -= currentSpeed * delta;
 
         Float lastY = yPositions.getLast();
         Float firstY = yPositions.getFirst();
@@ -129,6 +160,9 @@ public class Road extends RoadObject {
 
             // Draw grass on the right
             canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
+
+            // Draw exit on the right
+            canvas.drawRoadObject(exitTexture, EXIT_X, exitY,  ROAD_HOVER_DISTANCE+0.01f, EXIT_WIDTH, EXIT_HEIGHT, 0, 0);
         }
     }
 
@@ -138,5 +172,9 @@ public class Road extends RoadObject {
 
     public float getSpeed() {
         return currentSpeed;
+    }
+
+    public boolean reachedEndOfLevel() {
+        return exitY < 0;
     }
 }

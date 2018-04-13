@@ -33,6 +33,9 @@ public class Car extends RoadObject {
     private int health;
     /** Angle of the health pointer */
     private float healthPointerAng;
+    /** Whether or not the car is taking the exit. This makes the car unable
+     *  to be controlled by the ehrr*/
+    private boolean takingExit;
 
     /** Start position of car. */
     private static final Vector2 CAR_START_POS = new Vector2(0, -10f);

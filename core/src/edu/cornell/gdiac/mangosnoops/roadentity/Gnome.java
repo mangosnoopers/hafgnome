@@ -19,6 +19,7 @@ public class Gnome extends RoadObject{
     /** The type of Gnome this is */
     private GnomeType gtype;
 
+    /** How high the gnome hovers in the world */
     private final float GNOME_HOVER_DISTANCE = 4.32f;
 
     /** speed of road */
