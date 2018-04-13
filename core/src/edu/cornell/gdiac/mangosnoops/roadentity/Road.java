@@ -11,14 +11,23 @@ import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.RoadObject;
 
 import javax.xml.soap.Text;
+import java.util.LinkedList;
 
 /**
  * Contains road logic, in particular, the "conveyor belt" effect stuff
  */
 public class Road extends RoadObject {
 
-    private Array<Vector3> roadPositions;
+    /** The road decals. */
+    private LinkedList<Vector3> roadPositions;
+    /** The number of road decals to draw. */
     int NUM_ROAD_DECALS = 30;
+    /** The distance from the camera of the farthest road. */
+    float DISTANCE_TO_DRAW = 5;
+    /** The threshold after which a road should be moved to the front of the
+     * "conveyor belt". */
+    float END_OF_CONVEYOR_BELT = -13;
+    /** The road texture. */
     Texture texture;
 
     /** max # frames to vroom */
@@ -51,9 +60,14 @@ public class Road extends RoadObject {
         /* FIXME: Get texture from asset manager */
         texture = new Texture(Gdx.files.internal("images/road.png"));
 
-        roadPositions = new Array<Vector3>(7);
+        // Invariant: roadPositions[i+1] is closer to the camera than roadPositions[i]
+        roadPositions = new LinkedList<Vector3>();
         for (int i = 0; i < NUM_ROAD_DECALS; i++) {
-            roadPositions.add(new Vector3(0, -0.8f*i, 1));
+            if (i == 0) {
+                roadPositions.add(new Vector3(0, DISTANCE_TO_DRAW, 1));
+            } else {
+                roadPositions.add(new Vector3(0, roadPositions.get(i-1).y-1, 1));
+            }
         }
     }
 
@@ -69,16 +83,22 @@ public class Road extends RoadObject {
             currentSpeed = VROOM_SPEED;
             vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
         } else {
-
             currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
         }
+
         for (Vector3 p : roadPositions) {
             float newY = p.y - currentSpeed * delta;
-            if (newY < -13) { /* FIXME: magic # */
-                newY = 0;
-            }
-            p.set(0, newY, ROAD_HOVER_DISTANCE);
+            p.set(p.x, newY, p.z);
         }
+
+        Vector3 lastPos = roadPositions.getLast();
+        Vector3 firstPos = roadPositions.getFirst();
+        if (lastPos.y < END_OF_CONVEYOR_BELT) {
+            lastPos.set(lastPos.x, firstPos.y+1, lastPos.z);
+            roadPositions.addFirst(lastPos);
+            roadPositions.removeLast();
+        }
+
     }
 
     public void draw(GameCanvas canvas) {
