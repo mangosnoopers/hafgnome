@@ -42,7 +42,7 @@ public class Road extends RoadObject {
     float ROAD_X = 0;
 
     /** World x,y coordinates of exit */
-    float EXIT_X = 1.5f;
+    float EXIT_X = 0.8f;
     float exitY;
 
     /** Texture dimensions of road */
@@ -54,8 +54,11 @@ public class Road extends RoadObject {
     float GRASS_HEIGHT = 1;
 
     /** Texture dimensions of exit */
-    float EXIT_WIDTH = 2;
-    float EXIT_HEIGHT = 3;
+    float EXIT_WIDTH = 1;
+    float EXIT_HEIGHT = 6;
+
+    /** */
+    float EXIT_GRASS_OFFSET = 0.6f;
 
     /** max # frames to vroom */
     private float MAX_VROOM_TIME = 40;
@@ -78,6 +81,8 @@ public class Road extends RoadObject {
     private boolean vrooming = false;
     /** The current speed of the car*/
     private float currentSpeed = NORMAL_SPEED;
+
+    private float initialExitY;
 
     /** Return the current speed */
     public float getCurrentSpeed() { return currentSpeed; }
@@ -102,6 +107,7 @@ public class Road extends RoadObject {
     public Road(float endY) {
 
         // The exit will appear at the end of the level
+        initialExitY = endY;
         exitY = endY;
 
         // Invariant: roadPositions[i+1] is closer to the camera than roadPositions[i]
@@ -113,6 +119,7 @@ public class Road extends RoadObject {
                 yPositions.add(new Float(yPositions.get(i-1)-1));
             }
         }
+
     }
 
     public void update(float delta) {
@@ -127,14 +134,19 @@ public class Road extends RoadObject {
         if (vrooming) {
             currentSpeed = VROOM_SPEED;
             vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
+        } else if (reachedEndOfLevel()) {
+            currentSpeed = NORMAL_SPEED;
         } else {
             currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
         }
 
-        // Move the road textures towards the camera
-        for (int i = 0; i < yPositions.size(); i++) {
+        // Move farthest road texture towards the camera
+        yPositions.set(0, yPositions.get(0) - currentSpeed * delta);
+
+        // Move the rest of the road textures
+        for (int i = 1; i < yPositions.size(); i++) {
             /* FIXME: optimize this */
-            yPositions.set(i, yPositions.get(i) - currentSpeed * delta);
+            yPositions.set(i, yPositions.get(i-1) - ROAD_HEIGHT);
         }
 
         // Move the exit towards the camera
@@ -159,10 +171,20 @@ public class Road extends RoadObject {
             canvas.drawRoadObject(grassTexture, LEFT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
 
             // Draw grass on the right
-            canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
+            if (y > exitY) {
+                /* FIXME: The grass and the exit overlap a bit and look weird */
+                canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X+EXIT_GRASS_OFFSET, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
+            } else {
+                canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
+            }
 
             // Draw exit on the right
-            canvas.drawRoadObject(exitTexture, EXIT_X, exitY,  ROAD_HOVER_DISTANCE+0.01f, EXIT_WIDTH, EXIT_HEIGHT, 0, 0);
+            canvas.drawRoadObject(exitTexture, EXIT_X, exitY,  ROAD_HOVER_DISTANCE, EXIT_WIDTH, EXIT_HEIGHT, 0, 0);
+
+            // Draw exit road
+            if (y > exitY) {
+                canvas.drawRoadObject(roadTexture, EXIT_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, 0, 0 );
+            }
         }
     }
 
@@ -175,6 +197,11 @@ public class Road extends RoadObject {
     }
 
     public boolean reachedEndOfLevel() {
-        return exitY < 0;
+        return exitY < -7;
+    }
+
+    /** Reset the road. */
+    public void reset () {
+        exitY = initialExitY;
     }
 }

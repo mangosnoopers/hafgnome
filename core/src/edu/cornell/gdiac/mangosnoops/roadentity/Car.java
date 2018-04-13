@@ -34,8 +34,11 @@ public class Car extends RoadObject {
     /** Angle of the health pointer */
     private float healthPointerAng;
     /** Whether or not the car is taking the exit. This makes the car unable
-     *  to be controlled by the ehrr*/
+     *  to be controlled by the wheel and vroomstick when this is true. */
     private boolean takingExit;
+    /** Whether or not the car teleported to the center of the road, which it
+     *  does when it starts to take the exit.*/
+    private boolean carTeleported;
 
     /** Start position of car. */
     private static final Vector2 CAR_START_POS = new Vector2(0, -10f);
@@ -69,6 +72,8 @@ public class Car extends RoadObject {
         nosh = new Child(Child.ChildType.NOSH);
         ned = new Child(Child.ChildType.NED);
         healthPointerAng = 50.0f;
+        takingExit = false;
+        carTeleported = false;
 
         timeToDisplayDamageIndicator = 10;
 
@@ -150,10 +155,22 @@ public class Car extends RoadObject {
      */
     public int getHealth() { return health; }
 
+    public void takeExit() {
+        if (!carTeleported) {
+            position.x = 0.3f;
+            carTeleported = true;
+        }
+        takingExit = true;
+    }
+
     /**
      * Reset the car to restart the game.
      */
     public void reset() {
+
+        takingExit = false;
+        carTeleported = false;
+
         destroyed = false;
         movement = 0.0f;
 
@@ -185,18 +202,24 @@ public class Car extends RoadObject {
 
         // Call superclass's update
         super.update(delta);
-        //System.out.println(position);
-        position.x -= wheel.getHorizontalMovement() * delta * CAR_XSPEED;
-
-        if (position.x < LEFT_X_BOUND) {
-            position.x = LEFT_X_BOUND;
-        }
-        if (position.x > RIGHT_X_BOUND) {
-            position.x = RIGHT_X_BOUND;
-        }
-
         nosh.update(delta, clickPos);
         ned.update(delta, clickPos);
+
+        if (!takingExit) {
+            position.x -= wheel.getHorizontalMovement() * delta * CAR_XSPEED;
+
+            if (position.x < LEFT_X_BOUND) {
+                position.x = LEFT_X_BOUND;
+            }
+            if (position.x > RIGHT_X_BOUND) {
+                position.x = RIGHT_X_BOUND;
+            }
+
+        } else {
+            if (position.x < 0.82) {
+                position.x += delta * 8 * CAR_XSPEED;
+            }
+        }
 
         // Update health angle
         healthPointerAng = Math.max((float) (health - 50), -50.0f);
@@ -209,6 +232,7 @@ public class Car extends RoadObject {
             timeToDisplayDamageIndicator = 10;
             displayAlpha = 1.0f;
         }
+
 
     }
 
