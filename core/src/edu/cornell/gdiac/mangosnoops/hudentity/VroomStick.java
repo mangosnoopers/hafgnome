@@ -45,23 +45,14 @@ public class VroomStick extends Image {
                         ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
     }
 
-    //@Override
-//    public void inArea(Vector2 in){
-//
-//    }
     public void update(Vector2 in, float dy) {
-//        System.out.println("hitbox:"+hitbox);
 
-        if(in != null){
+        if(in != null) {
             in.y = SCREEN_DIMENSIONS.y-in.y;
         }
         if (in != null && hitbox.contains(in)) {
             ang -= dy;
-//            System.out.println("In rect");
-//            System.out.println("angle is: " + ang);
-//            System.out.println("dy is: " + dy);
             hitbox.setPosition(hitbox.getX(),(hitbox.getY()- dy));
-//            System.out.println("hitbox is now:"+hitbox);
 
             if (ang < ENGAGE_ANGLE) {
                 ang = ENGAGE_ANGLE;
@@ -78,8 +69,6 @@ public class VroomStick extends Image {
         }
 
         if(hitbox.getY()+hitbox.getHeight() > position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale){
-            //System.out.println("thatboi numba 1: " + (hitbox.getY()));
-            //System.out.println("thatboi numba 2: " + (position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale));
             hitbox.setPosition(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
                                  position.y*SCREEN_DIMENSIONS.y + 0.652f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale);
         }
