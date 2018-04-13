@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
+import sun.java2d.xr.GrowableRectArray;
 
 import java.util.Random;
 
@@ -89,6 +90,14 @@ public class GameplayController {
 	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
 	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
 	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
+
+	/** The texture files for the road and grass */
+	private static final String ROAD_FILE = "images/road.png";
+	private static final String GRASS_FILE = "images/grass.png";
+
+	/** Textures for road, grass */
+	private Texture roadTexture;
+	private Texture grassTexture;
 
 	/** Texture for the wheel */
 	private Texture wheelTexture;
@@ -166,6 +175,10 @@ public class GameplayController {
 		assets.add(NED_CRITICAL_FILE);
 		manager.load(NED_SLEEP_FILE, Texture.class);
 		assets.add(NED_SLEEP_FILE);
+		manager.load(GRASS_FILE, Texture.class);
+		assets.add(GRASS_FILE);
+		manager.load(ROAD_FILE, Texture.class);
+		assets.add(ROAD_FILE);
 	}
 
 	/**
@@ -195,6 +208,8 @@ public class GameplayController {
 		ned_sad = createTexture(manager, NED_SAD_FILE);
 		ned_critical = createTexture(manager, NED_CRITICAL_FILE);
 		ned_sleep = createTexture(manager, NED_SLEEP_FILE);
+		roadTexture = createTexture(manager, ROAD_FILE);
+		grassTexture = createTexture(manager, GRASS_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -289,6 +304,9 @@ public class GameplayController {
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+
+		road.setRoadTexture(roadTexture);
+		road.setGrassTexture(grassTexture);
 
 		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy(0.844f, 0.8f, 0.18f,0, rearviewGnomeTexture);
