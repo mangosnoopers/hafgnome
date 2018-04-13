@@ -155,18 +155,18 @@ public class Radio extends Image {
      * Draws the radio and its knob on the given canvas
      * @param canvas
      */
-    public void draw(GameCanvas canvas, BitmapFont displayFont){
-        if( texture == null) {
+    public void draw(GameCanvas canvas, BitmapFont displayFont) {
+        if (texture == null) {
             return;
         }
 
         float oxk = 0.5f * texture.getWidth();
         float oyk = 0.5f * texture.getHeight();
 
-        canvas.draw(texture, Color.WHITE, oxk, oyk, position.x*canvas.getWidth(), position.y*canvas.getHeight(), knobAng,
-                    relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
+        canvas.draw(texture, Color.WHITE, oxk, oyk, position.x * canvas.getWidth(), position.y * canvas.getHeight(), knobAng,
+                relativeScale * canvas.getHeight(), relativeScale * canvas.getHeight());
 
-        canvas.drawText(getCurrentStationName(), displayFont, 0.75f*canvas.getWidth() ,0.2f*canvas.getHeight());
+        canvas.drawText(getCurrentStationName(), displayFont, 0.75f * canvas.getWidth(), 0.2f * canvas.getHeight());
     }
 
 

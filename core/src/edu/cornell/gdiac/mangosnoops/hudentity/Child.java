@@ -31,6 +31,7 @@ public class Child {
         NED,
     }
 
+
     /** Speech bubble offset for shaky effect */
     private float speechBubbleOffsetX = 3;
     private float speechBubbleOffsetY = -2;
@@ -41,6 +42,10 @@ public class Child {
     /** Coordinates of speech bubbles for Ned and Nosh */
     public static Vector2 NED_SPEECH_BUBBLE_COORDS;
     public static Vector2 NOSH_SPEECH_BUBBLE_COORDS;
+
+    /** Speech bubble offset for scaling effect */
+    private float deltaSum = 0;
+    private float scale = 0;
 
     /** Represents the current mood. 0-100 means they are awake, -100 they are asleep.*/
     private int happiness;
@@ -165,7 +170,8 @@ public class Child {
      * @return True if the child is the awake.
      */
     private Mood prevMood;
-    public void update(Vector2 in) {
+    public void update(float delta, Vector2 in) {
+
         if(isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
             if(gettingHappy) {
                 happiness += MOOD_DELTA;
@@ -208,6 +214,11 @@ public class Child {
            }
         }
         prevMood = getCurrentMood();
+
+        deltaSum += delta;
+
+        scale = 1f + (float) (0.2*Math.sin(5*deltaSum));
+
     }
 
     /**
@@ -231,7 +242,29 @@ public class Child {
         canvas.draw(currentTex, Color.WHITE, ox, oy, pos.x, pos.y, 0,
                 0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
                 0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
+
     }
+
+    public void drawSpeechBubble(GameCanvas canvas, Texture speechBubble) {
+        if (getCurrentMood() == Mood.CRITICAL) {
+            float speechX;
+            float speechY;
+            ;
+            if (getType() == ChildType.NED) {
+
+                canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
+                        Child.NED_SPEECH_BUBBLE_COORDS.x*canvas.getWidth(), Child.NED_SPEECH_BUBBLE_COORDS.y*canvas.getHeight(),
+                        0, 0.9f*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
+            }
+            else {
+                canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
+                        Child.NOSH_SPEECH_BUBBLE_COORDS.x*canvas.getWidth(), Child.NOSH_SPEECH_BUBBLE_COORDS.y*canvas.getHeight(),
+                        0, 0.9f*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
+            }
+
+        }
+    }
+
 
     /**
      * Returns true if the mouse is positioned inside the area of the wheel.
