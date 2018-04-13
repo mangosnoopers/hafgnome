@@ -18,7 +18,6 @@
 package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
@@ -27,12 +26,6 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Sort;
-import edu.cornell.gdiac.mangosnoops.roadentity.Exit;
-import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
-import edu.cornell.gdiac.mangosnoops.roadentity.Road;
-
-import java.util.Comparator;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.

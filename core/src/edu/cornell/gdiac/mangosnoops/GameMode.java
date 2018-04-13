@@ -423,7 +423,6 @@ public class GameMode implements Screen {
 		}
 
 		// Draw speech bubbles, if necessary
-
 		gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
 		gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
 

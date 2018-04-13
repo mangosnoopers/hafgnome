@@ -94,14 +94,19 @@ public class GameplayController {
 	/** The texture files for all Items **/
 	private static final String DVD_FILE = "images/Items/dvd.png";
 	private static final String SNACK_FILE = "images/Items/snack.png";
-
-	/** The texture files for the road and grass */
+	/** The texture file for the road */
 	private static final String ROAD_FILE = "images/road.png";
+	/** The texture file for the grass */
 	private static final String GRASS_FILE = "images/grass.png";
+	/** The texture file for the exit */
+	private static final String EXIT_FILE = "images/exit.png";
 
-	/** Textures for road, grass */
+	/** Texture for road */
 	private Texture roadTexture;
+	/** Texture for grass */
 	private Texture grassTexture;
+	/** Texture for exit */
+	private Texture exitTexture;
 
 	/** Texture for the wheel */
 	private Texture wheelTexture;
@@ -188,6 +193,8 @@ public class GameplayController {
 		assets.add(GRASS_FILE);
 		manager.load(ROAD_FILE, Texture.class);
 		assets.add(ROAD_FILE);
+		manager.load(EXIT_FILE, Texture.class);
+		assets.add(EXIT_FILE);
 	}
 
 	/**
@@ -220,6 +227,7 @@ public class GameplayController {
 		snackTexture = createTexture(manager,SNACK_FILE);
 		roadTexture = createTexture(manager, ROAD_FILE);
 		grassTexture = createTexture(manager, GRASS_FILE);
+		exitTexture = createTexture(manager, EXIT_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -242,7 +250,7 @@ public class GameplayController {
 		events = new Array<Event>();
 		yonda = new Car();
 		backing = new Array<Gnome>();
-		road = new Road();
+		road = new Road(level.getLevelEndY());
 		ypos = 0.0f;
 		nextEvent = 0;
 	}
@@ -319,6 +327,7 @@ public class GameplayController {
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
+		road.setExitTexture(exitTexture);
 
 		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
@@ -484,6 +493,11 @@ public class GameplayController {
 			prevClick = input.getClickPos();
 			yonda.update(null, wheel, delta);
 		}
+
+		if (road.reachedEndOfLevel()) {
+			getCar().takeExit();
+		}
+
 	}
 
 	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP also handles radio
