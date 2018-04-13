@@ -479,6 +479,8 @@ public class GameMode implements Screen {
 				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
 				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
 
+		//Draw inventory
+		gameplayController.getInventory().draw(canvas);
 
 		// Draw messages
 		switch (gameState) {
