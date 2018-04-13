@@ -299,6 +299,11 @@ public class GameplayController {
     public Radio getRadio(){ return radio; }
 
 	/**
+	 * Returns a reference to the inventory
+	 */
+	public Inventory getInventory(){ return inventory; }
+
+	/**
 	 * Starts a new game.
 	 *
 	 * This method creates a single player, but does nothing else.
@@ -307,6 +312,8 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
+
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
 		}
@@ -323,7 +330,6 @@ public class GameplayController {
 
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
-		Inventory.Item.setTexturesAndScales(dvdTexture,0.3f,snackTexture,0.3f);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
@@ -341,6 +347,7 @@ public class GameplayController {
 		road.reset();
 		rotationMagnitude = 0;
 		yonda.reset();
+		inventory.reset();
 		wheel = null;
 		radio = null;
 		gnomez = new Array<Gnome>(level.getGnomez().size);
@@ -463,16 +470,21 @@ public class GameplayController {
 
         // Update the HUD
         Vector2 in = input.getClickPos();
-        Vector2 mouseCoords = null;
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
-        if (in != null){
-            mouseCoords = new Vector2(in);
-        }
+  		boolean mousePressed = input.mousePressed();
 
-        wheel.update(mouseCoords, dr.x);
-		vroomStick.update(in, dr.y);
-		radio.update(mouseCoords, dr.x);
-		inventory.update(in,input.mousePressed());
+        if(in != null) {
+			wheel.update(new Vector2(in), dr.x);
+			vroomStick.update(new Vector2(in), dr.y);
+			radio.update(new Vector2(in), dr.x);
+			inventory.update(new Vector2(in), mousePressed);
+		}
+		else{
+			wheel.update(null, dr.x);
+			vroomStick.update(null, dr.y);
+			radio.update(null, dr.x);
+			inventory.update(null, mousePressed);
+		}
 
 		rearviewEnemy.update(delta*0.0004f);
 
@@ -496,7 +508,7 @@ public class GameplayController {
 		}
 
 		if (road.reachedEndOfLevel()) {
-			getCar().takeExit();
+			//getCar().takeExit();
 		}
 
 	}
