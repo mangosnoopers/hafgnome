@@ -11,15 +11,36 @@ import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.RoadObject;
 
 import javax.xml.soap.Text;
+import java.util.LinkedList;
 
 /**
  * Contains road logic, in particular, the "conveyor belt" effect stuff
  */
 public class Road extends RoadObject {
 
-    private Array<Vector3> roadPositions;
+    /** The road decals. */
+    private LinkedList<Float> yPositions;
+    /** The number of road decals to draw. */
     int NUM_ROAD_DECALS = 30;
-    Texture texture;
+    /** The distance from the camera of the farthest road. */
+    float DISTANCE_TO_DRAW = 5;
+    /** The threshold after which a road should be moved to the front of the
+     * "conveyor belt". */
+    float END_OF_CONVEYOR_BELT = -13;
+    /** The road texture. */
+    Texture roadTexture;
+    /** The grass texture. */
+    Texture grassTexture;
+
+    float LEFT_GRASS_X = -1.5f;
+    float RIGHT_GRASS_X = 1.5f;
+    float ROAD_X = 0;
+
+    float ROAD_WIDTH = 1;
+    float ROAD_HEIGHT = 1;
+
+    float GRASS_WIDTH = 2;
+    float GRASS_HEIGHT = 1;
 
     /** max # frames to vroom */
     private float MAX_VROOM_TIME = 40;
@@ -47,13 +68,24 @@ public class Road extends RoadObject {
         return null;
     }
 
-    public Road() {
-        /* FIXME: Get texture from asset manager */
-        texture = new Texture(Gdx.files.internal("images/road.png"));
+    public void setRoadTexture(Texture t) {
+        roadTexture = t;
+    }
 
-        roadPositions = new Array<Vector3>(7);
+    public void setGrassTexture(Texture t) {
+        grassTexture = t;
+    }
+
+    public Road() {
+
+        // Invariant: roadPositions[i+1] is closer to the camera than roadPositions[i]
+        yPositions = new LinkedList<Float>();
         for (int i = 0; i < NUM_ROAD_DECALS; i++) {
-            roadPositions.add(new Vector3(0, -0.8f*i, 1));
+            if (i == 0) {
+                yPositions.add(new Float(DISTANCE_TO_DRAW));
+            } else {
+                yPositions.add(new Float(yPositions.get(i-1)-1));
+            }
         }
     }
 
@@ -69,22 +101,34 @@ public class Road extends RoadObject {
             currentSpeed = VROOM_SPEED;
             vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
         } else {
-
             currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
         }
-        for (Vector3 p : roadPositions) {
-            float newY = p.y - currentSpeed * delta;
-            if (newY < -13) { /* FIXME: magic # */
-                newY = 0;
-            }
-            p.set(0, newY, ROAD_HOVER_DISTANCE);
+
+        for (int i = 0; i < yPositions.size(); i++) {
+            /* FIXME: optimize this */
+            yPositions.set(i, yPositions.get(i) - currentSpeed * delta);
         }
+
+        Float lastY = yPositions.getLast();
+        Float firstY = yPositions.getFirst();
+        if (lastY < END_OF_CONVEYOR_BELT) {
+            yPositions.addFirst(firstY+1);
+            yPositions.removeLast();
+        }
+
     }
 
     public void draw(GameCanvas canvas) {
 
-        for (Vector3 p : roadPositions) {
-            canvas.drawRoadObject(texture, p.x, p.y, ROAD_HOVER_DISTANCE, 1, 1, 0, 0 );
+        for (Float y : yPositions) {
+            // Draw road
+            canvas.drawRoadObject(roadTexture, ROAD_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, 0, 0 );
+
+            // Draw grass on the left
+            canvas.drawRoadObject(grassTexture, LEFT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
+
+            // Draw grass on the right
+            canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
         }
     }
 

@@ -29,6 +29,7 @@ import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 
+
 import java.util.Random;
 
 /**
@@ -93,6 +94,14 @@ public class GameplayController {
 	/** The texture files for all Items **/
 	private static final String DVD_FILE = "images/Items/dvd.png";
 	private static final String SNACK_FILE = "images/Items/snack.png";
+
+	/** The texture files for the road and grass */
+	private static final String ROAD_FILE = "images/road.png";
+	private static final String GRASS_FILE = "images/grass.png";
+
+	/** Textures for road, grass */
+	private Texture roadTexture;
+	private Texture grassTexture;
 
 	/** Texture for the wheel */
 	private Texture wheelTexture;
@@ -175,6 +184,10 @@ public class GameplayController {
 		assets.add(DVD_FILE);
 		manager.load(SNACK_FILE,Texture.class);
 		assets.add(SNACK_FILE);
+		manager.load(GRASS_FILE, Texture.class);
+		assets.add(GRASS_FILE);
+		manager.load(ROAD_FILE, Texture.class);
+		assets.add(ROAD_FILE);
 	}
 
 	/**
@@ -205,6 +218,8 @@ public class GameplayController {
 		ned_sleep = createTexture(manager, NED_SLEEP_FILE);
 		dvdTexture = createTexture(manager,DVD_FILE);
 		snackTexture = createTexture(manager,SNACK_FILE);
+		roadTexture = createTexture(manager, ROAD_FILE);
+		grassTexture = createTexture(manager, GRASS_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -292,13 +307,18 @@ public class GameplayController {
 			g.setTexture(gnomeTexture);
 		}
 		events = level.getEvents();
+
 		wheel = new Wheel(0.193f,0.22f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
 		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
 		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
+
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.3f,snackTexture,0.3f);
+
+		road.setRoadTexture(roadTexture);
+		road.setGrassTexture(grassTexture);
 
 		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
