@@ -53,8 +53,6 @@ public class GameMode implements Screen {
 	private static String BKGD_FILE = "images/background.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
-	/** The file for the road image */
-	private static String ROAD_FILE = "images/road.png";
 	/** The file for the cloud image */
 	private static String CLOUDS_FILE = "images/clouds.png";
 	/** The file for the sky image */
@@ -79,9 +77,6 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
-	/** A pixel map of the original road image, to be mapped to the
-	 * pseudo-3d view */
-	private Pixmap roadMap;
 	/** Texture of the clouds */
 	private Texture clouds;
 	/** Texture of the sky */
@@ -96,6 +91,7 @@ public class GameMode implements Screen {
 	private Texture rearviewMirror;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
+
 
 	/** Counter for the game */
 	private int counter;
@@ -145,8 +141,6 @@ public class GameMode implements Screen {
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
 
-		// Load the road asset
-		manager.load(ROAD_FILE, Pixmap.class);
 		// Load the clouds
 		manager.load(CLOUDS_FILE, Texture.class);
 		// Load sky
@@ -199,10 +193,6 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(BKGD_FILE)) {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-		}
-
-		if (manager.isLoaded(ROAD_FILE)) {
-			roadMap = manager.get(ROAD_FILE, Pixmap.class);
 		}
 
 		if (manager.isLoaded(CLOUDS_FILE)) {

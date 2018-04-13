@@ -19,7 +19,7 @@ import java.util.LinkedList;
 public class Road extends RoadObject {
 
     /** The road decals. */
-    private LinkedList<Vector3> roadPositions;
+    private LinkedList<Float> yPositions;
     /** The number of road decals to draw. */
     int NUM_ROAD_DECALS = 30;
     /** The distance from the camera of the farthest road. */
@@ -35,6 +35,12 @@ public class Road extends RoadObject {
     float LEFT_GRASS_X = -1.5f;
     float RIGHT_GRASS_X = 1.5f;
     float ROAD_X = 0;
+
+    float ROAD_WIDTH = 1;
+    float ROAD_HEIGHT = 1;
+
+    float GRASS_WIDTH = 2;
+    float GRASS_HEIGHT = 1;
 
     /** max # frames to vroom */
     private float MAX_VROOM_TIME = 40;
@@ -62,18 +68,23 @@ public class Road extends RoadObject {
         return null;
     }
 
+    public void setRoadTexture(Texture t) {
+        roadTexture = t;
+    }
+
+    public void setGrassTexture(Texture t) {
+        grassTexture = t;
+    }
+
     public Road() {
-        /* FIXME: Get texture from asset manager */
-        roadTexture = new Texture(Gdx.files.internal("images/road.png"));
-        grassTexture = new Texture(Gdx.files.internal("images/grass.png"));
 
         // Invariant: roadPositions[i+1] is closer to the camera than roadPositions[i]
-        roadPositions = new LinkedList<Vector3>();
+        yPositions = new LinkedList<Float>();
         for (int i = 0; i < NUM_ROAD_DECALS; i++) {
             if (i == 0) {
-                roadPositions.add(new Vector3(0, DISTANCE_TO_DRAW, 1));
+                yPositions.add(new Float(DISTANCE_TO_DRAW));
             } else {
-                roadPositions.add(new Vector3(0, roadPositions.get(i-1).y-1, 1));
+                yPositions.add(new Float(yPositions.get(i-1)-1));
             }
         }
     }
@@ -93,32 +104,31 @@ public class Road extends RoadObject {
             currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
         }
 
-        for (Vector3 p : roadPositions) {
-            float newY = p.y - currentSpeed * delta;
-            p.set(p.x, newY, p.z);
+        for (int i = 0; i < yPositions.size(); i++) {
+            /* FIXME: optimize this */
+            yPositions.set(i, yPositions.get(i) - currentSpeed * delta);
         }
 
-        Vector3 lastPos = roadPositions.getLast();
-        Vector3 firstPos = roadPositions.getFirst();
-        if (lastPos.y < END_OF_CONVEYOR_BELT) {
-            lastPos.set(lastPos.x, firstPos.y+1, lastPos.z);
-            roadPositions.addFirst(lastPos);
-            roadPositions.removeLast();
+        Float lastY = yPositions.getLast();
+        Float firstY = yPositions.getFirst();
+        if (lastY < END_OF_CONVEYOR_BELT) {
+            yPositions.addFirst(firstY+1);
+            yPositions.removeLast();
         }
 
     }
 
     public void draw(GameCanvas canvas) {
 
-        for (Vector3 p : roadPositions) {
+        for (Float y : yPositions) {
             // Draw road
-            canvas.drawRoadObject(roadTexture, ROAD_X, p.y, ROAD_HOVER_DISTANCE, 1, 1, 0, 0 );
+            canvas.drawRoadObject(roadTexture, ROAD_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, 0, 0 );
 
             // Draw grass on the left
-            canvas.drawRoadObject(grassTexture, LEFT_GRASS_X, p.y, ROAD_HOVER_DISTANCE, 2, 1, 0, 0 );
+            canvas.drawRoadObject(grassTexture, LEFT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
 
             // Draw grass on the right
-            canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, p.y, ROAD_HOVER_DISTANCE, 2, 1, 0, 0 );
+            canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, 0, 0 );
         }
     }
 
