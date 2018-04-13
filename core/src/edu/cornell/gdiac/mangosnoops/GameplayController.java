@@ -508,7 +508,7 @@ public class GameplayController {
 		}
 
 		if (road.reachedEndOfLevel()) {
-			//getCar().takeExit();
+			getCar().takeExit();
 		}
 
 	}
