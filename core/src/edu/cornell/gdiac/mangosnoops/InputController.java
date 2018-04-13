@@ -82,6 +82,11 @@ public class InputController {
 	}
 
 	/**
+	 * Returns true if left click is being pressed
+	 * @return true if left click is being pressed
+	 */
+	public boolean mousePressed() { return mouseClicked; }
+	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
@@ -92,7 +97,8 @@ public class InputController {
             clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             dx = Gdx.input.getDeltaX();
             dy = Gdx.input.getDeltaY();
-            //System.out.println("Mouse at: "+ clickPos);
+			//System.out.println(mouseClicked);
+            System.out.println("Mouse at: "+ clickPos);
         } else {
             clickPos = null;
         }

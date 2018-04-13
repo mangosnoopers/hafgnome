@@ -60,13 +60,13 @@ public class GameMode implements Screen {
 	/** The file for the sky image */
 	private static String SKY_FILE = "images/sky.png";
 	/** The texture file for the dash */
-	private static final String DASH_FILE = "images/dash.png";
+	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
 	/** The file for the health gauge */
-	private static final String HEALTH_GAUGE_FILE = "images/gauge.png";
+	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
 	/** The file for the health gauge pointer */
-	private static final String HEALTH_POINTER_FILE = "images/pointer.png";
+	private static final String HEALTH_POINTER_FILE = "images/DashHUD/pointer.png";
 	/** The file for the rear view mirror */
-	private static final String REARVIEW_MIRROR_FILE = "images/rearview.png";
+	private static final String REARVIEW_MIRROR_FILE = "images/DashHUD/rearview.png";
 	/** The file for the angry speech bubble */
 	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
 
@@ -396,28 +396,42 @@ public class GameMode implements Screen {
 
 		canvas.clearScreen();
 
-        // TODO: change this
-        Array<Gnome> gnomez = gameplayController.getGnomez();
-        for (Gnome g : gnomez) {
-        	g.draw(canvas);
-		}
+
         gameplayController.getRoad().draw(canvas);
 		canvas.drawWorld();
+
 
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
 
-		// Road, clouds, and dash
+		// Clouds
+		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
+				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
 
-		// Dash
+		//Gnomez
+		for (Gnome g : gameplayController.getGnomez()) {
+			g.draw(canvas);
+		}
+
+		// Draw speech bubbles, if necessary
+		Child nedRef = gameplayController.getCar().getNed();
+		Child noshRef = gameplayController.getCar().getNosh();
+		if (nedRef.getCurrentMood() == Child.Mood.CRITICAL) {
+			canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
+							Child.NED_SPEECH_BUBBLE_COORDS.x*canvas.getWidth() + nedRef.getShakeX(), Child.NED_SPEECH_BUBBLE_COORDS.y*canvas.getHeight() + nedRef.getShakeY(),
+								0, 0.9f*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
+		}
+		if (noshRef.getCurrentMood() == Child.Mood.CRITICAL) {
+			canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
+					Child.NOSH_SPEECH_BUBBLE_COORDS.x*canvas.getWidth() + noshRef.getShakeX(), Child.NOSH_SPEECH_BUBBLE_COORDS.y*canvas.getHeight() + noshRef.getShakeY(),
+					0, 0.9f*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
+		}
+
+        ///**  Draw Dash and Interactive HUD Elements **///
+
 		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
-					(float)canvas.getWidth()/(float)dash.getWidth(),
-					0.33f*(float)canvas.getHeight()/(float)dash.getHeight());
-
-        canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
-				(float)canvas.getHeight()/(float)clouds.getHeight(), (float)canvas.getHeight()/(float)clouds.getHeight());
-
-        ///**  Draw Interactive HUD Elements **///
+				(float)canvas.getWidth()/(float)dash.getWidth(),
+				0.33f*(float)canvas.getHeight()/(float)dash.getHeight());
 
 		// Vroom Stick
 		gameplayController.getVroomStick().draw(canvas);
@@ -428,12 +442,19 @@ public class GameMode implements Screen {
 		// Radio
 		gameplayController.getRadio().draw(canvas, displayFont);
 
+		// Health gauge and pointer
+		canvas.draw(healthGauge, Color.WHITE, healthGauge.getWidth()*0.5f,healthGauge.getHeight()*0.5f,0.404f*canvas.getWidth(),0.098f*canvas.getHeight(),
+				0.0f,0.175f*((float)canvas.getHeight()/(float)healthGauge.getHeight()),0.175f*((float)canvas.getHeight()/(float)healthGauge.getHeight()));
+		canvas.draw(healthPointer, Color.WHITE, healthPointer.getWidth()*0.5f,0, 0.404f*canvas.getWidth(), 0.048f*canvas.getHeight(),
+				gameplayController.getCar().getHealthPointerAng(), 0.2f*((float)canvas.getHeight()/(float)healthPointer.getHeight()),0.065f*((float)canvas.getHeight()/(float)healthPointer.getHeight()));
+
+
 		// Draw Rearview Enenmy
 		gameplayController.getRearviewEnemy().draw(canvas);
 
 		// Draw rearview mirror
-		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth(),rearviewMirror.getHeight(),
-					canvas.getWidth(),canvas.getHeight(),0,
+		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth()*0.5f,rearviewMirror.getHeight()*0.5f,
+					0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
 				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
 
 
@@ -441,23 +462,7 @@ public class GameMode implements Screen {
 		gameplayController.getCar().getNosh().draw(canvas, rearviewMirror);
         gameplayController.getCar().getNed().draw(canvas, rearviewMirror);
 
-		// Health gauge and pointer
-		canvas.draw(healthGauge, Color.WHITE, 0.0f,0.0f,25.0f,4.0f,0.0f,0.40f,0.40f);
-        canvas.draw(healthPointer, Color.WHITE, 0.0f, 0.0f, 60.0f, 20.0f, gameplayController.getCar().getHealthPointerAng(), 0.5f,0.2f);
 
-		// Draw speech bubbles, if necessary
-		Child nedRef = gameplayController.getCar().getNed();
-		Child noshRef = gameplayController.getCar().getNosh();
-		float speechX = Child.NED_SPEECH_BUBBLE_COORDS.x + nedRef.getShakeX();
-		float speechY = Child.NED_SPEECH_BUBBLE_COORDS.y + nedRef.getShakeY();
-		float speechXNosh = Child.NOSH_SPEECH_BUBBLE_COORDS.x + noshRef.getShakeX();
-		float speechYNosh = Child.NOSH_SPEECH_BUBBLE_COORDS.y + noshRef.getShakeY();
-		if (nedRef.getCurrentMood() == Child.Mood.CRITICAL) {
-			canvas.draw(speechBubble, speechX, speechY, 1000, 600);
-		}
-		if (noshRef.getCurrentMood() == Child.Mood.CRITICAL) {
-			canvas.draw(speechBubble, speechXNosh, speechYNosh, 1000, 600);
-		}
 
 		// Draw messages
 		switch (gameState) {
