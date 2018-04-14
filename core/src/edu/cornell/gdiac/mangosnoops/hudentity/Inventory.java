@@ -22,37 +22,41 @@ public class Inventory extends Image{
 
     private Array<Slot> slots;
 
-    private Array<Slot> START_INVENTORY;
+    private Vector2 slotsDimensions;
 
     private final float itemOffset = 0.01f;
 
     public Inventory(float x_left, float y_bottom, float r, float cb, Texture t, float slotWidth, float slotHeight, int numSlots) {
         super(x_left, y_bottom, r, cb, t);
         slots = new Array<Slot>(numSlots);
+        slotsDimensions = new Vector2(slotWidth,slotHeight);
         int temp = numSlots-1;
         for (int i=numSlots; i > 0; i--) {
-           slots.add( new Slot(temp, x_left,y_bottom+(temp*slotHeight), slotWidth, slotHeight,Item.ItemType.DVD,1));
+           slots.add( new Slot(temp, x_left,y_bottom+(temp*slotHeight), slotWidth, slotHeight));
            temp--;
-        }
-        START_INVENTORY = new Array<Slot>(numSlots);
-        for (Slot s : slots){
-            START_INVENTORY.add(new Slot(s));
         }
     }
 
     public void reset(){
         itemInHand = null;
-
         itemInHandPosition = null;
-
         lastSlotTakenFromState = null;
-
         lastSlotTakenFrom = null;
-
         slots = new Array<Slot>(slots.size);
-        for(Slot s : START_INVENTORY){
-            slots.add(new Slot(s));
+    }
+
+    public void load(Array<Slot> inv){
+        if(inv.size < slots.size){
+            for(int i=0; i<(slots.size-inv.size); i++){
+                inv.add(new Slot(inv, this, null, 0));
+            }
         }
+        if(inv.size > slots.size){
+            for(int i=0; i<(inv.size-slots.size); i++){
+                inv.pop();
+            }
+        }
+        slots = inv;
     }
 
     @Override
@@ -71,25 +75,26 @@ public class Inventory extends Image{
 
     boolean prevMousePressed;
     public void update(Vector2 in, boolean mousePressed){
-        System.out.println(itemInHand);
+        //System.out.println(itemInHand);
         for(Slot s : slots) {
             s.setRealHitbox(new Rectangle(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y,
                     s.getHitbox().getWidth() * SCREEN_DIMENSIONS.x, s.getHitbox().getHeight() * SCREEN_DIMENSIONS.y));
         }
 
         //System.out.println("Inventory at: " + this.position.x*SCREEN_DIMENSIONS.x +" " + this.position.y*SCREEN_DIMENSIONS.y);
+
         if(in != null) {
-            if (itemInHand == null && inArea(in) && mousePressed) {
+            if (itemInHand == null && inArea(in)) {
                 itemInHand = take(slotInArea(in));
             }
-            if (itemInHand != null && mousePressed) {
-                itemInHandPosition = new Vector2(in.x, SCREEN_DIMENSIONS.y-in.y);
+            if (itemInHand != null) {
+                itemInHandPosition = new Vector2(in.x, SCREEN_DIMENSIONS.y - in.y);
             }
-            if( (itemInHand!=null)&& (prevMousePressed && !mousePressed)){
-                //released mouse, check areas w/ this vector in (store, children, dvd player)
-                System.out.println("jduyrt");
-                cancelTake();
-            }
+        }
+        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
+            //released mouse, check areas w/ this vector in (store, children, dvd player)
+            cancelTake();
+
         }
         prevMousePressed = mousePressed;
     }
@@ -157,13 +162,16 @@ public class Inventory extends Image{
     }
 
     private void cancelTake(){
+        System.out.println("Canceelling Take");
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
         lastSlotTakenFrom.amount = lastSlotTakenFromState.amount;
         lastSlotTakenFrom = null;
         lastSlotTakenFromState = null;
+        itemInHand = null;
+        itemInHandPosition = null;
     }
 
-    private class Slot{
+    public static class Slot{
 
         private int invPos;
         private Item slotItem;
@@ -193,6 +201,16 @@ public class Inventory extends Image{
             this.amount = s.amount;
             this. hitbox = s. hitbox;
             this.realHitbox = s.realHitbox;
+        }
+
+        public Slot(Array<Slot> slots, Inventory inv, Item.ItemType slotItem, int amount){
+            this.invPos = slots.size;
+            this.slotItem = new Item(slotItem);
+            this.amount = amount;
+            this.hitbox = new Rectangle(inv.position.x, inv.position.y+invPos*inv.slotsDimensions.y,
+                                        inv.slotsDimensions.x, inv.slotsDimensions.y);
+            this.realHitbox = new Rectangle(hitbox.getX()*SCREEN_DIMENSIONS.x,hitbox.getY()*SCREEN_DIMENSIONS.y,
+                                            hitbox.getWidth()*SCREEN_DIMENSIONS.x,hitbox.getHeight()*SCREEN_DIMENSIONS.y);
         }
 
         private boolean inHitbox( Vector2 in){
