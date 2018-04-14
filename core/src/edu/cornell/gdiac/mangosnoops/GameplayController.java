@@ -327,7 +327,10 @@ public class GameplayController {
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
 		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
 		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
-
+		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
+		inventory.load(i);
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 
@@ -472,7 +475,6 @@ public class GameplayController {
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
   		boolean mousePressed = input.mousePressed();
-
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x);
 			vroomStick.update(new Vector2(in), dr.y);
