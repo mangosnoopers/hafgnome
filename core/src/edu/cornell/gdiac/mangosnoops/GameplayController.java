@@ -313,6 +313,8 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
+		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
+		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
@@ -331,8 +333,6 @@ public class GameplayController {
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
 		inventory.load(i);
-		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
-		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
@@ -474,7 +474,7 @@ public class GameplayController {
         // Update the HUD
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
-  		boolean mousePressed = input.mousePressed();
+  		boolean mousePressed = input.isMousePressed();
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x);
 			vroomStick.update(new Vector2(in), dr.y);
@@ -487,7 +487,7 @@ public class GameplayController {
 			radio.update(null, dr.x);
 			inventory.update(null, mousePressed);
 		}
-
+		resolveItemDrop(input);
 		rearviewEnemy.update(delta*0.0004f);
 
 		if (vroomStick.isEngaged()) {
@@ -612,5 +612,52 @@ public class GameplayController {
 //
 //		}
 
+	}
+
+	Vector2 droppedPos;
+	public void resolveItemDrop(InputController inputController) {
+//		System.out.println("prevClick: "+inputController.isPrevMousePressed());
+//		System.out.println("currClick: "+inputController.isMousePressed());
+		if(droppedPos!=null) {
+			System.out.println(droppedPos);
+		}
+		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
+			if (yonda.getNosh().inChildArea(droppedPos)) {
+				//TODO ITEM CHECKS FOR NOSH
+				switch (inventory.getItemInHand().getItemType()) {
+					case SNACK:
+						yonda.getNosh().setMood(Child.Mood.HAPPY);
+						break;
+					case DVD:
+						if(!yonda.getNosh().isAwake()) {
+							inventory.cancelTake();
+							break;
+						}
+						yonda.getNosh().setMood(Child.Mood.SLEEP);
+						break;
+				}
+			} else if (yonda.getNed().inChildArea(droppedPos)) {
+				//TODO ITEM CHECKS FOR NED
+				switch (inventory.getItemInHand().getItemType()) {
+					case SNACK:
+						yonda.getNed().setMood(Child.Mood.HAPPY);
+						break;
+					case DVD:
+						if(!yonda.getNed().isAwake()) {
+							inventory.cancelTake();
+							break;
+						}
+						yonda.getNed().setMood(Child.Mood.SLEEP);
+						break;
+				}
+			} else if (inventory.inArea(droppedPos)){
+				inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
+			} else {
+				inventory.cancelTake();
+				return;
+			}
+		inventory.setItemInHand(null);
+		}
+		droppedPos = inputController.getClickPos();
 	}
 }
