@@ -618,9 +618,6 @@ public class GameplayController {
 	public void resolveItemDrop(InputController inputController) {
 //		System.out.println("prevClick: "+inputController.isPrevMousePressed());
 //		System.out.println("currClick: "+inputController.isMousePressed());
-		if(droppedPos!=null) {
-			System.out.println(droppedPos);
-		}
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			if (yonda.getNosh().inChildArea(droppedPos)) {
 				//TODO ITEM CHECKS FOR NOSH
