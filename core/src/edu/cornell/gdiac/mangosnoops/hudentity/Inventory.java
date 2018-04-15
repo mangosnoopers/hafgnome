@@ -73,7 +73,7 @@ public class Inventory extends Image{
         return null;
     }
 
-    boolean prevMousePressed;
+//    boolean prevMousePressed;
     public void update(Vector2 in, boolean mousePressed){
         //System.out.println(itemInHand);
         for(Slot s : slots) {
@@ -91,16 +91,21 @@ public class Inventory extends Image{
                 itemInHandPosition = new Vector2(in.x, SCREEN_DIMENSIONS.y - in.y);
             }
         }
-        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
-            //released mouse, check areas w/ this vector in (store, children, dvd player)
-            cancelTake();
 
-        }
-        prevMousePressed = mousePressed;
+//        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
+//            //released mouse, check areas w/ this vector in (store, children, dvd player)
+//            cancelTake();
+//
+//        }
+//        prevMousePressed = mousePressed;
     }
 
-    public void setItemInHand(Item itemInHand) {
-        this.itemInHand = itemInHand;
+    public Item getItemInHand() {
+        return itemInHand;
+    }
+
+    public void setItemInHand(Item i){
+        itemInHand = i;
     }
 
     @Override
@@ -127,7 +132,7 @@ public class Inventory extends Image{
 
     /** Returns the item in this slot, removing 1 from its stored amount, if doing so depletes all items in the slot, the slot is
      * made empty (null slotItem, amount of 0).
-     * // TODO Also saves state of slot previous to action, in case action is canceled.
+     * Also saves state of slot previous to action, in case action is canceled.
      * @return slot's Item
      */
     public Item take(Slot s){
@@ -161,7 +166,7 @@ public class Inventory extends Image{
         }
     }
 
-    private void cancelTake(){
+    public void cancelTake(){
         System.out.println("Canceelling Take");
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
         lastSlotTakenFrom.amount = lastSlotTakenFromState.amount;

@@ -368,10 +368,9 @@ public class GameMode implements Screen {
             gameState = GameState.OVER;
         }
 
-		// Update
+		// Update Based on input
         gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
 		gameplayController.resolveActions(inputController, delta);
-		soundController.play(gameplayController.getRadio());
 
 		// Update child states TODO: idk
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(),
@@ -382,9 +381,13 @@ public class GameMode implements Screen {
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
 		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
 
+		// Play resulting sound
+		soundController.play(gameplayController.getRadio());
+
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
 
+		// Set Camera
 		canvas.setCameraXY(gameplayController.getCar().getPosition());
 
 		// Update the counter
