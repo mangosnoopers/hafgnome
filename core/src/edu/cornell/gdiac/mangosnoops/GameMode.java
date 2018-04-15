@@ -449,7 +449,11 @@ public class GameMode implements Screen {
 
 
 		// Health gauge and pointer
-		canvas.draw(healthGauge, Color.WHITE, healthGauge.getWidth()*0.5f,healthGauge.getHeight()*0.5f,0.404f*canvas.getWidth(),0.098f*canvas.getHeight(),
+		Color gaugeTint = Color.WHITE;
+		if (gameplayController.getCar().getIsDamaged()) {
+			gaugeTint = Color.RED;
+		}
+		canvas.draw(healthGauge, gaugeTint, healthGauge.getWidth()*0.5f,healthGauge.getHeight()*0.5f,0.404f*canvas.getWidth(),0.098f*canvas.getHeight(),
 				0.0f,0.175f*((float)canvas.getHeight()/(float)healthGauge.getHeight()),0.175f*((float)canvas.getHeight()/(float)healthGauge.getHeight()));
 		canvas.draw(healthPointer, Color.WHITE, healthPointer.getWidth()*0.5f,0, 0.404f*canvas.getWidth(), 0.048f*canvas.getHeight(),
 				gameplayController.getCar().getHealthPointerAng(), 0.2f*((float)canvas.getHeight()/(float)healthPointer.getHeight()),0.065f*((float)canvas.getHeight()/(float)healthPointer.getHeight()));
@@ -514,9 +518,9 @@ public class GameMode implements Screen {
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();
 
-		if (gameplayController.getCar().getIsDamaged()) {
-		    canvas.drawDamageIndicator(gameplayController.getCar().getDamageDisplayAlpha());
-        }
+//		if (gameplayController.getCar().getIsDamaged()) {
+//		    canvas.drawDamageIndicator(gameplayController.getCar().getDamageDisplayAlpha());
+//        }
 	}
 	
 	/**
