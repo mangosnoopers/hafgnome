@@ -73,16 +73,15 @@ public class Inventory extends Image{
         return null;
     }
 
+    public void setItemInHandPosition(Vector2 in){
+        itemInHandPosition = in;
+    }
 //    boolean prevMousePressed;
     public void update(Vector2 in, boolean mousePressed){
-        //System.out.println(itemInHand);
         for(Slot s : slots) {
-            s.setRealHitbox(new Rectangle(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y,
-                    s.getHitbox().getWidth() * SCREEN_DIMENSIONS.x, s.getHitbox().getHeight() * SCREEN_DIMENSIONS.y));
+            s.realHitbox.setPosition(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y);
+            s.realHitbox.setSize(s.getHitbox().getWidth() * SCREEN_DIMENSIONS.x,s.getHitbox().getHeight() * SCREEN_DIMENSIONS.y);
         }
-
-        //System.out.println("Inventory at: " + this.position.x*SCREEN_DIMENSIONS.x +" " + this.position.y*SCREEN_DIMENSIONS.y);
-
         if(in != null) {
             if (itemInHand == null && inArea(in)) {
                 itemInHand = take(slotInArea(in));
@@ -97,7 +96,7 @@ public class Inventory extends Image{
 //            cancelTake();
 //
 //        }
-//        prevMousePressed = mousePressed;
+
     }
 
     public Item getItemInHand() {
@@ -167,7 +166,6 @@ public class Inventory extends Image{
     }
 
     public void cancelTake(){
-        System.out.println("Canceelling Take");
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
         lastSlotTakenFrom.amount = lastSlotTakenFromState.amount;
         lastSlotTakenFrom = null;
@@ -228,6 +226,10 @@ public class Inventory extends Image{
 
         public Rectangle getHitbox() {
             return hitbox;
+        }
+
+        public Rectangle getRealHitbox() {
+            return realHitbox;
         }
 
         public void setRealHitbox(Rectangle rhitbox) {
