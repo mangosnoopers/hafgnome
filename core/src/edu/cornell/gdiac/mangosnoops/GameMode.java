@@ -39,14 +39,15 @@ public class GameMode implements Screen {
 	public enum GameState {
 		/** Before the game has started */
 		INTRO,
-		/** While we are playing the game */
+		/** While we are on the road */
 		PLAY,
 		/** When the ships is dead (but shells still work) */
 		OVER
 	}
 
-	// LEVEL FILES TODO idk
-	private static String TEST_LEVEL_0_EXCEL = "test_level0.xlsx";
+	// LEVEL FILES TODO implement moving to next level
+	private static String[] TEST_LEVELS = new String[]{"test_level0.xlsx", "test_level0.xlsx"};
+	private static int currLevel = 0;
 
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
@@ -98,8 +99,6 @@ public class GameMode implements Screen {
 	private Texture rearviewCover;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
-
-
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
@@ -280,7 +279,7 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(TEST_LEVEL_0_EXCEL));
+            gameplayController = new GameplayController(new LevelObject(TEST_LEVELS[currLevel]));
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
             soundController = new SoundController();
         } catch (Exception e) {
@@ -321,7 +320,6 @@ public class GameMode implements Screen {
 					gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					break;
 				case OVER:
-
 					if (inputController.didReset()) {
 						gameplayController.reset();
 						soundController.reset();
@@ -363,7 +361,6 @@ public class GameMode implements Screen {
 	protected void play(float delta) {
 
 		// Check if game is over
-		// TODO: also check if end of level
 		if (gameplayController.getCar().isDestroyed()) {
             gameState = GameState.OVER;
         }
@@ -485,10 +482,6 @@ public class GameMode implements Screen {
 		//Draw inventory
 		gameplayController.getInventory().draw(canvas);
 
-		if (gameplayController.getRoad().reachedEndOfLevel()) {
-            gameState = GameState.OVER;
-		}
-
 		// Draw messages
 		switch (gameState) {
 			case INTRO:
@@ -541,9 +534,16 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
-			if (inputController.didExit() && listener != null) {
+			// Check if end of level
+			if (gameplayController.getRoad().reachedEndOfLevel() && listener != null) {
+				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);
 			}
+
+			//FIXME: idk what the below is for
+//			if (inputController.didExit() && listener != null) {
+//				listener.exitScreen(this, 0);
+//			}
 		}
 	}
 

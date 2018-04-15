@@ -45,6 +45,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private LoadingMode loading;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
 	private GameMode    playing;
+	private RestStopMode reststop;
 	private StartMenuMode start;
 
 	/**
@@ -73,6 +74,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas);
+		reststop = new RestStopMode(canvas);
 		start = new StartMenuMode(canvas, manager);
 
 		Gdx.graphics.setTitle("Gnomez");
@@ -142,7 +144,19 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			start.dispose();
 			start = null;
-		}else {
+		} else if (screen == playing) {
+			reststop.setScreenListener(this);
+			setScreen(reststop);
+
+			playing.dispose();
+			playing = null;
+		} else if (screen == reststop) {
+			playing.setScreenListener(this);
+			setScreen(playing);
+
+			reststop.dispose();
+			reststop = null;
+		} else {
 			// We quit the main application
 			Gdx.app.exit();
 		}
