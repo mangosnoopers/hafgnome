@@ -503,8 +503,6 @@ public class GameMode implements Screen {
 				break;
 		}
 
-		canvas.drawText("" + gameplayController.getCar().getShakeOffset(), displayFont, 100, 100);
-
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();
 

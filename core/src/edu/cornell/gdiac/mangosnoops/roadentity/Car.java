@@ -70,7 +70,7 @@ public class Car extends RoadObject {
 
     /** The current offset that is applied to the dash drawing
      *  coordinates, for the "shake" effect */
-    private float MAX_SHAKE_AMOUNT = 20;
+    private float MAX_SHAKE_AMOUNT = 5;
 
     /** Whether or not the car is shaking from a collision */
     private boolean isShaking = false;
@@ -78,7 +78,7 @@ public class Car extends RoadObject {
     /** How quickly the shake ends, in range (0, 1)
      *  smaller value => depletes more quickly
      */
-    private float SHAKE_DEPLETION = 0.5f;
+    private float SHAKE_DEPLETION = 0.95f;
 
     /** The sum of the deltas passed to every update call */
     private float deltaSum = 0;
@@ -267,7 +267,7 @@ public class Car extends RoadObject {
 
             deltaSum += delta;
 
-            currentShakeAmount *= 100 * SHAKE_DEPLETION * delta;
+            currentShakeAmount *= SHAKE_DEPLETION;
 
             if (Math.abs(currentShakeAmount) < 0.001) {
                 isShaking = false;
@@ -283,11 +283,12 @@ public class Car extends RoadObject {
     public void shakeCar() {
         currentShakeAmount = MAX_SHAKE_AMOUNT;
         isShaking = true;
+        deltaSum = 0;
     }
 
     public void drawDash(GameCanvas canvas) {
 
-        float shakeOffset = currentShakeAmount * (float) Math.sin(deltaSum);
+        float shakeOffset = currentShakeAmount * ((float) Math.cos(30*deltaSum) - MAX_SHAKE_AMOUNT);
 
         canvas.draw(dashTexture, Color.WHITE, 0,0,0,shakeOffset,0,
                 (float)canvas.getWidth()/(float)dashTexture.getWidth(),
@@ -295,6 +296,6 @@ public class Car extends RoadObject {
 
     }
 
-    public float getShakeOffset() { return currentShakeAmount * (float) Math.sin(deltaSum); }
+    public float getShakeOffset() { return currentShakeAmount * (float) Math.sin(30*deltaSum); }
 
 }
