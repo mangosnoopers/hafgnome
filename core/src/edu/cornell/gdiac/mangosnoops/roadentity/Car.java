@@ -76,8 +76,7 @@ public class Car extends RoadObject {
     private boolean isShaking = false;
 
     /** How quickly the shake ends, in range (0, 1)
-     *  smaller value => depletes more quickly
-     */
+     *  smaller value => depletes more quickly */
     private float SHAKE_DEPLETION = 0.95f;
 
     /** The sum of the deltas passed to every update call */
@@ -296,6 +295,5 @@ public class Car extends RoadObject {
 
     }
 
-    public float getShakeOffset() { return currentShakeAmount * (float) Math.sin(30*deltaSum); }
 
 }

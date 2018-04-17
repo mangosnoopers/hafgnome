@@ -74,7 +74,7 @@ public class Inventory extends Image{
     }
 
 //    boolean prevMousePressed;
-    public void update(Vector2 in, boolean mousePressed){
+    public void update(Vector2 in, boolean mousePressed) {
         //System.out.println(itemInHand);
         for(Slot s : slots) {
             s.setRealHitbox(new Rectangle(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y,

@@ -368,7 +368,7 @@ public class GameMode implements Screen {
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
-		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar());
+		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar(), gameplayController);
 
 		// Play resulting sound
 		soundController.play(gameplayController.getRadio());
