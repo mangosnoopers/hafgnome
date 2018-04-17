@@ -30,7 +30,7 @@ public abstract class Image {
     protected float currentShakeAmount = 0;
 
     /** The current shake magnitude */
-    protected float currentShakeMagnitude = 0;
+    private float currentShakeMagnitude = 0;
 
     /** Whether or not the object is shaking from a collision */
     protected boolean isShaking = false;
