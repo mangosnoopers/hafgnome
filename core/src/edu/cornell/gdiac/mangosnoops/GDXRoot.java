@@ -137,11 +137,18 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 			loading = null;
 		} else if (screen == start) {
-			playing.setScreenListener(this);
-			setScreen(playing);
+			if(start.levelSelectButtonClicked()) {
 
-			start.dispose();
-			start = null;
+			} else if(start.exitButtonClicked()) {
+				Gdx.app.exit();
+			} else if(start.settingsButtonClicked()) {
+
+			} else {
+				playing.setScreenListener(this);
+				setScreen(playing);
+				start.dispose();
+				start = null;
+			}
 		}else {
 			// We quit the main application
 			Gdx.app.exit();
