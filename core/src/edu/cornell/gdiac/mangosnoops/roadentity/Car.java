@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.mangosnoops.roadentity;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
@@ -58,6 +60,28 @@ public class Car extends RoadObject {
     private final float DISPLAY_DEPLETION = 26;
 
     private float displayAlpha = 1.0f;
+
+    /** The texture */
+    private Texture dashTexture;
+
+    /** The maximimum amount of offset that is applied to
+     *  the dash drawing coordinates, for the "shake" effect */
+    private float currentShakeAmount = 0;
+
+    /** The current offset that is applied to the dash drawing
+     *  coordinates, for the "shake" effect */
+    private float MAX_SHAKE_AMOUNT = 20;
+
+    /** Whether or not the car is shaking from a collision */
+    private boolean isShaking = false;
+
+    /** How quickly the shake ends, in range (0, 1)
+     *  smaller value => depletes more quickly
+     */
+    private float SHAKE_DEPLETION = 0.5f;
+
+    /** The sum of the deltas passed to every update call */
+    private float deltaSum = 0;
 
     //PARTY MEMBERS
     /** Noshy boi */
@@ -124,6 +148,11 @@ public class Car extends RoadObject {
     public boolean nedAwake() { return ned.isAwake(); }
 
     public void setHealth(int newHealth) { health = newHealth; }
+
+    /** Set the texture of the dash to t. */
+    public void setDashTexture(Texture t) {
+        dashTexture = t;
+    }
 
     /**
      * Damage the car. Only has an effect if the car isn't already
@@ -233,7 +262,39 @@ public class Car extends RoadObject {
             displayAlpha = 1.0f;
         }
 
+        // Update "shake" offset
+        if (isShaking) {
+
+            deltaSum += delta;
+
+            currentShakeAmount *= 100 * SHAKE_DEPLETION * delta;
+
+            if (Math.abs(currentShakeAmount) < 0.001) {
+                isShaking = false;
+                currentShakeAmount = 0;
+                deltaSum = 0;
+            }
+
+
+        }
 
     }
+
+    public void shakeCar() {
+        currentShakeAmount = MAX_SHAKE_AMOUNT;
+        isShaking = true;
+    }
+
+    public void drawDash(GameCanvas canvas) {
+
+        float shakeOffset = currentShakeAmount * (float) Math.sin(deltaSum);
+
+        canvas.draw(dashTexture, Color.WHITE, 0,0,0,shakeOffset,0,
+                (float)canvas.getWidth()/(float)dashTexture.getWidth(),
+                0.33f*(float)canvas.getHeight()/(float)dashTexture.getHeight());
+
+    }
+
+    public float getShakeOffset() { return currentShakeAmount * (float) Math.sin(deltaSum); }
 
 }
