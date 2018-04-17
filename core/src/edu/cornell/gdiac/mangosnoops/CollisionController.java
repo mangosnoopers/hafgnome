@@ -122,6 +122,7 @@ public class CollisionController {
 //		else {
 			if (g.getY() < -10 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
 				c.damage();
+				c.shakeCar();
 				g.setDestroyed(true);
 
 				if (c.getHealth() == 0)

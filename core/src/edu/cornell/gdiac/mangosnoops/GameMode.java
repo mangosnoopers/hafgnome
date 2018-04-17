@@ -57,8 +57,6 @@ public class GameMode implements Screen {
 	private static String CLOUDS_FILE = "images/clouds.png";
 	/** The file for the sky image */
 	private static String SKY_FILE = "images/sky.png";
-	/** The texture file for the dash */
-	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
 	/** The file for the health gauge */
 	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
 	/** The file for the health gauge pointer */
@@ -86,8 +84,6 @@ public class GameMode implements Screen {
 	private Texture clouds;
 	/** Texture of the sky */
 	private Texture sky;
-	/** Texture of the dash **/
-	private Texture dash;
 	/** Texture of the health gauge */
 	private Texture healthGauge;
 	/** Texture of the health gauge's pointer */
@@ -152,9 +148,6 @@ public class GameMode implements Screen {
 		manager.load(CLOUDS_FILE, Texture.class);
 		// Load sky
 		manager.load(SKY_FILE, Texture.class);
-		// Load dash
-		manager.load(DASH_FILE,Texture.class);
-		assets.add(DASH_FILE);
 		// Load health gauge and pointer
 		manager.load(HEALTH_GAUGE_FILE, Texture.class);
 		assets.add(HEALTH_GAUGE_FILE);
@@ -212,10 +205,6 @@ public class GameMode implements Screen {
 
 		if (manager.isLoaded(SKY_FILE)) {
 			sky = manager.get(CLOUDS_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(DASH_FILE)){
-			dash = manager.get(DASH_FILE, Texture.class);
 		}
 
 		if (manager.isLoaded(HEALTH_GAUGE_FILE)) {
@@ -410,6 +399,12 @@ public class GameMode implements Screen {
 
 
         gameplayController.getRoad().draw(canvas);
+
+		//Gnomez
+		for (Gnome g : gameplayController.getGnomez()) {
+			g.draw(canvas);
+		}
+
 		canvas.drawWorld();
 
 
@@ -420,11 +415,6 @@ public class GameMode implements Screen {
 		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
 				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
 
-		//Gnomez
-		for (Gnome g : gameplayController.getGnomez()) {
-			g.draw(canvas);
-		}
-
 		// Draw speech bubbles, if necessary
 
 		if (!gameplayController.getRoad().reachedEndOfLevel()) {
@@ -434,9 +424,7 @@ public class GameMode implements Screen {
 
         ///**  Draw Dash and Interactive HUD Elements **///
 
-		canvas.draw(dash,Color.WHITE,0,0,0,0,0,
-				(float)canvas.getWidth()/(float)dash.getWidth(),
-				0.33f*(float)canvas.getHeight()/(float)dash.getHeight());
+		gameplayController.getCar().drawDash(canvas);
 
 		// Vroom Stick
 		gameplayController.getVroomStick().draw(canvas);
@@ -514,6 +502,8 @@ public class GameMode implements Screen {
 			default:
 				break;
 		}
+
+		canvas.drawText("" + gameplayController.getCar().getShakeOffset(), displayFont, 100, 100);
 
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();

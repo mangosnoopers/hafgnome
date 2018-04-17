@@ -100,6 +100,8 @@ public class GameplayController {
 	private static final String GRASS_FILE = "images/grass.png";
 	/** The texture file for the exit */
 	private static final String EXIT_FILE = "images/exit.png";
+	/** The texture file for the dash */
+	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -134,6 +136,9 @@ public class GameplayController {
 	/** Textures for items **/
 	private Texture dvdTexture;
 	private Texture snackTexture;
+
+	/** Texture of the dash **/
+	private Texture dashTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -195,6 +200,8 @@ public class GameplayController {
 		assets.add(ROAD_FILE);
 		manager.load(EXIT_FILE, Texture.class);
 		assets.add(EXIT_FILE);
+		manager.load(DASH_FILE,Texture.class);
+		assets.add(DASH_FILE);
 	}
 
 	/**
@@ -228,6 +235,7 @@ public class GameplayController {
 		roadTexture = createTexture(manager, ROAD_FILE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
+		dashTexture = createTexture(manager, DASH_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -315,6 +323,7 @@ public class GameplayController {
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+		yonda.setDashTexture(dashTexture);
 
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
