@@ -21,6 +21,55 @@ public abstract class Image {
     /** Dimensions of the screen **/
     protected static Vector2 SCREEN_DIMENSIONS;
 
+    /** The maximimum amount of offset that is applied to
+     *  the drawing coordinates, for the "shake" effect */
+    protected float MAX_SHAKE_AMOUNT = 5;
+
+    /** The current offset that is applied to the dash drawing
+     *  coordinates, for the "shake" effect */
+    protected float currentShakeAmount = 0;
+
+    /** The current shake magnitude */
+    protected float currentShakeMagnitude = 0;
+
+    /** Whether or not the object is shaking from a collision */
+    protected boolean isShaking = false;
+
+    /** How quickly the shake ends, in range (0, 1)
+     *  smaller value => depletes more quickly */
+    protected float SHAKE_DEPLETION = 0.95f;
+
+    /** The sum of the deltas passed to every update call once a
+     *  shake begins */
+    protected float shakeDeltaSum = 0;
+
+    /** Update the shake amount based. */
+    protected void updateShake(float delta) {
+
+        if (isShaking) {
+            shakeDeltaSum += delta;
+            currentShakeMagnitude *= SHAKE_DEPLETION;
+
+            currentShakeAmount = currentShakeMagnitude  * ((float) Math.cos(30*shakeDeltaSum) - MAX_SHAKE_AMOUNT);
+            if (Math.abs(currentShakeMagnitude) < 0.001) {
+                isShaking = false;
+                currentShakeMagnitude = 0;
+                shakeDeltaSum = 0;
+            }
+
+        } else {
+            currentShakeAmount = 0;
+        }
+
+    }
+
+    /** Apply the shake to the particular image.  Inventory must override this,
+     *  because items should not shake if they are being dragged by the mouse. */
+    public void applyShake() {
+        currentShakeMagnitude = MAX_SHAKE_AMOUNT;
+        isShaking = true;
+        shakeDeltaSum = 0;
+    }
 
     public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);

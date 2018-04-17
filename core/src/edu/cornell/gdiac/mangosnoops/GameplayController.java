@@ -68,6 +68,7 @@ public class GameplayController {
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 
+	private ObjectSet<Image> hudObjects;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -320,6 +321,8 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+
+		hudObjects = new ObjectSet<Image>();
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
@@ -347,8 +350,14 @@ public class GameplayController {
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
 
-		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
+
+		// Add all HUD objects to hudObjects
+		hudObjects.add(vroomStick);
+		hudObjects.add(radio);
+		hudObjects.add(inventory);
+		hudObjects.add(rearviewEnemy);
+		hudObjects.add(wheel);
 
   }
 
@@ -522,6 +531,10 @@ public class GameplayController {
 			getCar().takeExit();
 		}
 
+		for (Image i : hudObjects) {
+			i.updateShake(delta);
+		}
+
 	}
 
 	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP also handles radio
@@ -665,5 +678,12 @@ public class GameplayController {
 		inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
+	}
+
+	public void shakeHUD() {
+		for (Image i : hudObjects) {
+			i.applyShake();
+		}
+
 	}
 }

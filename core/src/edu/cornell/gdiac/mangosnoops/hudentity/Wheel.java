@@ -58,7 +58,7 @@ public class Wheel extends Image {
         float ox = 0.5f * texture.getWidth();
         float oy = 0.5f * texture.getHeight();
 
-        canvas.draw(texture, Color.WHITE, ox, oy, position.x*canvas.getWidth(), position.y*canvas.getHeight(), ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
+        canvas.draw(texture, Color.WHITE, ox, oy, position.x*canvas.getWidth(), currentShakeAmount+position.y*canvas.getHeight(), ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
     }
 
     public String toString(){
