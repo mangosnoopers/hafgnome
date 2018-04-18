@@ -57,10 +57,6 @@ public class GameMode implements Screen {
 	private static String CLOUDS_FILE = "images/clouds.png";
 	/** The file for the sky image */
 	private static String SKY_FILE = "images/sky.png";
-	/** The file for the health gauge */
-	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
-	/** The file for the health gauge pointer */
-	private static final String HEALTH_POINTER_FILE = "images/DashHUD/pointer.png";
 	/** The file for the rear view mirror */
 	private static final String REARVIEW_MIRROR_FILE = "images/DashHUD/rearview.png";
 	/** Rearview mirror stuff */
@@ -84,10 +80,6 @@ public class GameMode implements Screen {
 	private Texture clouds;
 	/** Texture of the sky */
 	private Texture sky;
-	/** Texture of the health gauge */
-	private Texture healthGauge;
-	/** Texture of the health gauge's pointer */
-	private Texture healthPointer;
 	/** Texture of the rear view mirror */
 	private Texture rearviewBackground;
 	private Texture rearviewSeats;
@@ -148,11 +140,6 @@ public class GameMode implements Screen {
 		manager.load(CLOUDS_FILE, Texture.class);
 		// Load sky
 		manager.load(SKY_FILE, Texture.class);
-		// Load health gauge and pointer
-		manager.load(HEALTH_GAUGE_FILE, Texture.class);
-		assets.add(HEALTH_GAUGE_FILE);
-		manager.load(HEALTH_POINTER_FILE, Texture.class);
-		assets.add(HEALTH_POINTER_FILE);
 		// Load rear view stuff
 		manager.load(REARVIEW_BACKGROUND, Texture.class);
 		assets.add(REARVIEW_BACKGROUND);
@@ -205,14 +192,6 @@ public class GameMode implements Screen {
 
 		if (manager.isLoaded(SKY_FILE)) {
 			sky = manager.get(CLOUDS_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(HEALTH_GAUGE_FILE)) {
-			healthGauge = manager.get(HEALTH_GAUGE_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(HEALTH_POINTER_FILE)) {
-			healthPointer = manager.get(HEALTH_POINTER_FILE, Texture.class);
 		}
 
 		if (manager.isLoaded(REARVIEW_SEATS)) {
@@ -422,8 +401,7 @@ public class GameMode implements Screen {
 			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
 		}
 
-        ///**  Draw Dash and Interactive HUD Elements **///
-
+		///**  Draw Dash and Interactive HUD Elements **///
 		gameplayController.getCar().drawDash(canvas);
 
 		// Vroom Stick
@@ -437,14 +415,11 @@ public class GameMode implements Screen {
 
 
 		// Health gauge and pointer
-		Color gaugeTint = Color.WHITE;
-		if (gameplayController.getCar().getIsDamaged()) {
-			gaugeTint = Color.RED;
+		Color healthGaugeColor = Color.WHITE;
+        if (gameplayController.getCar().getIsDamaged()) {
+        	healthGaugeColor = Color.RED;
 		}
-		canvas.draw(healthGauge, gaugeTint, healthGauge.getWidth()*0.5f,healthGauge.getHeight()*0.5f,0.404f*canvas.getWidth(),0.098f*canvas.getHeight(),
-				0.0f,0.175f*((float)canvas.getHeight()/(float)healthGauge.getHeight()),0.175f*((float)canvas.getHeight()/(float)healthGauge.getHeight()));
-		canvas.draw(healthPointer, Color.WHITE, healthPointer.getWidth()*0.5f,0, 0.404f*canvas.getWidth(), 0.048f*canvas.getHeight(),
-				gameplayController.getCar().getHealthPointerAng(), 0.2f*((float)canvas.getHeight()/(float)healthPointer.getHeight()),0.065f*((float)canvas.getHeight()/(float)healthPointer.getHeight()));
+        gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
 
 
 		// FIXME: this is a mess
@@ -455,13 +430,6 @@ public class GameMode implements Screen {
 
 		// Draw Rearview Enenmy
 		gameplayController.getRearviewEnemy().draw(canvas);
-
-
-//		// Draw rearview mirror
-//		canvas.draw(rearviewMirror,Color.WHITE,rearviewMirror.getWidth()*0.5f,rearviewMirror.getHeight()*0.5f,
-//					0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-//				canvas.getHeight()/(rearviewMirror.getHeight()*3.5f),canvas.getHeight()/(rearviewMirror.getHeight()*3.5f));
-
 
 		// Draw rearview seats
 		canvas.draw(rearviewSeats,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,

@@ -14,7 +14,7 @@ public class Wheel extends Image {
     private static final float ANGLE_TO_LR = 7.0f;
 
 
-    public Wheel(float x, float y, float relSize, float cb, Texture tex) {
+    public Wheel(float x, float y, float relSize, float cb, Texture tex){
         super(x, y ,relSize, cb, tex);
     }
 
