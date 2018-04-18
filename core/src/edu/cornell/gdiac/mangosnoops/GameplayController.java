@@ -68,6 +68,8 @@ public class GameplayController {
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 
+	private Image healthGauge;
+
 	private ObjectSet<Image> hudObjects;
 
 	// Graphics assets for the entities
@@ -103,6 +105,10 @@ public class GameplayController {
 	private static final String EXIT_FILE = "images/exit.png";
 	/** The texture file for the dash */
 	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
+	/** The file for the health gauge */
+	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
+	/** The file for the health gauge pointer */
+	private static final String HEALTH_POINTER_FILE = "images/DashHUD/pointer.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -118,8 +124,6 @@ public class GameplayController {
 	/** Texture for the gnomes */
 	private Texture gnomeTexture;
 	private Texture rearviewGnomeTexture;
-	/** Texture for the radio */
-	private Texture radioTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
@@ -140,6 +144,10 @@ public class GameplayController {
 
 	/** Texture of the dash **/
 	private Texture dashTexture;
+	/** Texture of the health gauge */
+	private Texture healthGaugeTexture;
+	/** Texture of the health gauge's pointer */
+	private Texture healthPointerTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -203,6 +211,10 @@ public class GameplayController {
 		assets.add(EXIT_FILE);
 		manager.load(DASH_FILE,Texture.class);
 		assets.add(DASH_FILE);
+		manager.load(HEALTH_GAUGE_FILE, Texture.class);
+		assets.add(HEALTH_GAUGE_FILE);
+		manager.load(HEALTH_POINTER_FILE, Texture.class);
+		assets.add(HEALTH_POINTER_FILE);
 	}
 
 	/**
@@ -237,6 +249,8 @@ public class GameplayController {
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
 		dashTexture = createTexture(manager, DASH_FILE);
+		healthGaugeTexture = createTexture(manager, HEALTH_GAUGE_FILE);
+		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -262,6 +276,7 @@ public class GameplayController {
 		road = new Road(level.getLevelEndY());
 		ypos = 0.0f;
 		nextEvent = 0;
+
 	}
 
 	/**
@@ -302,6 +317,8 @@ public class GameplayController {
    */
 	public VroomStick getVroomStick() { return vroomStick; }
 
+	public Image getHealthGauge() { return healthGauge; }
+
 	/**
 	 * Returns a reference to the radio
 	 */
@@ -327,6 +344,10 @@ public class GameplayController {
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 		yonda.setDashTexture(dashTexture);
+		getCar().setGaugeTexture(healthGaugeTexture);
+		getCar().setGaugePointerTexture(healthPointerTexture);
+
+		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
 
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
@@ -358,6 +379,7 @@ public class GameplayController {
 		hudObjects.add(inventory);
 		hudObjects.add(rearviewEnemy);
 		hudObjects.add(wheel);
+		hudObjects.add(healthGauge);
 
   }
 

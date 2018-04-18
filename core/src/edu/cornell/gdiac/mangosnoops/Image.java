@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 
-public abstract class Image {
+public class Image {
 
     /** Texture center point relative to screen size
      *  i.e. (0.5f, 0.5f) would place asset in the middle of the screen */
@@ -43,7 +43,7 @@ public abstract class Image {
      *  shake begins */
     protected float shakeDeltaSum = 0;
 
-    /** Update the shake amount based. */
+    /** Update the shake amount. */
     protected void updateShake(float delta) {
 
         if (isShaking) {
@@ -103,13 +103,17 @@ public abstract class Image {
     }
 
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), position.y*canvas.getHeight(), 0,
+
+        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, 0,
                 relativeScale*canvas.getHeight(),
                 relativeScale*canvas.getHeight());
     }
 
     public void draw(GameCanvas canvas, Color tint) {
-        canvas.draw(texture, tint, 0, 0, position.x*canvas.getWidth(), position.y*canvas.getHeight(), 0,
+
+        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
+        canvas.draw(texture, tint, 0, 0, position.x*canvas.getWidth(), yWithOffset, 0,
                 relativeScale*canvas.getHeight(),
                 relativeScale*canvas.getHeight());
     }

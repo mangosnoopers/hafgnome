@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.Image;
 
-public class Inventory extends Image{
+public class Inventory extends Image {
 
     private static Item itemInHand;
 

@@ -61,8 +61,14 @@ public class Car extends RoadObject {
 
     private float displayAlpha = 1.0f;
 
-    /** The texture */
+    /** The texture of the dash */
     private Texture dashTexture;
+
+    /** The texture of the gauge */
+    private Texture gaugeTexture;
+
+    /** The texture of the gauge pointer */
+    private Texture gaugePointerTexture;
 
     /** The maximimum amount of offset that is applied to
      *  the dash drawing coordinates, for the "shake" effect */
@@ -152,6 +158,17 @@ public class Car extends RoadObject {
     public void setDashTexture(Texture t) {
         dashTexture = t;
     }
+
+    /** Set the texture of the health gauge to t. */
+    public void setGaugeTexture(Texture t) {
+        gaugeTexture = t;
+    }
+
+    /** Set the texture of the health gauge pointer to t. */
+    public void setGaugePointerTexture(Texture t) {
+        gaugePointerTexture = t;
+    }
+
 
     /**
      * Damage the car. Only has an effect if the car isn't already
