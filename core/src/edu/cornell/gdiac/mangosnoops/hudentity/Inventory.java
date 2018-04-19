@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.Image;
 
-public class Inventory extends Image{
+public class Inventory extends Image {
 
     private static Item itemInHand;
 
@@ -114,7 +114,7 @@ public class Inventory extends Image{
                 float ix = s.getSlotItem().getTexture().getWidth()*0.5f; //center of item
                 float iy = s.getSlotItem().getTexture().getHeight()*0.5f;
                 float x = s.realHitbox.getX() + 0.5f*s.realHitbox.getWidth(); //centerOfSlot, already in screen dimensions
-                float y = s.realHitbox.getY() + 0.5f*s.realHitbox.getHeight();
+                float y = s.realHitbox.getY() + 0.5f*s.realHitbox.getHeight() + currentShakeAmount;
 
                 for(int i=0; i<s.amount; i++) {
                     canvas.draw(s.getSlotItem().getTexture(), Color.WHITE, ix, iy, x-itemOffset*SCREEN_DIMENSIONS.x*i, y, 0,

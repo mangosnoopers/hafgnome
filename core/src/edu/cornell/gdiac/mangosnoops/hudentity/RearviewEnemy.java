@@ -73,7 +73,8 @@ public class RearviewEnemy extends Image {
         if (isDying || isAlive) {
             float ox = 0.5f * texture.getWidth();
             float oy = 0.5f * texture.getHeight();
-            canvas.draw(texture, Color.WHITE, ox, oy, position.x*SCREEN_DIMENSIONS.x, (position.y*SCREEN_DIMENSIONS.y + currentHeight), 0,
+            float drawY = position.y*SCREEN_DIMENSIONS.y + currentHeight + currentShakeAmount;
+            canvas.draw(texture, Color.WHITE, ox, oy, position.x*SCREEN_DIMENSIONS.x, drawY, 0,
                     relativeScale*canvas.getHeight(),
                     relativeScale*canvas.getHeight());
         }

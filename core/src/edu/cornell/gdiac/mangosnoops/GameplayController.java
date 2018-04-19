@@ -68,6 +68,12 @@ public class GameplayController {
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 
+	private Image healthGauge;
+	private Image rearviewBackground;
+	private Image rearviewSeats;
+	private Image rearviewCover;
+
+	private ObjectSet<Image> hudObjects;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -100,6 +106,16 @@ public class GameplayController {
 	private static final String GRASS_FILE = "images/grass.png";
 	/** The texture file for the exit */
 	private static final String EXIT_FILE = "images/exit.png";
+	/** The texture file for the dash */
+	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
+	/** The file for the health gauge */
+	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
+	/** The file for the health gauge pointer */
+	private static final String HEALTH_POINTER_FILE = "images/DashHUD/pointer.png";
+	/** Rearview mirror stuff */
+	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
+	private static final String REARVIEW_COVER = "images/rearview_cover.png";
+	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -115,8 +131,6 @@ public class GameplayController {
 	/** Texture for the gnomes */
 	private Texture gnomeTexture;
 	private Texture rearviewGnomeTexture;
-	/** Texture for the radio */
-	private Texture radioTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
@@ -134,6 +148,17 @@ public class GameplayController {
 	/** Textures for items **/
 	private Texture dvdTexture;
 	private Texture snackTexture;
+
+	/** Texture of the dash **/
+	private Texture dashTexture;
+	/** Texture of the health gauge */
+	private Texture healthGaugeTexture;
+	/** Texture of the health gauge's pointer */
+	private Texture healthPointerTexture;
+	/** Texture of the rear view mirror */
+	private Texture rearviewBackgroundTexture;
+	private Texture rearviewSeatsTexture;
+	private Texture rearviewCoverTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -195,6 +220,18 @@ public class GameplayController {
 		assets.add(ROAD_FILE);
 		manager.load(EXIT_FILE, Texture.class);
 		assets.add(EXIT_FILE);
+		manager.load(DASH_FILE,Texture.class);
+		assets.add(DASH_FILE);
+		manager.load(HEALTH_GAUGE_FILE, Texture.class);
+		assets.add(HEALTH_GAUGE_FILE);
+		manager.load(HEALTH_POINTER_FILE, Texture.class);
+		assets.add(HEALTH_POINTER_FILE);
+		manager.load(REARVIEW_BACKGROUND, Texture.class);
+		assets.add(REARVIEW_BACKGROUND);
+		manager.load(REARVIEW_COVER, Texture.class);
+		assets.add(REARVIEW_COVER);
+		manager.load(REARVIEW_SEATS, Texture.class);
+		assets.add(REARVIEW_SEATS);
 	}
 
 	/**
@@ -228,6 +265,12 @@ public class GameplayController {
 		roadTexture = createTexture(manager, ROAD_FILE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
+		dashTexture = createTexture(manager, DASH_FILE);
+		healthGaugeTexture = createTexture(manager, HEALTH_GAUGE_FILE);
+		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
+		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
+		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
+		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -253,6 +296,7 @@ public class GameplayController {
 		road = new Road(level.getLevelEndY());
 		ypos = 0.0f;
 		nextEvent = 0;
+
 	}
 
 	/**
@@ -293,6 +337,11 @@ public class GameplayController {
    */
 	public VroomStick getVroomStick() { return vroomStick; }
 
+	public Image getHealthGauge() { return healthGauge; }
+	public Image getRearviewBackground() { return rearviewBackground; }
+	public Image getRearviewSeats() { return rearviewSeats; }
+	public Image getRearviewCover() { return rearviewCover; }
+
 	/**
 	 * Returns a reference to the radio
 	 */
@@ -312,9 +361,19 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+
+		hudObjects = new ObjectSet<Image>();
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
 		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+		yonda.setDashTexture(dashTexture);
+		getCar().setGaugeTexture(healthGaugeTexture);
+		getCar().setGaugePointerTexture(healthPointerTexture);
+
+		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
+		rearviewBackground = new Image(0.63f, 0.71f, 0.3f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
 
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
@@ -338,8 +397,18 @@ public class GameplayController {
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
 
-		// Rearview enemy
 		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
+
+		// Add all HUD objects to hudObjects
+		hudObjects.add(vroomStick);
+		hudObjects.add(radio);
+		hudObjects.add(inventory);
+		hudObjects.add(rearviewEnemy);
+		hudObjects.add(wheel);
+		hudObjects.add(healthGauge);
+		hudObjects.add(rearviewBackground);
+		hudObjects.add(rearviewCover);
+		hudObjects.add(rearviewSeats);
 
   }
 
@@ -513,6 +582,10 @@ public class GameplayController {
 			getCar().takeExit();
 		}
 
+		for (Image i : hudObjects) {
+			i.updateShake(delta);
+		}
+
 	}
 
 	/** TODO: MAKE THIS NOT JANK IM JUST TRYING TO MAKE THE KIDS SLEEP also handles radio
@@ -656,5 +729,12 @@ public class GameplayController {
 		inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
+	}
+
+	public void shakeHUD() {
+		for (Image i : hudObjects) {
+			i.applyShake();
+		}
+
 	}
 }
