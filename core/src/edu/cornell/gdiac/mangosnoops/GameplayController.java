@@ -69,6 +69,9 @@ public class GameplayController {
 	private float ypos;
 
 	private Image healthGauge;
+	private Image rearviewBackground;
+	private Image rearviewSeats;
+	private Image rearviewCover;
 
 	private ObjectSet<Image> hudObjects;
 
@@ -109,6 +112,10 @@ public class GameplayController {
 	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
 	/** The file for the health gauge pointer */
 	private static final String HEALTH_POINTER_FILE = "images/DashHUD/pointer.png";
+	/** Rearview mirror stuff */
+	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
+	private static final String REARVIEW_COVER = "images/rearview_cover.png";
+	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -148,6 +155,10 @@ public class GameplayController {
 	private Texture healthGaugeTexture;
 	/** Texture of the health gauge's pointer */
 	private Texture healthPointerTexture;
+	/** Texture of the rear view mirror */
+	private Texture rearviewBackgroundTexture;
+	private Texture rearviewSeatsTexture;
+	private Texture rearviewCoverTexture;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -215,6 +226,12 @@ public class GameplayController {
 		assets.add(HEALTH_GAUGE_FILE);
 		manager.load(HEALTH_POINTER_FILE, Texture.class);
 		assets.add(HEALTH_POINTER_FILE);
+		manager.load(REARVIEW_BACKGROUND, Texture.class);
+		assets.add(REARVIEW_BACKGROUND);
+		manager.load(REARVIEW_COVER, Texture.class);
+		assets.add(REARVIEW_COVER);
+		manager.load(REARVIEW_SEATS, Texture.class);
+		assets.add(REARVIEW_SEATS);
 	}
 
 	/**
@@ -251,6 +268,9 @@ public class GameplayController {
 		dashTexture = createTexture(manager, DASH_FILE);
 		healthGaugeTexture = createTexture(manager, HEALTH_GAUGE_FILE);
 		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
+		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
+		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
+		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -318,6 +338,9 @@ public class GameplayController {
 	public VroomStick getVroomStick() { return vroomStick; }
 
 	public Image getHealthGauge() { return healthGauge; }
+	public Image getRearviewBackground() { return rearviewBackground; }
+	public Image getRearviewSeats() { return rearviewSeats; }
+	public Image getRearviewCover() { return rearviewCover; }
 
 	/**
 	 * Returns a reference to the radio
@@ -348,6 +371,9 @@ public class GameplayController {
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
+		rearviewBackground = new Image(0.63f, 0.71f, 0.3f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
 
 		for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
@@ -380,6 +406,9 @@ public class GameplayController {
 		hudObjects.add(rearviewEnemy);
 		hudObjects.add(wheel);
 		hudObjects.add(healthGauge);
+		hudObjects.add(rearviewBackground);
+		hudObjects.add(rearviewCover);
+		hudObjects.add(rearviewSeats);
 
   }
 
