@@ -10,23 +10,30 @@ import edu.cornell.gdiac.util.ScreenListener;
 public class RestStopMode implements Screen, InputProcessor {
     /** Assets TODO */
     private static final String BACKGROUND_FILE = "images/restStopAssets/background.png";
-//    private static final String SHELF_FILE = "images/restStopAssets/shelf.png";
+    private static final String SHELF_FILE = "images/restStopAssets/shelf.png";
 //    private static final String SNACK_FILE = "";
 //    private static final String MOVIE_FILE = "";
 //    private static final String BOOK_FILE = "";
 //    private static final String READY_BUTTON_FILE = "";
+//    private static final String SAVE_BUTTON_FILE = "";
+
     private Texture background;
-//    private Texture shelf;
+    private Texture shelf;
 //    private Texture snack;
 //    private Texture movie;
 //    private Texture book;
 //    private Texture readyButton;
+//    private Texture saveButton
 
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
-    /** Ready button is clicked when the player is ready to return to the road */
-    private int ready;
+    private static final int UNCLICKED = 0;
+    private static final int BUTTON_DOWN = 1;
+    private static final int BUTTON_UP = 2;
 
-    // TODO: items
+    /** Ready button is clicked when the player is ready to return to the road */
+    private int readyStatus;
+    private int saveStatus; // TODO
+    // TODO: item statuses (array)
 
     /** AssetManager to be loading in the background */
     private AssetManager manager;
@@ -66,6 +73,8 @@ public class RestStopMode implements Screen, InputProcessor {
     public void preLoadContent(AssetManager manager) {
         manager.load(BACKGROUND_FILE,Texture.class);
         assets.add(BACKGROUND_FILE);
+        manager.load(SHELF_FILE,Texture.class);
+        assets.add(SHELF_FILE);
         // TODO add others
     }
 
@@ -84,6 +93,12 @@ public class RestStopMode implements Screen, InputProcessor {
             background = manager.get(BACKGROUND_FILE, Texture.class);
             background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
+
+        if (manager.isLoaded(SHELF_FILE)) {
+            shelf = manager.get(SHELF_FILE, Texture.class);
+            shelf.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+
         // TODO add others
     }
 
@@ -108,6 +123,7 @@ public class RestStopMode implements Screen, InputProcessor {
         this.manager = manager;
 
         background = new Texture(BACKGROUND_FILE);
+        shelf = new Texture(SHELF_FILE);
         // TODO add others
 
         active = true;
@@ -162,7 +178,7 @@ public class RestStopMode implements Screen, InputProcessor {
             update(delta);
             draw();
 
-            if (ready == 2 && listener != null) {
+            if (readyStatus == BUTTON_UP && listener != null) {
                 listener.exitScreen(this,0);
             }
         }
@@ -230,7 +246,7 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return whether the input was processed (whether to hand the event to other listeners)
      */
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
-        if (ready == 2) {
+        if (readyStatus == BUTTON_UP) {
             return true;
         }
 
@@ -244,52 +260,71 @@ public class RestStopMode implements Screen, InputProcessor {
         float distX = (screenX-(centerX-OFFSET_X))*(screenX-(centerX-OFFSET_X));
         float distY = (screenY-(centerY+OFFSET_Y))*(screenY-(centerY+OFFSET_Y));
         if (distX < radius*radius && distY < radius*radius) {
-            ready  = 1;
+            readyStatus = BUTTON_DOWN;
         }
 
         // TODO: also check for items on shelf
 
         return false;
-
     }
 
     /** Called when a finger was lifted or a mouse button was released. The button parameter will be {@link Input.Buttons#LEFT} on iOS.
      * @param pointer the pointer for the event.
      * @param button the button
      * @return whether the input was processed */
-    public boolean touchUp (int screenX, int screenY, int pointer, int button) {}
+    public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+        if (readyStatus == BUTTON_DOWN) {
+            readyStatus = BUTTON_UP;
+            return false;
+        }
+        return true;
+    }
 
-    /** Called when a finger or the mouse was dragged.
+    // UNSUPPORTED
+
+    /** Called when a finger or the mouse was dragged -- UNSUPPORTED
      * @param pointer the pointer for the event.
      * @return whether the input was processed */
-    public boolean touchDragged (int screenX, int screenY, int pointer) {}
+    public boolean touchDragged (int screenX, int screenY, int pointer) {
+        return true;
+    }
 
-    /** Called when a key was pressed
+    /** Called when a key was pressed -- UNSUPPORTED
      *
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
-    public boolean keyDown (int keycode) {}
+    public boolean keyDown (int keycode) {
+        return true;
+    }
 
-    /** Called when a key was released
+    /** Called when a key was released -- UNSUPPORTED
      *
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
-    public boolean keyUp (int keycode) {}
+    public boolean keyUp (int keycode) {
+        return true;
+    }
 
-    /** Called when a key was typed
+    /** Called when a key was typed -- UNSUPPORTED
      *
      * @param character The character
      * @return whether the input was processed */
-    public boolean keyTyped (char character) {}
+    public boolean keyTyped (char character) {
+        return true;
+    }
 
-
-    /** Called when the mouse was moved without any buttons being pressed. Will not be called on iOS.
+    /** Called when the mouse was moved without any buttons being pressed. -- UNSUPPORTED
+     * Will not be called on iOS.
      * @return whether the input was processed */
-    public boolean mouseMoved (int screenX, int screenY) {}
+    public boolean mouseMoved (int screenX, int screenY) {
+        return true;
+    }
 
-    /** Called when the mouse wheel was scrolled. Will not be called on iOS.
+    /** Called when the mouse wheel was scrolled. Will not be called on iOS. -- UNSUPPORTED
      * @param amount the scroll amount, -1 or 1 depending on the direction the wheel was scrolled.
      * @return whether the input was processed. */
-    public boolean scrolled (int amount) {}
+    public boolean scrolled (int amount) {
+        return true;
+    }
 
 }
