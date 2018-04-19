@@ -498,7 +498,10 @@ public class GameplayController {
 					case REAR_ENEMY:
 						rearviewEnemy.create();
 						break;
-					case SUN:
+					case SUN_START:
+						// TODO
+						break;
+					case SUN_END:
 						// TODO
 						break;
 					case NED_WAKES_UP:
