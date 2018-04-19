@@ -353,8 +353,10 @@ public class LevelObject {
             String eventStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toLowerCase();
             if (eventStr.equals("rear enemy")) {
                 events.add(new Event(y, Event.EventType.REAR_ENEMY));
-            } else if (eventStr.equals("sun")) {
-                events.add(new Event(y, Event.EventType.SUN));
+            } else if (eventStr.equals("sun start")) {
+                events.add(new Event(y, Event.EventType.SUN_START));
+            } else if (eventStr.equals("sun end")) {
+                events.add(new Event(y, Event.EventType.SUN_END));
             } else if (eventStr.equals("ned wakes up")) {
                 events.add(new Event(y, Event.EventType.NED_WAKES_UP));
             } else if (eventStr.equals("nosh wakes up")) {
