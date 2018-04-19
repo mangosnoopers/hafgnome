@@ -101,7 +101,7 @@ public class InputController {
             dx = Gdx.input.getDeltaX();
             dy = Gdx.input.getDeltaY();
 			//System.out.println(mouseClicked);
-            //System.out.println("Mouse at: "+ clickPos);
+            System.out.println("Mouse at: "+ clickPos);
         } else {
             clickPos = null;
         }

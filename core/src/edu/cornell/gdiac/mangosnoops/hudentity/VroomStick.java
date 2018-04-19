@@ -41,7 +41,9 @@ public class VroomStick extends Image {
             return;
         }
 
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), position.y*canvas.getHeight(),
+        float drawY = position.y * canvas.getHeight() + currentShakeAmount;
+
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), drawY,
                         ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
     }
 
@@ -73,8 +75,6 @@ public class VroomStick extends Image {
                                  position.y*SCREEN_DIMENSIONS.y + 0.652f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale);
         }
     }
-
-
 
     public boolean isEngaged() { return engaged; }
 

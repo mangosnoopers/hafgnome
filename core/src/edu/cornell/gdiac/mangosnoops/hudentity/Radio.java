@@ -163,7 +163,9 @@ public class Radio extends Image {
         float oxk = 0.5f * texture.getWidth();
         float oyk = 0.5f * texture.getHeight();
 
-        canvas.draw(texture, Color.WHITE, oxk, oyk, position.x * canvas.getWidth(), position.y * canvas.getHeight(), knobAng,
+        float drawY = position.y * canvas.getHeight() + currentShakeAmount;
+
+        canvas.draw(texture, Color.WHITE, oxk, oyk, position.x * canvas.getWidth(), drawY, knobAng,
                 relativeScale * canvas.getHeight(), relativeScale * canvas.getHeight());
 
         canvas.drawText(getCurrentStationName(), displayFont, 0.75f * canvas.getWidth(), 0.2f * canvas.getHeight());
