@@ -124,12 +124,12 @@ public class CollisionController {
 				c.damage();
 				c.shakeCar();
 				controller.shakeHUD();
+				c.getNed().setMood(Child.Mood.SAD);
+				c.getNosh().setMood(Child.Mood.SAD);
 				g.setDestroyed(true);
 
 				if (c.getHealth() == 0)
 					c.setDestroyed(true);
-
-
 			}
 
 //		}
