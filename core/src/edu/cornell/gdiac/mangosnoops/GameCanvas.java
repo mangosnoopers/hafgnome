@@ -21,6 +21,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.g3d.decals.SimpleOrthoGroupStrategy;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
@@ -97,6 +98,9 @@ public class GameCanvas {
 		camera.near = 0.0001f;
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
+
+		Gdx.gl20.glDepthMask(false);
+		Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
 	}
 
@@ -621,15 +625,15 @@ public class GameCanvas {
 	public void drawRoadObject(Texture t, float x, float y, float z, float width, float height, float xRotationAngle, float yRotationAngle) {
 		camera.update();
 		//System.out.println(t);
-		Decal objectDecal = Decal.newDecal(width, height, new TextureRegion(t));
+		Decal objectDecal = Decal.newDecal(width, height, new TextureRegion(t), true);
 		objectDecal.setPosition(x, y, z);
-		objectDecal.setBlending(1, 0	);
 		objectDecal.rotateX(xRotationAngle);
 		objectDecal.rotateY(yRotationAngle);
 		batch.add(objectDecal);
 	}
 
 	public void drawWorld() {
+		Gdx.gl20.glDepthMask(false);
 		batch.flush();
 	}
 

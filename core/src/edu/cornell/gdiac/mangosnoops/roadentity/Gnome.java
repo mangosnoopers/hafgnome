@@ -25,6 +25,12 @@ public class Gnome extends RoadObject{
     /** speed of road */
     private float currSpeed;
 
+    /** gnome width */
+    private static final float GNOME_WIDTH = 0.65f;
+
+    /** gnome height */
+    private static final float GNOME_HEIGHT = 0.23f;
+
     /** speed of gnome relative to road, FIXME: change this prob */
     private float gnomeSpeed = 2f;
 
@@ -118,7 +124,7 @@ public class Gnome extends RoadObject{
     }
 
     public void draw(GameCanvas canvas) {
-        canvas.drawRoadObject(getTexture(), getX(), getY(), GNOME_HOVER_DISTANCE, 0.08f, 0.1f, 90, 0);
+        canvas.drawRoadObject(getTexture(), getX(), getY(), GNOME_HOVER_DISTANCE,GNOME_WIDTH, GNOME_HEIGHT, 90, 0);
     }
 
     public void setSpeed (float s) {
