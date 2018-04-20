@@ -94,12 +94,11 @@ public class Image {
      *
      *  @param p the vector giving the mouse's (x,y) screen coordinates
      */
-    protected boolean inArea(Vector2 p) {
-
-        return ((p.x > position.x*SCREEN_DIMENSIONS.x - (0.5*(float)texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
-                && (p.x < position.x*SCREEN_DIMENSIONS.x + (0.5*(float)texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
-                && (SCREEN_DIMENSIONS.y - p.y > position.y*SCREEN_DIMENSIONS.y - 0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y)
-                && (SCREEN_DIMENSIONS.y - p.y < position.y*SCREEN_DIMENSIONS.y + 0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y));
+    public boolean inArea(Vector2 p) {
+        return ((p.x > position.x*SCREEN_DIMENSIONS.x - (0.5f*texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
+                && (p.x < position.x*SCREEN_DIMENSIONS.x + (0.5f*texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
+                && (SCREEN_DIMENSIONS.y - p.y > position.y*SCREEN_DIMENSIONS.y - (0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
+                && (SCREEN_DIMENSIONS.y - p.y < position.y*SCREEN_DIMENSIONS.y + (0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer)));
     }
 
     public void draw(GameCanvas canvas) {
