@@ -16,7 +16,7 @@ public class Child {
 
     private Vector2 pos;
     private ObjectMap<Mood,Texture> childTextures;
-    private static final int SLACK = 30; //pixel leeway in inChildArea TODO maybe remove
+    private static final int SLACK = 50; //pixel leeway in inChildArea TODO maybe remove
 
     private boolean gettingSad; //is gradually getting happier
     private boolean gettingHappy; //is gradually getting sadder
@@ -263,6 +263,8 @@ public class Child {
             }
 
         }
+
+
     }
 
 

@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.Image;
 
-public class Inventory extends Image{
+public class Inventory extends Image {
 
     private static Item itemInHand;
 
@@ -73,16 +73,15 @@ public class Inventory extends Image{
         return null;
     }
 
-    boolean prevMousePressed;
+    public void setItemInHandPosition(Vector2 in){
+        itemInHandPosition = in;
+    }
+//    boolean prevMousePressed;
     public void update(Vector2 in, boolean mousePressed){
-        //System.out.println(itemInHand);
         for(Slot s : slots) {
-            s.setRealHitbox(new Rectangle(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y,
-                    s.getHitbox().getWidth() * SCREEN_DIMENSIONS.x, s.getHitbox().getHeight() * SCREEN_DIMENSIONS.y));
+            s.realHitbox.setPosition(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y);
+            s.realHitbox.setSize(s.getHitbox().getWidth() * SCREEN_DIMENSIONS.x,s.getHitbox().getHeight() * SCREEN_DIMENSIONS.y);
         }
-
-        //System.out.println("Inventory at: " + this.position.x*SCREEN_DIMENSIONS.x +" " + this.position.y*SCREEN_DIMENSIONS.y);
-
         if(in != null) {
             if (itemInHand == null && inArea(in)) {
                 itemInHand = take(slotInArea(in));
@@ -91,16 +90,21 @@ public class Inventory extends Image{
                 itemInHandPosition = new Vector2(in.x, SCREEN_DIMENSIONS.y - in.y);
             }
         }
-        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
-            //released mouse, check areas w/ this vector in (store, children, dvd player)
-            cancelTake();
 
-        }
-        prevMousePressed = mousePressed;
+//        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
+//            //released mouse, check areas w/ this vector in (store, children, dvd player)
+//            cancelTake();
+//
+//        }
+
     }
 
-    public void setItemInHand(Item itemInHand) {
-        this.itemInHand = itemInHand;
+    public Item getItemInHand() {
+        return itemInHand;
+    }
+
+    public void setItemInHand(Item i){
+        itemInHand = i;
     }
 
     @Override
@@ -110,7 +114,7 @@ public class Inventory extends Image{
                 float ix = s.getSlotItem().getTexture().getWidth()*0.5f; //center of item
                 float iy = s.getSlotItem().getTexture().getHeight()*0.5f;
                 float x = s.realHitbox.getX() + 0.5f*s.realHitbox.getWidth(); //centerOfSlot, already in screen dimensions
-                float y = s.realHitbox.getY() + 0.5f*s.realHitbox.getHeight();
+                float y = s.realHitbox.getY() + 0.5f*s.realHitbox.getHeight() + currentShakeAmount;
 
                 for(int i=0; i<s.amount; i++) {
                     canvas.draw(s.getSlotItem().getTexture(), Color.WHITE, ix, iy, x-itemOffset*SCREEN_DIMENSIONS.x*i, y, 0,
@@ -127,7 +131,7 @@ public class Inventory extends Image{
 
     /** Returns the item in this slot, removing 1 from its stored amount, if doing so depletes all items in the slot, the slot is
      * made empty (null slotItem, amount of 0).
-     * // TODO Also saves state of slot previous to action, in case action is canceled.
+     * Also saves state of slot previous to action, in case action is canceled.
      * @return slot's Item
      */
     public Item take(Slot s){
@@ -161,8 +165,7 @@ public class Inventory extends Image{
         }
     }
 
-    private void cancelTake(){
-        System.out.println("Canceelling Take");
+    public void cancelTake(){
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
         lastSlotTakenFrom.amount = lastSlotTakenFromState.amount;
         lastSlotTakenFrom = null;
@@ -223,6 +226,10 @@ public class Inventory extends Image{
 
         public Rectangle getHitbox() {
             return hitbox;
+        }
+
+        public Rectangle getRealHitbox() {
+            return realHitbox;
         }
 
         public void setRealHitbox(Rectangle rhitbox) {
