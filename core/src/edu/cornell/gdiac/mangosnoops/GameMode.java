@@ -397,10 +397,8 @@ public class GameMode implements Screen {
 		gameplayController.getRearviewSeats().draw(canvas);
 		gameplayController.getRearviewCover().draw(canvas);
 		// Draw Ned and Nosh
-        /*
-		gameplayController.getCar().getNosh().draw(canvas, rearviewBackground);
-		gameplayController.getCar().getNed().draw(canvas, rearviewBackground);
-		*/
+		gameplayController.getCar().getNosh().draw(canvas);
+		gameplayController.getCar().getNed().draw(canvas);
 
         /*
 		// Draw rearview background

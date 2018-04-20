@@ -21,6 +21,7 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
+import edu.cornell.gdiac.util.FilmStrip;
 
 
 import java.util.Random;
@@ -134,17 +136,17 @@ public class GameplayController {
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
-	private Texture nosh_happy;
-	private Texture nosh_neutral;
-	private Texture nosh_sad;
-	private Texture nosh_critical;
-	private Texture nosh_sleep;
+	private FilmStrip nosh_happy;
+	private FilmStrip nosh_neutral;
+	private FilmStrip nosh_sad;
+	private FilmStrip nosh_critical;
+	private FilmStrip nosh_sleep;
 	/** Textures for ned */
-	private Texture ned_happy;
-	private Texture ned_neutral;
-	private Texture ned_sad;
-	private Texture ned_critical;
-	private Texture ned_sleep;
+	private FilmStrip ned_happy;
+	private FilmStrip ned_neutral;
+	private FilmStrip ned_sad;
+	private FilmStrip ned_critical;
+	private FilmStrip ned_sleep;
 	/** Textures for items **/
 	private Texture dvdTexture;
 	private Texture snackTexture;
@@ -250,16 +252,16 @@ public class GameplayController {
 		gnomeTexture = createTexture(manager, GNOME_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
-		nosh_happy = createTexture(manager,NOSH_HAPPY_FILE);
-		nosh_neutral = createTexture(manager,NOSH_NEUTRAL_FILE);
-		nosh_sad = createTexture(manager, NOSH_SAD_FILE);
-		nosh_critical = createTexture(manager, NOSH_CRITICAL_FILE);
-		nosh_sleep= createTexture(manager, NOSH_SLEEP_FILE);
-		ned_happy = createTexture(manager,NED_HAPPY_FILE);
-		ned_neutral = createTexture(manager,NED_NEUTRAL_FILE);
-		ned_sad = createTexture(manager, NED_SAD_FILE);
-		ned_critical = createTexture(manager, NED_CRITICAL_FILE);
-		ned_sleep = createTexture(manager, NED_SLEEP_FILE);
+		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 1);
+		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 1);
+		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
+		nosh_critical = new FilmStrip(createTexture(manager, NOSH_CRITICAL_FILE), 1, 1);
+		nosh_sleep= new FilmStrip(createTexture(manager, NOSH_SLEEP_FILE), 1, 1);
+		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 1, 1);
+		ned_neutral = new FilmStrip(createTexture(manager,NED_NEUTRAL_FILE), 1, 1);
+		ned_sad = new FilmStrip(createTexture(manager, NED_SAD_FILE), 1, 1);
+		ned_critical = new FilmStrip(createTexture(manager, NED_CRITICAL_FILE), 1, 1);
+		ned_sleep = new FilmStrip(createTexture(manager, NED_SLEEP_FILE), 1, 1);
 		dvdTexture = createTexture(manager,DVD_FILE);
 		snackTexture = createTexture(manager,SNACK_FILE);
 		roadTexture = createTexture(manager, ROAD_FILE);
@@ -271,6 +273,7 @@ public class GameplayController {
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
 		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
+
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -364,8 +367,8 @@ public class GameplayController {
 
 		hudObjects = new ObjectSet<Image>();
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
-		yonda.getNosh().setChildTextures(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
-		yonda.getNed().setChildTextures(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
+		yonda.getNed().setChildFilmStrips(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 		yonda.setDashTexture(dashTexture);
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
