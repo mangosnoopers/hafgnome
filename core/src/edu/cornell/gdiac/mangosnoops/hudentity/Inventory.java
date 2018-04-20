@@ -24,7 +24,9 @@ public class Inventory extends Image {
 
     private Vector2 slotsDimensions;
 
-    private final float itemOffset = 0.01f;
+    private float itemOffset = 0.01f;
+
+    public void setItemOffset(float f) { itemOffset = f; }
 
     public Inventory(float x_left, float y_bottom, float r, float cb, Texture t, float slotWidth, float slotHeight, int numSlots) {
         super(x_left, y_bottom, r, cb, t);
