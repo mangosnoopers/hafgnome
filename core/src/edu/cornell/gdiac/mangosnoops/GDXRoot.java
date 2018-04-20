@@ -98,7 +98,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = null;
 	
 		// Unload all of the resources
-		playing.unloadContent(manager);
 		manager.clear();
 		manager.dispose();
 		super.dispose();
@@ -156,6 +155,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			setScreen(reststop);
 
 			playing.dispose();
+			playing.unloadContent(manager); // TODO move this perhaps
 			playing = null;
 		} else if (screen == reststop) {
 			playing.setScreenListener(this);

@@ -48,7 +48,8 @@ public class Inventory extends Image {
     public void load(Array<Slot> inv){
         if(inv.size < slots.size){
             for(int i=0; i<(slots.size-inv.size); i++){
-                inv.add(new Slot(inv, this, null, 0));
+//                inv.add(new Slot(inv, this, null, 0));
+                inv.add(null);
             }
         }
         if(inv.size > slots.size){
@@ -202,7 +203,7 @@ public class Inventory extends Image {
             this.invPos = s.invPos;
             this.slotItem = s.slotItem;
             this.amount = s.amount;
-            this. hitbox = s. hitbox;
+            this.hitbox = s.hitbox;
             this.realHitbox = s.realHitbox;
         }
 
@@ -270,7 +271,7 @@ public class Inventory extends Image {
             relativeScale = relativeScales.get(itemType);
         }
 
-        public Item (ItemType itemType){
+        public Item (ItemType itemType) {
             position = null;
             this.itemType = itemType;
             texture = itemTextures.get(itemType);
