@@ -53,6 +53,8 @@ public class GameplayController {
 	private Radio radio;
 	/** Inventory */
 	private Inventory inventory;
+	/** Visor */
+    private Visor visor;
 	/** Contains location for the previous click, used for debouncing */
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
@@ -69,13 +71,15 @@ public class GameplayController {
 	private RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
-
+	
 	private Image healthGauge;
 	private Image rearviewBackground;
 	private Image rearviewSeats;
 	private Image rearviewCover;
 
 	private ObjectSet<Image> hudObjects;
+	/** If there is sun shining right now */
+	public boolean sunShine;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -102,6 +106,9 @@ public class GameplayController {
 	/** The texture files for all Items **/
 	private static final String DVD_FILE = "images/Items/dvd.png";
 	private static final String SNACK_FILE = "images/Items/snack.png";
+	/** The texture files for the visor states */
+    private static final String VISOR_OPEN_FILE = "images/visor_open.png";
+    private static final String VISOR_CLOSED_FILE = "images/visor_closed.png";
 	/** The texture file for the road */
 	private static final String ROAD_FILE = "images/road.png";
 	/** The texture file for the grass */
@@ -150,6 +157,9 @@ public class GameplayController {
 	/** Textures for items **/
 	private Texture dvdTexture;
 	private Texture snackTexture;
+	/** Textures for visor states */
+	private Texture visorOpen;
+	private Texture visorClosed;
 
 	/** Texture of the dash **/
 	private Texture dashTexture;
@@ -234,6 +244,10 @@ public class GameplayController {
 		assets.add(REARVIEW_COVER);
 		manager.load(REARVIEW_SEATS, Texture.class);
 		assets.add(REARVIEW_SEATS);
+        manager.load(VISOR_OPEN_FILE, Texture.class);
+        assets.add(VISOR_OPEN_FILE);
+        manager.load(VISOR_CLOSED_FILE, Texture.class);
+        assets.add(VISOR_OPEN_FILE);
 	}
 
 	/**
@@ -273,7 +287,8 @@ public class GameplayController {
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
 		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
-
+        visorOpen = createTexture(manager, VISOR_OPEN_FILE);
+        visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -299,7 +314,7 @@ public class GameplayController {
 		road = new Road(level.getLevelEndY());
 		ypos = 0.0f;
 		nextEvent = 0;
-
+		sunShine = false;
 	}
 
 	/**
@@ -355,6 +370,11 @@ public class GameplayController {
 	 */
 	public Inventory getInventory(){ return inventory; }
 
+    /**
+     * Returns a reference to the visor
+     */
+    public Visor getVisor(){ return visor; }
+
 	/**
 	 * Starts a new game.
 	 *
@@ -364,8 +384,8 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-
 		hudObjects = new ObjectSet<Image>();
+        sunShine = false;
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildFilmStrips(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
@@ -395,6 +415,7 @@ public class GameplayController {
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
 		inventory.load(i);
+		visor = new Visor(visorOpen, visorClosed);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
@@ -502,10 +523,10 @@ public class GameplayController {
 						rearviewEnemy.create();
 						break;
 					case SUN_START:
-						// TODO
+						sunShine = true;
 						break;
 					case SUN_END:
-						// TODO
+						sunShine = false;
 						break;
 					case NED_WAKES_UP:
 						if (!ned.isAwake()) {
@@ -525,6 +546,7 @@ public class GameplayController {
 					default:
 						break;
 				}
+				nextEvent++;
 			}
 		}
 	}
@@ -555,6 +577,7 @@ public class GameplayController {
 			vroomStick.update(new Vector2(in), dr.y);
 			radio.update(new Vector2(in), dr.x);
 			inventory.update(new Vector2(in), mousePressed);
+			visor.update(new Vector2(in), input.isPrevMousePressed());
 		}
 		else{
 			wheel.update(null, dr.x);
