@@ -43,7 +43,7 @@ public class CollisionController {
 	/** A factor to determine the gnome is close enough for Ned to shoot. */
 	private static final float GNOME_INRANGE = -9.0f;
 	/** A factor to determine the gnome and car have collided. */
-	private static final float HIT_RANGE = 0.05f;
+	private static final float HIT_RANGE = 0.15f;
 
 	// These cannot be modified after the controller is constructed.
 	// If these change, make a new constructor.
@@ -120,7 +120,7 @@ public class CollisionController {
 //		}
 //
 //		else {
-			if (g.getY() < -10 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
+			if (g.getY() < -10 && g.getY() > -10.5 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
 				c.damage();
 				c.shakeCar();
 				controller.shakeHUD();

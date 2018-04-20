@@ -44,7 +44,7 @@ public class Child {
     private float animationFrame;
 
     /** How many animation frames there are */
-    private static final int NUM_ANIMATION_FRAMES = 20;
+    private static final int NUM_ANIMATION_FRAMES = 19;
 
     /** The current FilmStrip */
     private FilmStrip currentFilmStrip;
@@ -257,7 +257,9 @@ public class Child {
         }
 
         currentFilmStrip = childTextures.get(getCurrentMood());
-        currentFilmStrip.setFrame((int) animationFrame);
+        /* FIXME: fix me */
+        // currentFilmStrip.setFrame((int) animationFrame);
+        currentFilmStrip.setFrame(0);
         float ox = 0.5f* currentFilmStrip.getRegionWidth();
         float oy = currentFilmStrip.getRegionHeight();
 
