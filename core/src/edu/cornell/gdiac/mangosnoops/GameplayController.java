@@ -546,7 +546,7 @@ public class GameplayController {
 					default:
 						break;
 				}
-				events.removeIndex(nextEvent);
+				nextEvent++;
 			}
 		}
 	}
