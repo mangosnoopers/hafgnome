@@ -257,7 +257,7 @@ public class GameplayController {
 		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
 		nosh_critical = new FilmStrip(createTexture(manager, NOSH_CRITICAL_FILE), 1, 1);
 		nosh_sleep= new FilmStrip(createTexture(manager, NOSH_SLEEP_FILE), 1, 1);
-		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 1, 1);
+		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 4, 5);
 		ned_neutral = new FilmStrip(createTexture(manager,NED_NEUTRAL_FILE), 1, 1);
 		ned_sad = new FilmStrip(createTexture(manager, NED_SAD_FILE), 1, 1);
 		ned_critical = new FilmStrip(createTexture(manager, NED_CRITICAL_FILE), 1, 1);
