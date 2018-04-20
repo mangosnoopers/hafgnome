@@ -330,7 +330,6 @@ public class StartMenuMode implements Screen, InputProcessor {
      * The ScreenListener will respond to requests to quit.
      */
     public void setScreenListener(ScreenListener listener) {
-
         this.listener = listener;
         menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
         menuSong.play();

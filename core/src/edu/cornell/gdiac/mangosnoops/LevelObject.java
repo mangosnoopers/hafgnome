@@ -346,7 +346,7 @@ public class LevelObject {
         // Iterate through cells until "END" is reached in first column
         int roadCurrRow = ROAD_START_ROW;
         while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
-            // Convert miles into the y-coordinate for this block
+            // Convert miles intor the y-coordinate for this block
             float y = localMiles * MILES_TO_PIXELS;
 
             // Read the events column - first column of the block
