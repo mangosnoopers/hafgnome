@@ -93,7 +93,7 @@ public class InputController {
 	 */
 	public void readInput() {
 		prevMouseClicked = mouseClicked;
-		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
+		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R)) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
         if (mouseClicked) {
