@@ -361,8 +361,10 @@ public class GameMode implements Screen {
 		canvas.beginHUDDrawing();
 
 		// Clouds
+		/*
 		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
 				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
+				*/
 
 		// Draw speech bubbles, if necessary
 
