@@ -35,6 +35,8 @@ public class InputController {
 	protected boolean exitPressed;
 	/** Whether the left mouse button was clicked. */
 	private boolean mouseClicked;
+	/**Last recorded state of the mouse button **/
+	private boolean prevMouseClicked;
     /** Vector location of click */
     private Vector2 clickPos;
     /** Change in x of the input */
@@ -49,23 +51,21 @@ public class InputController {
     }
 
 	/**
-	 * Returns the change in x of the input.
+	 * @return the change in x of the input.
 	 */
 	public float getDX() { return dx; }
 
 	/**
-	 * Returns the change in x of the input.
+	 * @return the change in x of the input.
 	 */
 	public float getDY() { return dy; }
 
 	/**
-	 * Returns the current mouse position.
+	 * @return The current mouse position
 	 */
 	public Vector2 getClickPos() { return clickPos; }
 
 	/**
-	 * Returns true if the reset button was pressed.
-	 *
 	 * @return true if the reset button was pressed.
 	 */
 	public boolean didReset() {
@@ -73,8 +73,6 @@ public class InputController {
 	}
 
 	/**
-	 * Returns true if the exit button was pressed.
-	 *
 	 * @return true if the exit button was pressed.
 	 */
 	public boolean didExit() {
@@ -82,14 +80,19 @@ public class InputController {
 	}
 
 	/**
-	 * Returns true if left click is being pressed
 	 * @return true if left click is being pressed
 	 */
-	public boolean mousePressed() { return mouseClicked; }
+	public boolean isMousePressed() { return mouseClicked; }
+
+	/**
+	 * @return true if the mouse was clicked on the last recorded instance
+	 */
+	public boolean isPrevMousePressed(){ return prevMouseClicked; }
 	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
+		prevMouseClicked = mouseClicked;
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R));
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
@@ -98,7 +101,7 @@ public class InputController {
             dx = Gdx.input.getDeltaX();
             dy = Gdx.input.getDeltaY();
 			//System.out.println(mouseClicked);
-            //System.out.println("Mouse at: "+ clickPos);
+            System.out.println("Mouse at: "+ clickPos);
         } else {
             clickPos = null;
         }
