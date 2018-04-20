@@ -60,6 +60,18 @@ public class GameMode implements Screen {
 	private static String SKY_FILE = "images/sky.png";
 	/** The file for the rear view mirror */
 	private static final String REARVIEW_MIRROR_FILE = "images/DashHUD/rearview.png";
+	/** Rearview mirror stuff */
+	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
+	private static final String REARVIEW_COVER = "images/rearview_cover.png";
+	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
+	/** Death Screen */
+	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
+
+	/** Sun effect that will be overlayed */
+	private static final String SUN_FILE = "images/sun_1.jpg";
+	private static final String SUN2_FILE = "images/sun_2.jpg";
+	private static final String SUN3_FILE = "images/sun_3.png";
+	private static final String WHITE_FILE = "images/white.png";
 
 	/** The file for the angry speech bubble */
 	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
@@ -77,6 +89,15 @@ public class GameMode implements Screen {
 	private Texture clouds;
 	/** Texture of the sky */
 	private Texture sky;
+	/** Texture of the dash **/
+	private Texture dash;
+	/** Death Screen */
+	private Texture deathModule;
+	/** Texture of sun effect */
+	private Texture sun;
+	private Texture sun2;
+	private Texture sun3;
+	private Texture white;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
 	/** Counter for the game */
@@ -134,6 +155,18 @@ public class GameMode implements Screen {
 		// Load speech bubble
 		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
 		assets.add(SPEECH_BUBBLE_FILE);
+		// Load death module
+		manager.load(DEATH_MODULE_FILE, Texture.class);
+		assets.add(DEATH_MODULE_FILE);
+		// Load sun effect
+		manager.load(SUN_FILE, Texture.class);
+		assets.add(SUN_FILE);
+		manager.load(SUN2_FILE, Texture.class);
+		assets.add(SUN2_FILE);
+		manager.load(SUN3_FILE, Texture.class);
+		assets.add(SUN3_FILE);
+		manager.load(WHITE_FILE, Texture.class);
+		assets.add(WHITE_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -180,6 +213,25 @@ public class GameMode implements Screen {
 
 		if (manager.isLoaded(SPEECH_BUBBLE_FILE)) {
 			speechBubble = manager.get(SPEECH_BUBBLE_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(DEATH_MODULE_FILE)) {
+			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(SUN_FILE)) {
+			sun = manager.get(SUN_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(SUN2_FILE)) {
+			sun2 = manager.get(SUN2_FILE, Texture.class);
+		}
+		if (manager.isLoaded(SUN3_FILE)) {
+			sun3 = manager.get(SUN3_FILE, Texture.class);
+		}
+
+		if (manager.isLoaded(WHITE_FILE)) {
+			white = manager.get(WHITE_FILE, Texture.class);
 		}
 
 		// Load gameplay content
@@ -274,7 +326,6 @@ public class GameMode implements Screen {
 					break;
 				case PLAY:
 					if (inputController.didReset()) {
-						System.out.println("RESETTING");
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
@@ -334,6 +385,10 @@ public class GameMode implements Screen {
 		}
 		counter += 1;
 	}
+
+	private int rotate = 0;
+	private boolean up = true;
+	private int del = 0;
 	
 	/**
 	 * Draw the status of this player mode.
@@ -356,7 +411,6 @@ public class GameMode implements Screen {
 
 		canvas.drawWorld();
 
-
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
 
@@ -364,11 +418,26 @@ public class GameMode implements Screen {
 		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
 				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
 
-		// Draw speech bubbles, if necessary
+		//Gnomez
+		for (Gnome g : gameplayController.getGnomez()) {
+			g.draw(canvas);
+		}
 
-		if (!gameplayController.getRoad().reachedEndOfLevel()) {
-			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
-			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
+		//Draw sun effect part 1
+		if(gameplayController.sunShine && !gameplayController.getVisor().isOpen()) {
+			canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
+			canvas.draw(white, new Color(1, 1, 0, 0.7f), 0, 0, 0, 0, 0,
+					canvas.getWidth(), canvas.getHeight());
+			canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
+			canvas.draw(white, new Color(1, 0.7f, 0, 0.7f), 0, 0, 0, 0, 0,
+					canvas.getWidth(), canvas.getHeight());
+		} else if (gameplayController.sunShine) {
+			canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
+			canvas.draw(white, new Color(1, 1, 0, 0.3f), 0, 0, 0, 0, 0,
+					canvas.getWidth(), canvas.getHeight());
+			canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
+			canvas.draw(white, new Color(1, 0.7f, 0, 0.3f), 0, 0, 0, 0, 0,
+					canvas.getWidth(), canvas.getHeight());
 		}
 
 		///**  Draw Dash and Interactive HUD Elements **///
@@ -421,6 +490,50 @@ public class GameMode implements Screen {
 		//Draw inventory
 		gameplayController.getInventory().draw(canvas);
 
+		// Draw speech bubbles, if necessary
+		if (!gameplayController.getRoad().reachedEndOfLevel()) {
+			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
+			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
+		}
+
+		del++;
+		//Draw sun effect part 2
+		if(gameplayController.sunShine) {
+			if(del > 10) {
+				del = 0;
+				if(up) {
+					rotate ++;
+					if(rotate > 5) up = false;
+				} else {
+					rotate --;
+					if(rotate < 0) up = true;
+				}
+			}
+			canvas.draw(sun3, Color.WHITE, 0.5f*sun3.getWidth(), 0.5f*sun3.getHeight(), 0.32f*canvas.getWidth(), 0.98f*canvas.getHeight(), 0,
+					((float).3*canvas.getWidth()+rotate*100)/sun3.getWidth(), ((float).3*canvas.getWidth()+rotate*100)/sun3.getWidth());
+			canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
+			if(!gameplayController.getVisor().isOpen()) {
+				canvas.draw(sun2, new Color(1, 1, 1, (float)rotate/20.0f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
+						((float)1.25*canvas.getWidth())/sun.getWidth()+rotate, ((float)1.25*canvas.getWidth())/sun.getWidth()+rotate);
+				canvas.draw(sun, new Color(1, 1, 1, 0.4f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
+						((float)1.25*canvas.getWidth())/sun.getWidth(), ((float)1.25*canvas.getWidth())/sun.getWidth());
+			} else {
+				canvas.draw(sun2, new Color(1, 1, 1, 0.2f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
+						((float)1.25*canvas.getWidth())/sun.getWidth(), ((float)1.25*canvas.getWidth())/sun.getWidth());
+				canvas.draw(sun, new Color(1, 1, 1, 0.2f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
+						((float)1.25*canvas.getWidth())/sun.getWidth(), ((float)1.25*canvas.getWidth())/sun.getWidth());
+			}
+			canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
+		}
+
+		//Draw visor
+		gameplayController.getVisor().draw(canvas);
+
+
+		if (gameplayController.getRoad().reachedEndOfLevel()) {
+            gameState = GameState.OVER;
+		}
+
 		// Draw messages
 		switch (gameState) {
 			case INTRO:
@@ -430,8 +543,8 @@ public class GameMode implements Screen {
 					canvas.drawTextCentered("YOU WON", displayFont, GAME_OVER_OFFSET);
 					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
 				} else {
-					canvas.drawTextCentered("GNOME OVER", displayFont, GAME_OVER_OFFSET);
-					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
+					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
+							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0, ((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
 				}
 				break;
 			case PLAY:
