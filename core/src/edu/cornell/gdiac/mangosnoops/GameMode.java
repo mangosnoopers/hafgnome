@@ -534,7 +534,7 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
-			// Check if end of level
+			// Check if end of level - if so transition to rest stop mode
 			if (gameplayController.getRoad().reachedEndOfLevel() && listener != null) {
 				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);

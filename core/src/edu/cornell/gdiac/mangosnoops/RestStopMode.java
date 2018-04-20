@@ -160,6 +160,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private void draw() {
         canvas.beginHUDDrawing();
         canvas.draw(background, 0, 0);
+        canvas.draw(shelf,0,0);
         canvas.endHUDDrawing();
     }
 
