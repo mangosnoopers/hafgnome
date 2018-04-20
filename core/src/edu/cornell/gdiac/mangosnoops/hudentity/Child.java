@@ -37,6 +37,18 @@ public class Child {
     private float speechBubbleOffsetX = 3;
     private float speechBubbleOffsetY = -2;
 
+    /** Spped for child animation */
+    private static final float ANIMATION_SPEED = 0.1f;
+
+    /** Current animation frame for animations */
+    private float animationFrame;
+
+    /** How many animation frames there are */
+    private static final int NUM_ANIMATION_FRAMES = 20;
+
+    /** The current FilmStrip */
+    private FilmStrip currentFilmStrip;
+
     public float getShakeX() { return speechBubbleOffsetX; }
     public float getShakeY() { return speechBubbleOffsetY; }
 
@@ -173,6 +185,13 @@ public class Child {
     private Mood prevMood;
     public void update(float delta, Vector2 in) {
 
+
+        animationFrame += ANIMATION_SPEED;
+        if (animationFrame >= NUM_ANIMATION_FRAMES) {
+            animationFrame -= NUM_ANIMATION_FRAMES;
+        }
+
+
         if(isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
             if(gettingHappy) {
                 happiness += MOOD_DELTA;
@@ -237,13 +256,15 @@ public class Child {
             pos = new Vector2(canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f);
         }
 
-        FilmStrip currentFilmStrip = childTextures.get(getCurrentMood());
+        currentFilmStrip = childTextures.get(getCurrentMood());
+        currentFilmStrip.setFrame((int) animationFrame);
         float ox = 0.5f* currentFilmStrip.getRegionWidth();
         float oy = currentFilmStrip.getRegionHeight();
 
         canvas.draw(currentFilmStrip, Color.WHITE, ox, oy, pos.x, pos.y, 0,
                 0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight(),
                 0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight());
+
 
     }
 
