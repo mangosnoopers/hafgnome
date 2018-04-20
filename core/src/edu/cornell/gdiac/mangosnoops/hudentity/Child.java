@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
+import edu.cornell.gdiac.util.FilmStrip;
 
 
 public class Child {
@@ -15,7 +16,7 @@ public class Child {
     private ChildType ctype;
 
     private Vector2 pos;
-    private ObjectMap<Mood,Texture> childTextures;
+    private ObjectMap<Mood,FilmStrip> childTextures;
     private static final int SLACK = 50; //pixel leeway in inChildArea TODO maybe remove
 
     private boolean gettingSad; //is gradually getting happier
@@ -154,8 +155,8 @@ public class Child {
      * @param sad
      * @param critical
      */
-    public void setChildTextures(Texture happy, Texture neutral, Texture sad, Texture critical, Texture sleep){
-        childTextures = new ObjectMap<Mood, Texture>();
+    public void setChildFilmStrips(FilmStrip happy, FilmStrip neutral, FilmStrip sad, FilmStrip critical, FilmStrip sleep){
+        childTextures = new ObjectMap<Mood, FilmStrip>();
         childTextures.put(Mood.HAPPY, happy);
         childTextures.put(Mood.NEUTRAL, neutral);
         childTextures.put(Mood.SAD,sad);
@@ -225,23 +226,24 @@ public class Child {
      * draws the child on the given canvas
      * @param canvas
      */
-    public void draw(GameCanvas canvas, Texture rearviewMirror){
+    public void draw(GameCanvas canvas) {
         if(childTextures == null) { return; }
 
-        float rearWidth = rearviewMirror.getWidth() * canvas.getHeight()/(rearviewMirror.getHeight()*3.5f);
+        /* FIXME: rearWidth used to be based on rearview mirror but it's different now */
+        float rearWidth = 50 * canvas.getHeight()/(50*3.5f);
         if(ctype == ChildType.NOSH) {
             pos = new Vector2(canvas.getWidth() - rearWidth/3.5f,canvas.getHeight()*0.95f);
         } else {
             pos = new Vector2(canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f);
         }
 
-        Texture currentTex = childTextures.get(getCurrentMood());
-        float ox = 0.5f* currentTex.getWidth();
-        float oy = currentTex.getHeight();
+        FilmStrip currentFilmStrip = childTextures.get(getCurrentMood());
+        float ox = 0.5f* currentFilmStrip.getRegionWidth();
+        float oy = currentFilmStrip.getRegionHeight();
 
-        canvas.draw(currentTex, Color.WHITE, ox, oy, pos.x, pos.y, 0,
-                0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight(),
-                0.5f*(canvas.getHeight()/2.5f)/currentTex.getHeight());
+        canvas.draw(currentFilmStrip, Color.WHITE, ox, oy, pos.x, pos.y, 0,
+                0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight(),
+                0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight());
 
     }
 
