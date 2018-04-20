@@ -4,26 +4,26 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.mangosnoops.hudentity.Inventory;
 import edu.cornell.gdiac.util.ScreenListener;
+
+import java.util.Random;
 
 public class RestStopMode implements Screen, InputProcessor {
     /** Assets TODO */
     private static final String BACKGROUND_FILE = "images/restStopAssets/background.png";
     private static final String SHELF_FILE = "images/restStopAssets/shelf.png";
-//    private static final String SNACK_FILE = "";
-//    private static final String MOVIE_FILE = "";
-//    private static final String BOOK_FILE = "";
+    private static final String DVD_FILE = "images/Items/dvd.png";
+    private static final String SNACK_FILE = "images/Items/snack.png";
 //    private static final String READY_BUTTON_FILE = "";
-//    private static final String SAVE_BUTTON_FILE = "";
 
     private Texture background;
     private Texture shelf;
-//    private Texture snack;
-//    private Texture movie;
-//    private Texture book;
+    private Texture dvd;
+    private Texture snack;
 //    private Texture readyButton;
-//    private Texture saveButton
 
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
     private static final int UNCLICKED = 0;
@@ -32,8 +32,14 @@ public class RestStopMode implements Screen, InputProcessor {
 
     /** Ready button is clicked when the player is ready to return to the road */
     private int readyStatus;
-    private int saveStatus; // TODO
     // TODO: item statuses (array)
+
+    /** Inventory - on a shelf */
+    private Inventory inv;
+    /** Number of items per shelf */
+    private static final int ITEMS_PER_SHELF = 10;
+    /** Number of shelves */
+    private static final int NUM_SHELVES = 3;
 
     /** AssetManager to be loading in the background */
     private AssetManager manager;
@@ -46,6 +52,12 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Whether or not this player mode is still active */
     private boolean active;
 
+    /** Dimensions of the screen **/
+    private static Vector2 SCREEN_DIMENSIONS;
+    /** Factor to scale the shelf by */
+    private static final float SHELF_SCALING = 0.9f;
+    /** Factor to move the shelf downward */
+    private static final float SHELF_Y_OFFSET = 30.0f;
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 1600;
     /** Standard window height (for scaling) */
@@ -75,7 +87,12 @@ public class RestStopMode implements Screen, InputProcessor {
         assets.add(BACKGROUND_FILE);
         manager.load(SHELF_FILE,Texture.class);
         assets.add(SHELF_FILE);
-        // TODO add others
+//        manager.load(READY_BUTTON_FILE,Texture.class);
+//        assets.add(READY_BUTTON_FILE);
+        manager.load(DVD_FILE,Texture.class);
+        assets.add(DVD_FILE);
+        manager.load(SNACK_FILE,Texture.class);
+        assets.add(SNACK_FILE);
     }
 
     /**
@@ -99,7 +116,20 @@ public class RestStopMode implements Screen, InputProcessor {
             shelf.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
 
-        // TODO add others
+//        if (manager.isLoaded(READY_BUTTON_FILE)) {
+//            readyButton = manager.get(READY_BUTTON_FILE, Texture.class);
+//            readyButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        }
+
+        if (manager.isLoaded(DVD_FILE)) {
+            dvd = manager.get(DVD_FILE, Texture.class);
+            dvd.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
+
+        if (manager.isLoaded(SNACK_FILE)) {
+            snack = manager.get(SNACK_FILE, Texture.class);
+            snack.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        }
     }
 
     /**
@@ -118,15 +148,60 @@ public class RestStopMode implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * Generates items that can be obtained at this rest stop.
+     * 3-5 snacks, 1-3 books, 0-1 movies
+     *
+     * @return a new Inventory with the generated items
+     */
+    private void generateItems() {
+        // Randomly generate item quantities
+        Random rand = new Random();
+        int numSnacks = rand.nextInt(2) + 3;
+        int numBooks = rand.nextInt(2) + 1;
+        int numMovies = rand.nextInt(1);
+
+        Array<Inventory.Slot> i = new Array<Inventory.Slot>();
+        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.DVD,1));
+        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,1));
+        // TODO: add books
+
+        inv.load(i);
+    }
+
+    /**
+     * Creates an inventory of items for this rest stop.
+     * @return the inventory
+     */
+    private Inventory createInventory() {
+        float shelf_ox = 0.5f;
+        float shelf_oy = 0.5f;
+        float shelf_relsca = 0.3f;
+        float shelf_cb = 0.0f;
+        float slot_width = 0.33f;
+        float slot_height = 0.33f;
+        return new Inventory(shelf_ox, shelf_oy, shelf_relsca, shelf_cb, shelf,
+                             slot_width, slot_height, ITEMS_PER_SHELF * NUM_SHELVES);
+    }
+
     public RestStopMode(GameCanvas canvas, AssetManager manager) {
         this.canvas = canvas;
         this.manager = manager;
+        assets = new Array<String>();
+        SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
+        active = true;
 
+        // Assets
         background = new Texture(BACKGROUND_FILE);
         shelf = new Texture(SHELF_FILE);
-        // TODO add others
+        dvd = new Texture(DVD_FILE);
+        snack = new Texture(SNACK_FILE);
 
-        active = true;
+        // Create inventory and add items to it
+        Image.updateScreenDimensions(canvas);
+        Inventory.Item.setTexturesAndScales(dvd,1.0f,snack,1.0f);
+        inv = createInventory();
+        generateItems();
     }
 
     /**
@@ -160,7 +235,13 @@ public class RestStopMode implements Screen, InputProcessor {
     private void draw() {
         canvas.beginHUDDrawing();
         canvas.draw(background, 0, 0);
-        canvas.draw(shelf,0,0);
+
+        // draw the shelf and items
+        canvas.draw(shelf,(SCREEN_DIMENSIONS.x - shelf.getWidth()*SHELF_SCALING)/2.0f,
+                (SCREEN_DIMENSIONS.y - shelf.getHeight()*SHELF_SCALING)/2.0f - SHELF_Y_OFFSET,
+                shelf.getWidth()*SHELF_SCALING, shelf.getHeight()*SHELF_SCALING);
+        inv.draw(canvas);
+
         canvas.endHUDDrawing();
     }
 
