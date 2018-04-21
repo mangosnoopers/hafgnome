@@ -76,6 +76,7 @@ public class GameMode implements Screen {
 	/** The file for the angry speech bubble */
 	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
 
+
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -233,6 +234,7 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(WHITE_FILE)) {
 			white = manager.get(WHITE_FILE, Texture.class);
 		}
+
 
 		// Load gameplay content
 		gameplayController.loadContent(manager);
@@ -454,13 +456,13 @@ public class GameMode implements Screen {
 		// Radio
 		gameplayController.getRadio().draw(canvas, displayFont);
 
-
 		// Health gauge and pointer
 		Color healthGaugeColor = Color.WHITE;
         if (gameplayController.getCar().getIsDamaged()) {
         	healthGaugeColor = Color.RED;
 		}
         gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
+        gameplayController.getHealthGaugePointer().draw(canvas, gameplayController.getCar().getHealthPointerAng());
 
 		// FIXME: this is a mess
 		gameplayController.getRearviewBackground().draw(canvas);

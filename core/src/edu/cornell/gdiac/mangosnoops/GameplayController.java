@@ -76,6 +76,7 @@ public class GameplayController {
 	private Image rearviewBackground;
 	private Image rearviewSeats;
 	private Image rearviewCover;
+	private Image healthGaugePointer;
 
 	private ObjectSet<Image> hudObjects;
 	/** If there is sun shining right now */
@@ -356,6 +357,7 @@ public class GameplayController {
 	public VroomStick getVroomStick() { return vroomStick; }
 
 	public Image getHealthGauge() { return healthGauge; }
+	public Image getHealthGaugePointer() { return healthGaugePointer; }
 	public Image getRearviewBackground() { return rearviewBackground; }
 	public Image getRearviewSeats() { return rearviewSeats; }
 	public Image getRearviewCover() { return rearviewCover; }
@@ -394,6 +396,7 @@ public class GameplayController {
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
+		healthGaugePointer = new Image(0.4f, 0.05f, 0.09f, healthPointerTexture);
 		rearviewBackground = new Image(0.63f, 0.71f, 0.3f, rearviewBackgroundTexture);
 		rearviewSeats = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
 		rearviewCover = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);

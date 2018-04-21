@@ -117,4 +117,11 @@ public class Image {
                 relativeScale*canvas.getHeight());
     }
 
+    public void draw(GameCanvas canvas, float ang) {
+        System.out.println("The angle is" + ang);
+        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, ang,
+                relativeScale*canvas.getHeight(),
+                relativeScale*canvas.getHeight());
+    }
 }
