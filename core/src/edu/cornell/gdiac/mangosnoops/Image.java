@@ -71,6 +71,10 @@ public class Image {
         shakeDeltaSum = 0;
     }
 
+    public Image() {
+        //used for visor lol
+    }
+
     public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);
         relativeScale = relSca/(float)tex.getHeight();

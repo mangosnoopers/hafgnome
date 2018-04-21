@@ -1,0 +1,16 @@
+{
+    "questions": [
+        {
+			"text": "Which of this animals are larger?",
+			"imageA": "orca.png",
+			"imageB": "armadillo.png",
+			"correct": "A"  
+	  	},
+        {
+			"text": "How many LEMONS is he holding?",
+			"imageA": "lemons.png",
+			"imageB": "N/A", 
+			"correct": 2
+	  	},
+    ],
+}
