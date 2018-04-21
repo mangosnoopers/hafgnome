@@ -123,9 +123,11 @@ public class Inventory extends Image {
                 }
             }
         }
+    }
+    public static void drawItemInHand(GameCanvas canvas){
         if(itemInHand != null && itemInHand.texture!=null) {
             canvas.draw(itemInHand.getTexture(), Color.WHITE, itemInHand.getTexture().getWidth()*0.5f, itemInHand.getTexture().getHeight()*0.5f,
-                            itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*SCREEN_DIMENSIONS.y, itemInHand.relativeScale*SCREEN_DIMENSIONS.y);
+                    itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*SCREEN_DIMENSIONS.y, itemInHand.relativeScale*SCREEN_DIMENSIONS.y);
         }
     }
 
@@ -266,15 +268,28 @@ public class Inventory extends Image {
         public Item (float x, float y,ItemType itemType){
             position = new Vector2(x,y);
             this.itemType = itemType;
-            texture = itemTextures.get(itemType);
-            relativeScale = relativeScales.get(itemType);
+            if(itemType == null){
+                texture = null;
+                relativeScale = 0;
+            }
+            else{
+                texture = itemTextures.get(itemType);
+                relativeScale = relativeScales.get(itemType);
+            }
+
         }
 
         public Item (ItemType itemType){
             position = null;
             this.itemType = itemType;
-            texture = itemTextures.get(itemType);
-            relativeScale = relativeScales.get(itemType);
+            if(itemType == null){
+                texture = null;
+                relativeScale = 0;
+            }
+            else{
+                texture = itemTextures.get(itemType);
+                relativeScale = relativeScales.get(itemType);
+            }
         }
 
         public static void setTexturesAndScales(Texture dvd, float dvdScale, Texture snack, float snackScale){
