@@ -83,7 +83,7 @@ public class Child extends Image{
         if(type == ChildType.NED){
             position = new Vector2(0.76f, 0.83f);
         } else{
-            position = new Vector2(0.915f, 0.81f);
+            position = new Vector2(0.91f, 0.83f);
         }
         Random rand = new Random();
         int animSpeedInt = rand.nextInt(5) + 20;

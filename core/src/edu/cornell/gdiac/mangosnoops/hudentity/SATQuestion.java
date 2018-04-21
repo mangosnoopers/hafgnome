@@ -42,7 +42,7 @@ public class SATQuestion extends Image {
      *
      * @return 0 = area was not pressed, 1 = left area pressed, 2 = right area pressed */
     private int isInArea(Vector2 p) {
-
+        return 0;
     }
 
     public void update(Vector2 p, int numPressed, Child nosh) {
