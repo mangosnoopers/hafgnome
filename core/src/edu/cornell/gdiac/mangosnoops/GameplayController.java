@@ -454,6 +454,7 @@ public class GameplayController {
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
+		visor = null;
 	}
 
 	/**

@@ -4,7 +4,7 @@
 			"text": "Which of this animals are larger?",
 			"imageA": "orca.png",
 			"imageB": "armadillo.png",
-			"correct": "A"  
+			"correct": 1
 	  	},
         {
 			"text": "How many LEMONS is he holding?",
