@@ -24,15 +24,18 @@ public class Inventory extends Image {
 
     private Vector2 slotsDimensions;
 
+    private boolean highlightClicked; // FIXME highlight items that are clicked
+
     private float itemOffset = 0.01f;
 
     public void setItemOffset(float f) { itemOffset = f; }
 
-    public Inventory(float x_left, float y_bottom, float r, float cb, Texture t, float slotWidth, float slotHeight, int numSlots) {
+    public Inventory(float x_left, float y_bottom, float r, float cb, Texture t, float slotWidth, float slotHeight, int numSlots, boolean highlight) {
         super(x_left, y_bottom, r, cb, t);
         slots = new Array<Slot>(numSlots);
         slotsDimensions = new Vector2(slotWidth,slotHeight);
         int temp = numSlots-1;
+        highlightClicked = highlight;
         for (int i=numSlots; i > 0; i--) {
            slots.add( new Slot(temp, x_left,y_bottom+(temp*slotHeight), slotWidth, slotHeight));
            temp--;

@@ -100,10 +100,15 @@ public class GameMode implements Screen {
 	private Texture white;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
+
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
 	private float globalMiles;
+	/** Opacity of the overlay used to fade out into rest stop */
+	private float fadeOutOpacity;
+	/** Whether or not to exit to the rest stop */
+	private boolean exitToRestStop;
 
 	/** Factor used to compute where we are in scrolling process */
 	private static final float TIME_MODIFIER    = 0.06f;
@@ -266,6 +271,7 @@ public class GameMode implements Screen {
 	    try {
             this.canvas = canvas;
             active = false;
+            fadeOutOpacity = 0.0f;
             // Null out all pointers, 0 out all ints, etc.
             gameState = GameState.INTRO;
             assets = new Array<String>();
@@ -530,8 +536,16 @@ public class GameMode implements Screen {
 		gameplayController.getVisor().draw(canvas);
 
 
-		if (gameplayController.getRoad().reachedEndOfLevel()) {
-            gameState = GameState.OVER;
+		// Draw fade out to rest stop
+		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {
+			// TODO FINISH THE FADE
+//            canvas.drawFade(fadeOutOpacity);
+//			// ready to exit gamemode when the fade out is complete
+//			if (fadeOutOpacity - 1.0f <= 0.001f) {
+				exitToRestStop = true;
+//			} else {
+//				fadeOutOpacity += 0.05f; // make it increasingly opaque
+//			}
 		}
 
 		// Draw messages
@@ -586,9 +600,10 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
-			// Check if end of level - if so transition to rest stop mode
-			if (gameplayController.getRoad().reachedEndOfLevel() && listener != null) {
-				gameState = GameState.OVER;
+			// Check if end of level and ready to exit - if so transition to rest stop mode
+			if (exitToRestStop && listener != null) {
+				System.out.println("WOOOOO");
+//				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);
 			}
 
