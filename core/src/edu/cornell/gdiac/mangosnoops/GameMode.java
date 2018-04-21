@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
+import edu.cornell.gdiac.mangosnoops.hudentity.Inventory;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.util.*;
 
@@ -28,12 +29,12 @@ import edu.cornell.gdiac.util.*;
  * The primary controller class for the game.
  *
  * While GDXRoot is the root class, it delegates all of the work to the player mode
- * classes. This is the player mode class for running the game. In initializes all 
+ * classes. This is the player mode class for running the game. In initializes all
  * of the other classes in the game and hooks them together.  It also provides the
  * basic game loop (update-draw).
  */
 public class GameMode implements Screen {
-	/** 
+	/**
  	 * Track the current state of the game for the update loop.
  	 */
 	public enum GameState {
@@ -113,13 +114,13 @@ public class GameMode implements Screen {
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
 
-	/** 
+	/**
 	 * Preloads the assets for this game.
-	 * 
+	 *
 	 * The asset manager for LibGDX is asynchronous.  That means that you
-	 * tell it what to load and then wait while it loads them.  This is 
+	 * tell it what to load and then wait while it loads them.  This is
 	 * the first step: telling it what to load.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void preLoadContent(AssetManager manager) {
@@ -141,19 +142,20 @@ public class GameMode implements Screen {
 		size2Params.fontParameters.size = FONT_SIZE;
 		manager.load(FONT_FILE, BitmapFont.class, size2Params);
 		assets.add(FONT_FILE);
-		
+
 		// Preload gameplay content
+
 		gameplayController.preLoadContent(manager,assets);
 	}
 
-	/** 
+	/**
 	 * Loads the assets for this game.
-	 * 
+	 *
 	 * The asset manager for LibGDX is asynchronous.  That means that you
-	 * tell it what to load and then wait while it loads them.  This is 
+	 * tell it what to load and then wait while it loads them.  This is
 	 * the second step: extracting assets from the manager after it has
 	 * finished loading them.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void loadContent(AssetManager manager) {
@@ -186,12 +188,12 @@ public class GameMode implements Screen {
 		gameplayController.loadContent(manager);
 	}
 
-	/** 
+	/**
 	 * Unloads the assets for this game.
-	 * 
-	 * This method erases the static variables.  It also deletes the associated textures 
+	 *
+	 * This method erases the static variables.  It also deletes the associated textures
 	 * from the asset manager.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void unloadContent(AssetManager manager) {
@@ -227,7 +229,7 @@ public class GameMode implements Screen {
 	        System.out.println(e.getMessage());
         }
 	}
-	
+
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
@@ -237,8 +239,8 @@ public class GameMode implements Screen {
 		collisionController = null;
 		canvas = null;
 	}
-	
-	
+
+
 	/**
 	 * Update the game state.
 	 *
@@ -334,7 +336,7 @@ public class GameMode implements Screen {
 		}
 		counter += 1;
 	}
-	
+
 	/**
 	 * Draw the status of this player mode.
 	 *
@@ -345,7 +347,6 @@ public class GameMode implements Screen {
 	private void draw(float delta) {
 
 		canvas.clearScreen();
-
 
         gameplayController.getRoad().draw(canvas);
 
@@ -365,7 +366,6 @@ public class GameMode implements Screen {
 				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
 
 		// Draw speech bubbles, if necessary
-
 		if (!gameplayController.getRoad().reachedEndOfLevel()) {
 			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
 			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
@@ -392,10 +392,12 @@ public class GameMode implements Screen {
         gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
 
 		// FIXME: this is a mess
-		gameplayController.getRearviewBackground().draw(canvas);
-		gameplayController.getRearviewEnemy().draw(canvas);
-		gameplayController.getRearviewSeats().draw(canvas);
-		gameplayController.getRearviewCover().draw(canvas);
+		gameplayController.getRearviewBackground().drawFromCenter(canvas);
+		if(gameplayController.getRearviewEnemy().exists()) {
+			gameplayController.getRearviewEnemy().drawFromCenter(canvas);
+		}
+		gameplayController.getRearviewSeats().drawFromCenter(canvas);
+		gameplayController.getRearviewCover().drawFromCenter(canvas);
 		// Draw Ned and Nosh
 		gameplayController.getCar().getNosh().draw(canvas);
 		gameplayController.getCar().getNed().draw(canvas);
@@ -420,6 +422,7 @@ public class GameMode implements Screen {
 
 		//Draw inventory
 		gameplayController.getInventory().draw(canvas);
+		Inventory.drawItemInHand(canvas);
 
 		// Draw messages
 		switch (gameState) {

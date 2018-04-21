@@ -374,11 +374,12 @@ public class GameplayController {
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
-		rearviewBackground = new Image(0.63f, 0.71f, 0.3f, rearviewBackgroundTexture);
-		rearviewSeats = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
-		rearviewCover = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
+		rearviewBackground = new Image(0.83f, 0.85f, 0.3f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.83f, 0.85f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.83f, 0.85f, 0.3f, rearviewSeatsTexture);
+        rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-		for(Gnome g: level.getGnomez()){
+        for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
 		}
 		// TODO CHANGE THIS LOL
@@ -393,14 +394,13 @@ public class GameplayController {
 		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
+		//i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
 		inventory.load(i);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
 
-		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
 
 		// Add all HUD objects to hudObjects
 		hudObjects.add(vroomStick);
@@ -412,6 +412,8 @@ public class GameplayController {
 		hudObjects.add(rearviewBackground);
 		hudObjects.add(rearviewCover);
 		hudObjects.add(rearviewSeats);
+		hudObjects.add(getCar().getNed());
+		hudObjects.add(getCar().getNosh());
 
   }
 
