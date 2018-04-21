@@ -131,17 +131,9 @@ public class Image {
                 relativeScale*canvas.getHeight());
     }
 
-<<<<<<< HEAD
-    public void drawFromCenter(GameCanvas canvas){
-        canvas.draw(texture, Color.WHITE, texture.getWidth()*0.5f, texture.getHeight()*0.5f, position.x*SCREEN_DIMENSIONS.x,
-                        position.y*SCREEN_DIMENSIONS.y+currentShakeAmount, 0, relativeScale*SCREEN_DIMENSIONS.y,  relativeScale*SCREEN_DIMENSIONS.y);
-=======
-    public void draw(GameCanvas canvas, float ang) {
-        System.out.println("The angle is" + ang);
-        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, ang,
-                relativeScale*canvas.getHeight(),
-                relativeScale*canvas.getHeight());
->>>>>>> 8dd5d158c3f6da6f60caa71a16e271beffe932f1
+    public void drawFromCenter(GameCanvas canvas) {
+        canvas.draw(texture, Color.WHITE, texture.getWidth() * 0.5f, texture.getHeight() * 0.5f, position.x * SCREEN_DIMENSIONS.x,
+                position.y * SCREEN_DIMENSIONS.y + currentShakeAmount, 0, relativeScale * SCREEN_DIMENSIONS.y, relativeScale * SCREEN_DIMENSIONS.y);
+
     }
 }
