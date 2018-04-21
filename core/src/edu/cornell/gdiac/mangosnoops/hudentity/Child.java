@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.Random;
+
 
 public class Child {
 
@@ -38,7 +40,7 @@ public class Child {
     private float speechBubbleOffsetY = -2;
 
     /** Spped for child animation */
-    private static final float ANIMATION_SPEED = 0.025f;
+    private static float ANIMATION_SPEED;
 
     /** Current animation frame for animations */
     private float animationFrame;
@@ -79,6 +81,9 @@ public class Child {
      * Constructor
      */
     public Child(ChildType type) {
+        Random rand = new Random();
+        int animSpeedInt = rand.nextInt(5) + 20;
+        ANIMATION_SPEED = animSpeedInt / 100;
         ctype = type;
         happiness = HAPPY_UBOUND;
     }

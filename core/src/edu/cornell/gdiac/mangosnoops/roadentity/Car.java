@@ -130,7 +130,7 @@ public class Car extends RoadObject {
     /**
      * Returns the angle of the car.
      */
-    public float getAngle() { return angle; }
+    public float getPointerAngle() { return healthPointerAng; }
 
     /**
      * Returns one Nosh
