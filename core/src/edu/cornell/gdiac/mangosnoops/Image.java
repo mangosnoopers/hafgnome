@@ -19,7 +19,7 @@ public class Image {
     /** An optional buffer given to the object in order to 'pad' its area of effectiveness**/
     protected float controlBuffer;
     /** Dimensions of the screen **/
-    protected static Vector2 SCREEN_DIMENSIONS;
+    public static Vector2 SCREEN_DIMENSIONS;
 
     /** The maximimum amount of offset that is applied to
      *  the drawing coordinates, for the "shake" effect */
