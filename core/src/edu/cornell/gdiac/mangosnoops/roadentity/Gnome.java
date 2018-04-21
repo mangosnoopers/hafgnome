@@ -1,17 +1,20 @@
 package edu.cornell.gdiac.mangosnoops.roadentity;
 
+import com.badlogic.gdx.graphics.g3d.particles.influencers.ColorInfluencer;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.*;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 
+import java.util.Random;
+
 public class Gnome extends RoadObject{
     //CONSTANTS
     /** How fast we change frames (one frame per 4 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** The number of animation frames in our filmstrip */
-    private static final int   NUM_ANIM_FRAMES = 2;
+    private static final int   NUM_ANIM_FRAMES = 11;
 
     //ATTRIBUTES
     /** Current animation frame for this ship */
@@ -20,16 +23,16 @@ public class Gnome extends RoadObject{
     private GnomeType gtype;
 
     /** How high the gnome hovers in the world */
-    private final float GNOME_HOVER_DISTANCE = 4.32f;
+    private final float GNOME_HOVER_DISTANCE = 4.33f;
 
     /** speed of road */
     private float currSpeed;
 
     /** gnome width */
-    private static final float GNOME_WIDTH = 0.65f;
+    private static final float GNOME_WIDTH = 0.35f;
 
     /** gnome height */
-    private static final float GNOME_HEIGHT = 0.23f;
+    private static final float GNOME_HEIGHT = 0.14f;
 
     /** speed of gnome relative to road, FIXME: change this prob */
     private float gnomeSpeed = 2f;
@@ -81,18 +84,20 @@ public class Gnome extends RoadObject{
     public Gnome(float x, float y, GnomeType type) {
         setX(x);
         setY(y);
-        animeframe = 0.0f;
+        Random rand = new Random();
+        animeframe = (float) rand.nextInt(11);
         gtype = type;
     }
 
     public Gnome(Gnome g){
         this.position = new Vector2(g.position);
-        animeframe = 0.0f;
+        Random rand = new Random();
+        animeframe = (float) rand.nextInt(11);
         gtype = g.gtype;
     }
 
     public void setTexture(Texture texture) {
-        animator = new FilmStrip(texture,1,2,2);
+        animator = new FilmStrip(texture,1,12,12);
         radius = animator.getRegionHeight() / 2.0f;
         origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
     }
@@ -124,7 +129,9 @@ public class Gnome extends RoadObject{
     }
 
     public void draw(GameCanvas canvas) {
-        canvas.drawRoadObject(getTexture(), getX(), getY(), GNOME_HOVER_DISTANCE,GNOME_WIDTH, GNOME_HEIGHT, 90, 0);
+        System.out.println("Size is" + animator.getSize());
+        animator.setFrame((int) animeframe);
+        canvas.drawRoadObject(animator, getX(), getY(), GNOME_HOVER_DISTANCE,GNOME_WIDTH, GNOME_HEIGHT, 90, 0);
     }
 
     public void setSpeed (float s) {
