@@ -18,11 +18,11 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String DVD_FILE = "images/Items/dvd.png";
     private static final String SNACK_FILE = "images/Items/snack.png";
     private static final String READY_BUTTON_FILE = "images/restStopAssets/readybutton.png";
-    private Texture background;
-    private Texture shelf;
-    private Texture dvd;
-    private Texture snack;
-    private Texture readyButton;
+    private Texture backgroundTex;
+    private Texture shelfTex;
+    private Texture dvdTex;
+    private Texture snackTex;
+    private Texture readyButtonTex;
 
     // BUTTONS
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
@@ -31,13 +31,21 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final int BUTTON_UP = 2;
     /** Ready button is clicked when the player is ready to return to the road */
     private int readyStatus;
-    // TODO: item statuses (array)
 
     // INVENTORY
     /** Inventory - on a shelf */
     private Inventory inv;
     /** Number of shelves */
     private static final int NUM_SHELVES = 3;
+    /** Number of items per shelf */
+    private static final int ITEMS_PER_SHELF = 5;
+
+    // ITEMS
+    private Array<RestStopItem> items;
+    private Image shelf;
+    private int numMovies;
+    private int numSnacks;
+    private int numBooks;
 
     // OTHER DOODADS
     /** AssetManager to be loading in the background */
@@ -50,6 +58,10 @@ public class RestStopMode implements Screen, InputProcessor {
     private Array<String> assets;
     /** Whether or not this player mode is still active */
     private boolean active;
+    /** Opacity used to fade in and out */
+    private float fadeOpacity;
+    /** True if screen should fade in, false otherwise */
+    private boolean fadeIn;
 
     // DRAWING
     /** Dimensions of the screen **/
@@ -59,11 +71,9 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Offset between shelves in the inventory */
     private static final float INV_SHELF_OFFSET = 105.0f;
     /** Size of inventory items */
-    private static final float ITEM_SIZE_SCALE = 0.1f;
-    /** Factor to scale the shelf by */
-    private static final float SHELF_SCALING = 0.9f;
-    /** Factor to move the shelf downward */
-    private static final float SHELF_Y_OFFSET = 30.0f;
+    private static final float ITEM_SIZE_SCALE = 0.12f;
+    /** Factor to scale the button by */
+    private static final float READY_BUTTON_SCALING = 0.13f;
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 1600;
     /** Standard window height (for scaling) */
@@ -113,28 +123,28 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     public void loadContent(AssetManager manager) {
         if (manager.isLoaded(BACKGROUND_FILE)) {
-            background = manager.get(BACKGROUND_FILE, Texture.class);
-            background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            backgroundTex = manager.get(BACKGROUND_FILE, Texture.class);
+            backgroundTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
 
         if (manager.isLoaded(SHELF_FILE)) {
-            shelf = manager.get(SHELF_FILE, Texture.class);
-            shelf.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            shelfTex = manager.get(SHELF_FILE, Texture.class);
+            shelfTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
 
         if (manager.isLoaded(READY_BUTTON_FILE)) {
-            readyButton = manager.get(READY_BUTTON_FILE, Texture.class);
-            readyButton.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            readyButtonTex = manager.get(READY_BUTTON_FILE, Texture.class);
+            readyButtonTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
 
         if (manager.isLoaded(DVD_FILE)) {
-            dvd = manager.get(DVD_FILE, Texture.class);
-            dvd.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            dvdTex = manager.get(DVD_FILE, Texture.class);
+            dvdTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
 
         if (manager.isLoaded(SNACK_FILE)) {
-            snack = manager.get(SNACK_FILE, Texture.class);
-            snack.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            snackTex = manager.get(SNACK_FILE, Texture.class);
+            snackTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         }
     }
 
@@ -161,19 +171,48 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return a new Inventory with the generated items
      */
     private void generateItems() {
-        // Randomly generate item quantities
-        Random rand = new Random();
-        int numSnacks = rand.nextInt(2) + 3;
-        int numBooks = rand.nextInt(2) + 1;
-        int numMovies = rand.nextInt(1);
+//        // Randomly generate item quantities
+//        Random rand = new Random();
+//        int numSnacks = rand.nextInt(2) + 3; // nextInt(high-low) + low
+//        int numBooks = rand.nextInt(2) + 1;
+//        int numMovies = rand.nextInt(1);
+//
+//        Array<Inventory.Slot> i = new Array<Inventory.Slot>();
+//        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.DVD,numMovies));
+//        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,numSnacks));
+//        // TODO: change to books
+//        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,numBooks));
+//
+//        inv.load(i);
 
-        Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.DVD,numMovies));
-        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,numSnacks));
-        // TODO: change to books
-        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,numBooks));
+        // starting position - top left slot of the shelf
+        float slotX = 0.0f;
+        float slotY = 0.0f;
 
-        inv.load(i);
+        // top shelf - snacks
+        for (int i = 0; i < numSnacks; i++) {
+            items.add(new RestStopItem(UNCLICKED, slotX, slotY, ITEM_SIZE_SCALE, snackTex));
+            slotX += shelf.texture.getWidth() / 5.0f;
+        }
+
+        slotX = 0.0f;
+        slotY += 0.0f;
+
+        // middle shelf - books
+        for (int i = 0; i < numBooks; i++) {
+            // TODO change to books
+            items.add(new RestStopItem(UNCLICKED, slotX, slotY, ITEM_SIZE_SCALE, snackTex));
+            slotX += shelf.texture.getWidth() / 5.0f;
+        }
+
+        slotX = 0.0f;
+        slotY += 0.0f;
+
+        // bottom shelf - movies
+        for (int i = 0; i < numMovies; i++) {
+            items.add(new RestStopItem(UNCLICKED, slotX, slotY, ITEM_SIZE_SCALE, dvdTex));
+            slotX += shelf.texture.getWidth() / 5.0f;
+        }
     }
 
     /**
@@ -185,10 +224,10 @@ public class RestStopMode implements Screen, InputProcessor {
         float shelf_oy = 0.1f;
         float shelf_relsca = 1.0f;
         float shelf_cb = 0.0f;
-        float slot_width = shelf.getWidth() / canvas.getWidth();
-        float slot_height = (shelf.getHeight() / NUM_SHELVES - INV_SHELF_OFFSET) / canvas.getHeight();
-        return new Inventory(shelf_ox, shelf_oy, shelf_relsca, shelf_cb, shelf,
-                             slot_width, slot_height, NUM_SHELVES);
+        float slot_width = (shelfTex.getWidth() / ITEMS_PER_SHELF) / canvas.getWidth();
+        float slot_height = (shelfTex.getHeight() / NUM_SHELVES - INV_SHELF_OFFSET) / canvas.getHeight();
+        return new Inventory(shelf_ox, shelf_oy, shelf_relsca, shelf_cb, shelfTex,
+                             slot_width, slot_height, NUM_SHELVES*ITEMS_PER_SHELF, true);
     }
 
     public RestStopMode(GameCanvas canvas, AssetManager manager) {
@@ -197,20 +236,35 @@ public class RestStopMode implements Screen, InputProcessor {
         assets = new Array<String>();
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
         active = true;
+        fadeIn = true;
+        fadeOpacity = 1.0f;
 
-        // Assets
-        background = new Texture(BACKGROUND_FILE);
-        shelf = new Texture(SHELF_FILE);
-        dvd = new Texture(DVD_FILE);
-        snack = new Texture(SNACK_FILE);
-        readyButton = new Texture(READY_BUTTON_FILE);
+        // Textures
+        backgroundTex = new Texture(BACKGROUND_FILE);
+        shelfTex = new Texture(SHELF_FILE);
+        dvdTex = new Texture(DVD_FILE);
+        snackTex = new Texture(SNACK_FILE);
+        readyButtonTex = new Texture(READY_BUTTON_FILE);
+
+        // The shelf image in middle of screen
+        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
+
+        // Get item quantities for this rest stop
+        Random rand = new Random();
+        numSnacks = rand.nextInt(2) + 3; // nextInt(high-low) + low
+        numBooks = rand.nextInt(2) + 1;
+        numMovies = rand.nextInt(1) + 1;
+
+        // Generate the items
+        items = new Array<RestStopItem>();
+        generateItems();
 
         // Create inventory and add items to it
-        Image.updateScreenDimensions(canvas);
-        Inventory.Item.setTexturesAndScales(dvd,ITEM_SIZE_SCALE,snack,ITEM_SIZE_SCALE);
-        inv = createInventory();
-        inv.setItemOffset(INV_ITEM_OFFSET);
-        generateItems();
+//        Image.updateScreenDimensions(canvas);
+//        Inventory.Item.setTexturesAndScales(dvd,ITEM_SIZE_SCALE,snack,ITEM_SIZE_SCALE);
+//        inv = createInventory();
+//        inv.setItemOffset(INV_ITEM_OFFSET);
+//        generateItems();
     }
 
     /**
@@ -243,16 +297,56 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     private void draw() {
         canvas.beginHUDDrawing();
-        canvas.draw(background, 0, 0);
+        // TODO FIX FADE-IN
+//        if (fadeIn) {
+//            canvas.drawFade(fadeOpacity);
+//            if (fadeOpacity - 0.0f <= 0.001f) {
+//                fadeIn = false;
+//            } else {
+//                fadeOpacity -= 0.05f;
+//            }
+//        }
 
-        // draw the shelf and items
-        canvas.draw(shelf,(SCREEN_DIMENSIONS.x - shelf.getWidth()*SHELF_SCALING)/2.0f,
-                (SCREEN_DIMENSIONS.y - shelf.getHeight()*SHELF_SCALING)/2.0f - SHELF_Y_OFFSET,
-                shelf.getWidth()*SHELF_SCALING, shelf.getHeight()*SHELF_SCALING);
-        inv.draw(canvas);
+
+        canvas.draw(backgroundTex, 0, 0);
+
+        // Draw the shelf and items
+        // Blue overlay if selected
+        shelf.draw(canvas);
+        for (RestStopItem i : items) {
+            Color overlay = Color.WHITE;
+            if (i.clickStatus == BUTTON_UP) {
+                overlay = Color.BLUE;
+            }
+            i.draw(canvas,overlay);
+        }
+
+//        // draw the shelf
+//        canvas.draw(shelfTex,(SCREEN_DIMENSIONS.x - shelfTex.getWidth()*SHELF_SCALING)/2.0f,
+//                (SCREEN_DIMENSIONS.y - shelfTex.getHeight()*SHELF_SCALING)/2.0f - SHELF_Y_OFFSET,
+//                shelfTex.getWidth()*SHELF_SCALING, shelfTex.getHeight()*SHELF_SCALING);
+////        inv.draw(canvas); FIXME AAAA
+//
+//        // draw movies
+//        for (int i = 0; i < numMovies; i++) {
+//            canvas.draw(dvdTex, (SCREEN_DIMENSIONS.x - shelfTex.getWidth()*SHELF_SCALING)/2.0f,
+//                    (SCREEN_DIMENSIONS.y - shelfTex.getHeight()*SHELF_SCALING)/2.0f - SHELF_Y_OFFSET,
+//                    dvdTex.getWidth()*ITEM_SIZE_SCALE, dvdTex.getHeight()*ITEM_SIZE_SCALE);
+//        }
+//
+//        // draw snacks
+//        for (int i = 0; i < numSnacks; i++) {
+//
+//        }
+//
+//        // draw books
+//        for (int i = 0; i < numBooks; i++) {
+//
+//        }
 
         // draw the ready button
-        canvas.draw(readyButton, SCREEN_DIMENSIONS.x, SCREEN_DIMENSIONS.y);
+        canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * 0.92f, SCREEN_DIMENSIONS.y * 0.02f,
+                readyButtonTex.getWidth()*READY_BUTTON_SCALING, readyButtonTex.getHeight()*READY_BUTTON_SCALING);
 
         canvas.endHUDDrawing();
     }
@@ -280,8 +374,8 @@ public class RestStopMode implements Screen, InputProcessor {
 
     /** Called when this screen should release all resources. */
     public void dispose () {
-        background.dispose();
-        background = null;
+        backgroundTex.dispose();
+        backgroundTex = null;
         // TODO add others
     }
 
@@ -414,11 +508,20 @@ public class RestStopMode implements Screen, InputProcessor {
         return true;
     }
 
-    /** Called when the mouse wheel was scrolled. Will not be called on iOS. -- UNSUPPORTED
+    /** Called when the mouse wheel was scrolled. Will not  be called on iOS. -- UNSUPPORTED
      * @param amount the scroll amount, -1 or 1 depending on the direction the wheel was scrolled.
      * @return whether the input was processed. */
     public boolean scrolled (int amount) {
         return true;
+    }
+
+    private class RestStopItem extends Image {
+        private int clickStatus;
+
+        private RestStopItem(int clickStatus, float x, float y, float relSca, Texture tex) {
+            super(x,y,relSca,tex);
+            this.clickStatus = clickStatus;
+        }
     }
 
 }

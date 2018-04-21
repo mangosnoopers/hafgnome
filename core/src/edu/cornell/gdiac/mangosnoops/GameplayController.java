@@ -410,7 +410,7 @@ public class GameplayController {
 		wheel = new Wheel(0.193f,0.22f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
 		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2, true);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));

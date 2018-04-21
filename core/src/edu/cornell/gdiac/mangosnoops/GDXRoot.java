@@ -151,6 +151,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				start = null;
 			}
 		} else if (screen == playing) {
+			System.out.println("End playing mode");
 			reststop.setScreenListener(this);
 			setScreen(reststop);
 

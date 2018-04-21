@@ -655,4 +655,17 @@ public class GameCanvas {
 		spriteBatch.setColor(Color.WHITE);
 		spriteBatch.draw(tex,x,y,ox,oy,width,height,sx,sy,ang,srcX,srcY,srcWidth,srcHeight,fx,fy);
 	}
+
+	/** Draws a fade-to-black rectangle when transitioning between modes.
+	 * (Can also be used to draw fade-ins).
+	 * Alpha 0 = transparent, 1 = opaque
+	 *
+	 * @param alpha The opacity of the rectangle
+	 */
+	public void drawFade(float alpha) {
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		shapeRenderer.setColor(new Color(0,0,0, alpha));
+		shapeRenderer.rect(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+		shapeRenderer.end();
+	}
 }
