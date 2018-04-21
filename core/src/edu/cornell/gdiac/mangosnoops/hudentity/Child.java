@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.Random;
+
 
 public class Child extends Image{
 
@@ -36,13 +38,13 @@ public class Child extends Image{
     private float speechBubbleOffsetY = -2;
 
     /** Spped for child animation */
-    private static final float ANIMATION_SPEED = 0.1f;
+    private static float ANIMATION_SPEED;
 
     /** Current animation frame for animations */
     private float animationFrame;
 
     /** How many animation frames there are */
-    private static final int NUM_ANIMATION_FRAMES = 19;
+    private static final int NUM_ANIMATION_FRAMES = 2;
 
     /** The current FilmStrip */
     private FilmStrip currentFilmStrip;
@@ -83,6 +85,9 @@ public class Child extends Image{
         } else{
             position = new Vector2(0.915f, 0.81f);
         }
+        Random rand = new Random();
+        int animSpeedInt = rand.nextInt(5) + 20;
+        ANIMATION_SPEED = animSpeedInt / 100;
         ctype = type;
         happiness = HAPPY_UBOUND;
     }
@@ -255,9 +260,7 @@ public class Child extends Image{
         float rearWidth = 50 * canvas.getHeight()/(50*3.5f);
 
         currentFilmStrip = childTextures.get(getCurrentMood());
-        /* FIXME: fix me */
-        // currentFilmStrip.setFrame((int) animationFrame);
-        currentFilmStrip.setFrame(0);
+        currentFilmStrip.setFrame((int) animationFrame);
         float ox = 0.5f* currentFilmStrip.getRegionWidth();
         float oy = 0.5f* currentFilmStrip.getRegionHeight();
         float drawY = position.y * canvas.getHeight() + currentShakeAmount;
@@ -266,6 +269,7 @@ public class Child extends Image{
                 0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight(),
                 0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight());
         }
+
 
     public void drawSpeechBubble(GameCanvas canvas, Texture speechBubble) {
         if (getCurrentMood() == Mood.CRITICAL) {

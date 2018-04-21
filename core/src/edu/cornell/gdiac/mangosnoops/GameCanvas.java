@@ -96,6 +96,8 @@ public class GameCanvas {
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.z = CAM_HEIGHT;
 		camera.near = 0.0001f;
+		camera.rotate(0, 0, 1, 0);
+		camera.update();
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
 
@@ -336,10 +338,10 @@ public class GameCanvas {
 			return;
 		}
 
-		float w = image.getWidth();
+//		float w = image.getWidth();
         // Have to draw the background twice for continuous scrolling.
         spriteBatch.draw(image, x,   y);
-        spriteBatch.draw(image, x+w, y);
+//        spriteBatch.draw(image, x+w, y);
     }
 
 
@@ -626,6 +628,16 @@ public class GameCanvas {
 		camera.update();
 		//System.out.println(t);
 		Decal objectDecal = Decal.newDecal(width, height, new TextureRegion(t), true);
+		objectDecal.setPosition(x, y, z);
+		objectDecal.rotateX(xRotationAngle);
+		objectDecal.rotateY(yRotationAngle);
+		batch.add(objectDecal);
+	}
+
+	public void drawRoadObject(TextureRegion t, float x, float y, float z, float width, float height, float xRotationAngle, float yRotationAngle) {
+		camera.update();
+		//System.out.println(t);
+		Decal objectDecal = Decal.newDecal(width, height, t, true);
 		objectDecal.setPosition(x, y, z);
 		objectDecal.rotateX(xRotationAngle);
 		objectDecal.rotateY(yRotationAngle);

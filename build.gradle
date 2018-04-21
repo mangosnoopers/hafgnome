@@ -62,6 +62,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "org.apache.poi:poi:3.17"
         compile "org.apache.poi:poi-ooxml:3.17"
+        compile 'org.json:json:20171018'
     }
 }
 
