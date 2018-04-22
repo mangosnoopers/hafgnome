@@ -277,6 +277,8 @@ public class GameMode implements Screen {
 			}
 		} catch (Exception e) {
 			// TODO get rid of this block probably
+			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
+			System.out.println(e.getMessage());
 		}
 
 	}
