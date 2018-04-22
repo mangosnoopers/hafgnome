@@ -126,6 +126,11 @@ public class GameplayController {
 	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
 	private static final String REARVIEW_COVER = "images/rearview_cover.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
+	/** Sun effect that will be overlayed */
+	private static final String SUN_FILE = "images/sun_1.jpg";
+	private static final String SUN2_FILE = "images/sun_2.jpg";
+	private static final String SUN3_FILE = "images/sun_3.png";
+	private static final String WHITE_FILE = "images/white.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -172,6 +177,11 @@ public class GameplayController {
 	private Texture rearviewBackgroundTexture;
 	private Texture rearviewSeatsTexture;
 	private Texture rearviewCoverTexture;
+	/** Texture of sun effect */
+	private Texture sun;
+	private Texture sun2;
+	private Texture sun3;
+	private Texture white;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -249,6 +259,15 @@ public class GameplayController {
         assets.add(VISOR_OPEN_FILE);
         manager.load(VISOR_CLOSED_FILE, Texture.class);
         assets.add(VISOR_OPEN_FILE);
+		// Load sun effect
+		manager.load(SUN_FILE, Texture.class);
+		assets.add(SUN_FILE);
+		manager.load(SUN2_FILE, Texture.class);
+		assets.add(SUN2_FILE);
+		manager.load(SUN3_FILE, Texture.class);
+		assets.add(SUN3_FILE);
+		manager.load(WHITE_FILE, Texture.class);
+		assets.add(WHITE_FILE);
 	}
 
 	/**
@@ -290,6 +309,10 @@ public class GameplayController {
 		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
         visorOpen = createTexture(manager, VISOR_OPEN_FILE);
         visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
+        sun = createTexture(manager, SUN_FILE);
+		sun2 = createTexture(manager, SUN2_FILE);
+		sun3 = createTexture(manager, SUN3_FILE);
+		white = createTexture(manager, WHITE_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -396,6 +419,7 @@ public class GameplayController {
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
+		healthGaugePointer = new Image(0.35f, 0.023f, 0.175f, healthPointerTexture);
 		rearviewBackground = new Image(0.83f, 0.85f, 0.3f, rearviewBackgroundTexture);
 		rearviewSeats = new Image(0.83f, 0.85f, 0.3f, rearviewSeatsTexture);
 		rearviewCover = new Image(0.83f, 0.85f, 0.3f, rearviewSeatsTexture);
@@ -418,7 +442,7 @@ public class GameplayController {
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
 		//i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
 		inventory.load(i);
-		visor = new Visor(visorOpen, visorClosed);
+		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);

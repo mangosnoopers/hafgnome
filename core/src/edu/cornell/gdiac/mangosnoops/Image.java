@@ -131,6 +131,14 @@ public class Image {
                 relativeScale*canvas.getHeight());
     }
 
+    public void draw(GameCanvas canvas, float ang) {
+
+        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, ang,
+                relativeScale*canvas.getHeight(),
+                relativeScale*canvas.getHeight());
+    }
+
     public void drawFromCenter(GameCanvas canvas) {
         canvas.draw(texture, Color.WHITE, texture.getWidth() * 0.5f, texture.getHeight() * 0.5f, position.x * SCREEN_DIMENSIONS.x,
                 position.y * SCREEN_DIMENSIONS.y + currentShakeAmount, 0, relativeScale * SCREEN_DIMENSIONS.y, relativeScale * SCREEN_DIMENSIONS.y);

@@ -2,7 +2,7 @@
  * GameMode.java
  *
  * This is the primary class file for running the game.  You should study this file for
- * ideas on how to structure your own root class. This class follows a 
+ * ideas on how to structure your own root class. This class follows a
  * model-view-controller pattern fairly strictly.
  *
  * Author: Walker M. White
@@ -21,7 +21,6 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
-import edu.cornell.gdiac.mangosnoops.hudentity.Inventory;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.util.*;
 
@@ -35,8 +34,8 @@ import edu.cornell.gdiac.util.*;
  */
 public class GameMode implements Screen {
 	/**
- 	 * Track the current state of the game for the update loop.
- 	 */
+	 * Track the current state of the game for the update loop.
+	 */
 	public enum GameState {
 		/** Before the game has started */
 		INTRO,
@@ -61,9 +60,16 @@ public class GameMode implements Screen {
 	private static String SKY_FILE = "images/sky.png";
 	/** The file for the rear view mirror */
 	private static final String REARVIEW_MIRROR_FILE = "images/DashHUD/rearview.png";
+	/** Rearview mirror stuff */
+	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
+	private static final String REARVIEW_COVER = "images/rearview_cover.png";
+	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
+	/** Death Screen */
+	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
 
 	/** The file for the angry speech bubble */
 	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
+
 
 	// Loaded assets
 	/** The background image for the game */
@@ -78,6 +84,10 @@ public class GameMode implements Screen {
 	private Texture clouds;
 	/** Texture of the sky */
 	private Texture sky;
+	/** Texture of the dash **/
+	private Texture dash;
+	/** Death Screen */
+	private Texture deathModule;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
 	/** Counter for the game */
@@ -135,6 +145,9 @@ public class GameMode implements Screen {
 		// Load speech bubble
 		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
 		assets.add(SPEECH_BUBBLE_FILE);
+		// Load death module
+		manager.load(DEATH_MODULE_FILE, Texture.class);
+		assets.add(DEATH_MODULE_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -144,7 +157,6 @@ public class GameMode implements Screen {
 		assets.add(FONT_FILE);
 
 		// Preload gameplay content
-
 		gameplayController.preLoadContent(manager,assets);
 	}
 
@@ -184,6 +196,11 @@ public class GameMode implements Screen {
 			speechBubble = manager.get(SPEECH_BUBBLE_FILE, Texture.class);
 		}
 
+		if (manager.isLoaded(DEATH_MODULE_FILE)) {
+			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
+		}
+
+
 		// Load gameplay content
 		gameplayController.loadContent(manager);
 	}
@@ -197,11 +214,11 @@ public class GameMode implements Screen {
 	 * @param manager Reference to global asset manager.
 	 */
 	public void unloadContent(AssetManager manager) {
-    	for(String s : assets) {
-    		if (manager.isLoaded(s)) {
-    			manager.unload(s);
-    		}
-    	}
+		for(String s : assets) {
+			if (manager.isLoaded(s)) {
+				manager.unload(s);
+			}
+		}
 	}
 
 
@@ -212,22 +229,22 @@ public class GameMode implements Screen {
 	 * view has already been initialized by the root class.
 	 */
 	public GameMode(GameCanvas canvas) {
-	    // TODO DO SOMETHING ELSE W THE EXCEPTIONS
-	    try {
-            this.canvas = canvas;
-            active = false;
-            // Null out all pointers, 0 out all ints, etc.
-            gameState = GameState.INTRO;
-            assets = new Array<String>();
+		// TODO DO SOMETHING ELSE W THE EXCEPTIONS
+		try {
+			this.canvas = canvas;
+			active = false;
+			// Null out all pointers, 0 out all ints, etc.
+			gameState = GameState.INTRO;
+			assets = new Array<String>();
 
-            // Create the controllers.
-            inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(TEST_LEVELS[currLevel]));
-            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
-            soundController = new SoundController();
-        } catch (Exception e) {
-	        System.out.println(e.getMessage());
-        }
+			// Create the controllers.
+			inputController = new InputController();
+			gameplayController = new GameplayController(new LevelObject(TEST_LEVELS[currLevel]));
+			collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
+			soundController = new SoundController();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/**
@@ -276,7 +293,6 @@ public class GameMode implements Screen {
 					break;
 				case PLAY:
 					if (inputController.didReset()) {
-						System.out.println("RESETTING");
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
@@ -305,16 +321,16 @@ public class GameMode implements Screen {
 
 		// Check if game is over
 		if (gameplayController.getCar().isDestroyed()) {
-            gameState = GameState.OVER;
-        }
+			gameState = GameState.OVER;
+		}
 
 		// Update Based on input
-        gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
+		gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
 		gameplayController.resolveActions(inputController, delta);
 
 		// Update child states TODO: idk
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(),
-											gameplayController.getCar().getNosh(), gameplayController.getRadio());
+				gameplayController.getCar().getNosh(), gameplayController.getRadio());
 
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
@@ -348,7 +364,8 @@ public class GameMode implements Screen {
 
 		canvas.clearScreen();
 
-        gameplayController.getRoad().draw(canvas);
+
+		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez
 		for (Gnome g : gameplayController.getGnomez()) {
@@ -357,19 +374,22 @@ public class GameMode implements Screen {
 
 		canvas.drawWorld();
 
-
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
 
 		// Clouds
+		/*
 		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
 				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
+				*/
 
-		// Draw speech bubbles, if necessary
-		if (!gameplayController.getRoad().reachedEndOfLevel()) {
-			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
-			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
+		//Gnomez
+		for (Gnome g : gameplayController.getGnomez()) {
+			g.draw(canvas);
 		}
+
+		//Draw sun effect part 1
+		gameplayController.getVisor().drawSunA(canvas, gameplayController.sunShine);
 
 		///**  Draw Dash and Interactive HUD Elements **///
 		gameplayController.getCar().drawDash(canvas);
@@ -383,21 +403,19 @@ public class GameMode implements Screen {
 		// Radio
 		gameplayController.getRadio().draw(canvas, displayFont);
 
-
 		// Health gauge and pointer
 		Color healthGaugeColor = Color.WHITE;
-        if (gameplayController.getCar().getIsDamaged()) {
-        	healthGaugeColor = Color.RED;
+		if (gameplayController.getCar().getIsDamaged()) {
+			healthGaugeColor = Color.RED;
 		}
-        gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
+		gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
+		gameplayController.getHealthGaugePointer().draw(canvas, gameplayController.getCar().getHealthPointerAng());
 
 		// FIXME: this is a mess
-		gameplayController.getRearviewBackground().drawFromCenter(canvas);
-		if(gameplayController.getRearviewEnemy().exists()) {
-			gameplayController.getRearviewEnemy().drawFromCenter(canvas);
-		}
-		gameplayController.getRearviewSeats().drawFromCenter(canvas);
-		gameplayController.getRearviewCover().drawFromCenter(canvas);
+		gameplayController.getRearviewBackground().draw(canvas);
+		gameplayController.getRearviewEnemy().draw(canvas);
+		gameplayController.getRearviewSeats().draw(canvas);
+		gameplayController.getRearviewCover().draw(canvas);
 		// Draw Ned and Nosh
 		gameplayController.getCar().getNosh().draw(canvas);
 		gameplayController.getCar().getNed().draw(canvas);
@@ -407,13 +425,10 @@ public class GameMode implements Screen {
 		canvas.draw(rearviewBackground,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
 					0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
 					canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-
-
 		// Draw rearview seats
 		canvas.draw(rearviewSeats,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
 				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
 				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-
 		// Draw rearview cover
 		canvas.draw(rearviewCover,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
 				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
@@ -422,7 +437,23 @@ public class GameMode implements Screen {
 
 		//Draw inventory
 		gameplayController.getInventory().draw(canvas);
-		Inventory.drawItemInHand(canvas);
+
+		// Draw speech bubbles, if necessary
+		if (!gameplayController.getRoad().reachedEndOfLevel()) {
+			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
+			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
+		}
+
+		//Draw sun effect part 2
+		gameplayController.getVisor().drawSunB(canvas, gameplayController.sunShine);
+
+		//Draw visor
+		gameplayController.getVisor().draw(canvas);
+
+
+		if (gameplayController.getRoad().reachedEndOfLevel()) {
+			gameState = GameState.OVER;
+		}
 
 		// Draw messages
 		switch (gameState) {
@@ -433,8 +464,8 @@ public class GameMode implements Screen {
 					canvas.drawTextCentered("YOU WON", displayFont, GAME_OVER_OFFSET);
 					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
 				} else {
-					canvas.drawTextCentered("GNOME OVER", displayFont, GAME_OVER_OFFSET);
-					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
+					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
+							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0, ((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
 				}
 				break;
 			case PLAY:
