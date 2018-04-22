@@ -448,7 +448,6 @@ public class GameplayController {
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
 
-
 		// Add all HUD objects to hudObjects
 		hudObjects.add(vroomStick);
 		hudObjects.add(radio);
@@ -520,14 +519,11 @@ public class GameplayController {
 	protected void destroy(RoadObject o) {
 	    // TODO: carry out actions that occur on death of object o
 		switch(o.getType()) {
-			case CAR:
-				break;
 			case GNOME:
 				break;
 			default:
 				break;
 		}
-
 	}
 
 	/**
@@ -694,54 +690,11 @@ public class GameplayController {
 				default:
 					break;
 			}
-//			if (ned.isAwake()) {
-//				if (r.getCurrentStationNed()) {
-//					ned.setHappy();
-//				} else {
-//					ned.decreaseHappiness();
-//				}
-//			}
-//
-//			// check radio for nosh
-//			if (nosh.isAwake()) {
-//				if (r.getCurrentStationNosh()) {
-//					nosh.setHappy();
-//				} else {
-//					nosh.decreaseHappiness();
-//				}
-//			}
 		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
             ned.setMoodShifting(true, false);
         } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
             nosh.setMoodShifting(true, false);
         }
-
-
-        // TODO: eventually remove this random stuff, commenting out for testing
-//		Random generator = new Random();
-//		float ned_prob = 0.3f;
-//		float nosh_prob = 0.3f;
-//
-//		float rearviewProb = 0.3f;
-//
-//		// check every 100 frames
-//		if (counter % 100 == 0) {
-//			// make ned sleepy with given probability
-//			if (generator.nextFloat() <= ned_prob) {
-////				ned.setAsleep();
-//				ned.setMoodShifting(true, false);
-//			}
-//			// make nosh sleepy with given probability
-//			if (generator.nextFloat() <= nosh_prob) {
-//				nosh.setAsleep();
-//			}
-//
-//			// Create rearview enemy with given probability
-//			if (generator.nextFloat() <= rearviewProb) {
-//				rearviewEnemy.create();
-//			}
-//
-//		}
 
 	}
 
