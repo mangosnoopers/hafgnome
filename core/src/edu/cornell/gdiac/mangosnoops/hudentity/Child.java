@@ -6,7 +6,6 @@ import edu.cornell.gdiac.mangosnoops.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ObjectMap;
-import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.Random;

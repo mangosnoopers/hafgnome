@@ -21,6 +21,9 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
@@ -39,8 +42,6 @@ import java.util.Random;
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
-	/** The change in x, computed based on the wheel angle */
-	private float rotationMagnitude;
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -131,6 +132,10 @@ public class GameplayController {
 	private static final String SUN2_FILE = "images/sun_2.jpg";
 	private static final String SUN3_FILE = "images/sun_3.png";
 	private static final String WHITE_FILE = "images/white.png";
+	/** The file for the angry speech bubble */
+	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
+	/** The font file to use for scores */
+	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -176,12 +181,16 @@ public class GameplayController {
 	/** Texture of the rear view mirror */
 	private Texture rearviewBackgroundTexture;
 	private Texture rearviewSeatsTexture;
-	private Texture rearviewCoverTexture;
 	/** Texture of sun effect */
 	private Texture sun;
 	private Texture sun2;
 	private Texture sun3;
 	private Texture white;
+	/** Texture of the angry speech bubble */
+	private Texture speechBubble;
+
+	/** The font for giving messages to the player */
+	private BitmapFont displayFont;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -259,7 +268,6 @@ public class GameplayController {
         assets.add(VISOR_OPEN_FILE);
         manager.load(VISOR_CLOSED_FILE, Texture.class);
         assets.add(VISOR_OPEN_FILE);
-		// Load sun effect
 		manager.load(SUN_FILE, Texture.class);
 		assets.add(SUN_FILE);
 		manager.load(SUN2_FILE, Texture.class);
@@ -268,6 +276,8 @@ public class GameplayController {
 		assets.add(SUN3_FILE);
 		manager.load(WHITE_FILE, Texture.class);
 		assets.add(WHITE_FILE);
+		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
+		assets.add(SPEECH_BUBBLE_FILE);
 	}
 
 	/**
@@ -306,13 +316,18 @@ public class GameplayController {
 		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
-		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
         visorOpen = createTexture(manager, VISOR_OPEN_FILE);
         visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
         sun = createTexture(manager, SUN_FILE);
 		sun2 = createTexture(manager, SUN2_FILE);
 		sun3 = createTexture(manager, SUN3_FILE);
 		white = createTexture(manager, WHITE_FILE);
+		speechBubble = createTexture(manager, SPEECH_BUBBLE_FILE);
+		if (manager.isLoaded(FONT_FILE)) {
+			displayFont = manager.get(FONT_FILE,BitmapFont.class);
+		} else {
+			displayFont = null;
+		}
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -468,7 +483,6 @@ public class GameplayController {
 	 */
 	public void reset() {
 		road.reset();
-		rotationMagnitude = 0;
 		yonda.reset();
 		inventory.reset();
 		wheel = null;
@@ -747,5 +761,59 @@ public class GameplayController {
 			i.applyShake();
 		}
 
+	}
+
+	public void draw(GameCanvas canvas) {
+		//Gnomez
+		for (Gnome g : gnomez) {
+			g.draw(canvas);
+		}
+
+		//Draw sun effect part 1
+		visor.drawSunA(canvas, sunShine);
+
+		///**  Draw Dash and Interactive HUD Elements **///
+		yonda.drawDash(canvas);
+
+		// Vroom Stick
+		vroomStick.draw(canvas);
+
+		// Wheel
+		wheel.draw(canvas);
+
+		// Radio
+		radio.draw(canvas, displayFont);
+
+		// Health gauge and pointer
+		Color healthGaugeColor = Color.WHITE;
+		if (yonda.getIsDamaged()) {
+			healthGaugeColor = Color.RED;
+		}
+		healthGauge.draw(canvas, healthGaugeColor);
+		healthGaugePointer.draw(canvas, yonda.getHealthPointerAng());
+
+		// FIXME: this is a mess
+		rearviewBackground.draw(canvas);
+		rearviewEnemy.draw(canvas);
+		rearviewSeats.draw(canvas);
+		rearviewCover.draw(canvas);
+		// Draw Ned and Nosh
+		yonda.getNosh().draw(canvas);
+		yonda.getNed().draw(canvas);
+
+		//Draw inventory
+		inventory.draw(canvas);
+
+		// Draw speech bubbles, if necessary
+		if (!road.reachedEndOfLevel()) {
+			yonda.getNed().drawSpeechBubble(canvas, speechBubble);
+			yonda.getNosh().drawSpeechBubble(canvas, speechBubble);
+		}
+
+		//Draw sun effect part 2
+		visor.drawSunB(canvas, sunShine);
+
+		//Draw visor
+		visor.draw(canvas);
 	}
 }

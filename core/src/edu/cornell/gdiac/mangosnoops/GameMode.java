@@ -58,17 +58,8 @@ public class GameMode implements Screen {
 	private static String CLOUDS_FILE = "images/clouds.png";
 	/** The file for the sky image */
 	private static String SKY_FILE = "images/sky.png";
-	/** The file for the rear view mirror */
-	private static final String REARVIEW_MIRROR_FILE = "images/DashHUD/rearview.png";
-	/** Rearview mirror stuff */
-	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
-	private static final String REARVIEW_COVER = "images/rearview_cover.png";
-	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
-
-	/** The file for the angry speech bubble */
-	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
 
 
 	// Loaded assets
@@ -80,16 +71,12 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
-	/** Texture of the clouds */
-	private Texture clouds;
 	/** Texture of the sky */
 	private Texture sky;
 	/** Texture of the dash **/
 	private Texture dash;
 	/** Death Screen */
 	private Texture deathModule;
-	/** Texture of the angry speech bubble */
-	private Texture speechBubble;
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
@@ -97,12 +84,8 @@ public class GameMode implements Screen {
 
 	/** Factor used to compute where we are in scrolling process */
 	private static final float TIME_MODIFIER    = 0.06f;
-	/** Offset for the shell counter message on the screen */
-	private static final float COUNTER_OFFSET   = 5.0f;
 	/** Offset for the game over message on the screen */
 	private static final float GAME_OVER_OFFSET = 40.0f;
-	/** Origin of health gauge */
-	private static final Vector2 HEALTH_GAUGE_ORIGIN = new Vector2(0.0f,0.0f);
 
 	/** Reference to drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
@@ -138,13 +121,8 @@ public class GameMode implements Screen {
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
 
-		// Load the clouds
-		manager.load(CLOUDS_FILE, Texture.class);
 		// Load sky
 		manager.load(SKY_FILE, Texture.class);
-		// Load speech bubble
-		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
-		assets.add(SPEECH_BUBBLE_FILE);
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
@@ -184,16 +162,8 @@ public class GameMode implements Screen {
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		}
 
-		if (manager.isLoaded(CLOUDS_FILE)) {
-			clouds = manager.get(CLOUDS_FILE, Texture.class);
-		}
-
 		if (manager.isLoaded(SKY_FILE)) {
-			sky = manager.get(CLOUDS_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(SPEECH_BUBBLE_FILE)) {
-			speechBubble = manager.get(SPEECH_BUBBLE_FILE, Texture.class);
+			sky = manager.get(SKY_FILE, Texture.class);
 		}
 
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
@@ -360,9 +330,7 @@ public class GameMode implements Screen {
 	 * prefer this in lecture.
 	 */
 	private void draw(float delta) {
-
 		canvas.clearScreen();
-
 
 		gameplayController.getRoad().draw(canvas);
 
@@ -376,58 +344,7 @@ public class GameMode implements Screen {
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
 
-		//Gnomez
-		for (Gnome g : gameplayController.getGnomez()) {
-			g.draw(canvas);
-		}
-
-		//Draw sun effect part 1
-		gameplayController.getVisor().drawSunA(canvas, gameplayController.sunShine);
-
-		///**  Draw Dash and Interactive HUD Elements **///
-		gameplayController.getCar().drawDash(canvas);
-
-		// Vroom Stick
-		gameplayController.getVroomStick().draw(canvas);
-
-		// Wheel
-		gameplayController.getWheel().draw(canvas);
-
-		// Radio
-		gameplayController.getRadio().draw(canvas, displayFont);
-
-		// Health gauge and pointer
-		Color healthGaugeColor = Color.WHITE;
-		if (gameplayController.getCar().getIsDamaged()) {
-			healthGaugeColor = Color.RED;
-		}
-		gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
-		gameplayController.getHealthGaugePointer().draw(canvas, gameplayController.getCar().getHealthPointerAng());
-
-		// FIXME: this is a mess
-		gameplayController.getRearviewBackground().draw(canvas);
-		gameplayController.getRearviewEnemy().draw(canvas);
-		gameplayController.getRearviewSeats().draw(canvas);
-		gameplayController.getRearviewCover().draw(canvas);
-		// Draw Ned and Nosh
-		gameplayController.getCar().getNosh().draw(canvas);
-		gameplayController.getCar().getNed().draw(canvas);
-
-		//Draw inventory
-		gameplayController.getInventory().draw(canvas);
-
-		// Draw speech bubbles, if necessary
-		if (!gameplayController.getRoad().reachedEndOfLevel()) {
-			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
-			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
-		}
-
-		//Draw sun effect part 2
-		gameplayController.getVisor().drawSunB(canvas, gameplayController.sunShine);
-
-		//Draw visor
-		gameplayController.getVisor().draw(canvas);
-
+		gameplayController.draw(canvas);
 
 		if (gameplayController.getRoad().reachedEndOfLevel()) {
 			gameState = GameState.OVER;
@@ -443,7 +360,8 @@ public class GameMode implements Screen {
 					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
 				} else {
 					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
-							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0, ((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
+							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0,
+							((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
 				}
 				break;
 			case PLAY:
@@ -454,10 +372,6 @@ public class GameMode implements Screen {
 
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();
-
-//		if (gameplayController.getCar().getIsDamaged()) {
-//		    canvas.drawDamageIndicator(gameplayController.getCar().getDamageDisplayAlpha());
-//        }
 	}
 
 	/**
@@ -491,10 +405,10 @@ public class GameMode implements Screen {
 				listener.exitScreen(this, 0);
 			}
 
-			//FIXME: idk what the below is for
-//			if (inputController.didExit() && listener != null) {
-//				listener.exitScreen(this, 0);
-//			}
+			// This is used to return back to GDXRoot - can help to transition to diff screens
+			if (inputController.didExit() && listener != null) {
+				listener.exitScreen(this, 0);
+			}
 		}
 	}
 
