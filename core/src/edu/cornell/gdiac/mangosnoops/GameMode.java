@@ -81,6 +81,7 @@ public class GameMode implements Screen {
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
 	private float globalMiles;
+	private boolean exitToRestStop;
 
 	/** Factor used to compute where we are in scrolling process */
 	private static final float TIME_MODIFIER    = 0.06f;
@@ -324,6 +325,9 @@ public class GameMode implements Screen {
 		counter += 1;
 	}
 
+	// TODO move ghese
+	private int delay = 0;
+	private float fadeOutOpacity = 0.0f;
 	/**
 	 * Draw the status of this player mode.
 	 *
@@ -348,8 +352,23 @@ public class GameMode implements Screen {
 
 		gameplayController.draw(canvas);
 
-		if (gameplayController.getRoad().reachedEndOfLevel()) {
-			gameState = GameState.OVER;
+		// Draw fade out to rest stop
+		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {
+			// TODO FINISH THE FADE make this not sus
+			canvas.drawFade(fadeOutOpacity);
+			if (!(Math.abs(fadeOutOpacity - 1.0f) <= 0.001f)) {
+				fadeOutOpacity += 0.05f;
+			}
+			else {
+				if (delay < 50) {
+					delay++;
+				}
+
+				else {
+					// ready to exit gamemode when the fade out is complete
+					exitToRestStop = true;
+				}
+			}
 		}
 
 		// Draw messages
@@ -402,8 +421,8 @@ public class GameMode implements Screen {
 			update(delta);
 			draw(delta);
 			// Check if end of level - if so transition to rest stop mode
-			if (gameplayController.getRoad().reachedEndOfLevel() && listener != null) {
-				gameState = GameState.OVER;
+			if (exitToRestStop && listener != null) {
+				//				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);
 			}
 
