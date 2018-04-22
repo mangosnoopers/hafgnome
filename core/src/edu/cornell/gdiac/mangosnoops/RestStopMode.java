@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.mangosnoops.hudentity.Inventory;
 import edu.cornell.gdiac.util.ScreenListener;
 
 import java.util.Random;
@@ -46,6 +45,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private int numMovies;
     private int numSnacks;
     private int numBooks;
+    private Inventory playerInv;
 
     // OTHER DOODADS
     /** AssetManager to be loading in the background */
@@ -229,6 +229,10 @@ public class RestStopMode implements Screen, InputProcessor {
         return new Inventory(shelf_ox, shelf_oy, shelf_relsca, shelf_cb, shelfTex,
                              slot_width, slot_height, NUM_SHELVES*ITEMS_PER_SHELF, true);
     }
+
+    public void setPlayerInv(Inventory inv) { playerInv = inv; }
+
+    public Inventory getPlayerInv() { return playerInv; }
 
     public RestStopMode(GameCanvas canvas, AssetManager manager) {
         this.canvas = canvas;

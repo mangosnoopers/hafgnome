@@ -17,6 +17,7 @@
  * LibGDX version, 2/2/2015
  */
 package edu.cornell.gdiac.mangosnoops;
+import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
@@ -63,7 +64,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
 		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 	}
-	
+
+
 	/** 
 	 * Called when the Application is first created.
 	 * 
@@ -151,13 +153,11 @@ public class GDXRoot extends Game implements ScreenListener {
 				start = null;
 			}
 		} else if (screen == playing) {
-			System.out.println("End playing mode");
+			reststop.setPlayerInv(playing.getInventory());
 			reststop.setScreenListener(this);
 			setScreen(reststop);
-
 			playing.dispose();
-			playing.unloadContent(manager); // TODO move this perhaps
-			playing = null;
+
 		} else if (screen == reststop) {
 			playing.setScreenListener(this);
 			setScreen(playing);
@@ -166,6 +166,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			reststop = null;
 		} else {
 			// We quit the main application
+			playing.unloadContent(manager); // TODO move this perhaps
+			playing = null;
 			Gdx.app.exit();
 		}
 	}
