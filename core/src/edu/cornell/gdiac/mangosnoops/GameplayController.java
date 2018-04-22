@@ -550,7 +550,7 @@ public class GameplayController {
 	 * @param nosh Nosh
 	 */
 	public void handleEvents(float delta, Child ned, Child nosh) {
-		if (events.size != 0) {
+		if (nextEvent < events.size && events.size != 0) {
 			float dy = road.getSpeed() * delta; // change in y position
 			ypos += dy; // add it to y position tracker
 			Event first = events.get(nextEvent);
@@ -585,7 +585,7 @@ public class GameplayController {
 					default:
 						break;
 				}
-				nextEvent = (nextEvent + 1) % events.size;
+				nextEvent += 1;
 			}
 		}
 	}
