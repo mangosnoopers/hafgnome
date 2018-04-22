@@ -21,7 +21,6 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
@@ -30,9 +29,6 @@ import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 import edu.cornell.gdiac.util.FilmStrip;
-
-
-import java.util.Random;
 
 /**
  * Controller to handle gameplay interactions.
@@ -103,9 +99,6 @@ public class GameplayController {
 	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
 	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
 	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
-	/** The texture files for all Items **/
-	private static final String DVD_FILE = "images/Items/dvd.png";
-	private static final String SNACK_FILE = "images/Items/snack.png";
 	/** The texture files for the visor states */
     private static final String VISOR_OPEN_FILE = "images/visor_open.png";
     private static final String VISOR_CLOSED_FILE = "images/visor_closed.png";
@@ -125,6 +118,9 @@ public class GameplayController {
 	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
 	private static final String REARVIEW_COVER = "images/rearview_cover.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
+	/** The texture files for all Items **/
+	private static final String DVD_FILE = "images/Items/dvd.png";
+	private static final String SNACK_FILE = "images/Items/snack.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -315,6 +311,15 @@ public class GameplayController {
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
+
+		// Initialize the inventory TODO REMOVE STARTING INV STUFF
+		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2, true);
+		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
+		inventory.load(i);
+
 	}
 
 	/**
@@ -386,7 +391,6 @@ public class GameplayController {
 	public void start(float x, float y) {
 		hudObjects = new ObjectSet<Image>();
         sunShine = false;
-		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildFilmStrips(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
 		yonda.setDashTexture(dashTexture);
@@ -410,11 +414,6 @@ public class GameplayController {
 		wheel = new Wheel(0.193f,0.22f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
 		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2, true);
-		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
-		inventory.load(i);
 		visor = new Visor(visorOpen, visorClosed);
 
 		road.setRoadTexture(roadTexture);

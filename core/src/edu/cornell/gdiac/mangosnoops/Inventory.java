@@ -1,14 +1,11 @@
-package edu.cornell.gdiac.mangosnoops.hudentity;
+package edu.cornell.gdiac.mangosnoops;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import edu.cornell.gdiac.mangosnoops.GameCanvas;
-import edu.cornell.gdiac.mangosnoops.Image;
 
 public class Inventory extends Image {
 
@@ -27,6 +24,7 @@ public class Inventory extends Image {
     private boolean highlightClicked; // FIXME highlight items that are clicked
 
     private float itemOffset = 0.01f;
+
 
     public void setItemOffset(float f) { itemOffset = f; }
 

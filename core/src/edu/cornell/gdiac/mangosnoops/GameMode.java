@@ -181,6 +181,7 @@ public class GameMode implements Screen {
 		assets.add(FONT_FILE);
 		
 		// Preload gameplay content
+		System.out.println(gameplayController == null);
 		gameplayController.preLoadContent(manager,assets);
 	}
 
@@ -258,6 +259,9 @@ public class GameMode implements Screen {
     		}
     	}
 	}
+
+	/** Get the player's inventory */
+	public Inventory getInventory() { return gameplayController.getInventory(); }
 
 
 	/**
