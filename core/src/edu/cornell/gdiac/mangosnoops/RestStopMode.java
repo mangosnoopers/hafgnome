@@ -80,10 +80,10 @@ public class RestStopMode implements Screen, InputProcessor {
     private static int STANDARD_HEIGHT = 900;
     /** Ration of the bar height to the screen */
     private static float BAR_HEIGHT_RATIO = 0.25f;
-    /** The y-coordinate of the center of the progress bar */
-    private int centerY;
-    /** The x-coordinate of the center of the progress bar */
-    private int centerX;
+    /** The y-coordinate of the center of the ready button */
+    private float centerY;
+    /** The x-coordinate of the center of the ready button */
+    private float centerX;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
@@ -171,47 +171,36 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return a new Inventory with the generated items
      */
     private void generateItems() {
-//        // Randomly generate item quantities
-//        Random rand = new Random();
-//        int numSnacks = rand.nextInt(2) + 3; // nextInt(high-low) + low
-//        int numBooks = rand.nextInt(2) + 1;
-//        int numMovies = rand.nextInt(1);
-//
-//        Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-//        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.DVD,numMovies));
-//        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,numSnacks));
-//        // TODO: change to books
-//        i.add(new Inventory.Slot(i,inv, Inventory.Item.ItemType.SNACK,numBooks));
-//
-//        inv.load(i);
-
         // starting position - top left slot of the shelf
-        float slotX = 0.0f;
-        float slotY = 0.0f;
+        float slotX = 0.3f;
+        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
 
         // top shelf - snacks
         for (int i = 0; i < numSnacks; i++) {
-            items.add(new RestStopItem(UNCLICKED, slotX, slotY, ITEM_SIZE_SCALE, snackTex));
-            slotX += shelf.texture.getWidth() / 5.0f;
+            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
+                                        slotX, slotY, ITEM_SIZE_SCALE, snackTex));
+            slotX += 0.09f;
         }
 
-        slotX = 0.0f;
-        slotY += 0.0f;
+        slotX = 0.3f;
+        slotY = (shelfTex.getHeight() * 0.36f) / canvas.getHeight();
 
         // middle shelf - books
         for (int i = 0; i < numBooks; i++) {
             // TODO change to books
-            items.add(new RestStopItem(UNCLICKED, slotX, slotY, ITEM_SIZE_SCALE, snackTex));
-            slotX += shelf.texture.getWidth() / 5.0f;
+            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
+                                        slotX, slotY, ITEM_SIZE_SCALE, snackTex));
+            slotX += 0.09f;
         }
 
-        slotX = 0.0f;
-        slotY += 0.0f;
+        slotX = 0.3f;
+        slotY = (shelfTex.getHeight() * 0.16f) / canvas.getHeight();
 
         // bottom shelf - movies
         for (int i = 0; i < numMovies; i++) {
-            items.add(new RestStopItem(UNCLICKED, slotX, slotY, ITEM_SIZE_SCALE, dvdTex));
-            slotX += shelf.texture.getWidth() / 5.0f;
+            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
+                                        slotX, slotY, ITEM_SIZE_SCALE, dvdTex));
+            slotX += 0.09f;
         }
     }
 
@@ -263,6 +252,10 @@ public class RestStopMode implements Screen, InputProcessor {
         items = new Array<RestStopItem>();
         generateItems();
 
+        // TODO CHANGe this also in draw
+        centerX = SCREEN_DIMENSIONS.x * 0.92f + readyButtonTex.getWidth()/2.0f;
+        centerY = SCREEN_DIMENSIONS.y * 0.02f + readyButtonTex.getWidth()/2.0f;
+
         // Create inventory and add items to it
 //        Image.updateScreenDimensions(canvas);
 //        Inventory.Item.setTexturesAndScales(dvd,ITEM_SIZE_SCALE,snack,ITEM_SIZE_SCALE);
@@ -311,7 +304,6 @@ public class RestStopMode implements Screen, InputProcessor {
 //            }
 //        }
 
-
         canvas.draw(backgroundTex, 0, 0);
 
         // Draw the shelf and items
@@ -325,32 +317,10 @@ public class RestStopMode implements Screen, InputProcessor {
             i.draw(canvas,overlay);
         }
 
-//        // draw the shelf
-//        canvas.draw(shelfTex,(SCREEN_DIMENSIONS.x - shelfTex.getWidth()*SHELF_SCALING)/2.0f,
-//                (SCREEN_DIMENSIONS.y - shelfTex.getHeight()*SHELF_SCALING)/2.0f - SHELF_Y_OFFSET,
-//                shelfTex.getWidth()*SHELF_SCALING, shelfTex.getHeight()*SHELF_SCALING);
-////        inv.draw(canvas); FIXME AAAA
-//
-//        // draw movies
-//        for (int i = 0; i < numMovies; i++) {
-//            canvas.draw(dvdTex, (SCREEN_DIMENSIONS.x - shelfTex.getWidth()*SHELF_SCALING)/2.0f,
-//                    (SCREEN_DIMENSIONS.y - shelfTex.getHeight()*SHELF_SCALING)/2.0f - SHELF_Y_OFFSET,
-//                    dvdTex.getWidth()*ITEM_SIZE_SCALE, dvdTex.getHeight()*ITEM_SIZE_SCALE);
-//        }
-//
-//        // draw snacks
-//        for (int i = 0; i < numSnacks; i++) {
-//
-//        }
-//
-//        // draw books
-//        for (int i = 0; i < numBooks; i++) {
-//
-//        }
-
         // draw the ready button
         canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * 0.92f, SCREEN_DIMENSIONS.y * 0.02f,
                 readyButtonTex.getWidth()*READY_BUTTON_SCALING, readyButtonTex.getHeight()*READY_BUTTON_SCALING);
+
 
         canvas.endHUDDrawing();
     }
@@ -438,24 +408,36 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return whether the input was processed (whether to hand the event to other listeners)
      */
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+        System.out.println("TOUCHDOWNN");
+
         if (readyStatus == BUTTON_UP) {
             return true;
+        }
+
+        for (RestStopItem i : items) {
+            if (i.clickStatus == BUTTON_UP) {
+                return true;
+            }
         }
 
         // Check if ready button was pressed
         // Flip to match graphics coordinates
         screenY = heightY-screenY;
+//        float distX = (screenX-(centerX))*(screenX-(centerX));
+        float distX = (screenX-(centerX));
+        float distY = (screenY-(centerY));
 
-        int OFFSET_X = 120; // TODO make global
-        int OFFSET_Y = 120;
-        float radius = 0.0f; // TODO: float radius = readyButton.getWidth()/4.0f;
-        float distX = (screenX-(centerX-OFFSET_X))*(screenX-(centerX-OFFSET_X));
-        float distY = (screenY-(centerY+OFFSET_Y))*(screenY-(centerY+OFFSET_Y));
-        if (distX < radius*radius && distY < radius*radius) {
+//        float distY = (screenY-(centerY))*(screenY-(centerY));
+
+        if (distX < readyButtonTex.getWidth() && distY < readyButtonTex.getHeight()) {
             readyStatus = BUTTON_DOWN;
         }
 
         // TODO: also check for items on shelf
+        // if in click area, change click status to button down
+        for (RestStopItem i : items) {
+
+        }
 
         return false;
     }
@@ -469,6 +451,14 @@ public class RestStopMode implements Screen, InputProcessor {
             readyStatus = BUTTON_UP;
             return false;
         }
+
+        for (RestStopItem i : items) {
+            if (i.clickStatus == BUTTON_DOWN) {
+                i.clickStatus = BUTTON_UP;
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -521,10 +511,12 @@ public class RestStopMode implements Screen, InputProcessor {
 
     private class RestStopItem extends Image {
         private int clickStatus;
+        private Inventory.Item.ItemType type;
 
-        private RestStopItem(int clickStatus, float x, float y, float relSca, Texture tex) {
+        private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
             super(x,y,relSca,tex);
             this.clickStatus = clickStatus;
+            type = t;
         }
     }
 

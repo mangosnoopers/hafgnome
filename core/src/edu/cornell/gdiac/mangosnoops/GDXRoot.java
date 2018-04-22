@@ -17,7 +17,6 @@
  * LibGDX version, 2/2/2015
  */
 package edu.cornell.gdiac.mangosnoops;
-import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
@@ -82,6 +81,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		Gdx.graphics.setTitle("Gnomez");
 
 		loading.setScreenListener(this);
+//		System.out.println(playing.getGPC() == null);
 		playing.preLoadContent(manager); // Load game assets statically.
 		setScreen(loading);
 	}
