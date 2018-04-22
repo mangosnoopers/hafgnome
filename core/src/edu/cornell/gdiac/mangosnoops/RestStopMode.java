@@ -314,7 +314,6 @@ public class RestStopMode implements Screen, InputProcessor {
         }
 
         if (!fadeIn) {
-
             canvas.draw(backgroundTex, 0, 0);
 
             // Draw the shelf and items
