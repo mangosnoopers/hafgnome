@@ -243,8 +243,6 @@ public class Inventory extends Image {
             return ("Slot #"+invPos) ;
         }
 
-
-
     }
 
     public static class Item{

@@ -585,7 +585,7 @@ public class GameplayController {
 					default:
 						break;
 				}
-				nextEvent++;
+				nextEvent = (nextEvent + 1) % events.size;
 			}
 		}
 	}
