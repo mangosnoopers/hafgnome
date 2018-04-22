@@ -129,7 +129,7 @@ public class Gnome extends RoadObject{
     }
 
     public void draw(GameCanvas canvas) {
-        System.out.println("Size is" + animator.getSize());
+//        System.out.println("Size is" + animator.getSize());
         animator.setFrame((int) animeframe);
         canvas.drawRoadObject(animator, getX(), getY(), GNOME_HOVER_DISTANCE,GNOME_WIDTH, GNOME_HEIGHT, 90, 0);
     }

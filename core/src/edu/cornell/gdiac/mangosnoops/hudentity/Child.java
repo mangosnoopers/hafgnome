@@ -225,7 +225,7 @@ public class Child extends Image{
                           NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                       }
                   }
-                   System.out.println(NED_SPEECH_BUBBLE_COORDS);
+//                   System.out.println(NED_SPEECH_BUBBLE_COORDS);
                }
                if(this.ctype == ChildType.NOSH){
                    NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
@@ -234,7 +234,7 @@ public class Child extends Image{
                            NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
                        }
                    }
-                   System.out.println(NOSH_SPEECH_BUBBLE_COORDS);
+//                   System.out.println(NOSH_SPEECH_BUBBLE_COORDS);
 
                }
            }

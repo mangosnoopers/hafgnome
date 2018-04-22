@@ -406,9 +406,9 @@ public class GameMode implements Screen {
 			}
 
 			// This is used to return back to GDXRoot - can help to transition to diff screens
-			if (inputController.didExit() && listener != null) {
-				listener.exitScreen(this, 0);
-			}
+//			if (inputController.didExit() && listener != null) {
+//				listener.exitScreen(this, 0);
+//			}
 		}
 	}
 
