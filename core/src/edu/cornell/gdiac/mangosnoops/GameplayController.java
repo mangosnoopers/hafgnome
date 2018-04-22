@@ -434,7 +434,7 @@ public class GameplayController {
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
-		healthGaugePointer = new Image(0.35f, 0.023f, 0.175f, healthPointerTexture);
+		healthGaugePointer = new Image(0.4f, 0.06f, 0.09f, healthPointerTexture);
 		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
 		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
@@ -475,6 +475,7 @@ public class GameplayController {
 		hudObjects.add(rearviewSeats);
 		hudObjects.add(getCar().getNed());
 		hudObjects.add(getCar().getNosh());
+		hudObjects.add(healthGaugePointer);
 
   }
 
