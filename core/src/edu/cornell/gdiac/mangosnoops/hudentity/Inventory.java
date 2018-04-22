@@ -91,6 +91,7 @@ public class Inventory extends Image {
             }
         }
 
+
 //        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
 //            //released mouse, check areas w/ this vector in (store, children, dvd player)
 //            cancelTake();

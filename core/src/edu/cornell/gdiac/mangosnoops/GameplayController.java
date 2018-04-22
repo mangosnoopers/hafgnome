@@ -804,6 +804,7 @@ public class GameplayController {
 
 		//Draw inventory
 		inventory.draw(canvas);
+		inventory.drawItemInHand(canvas);
 
 		// Draw speech bubbles, if necessary
 		if (!road.reachedEndOfLevel()) {
