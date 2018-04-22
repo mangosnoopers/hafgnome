@@ -23,6 +23,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.util.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+
+import java.io.IOException;
 
 /**
  * The primary controller class for the game.
@@ -181,9 +184,10 @@ public class GameMode implements Screen {
 		assets.add(FONT_FILE);
 		
 		// Preload gameplay content
-		System.out.println(gameplayController == null);
 		gameplayController.preLoadContent(manager,assets);
 	}
+
+	public GameplayController getGPC() { return gameplayController; }
 
 	/** 
 	 * Loads the assets for this game.
@@ -282,12 +286,14 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(TEST_LEVELS[currLevel]));
+            gameplayController = new GameplayController(new LevelObject(TEST_LEVELS[currLevel]), canvas);
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
             soundController = new SoundController();
-        } catch (Exception e) {
+        } catch (IOException e) {
 	        System.out.println(e.getMessage());
-        }
+        } catch (InvalidFormatException e) {
+
+		}
 	}
 	
 	/**
@@ -606,7 +612,6 @@ public class GameMode implements Screen {
 			draw(delta);
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if (exitToRestStop && listener != null) {
-				System.out.println("WOOOOO");
 //				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);
 			}

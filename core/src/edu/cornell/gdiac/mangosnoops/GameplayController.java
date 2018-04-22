@@ -301,7 +301,7 @@ public class GameplayController {
 	 *
 	 * @param level is the Level information
 	 */
-	public GameplayController(LevelObject level) {
+	public GameplayController(LevelObject level, GameCanvas canvas) {
 		this.level = level;
 		gnomez = new Array<Gnome>();
 		events = new Array<Event>();
@@ -313,8 +313,11 @@ public class GameplayController {
 		sunShine = false;
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
+		dvdTexture = new Texture(DVD_FILE);
+		snackTexture = new Texture(SNACK_FILE);
+		Image.updateScreenDimensions(canvas);
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2, true);
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,dvdTexture, 0.146f, 0.128f, 2, true);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
