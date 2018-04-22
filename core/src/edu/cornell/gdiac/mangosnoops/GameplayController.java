@@ -455,7 +455,7 @@ public class GameplayController {
 		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
-		//i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
 		inventory.load(i);
 		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 
@@ -717,6 +717,7 @@ public class GameplayController {
 	public void resolveItemDrop(InputController inputController) {
 //		System.out.println("prevClick: "+inputController.isPrevMousePressed());
 //		System.out.println("currClick: "+inputController.isMousePressed());
+
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			if (yonda.getNosh().inChildArea(droppedPos)) {
 				//TODO ITEM CHECKS FOR NOSH
