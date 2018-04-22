@@ -200,7 +200,6 @@ public class GameMode implements Screen {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
 		}
 
-
 		// Load gameplay content
 		gameplayController.loadContent(manager);
 	}
@@ -377,12 +376,6 @@ public class GameMode implements Screen {
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
 
-		// Clouds
-		/*
-		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
-				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
-				*/
-
 		//Gnomez
 		for (Gnome g : gameplayController.getGnomez()) {
 			g.draw(canvas);
@@ -419,21 +412,6 @@ public class GameMode implements Screen {
 		// Draw Ned and Nosh
 		gameplayController.getCar().getNosh().draw(canvas);
 		gameplayController.getCar().getNed().draw(canvas);
-
-        /*
-		// Draw rearview background
-		canvas.draw(rearviewBackground,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
-					0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-					canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-		// Draw rearview seats
-		canvas.draw(rearviewSeats,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
-				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-		// Draw rearview cover
-		canvas.draw(rearviewCover,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
-				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-				*/
 
 		//Draw inventory
 		gameplayController.getInventory().draw(canvas);
