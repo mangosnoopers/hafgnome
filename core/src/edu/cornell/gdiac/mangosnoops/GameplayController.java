@@ -435,9 +435,9 @@ public class GameplayController {
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.35f, 0.023f, 0.175f, healthPointerTexture);
-		rearviewBackground = new Image(0.83f, 0.85f, 0.3f, rearviewBackgroundTexture);
-		rearviewSeats = new Image(0.83f, 0.85f, 0.3f, rearviewSeatsTexture);
-		rearviewCover = new Image(0.83f, 0.85f, 0.3f, rearviewSeatsTexture);
+		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
         for(Gnome g: level.getGnomez()){

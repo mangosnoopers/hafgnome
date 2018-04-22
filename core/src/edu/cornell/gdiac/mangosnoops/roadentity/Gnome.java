@@ -23,16 +23,16 @@ public class Gnome extends RoadObject{
     private GnomeType gtype;
 
     /** How high the gnome hovers in the world */
-    private final float GNOME_HOVER_DISTANCE = 4.33f;
+    private final float GNOME_HOVER_DISTANCE = 4.309f;
 
     /** speed of road */
     private float currSpeed;
 
     /** gnome width */
-    private static final float GNOME_WIDTH = 0.35f;
+    private static final float GNOME_WIDTH = 0.15f;
 
     /** gnome height */
-    private static final float GNOME_HEIGHT = 0.14f;
+    private static final float GNOME_HEIGHT = 0.08f;
 
     /** speed of gnome relative to road, FIXME: change this prob */
     private float gnomeSpeed = 2f;
