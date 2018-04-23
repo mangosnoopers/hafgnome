@@ -734,9 +734,9 @@ public class GameplayController {
 					break;
 			}
 		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-            ned.setMoodShifting(true, false);
+//            ned.setMoodShifting(true, false);
         } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-            nosh.setMoodShifting(true, false);
+//            nosh.setMoodShifting(true, false);
         }
 
 	}
@@ -820,7 +820,7 @@ public class GameplayController {
 			healthGaugeColor = Color.RED;
 		}
 		healthGauge.draw(canvas, healthGaugeColor);
-		healthGaugePointer.draw(canvas, yonda.getHealthPointerAng());
+		healthGaugePointer.draw(canvas, -yonda.getHealthPointerAng());
 
 		// FIXME: this is a mess
 		rearviewBackground.draw(canvas);

@@ -298,11 +298,13 @@ public class Child extends Image{
      * @param in the vector giving the mouse click's (x,y) screen coordinates
      */
     public boolean inChildArea(Vector2 in) {
-        in.y = SCREEN_DIMENSIONS.y - in.y;
+//        System.out.println("input: " + in.x + " " + in.y);
+//        System.out.println("X: " + (position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f) + " " + (position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f));
+//        System.out.println("Y: " + (position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f) + " " + (position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f));
         return (in.x <= position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f)
                 && (in.x >= position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f)
-                && (in.y <= position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f)
-                && (in.y >= position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f);
+                && (SCREEN_DIMENSIONS.y - in.y <= position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f)
+                && (SCREEN_DIMENSIONS.y - in.y >= position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f);
     }
 
 }
