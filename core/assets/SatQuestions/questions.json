@@ -1,7 +1,7 @@
 {  
    "questions":[  
       {  
-         "text":"Which of this animals are larger?",
+         "text":"Which of these animals are larger?",
          "imageA":"whale.png",
          "imageB":"armadillo.png",
          "correct":1
