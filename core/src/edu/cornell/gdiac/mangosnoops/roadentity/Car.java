@@ -130,7 +130,7 @@ public class Car extends RoadObject {
     /**
      * Returns the angle of the car.
      */
-    public float getAngle() { return angle; }
+    public float getPointerAngle() { return healthPointerAng; }
 
     /**
      * Returns one Nosh
@@ -308,7 +308,7 @@ public class Car extends RoadObject {
 
         canvas.draw(dashTexture, Color.WHITE, 0,0,0,shakeOffset,0,
                 (float)canvas.getWidth()/(float)dashTexture.getWidth(),
-                0.33f*(float)canvas.getHeight()/(float)dashTexture.getHeight());
+                0.45f*(float)canvas.getHeight()/(float)dashTexture.getHeight());
 
     }
 

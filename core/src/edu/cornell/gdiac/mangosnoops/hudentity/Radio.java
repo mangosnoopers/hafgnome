@@ -156,6 +156,7 @@ public class Radio extends Image {
      * @param canvas
      */
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
+        displayFont.setColor(Color.WHITE);
         if (texture == null) {
             return;
         }
@@ -168,7 +169,7 @@ public class Radio extends Image {
         canvas.draw(texture, Color.WHITE, oxk, oyk, position.x * canvas.getWidth(), drawY, knobAng,
                 relativeScale * canvas.getHeight(), relativeScale * canvas.getHeight());
 
-        canvas.drawText(getCurrentStationName(), displayFont, 0.75f * canvas.getWidth(), 0.2f * canvas.getHeight());
+        canvas.drawText(getCurrentStationName(), displayFont, 0.75f * canvas.getWidth(), 0.3f * canvas.getHeight());
     }
 
 
