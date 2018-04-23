@@ -68,7 +68,6 @@ public class SATQuestions extends Image {
     /**
      * @return -1 = question area was not pressed, 1 = left area pressed, 2 = right area pressed */
     private int isInArea(Vector2 p) {
-        System.out.println("DOOM" + p.x + " " + Y*SCREEN_DIMENSIONS.y + " " + (Y*SCREEN_DIMENSIONS.y-0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth()));
         if (p.x > X*SCREEN_DIMENSIONS.x && p.x < (X+0.3f*0.45f)*SCREEN_DIMENSIONS.x
             && SCREEN_DIMENSIONS.y-p.y < Y*SCREEN_DIMENSIONS.y && SCREEN_DIMENSIONS.y-p.y > Y*SCREEN_DIMENSIONS.y-0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth()) {
             return 1;
