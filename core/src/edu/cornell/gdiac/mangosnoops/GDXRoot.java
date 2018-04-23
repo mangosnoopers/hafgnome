@@ -47,7 +47,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameMode    playing;
 	private RestStopMode reststop;
 	private StartMenuMode start;
-	private ExitRestStopMode exitreststop;
+
+	// LEVEL FILES TODO implement moving to next level
+	private static final String[] LEVELS = new String[]{"test_level0.xlsx", "test_level0.xlsx"};
+	private static int currLevel;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -63,6 +66,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		FileHandleResolver resolver = new InternalFileHandleResolver();
 		manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
 		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+		currLevel = 0;
 	}
 
 
@@ -73,11 +77,11 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * the asynchronous loader for all other assets.
 	 */
 	public void create() {
+		currLevel = 0;
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
-		playing = new GameMode(canvas);
+		playing = new GameMode(canvas,LEVELS[currLevel]);
 		reststop = new RestStopMode(canvas, manager);
-		exitreststop = new ExitRestStopMode(canvas,manager,1);
 		start = new StartMenuMode(canvas, manager);
 
 		Gdx.graphics.setTitle("Gnomez");
@@ -129,11 +133,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
-		for (String s : manager.getAssetNames()) {
-			System.out.println(s + " is loaded? " + manager.isLoaded(s));
-		}
-		System.out.println("-------------");
-
 		if (exitCode != 0) {
 			Gdx.app.error("GDXRoot", "Exit with error code "+exitCode, new RuntimeException());
 			Gdx.app.exit();
@@ -159,33 +158,26 @@ public class GDXRoot extends Game implements ScreenListener {
 				start = null;
 			}
 		} else if (screen == playing) {
-			// playing --> rest stop
-
+			reststop = new RestStopMode(canvas,manager);
 			reststop.setPlayerInv(playing.getInventory());
 			reststop.setScreenListener(this);
 			Gdx.input.setInputProcessor(reststop);
 			setScreen(reststop);
-//			playing.unloadContent(manager); // TODO move this perhaps
-			//TODO -- send updated inventory back
-		} else if (screen == reststop) {
-			// rest stop --> exit rest stop
-			exitreststop.setScreenListener(this);
-			setScreen(exitreststop);
-			playing.preLoadContent(manager);
-			playing.loadContent(manager);
-		} else if (screen == exitreststop) {
-			// exit rest stop --> playing
-			//			playing.loadGameplay(manager);
-			playing.startNewLevel();
-			playing.setScreenListener(this);
-			setScreen(playing);
-		} else {
-			// We quit the main application
+
 			playing.dispose();
 			playing = null;
+		} else if (screen == reststop) {
+			playing = new GameMode(canvas,LEVELS[currLevel]);
+			playing.preLoadContent(manager);
+			playing.loadContent(manager);
+			playing.setScreenListener(this);
+			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode
+			setScreen(playing);
 
 			reststop.dispose();
 			reststop = null;
+		} else {
+			// We quit the main application
 			Gdx.app.exit();
 		}
 	}
