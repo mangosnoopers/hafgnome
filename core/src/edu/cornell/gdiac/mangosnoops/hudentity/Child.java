@@ -300,10 +300,9 @@ public class Child extends Image{
     public boolean inChildArea(Vector2 in) {
         in.y = SCREEN_DIMENSIONS.y - in.y;
         return (in.x <= position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f)
-                && (in.x <= position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f)
                 && (in.x >= position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f)
                 && (in.y <= position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f)
-                && (in.y >= position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionHeight()*0.5f);
+                && (in.y >= position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f);
     }
 
 }

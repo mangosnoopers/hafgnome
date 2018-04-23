@@ -48,21 +48,21 @@ public class Visor extends Image {
 
     public boolean inArea(Vector2 p) {
         if(open) {
-            return (p.x > 0.06f*SCREEN_DIMENSIONS.x && p.x < (0.06f+0.35f)*SCREEN_DIMENSIONS.x
-                    && p.y > 0 && p.y < openVisor.getHeight()*SCREEN_DIMENSIONS.x*0.35f/openVisor.getWidth());
+            return (p.x > 0 && p.x < (0.41f)*SCREEN_DIMENSIONS.x
+                    && p.y > 0 && p.y < openVisor.getHeight()*SCREEN_DIMENSIONS.x*0.41f/openVisor.getWidth());
         } else {
-            return (p.x > 0.06f*SCREEN_DIMENSIONS.x && p.x < (0.06f+0.35f)*SCREEN_DIMENSIONS.x
-                    && p.y > 0 && p.y < closedVisor.getHeight()*SCREEN_DIMENSIONS.x*0.35f/openVisor.getWidth());
+            return (p.x > 0 && p.x < (0.41f)*SCREEN_DIMENSIONS.x
+                    && p.y > 0 && p.y < closedVisor.getHeight()*SCREEN_DIMENSIONS.x*0.41f/openVisor.getWidth());
         }
     }
 
     public void draw(GameCanvas canvas) {
         if(open) {
-            canvas.draw(openVisor, Color.WHITE, 0, openVisor.getHeight(), 0.06f*canvas.getWidth(), canvas.getHeight(), 0,
-                    canvas.getWidth()*0.35f/openVisor.getWidth(),canvas.getWidth()*0.35f/openVisor.getWidth());
+            canvas.draw(openVisor, Color.WHITE, 0, openVisor.getHeight(), 0, canvas.getHeight(), 0,
+                    canvas.getWidth()*0.41f/openVisor.getWidth(),canvas.getWidth()*0.41f/openVisor.getWidth());
         } else {
-            canvas.draw(closedVisor, Color.WHITE, 0, closedVisor.getHeight(), 0.06f*canvas.getWidth(), canvas.getHeight(), 0,
-                    canvas.getWidth()*0.35f/openVisor.getWidth(),canvas.getWidth()*0.35f/openVisor.getWidth());
+            canvas.draw(closedVisor, Color.WHITE, 0, closedVisor.getHeight(), 0, canvas.getHeight(), 0,
+                    canvas.getWidth()*0.41f/openVisor.getWidth(),canvas.getWidth()*0.41f/openVisor.getWidth());
         }
     }
 
