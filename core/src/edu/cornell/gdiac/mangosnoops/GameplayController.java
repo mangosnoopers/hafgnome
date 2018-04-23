@@ -21,10 +21,8 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
@@ -34,8 +32,7 @@ import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
-
-import java.util.Random;
+import java.util.HashMap;
 
 /**
  * Controller to handle gameplay interactions.
@@ -72,7 +69,8 @@ public class GameplayController {
 	private RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
-	
+	private SATQuestions satQuestions;
+
 	private Image healthGauge;
 	private Image rearviewBackground;
 	private Image rearviewSeats;
@@ -134,6 +132,11 @@ public class GameplayController {
 	private static final String WHITE_FILE = "images/white.png";
 	/** The file for the angry speech bubble */
 	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
+	/** SAT Questions */
+	private static final String SAT_BUBBLE_FILE = "SatQuestions/satbubble.png";
+	private static final String SAT_ARMADILLO_FILE = "SatQuestions/armadillo.png";
+	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
+	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
@@ -188,6 +191,12 @@ public class GameplayController {
 	private Texture white;
 	/** Texture of the angry speech bubble */
 	private Texture speechBubble;
+	/** SAT Questions */
+	private Texture satBubble;
+	private Texture satArmadillo;
+	private Texture satWhale;
+	private Texture satLemonMan;
+	private HashMap<String, Texture> satTextures;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -278,6 +287,14 @@ public class GameplayController {
 		assets.add(WHITE_FILE);
 		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
 		assets.add(SPEECH_BUBBLE_FILE);
+		manager.load(SAT_BUBBLE_FILE, Texture.class);
+		assets.add(SAT_BUBBLE_FILE);
+		manager.load(SAT_ARMADILLO_FILE, Texture.class);
+		assets.add(SAT_ARMADILLO_FILE);
+		manager.load(SAT_WHALE_FILE, Texture.class);
+		assets.add(SAT_WHALE_FILE);
+		manager.load(SAT_LEMONMAN_FILE, Texture.class);
+		assets.add(SAT_LEMONMAN_FILE);
 	}
 
 	/**
@@ -328,6 +345,13 @@ public class GameplayController {
 		} else {
 			displayFont = null;
 		}
+		satBubble = createTexture(manager, SAT_BUBBLE_FILE);
+		satArmadillo = createTexture(manager, SAT_ARMADILLO_FILE);
+		satTextures.put(SAT_ARMADILLO_FILE, satArmadillo);
+		satWhale = createTexture(manager, SAT_WHALE_FILE);
+		satTextures.put(SAT_WHALE_FILE, satWhale);
+		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
+		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -354,6 +378,7 @@ public class GameplayController {
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
+		satQuestions = new SATQuestions(satTextures, satBubble);
 	}
 
 	/**
@@ -581,7 +606,7 @@ public class GameplayController {
 						}
 						break;
 					case SAT_QUESTION:
-						// TODO
+						satQuestions.askQuestion();
 						break;
 					default:
 						break;
@@ -818,5 +843,7 @@ public class GameplayController {
 
 		//Draw visor
 		visor.draw(canvas);
+
+		satQuestions.draw(canvas);
 	}
 }
