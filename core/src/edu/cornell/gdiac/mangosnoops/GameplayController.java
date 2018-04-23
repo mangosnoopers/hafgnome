@@ -519,7 +519,7 @@ public class GameplayController {
 		ypos = 0.0f;
 		nextEvent = 0;
 		visor = null;
-		satQuestions = null;
+		satQuestions.reset();
 	}
 
 	/**
