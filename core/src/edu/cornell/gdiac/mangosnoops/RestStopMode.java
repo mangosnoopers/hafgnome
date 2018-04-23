@@ -62,6 +62,8 @@ public class RestStopMode implements Screen, InputProcessor {
     private float fadeOpacity;
     /** True if screen should fade in, false otherwise */
     private boolean fadeIn;
+    /** Fade delay */
+    private int delay;
 
     // DRAWING
     /** Dimensions of the screen **/
@@ -99,16 +101,16 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param manager Reference to global asset manager.
      */
     public void preLoadContent(AssetManager manager) {
-        manager.load(BACKGROUND_FILE,Texture.class);
-        assets.add(BACKGROUND_FILE);
-        manager.load(SHELF_FILE,Texture.class);
-        assets.add(SHELF_FILE);
-        manager.load(READY_BUTTON_FILE,Texture.class);
-        assets.add(READY_BUTTON_FILE);
-        manager.load(DVD_FILE,Texture.class);
-        assets.add(DVD_FILE);
-        manager.load(SNACK_FILE,Texture.class);
-        assets.add(SNACK_FILE);
+//        manager.load(BACKGROUND_FILE,Texture.class);
+//        assets.add(BACKGROUND_FILE);
+//        manager.load(SHELF_FILE,Texture.class);
+//        assets.add(SHELF_FILE);
+//        manager.load(READY_BUTTON_FILE,Texture.class);
+//        assets.add(READY_BUTTON_FILE);
+//        manager.load(DVD_FILE,Texture.class);
+//        assets.add(DVD_FILE);
+//        manager.load(SNACK_FILE,Texture.class);
+//        assets.add(SNACK_FILE);
     }
 
     /**
@@ -122,46 +124,30 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param manager Reference to global asset manager.
      */
     public void loadContent(AssetManager manager) {
-        if (manager.isLoaded(BACKGROUND_FILE)) {
-            backgroundTex = manager.get(BACKGROUND_FILE, Texture.class);
-            backgroundTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        }
-
-        if (manager.isLoaded(SHELF_FILE)) {
-            shelfTex = manager.get(SHELF_FILE, Texture.class);
-            shelfTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        }
-
-        if (manager.isLoaded(READY_BUTTON_FILE)) {
-            readyButtonTex = manager.get(READY_BUTTON_FILE, Texture.class);
-            readyButtonTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        }
-
-        if (manager.isLoaded(DVD_FILE)) {
-            dvdTex = manager.get(DVD_FILE, Texture.class);
-            dvdTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        }
-
-        if (manager.isLoaded(SNACK_FILE)) {
-            snackTex = manager.get(SNACK_FILE, Texture.class);
-            snackTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        }
-    }
-
-    /**
-     * Unloads the assets for this game.
-     *
-     * This method erases the static variables.  It also deletes the associated textures
-     * from the asset manager.
-     *
-     * @param manager Reference to global asset manager.
-     */
-    public void unloadContent(AssetManager manager) {
-        for(String s : assets) {
-            if (manager.isLoaded(s)) {
-                manager.unload(s);
-            }
-        }
+//        if (manager.isLoaded(BACKGROUND_FILE)) {
+//            backgroundTex = manager.get(BACKGROUND_FILE, Texture.class);
+//            backgroundTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        }
+//
+//        if (manager.isLoaded(SHELF_FILE)) {
+//            shelfTex = manager.get(SHELF_FILE, Texture.class);
+//            shelfTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        }
+//
+//        if (manager.isLoaded(READY_BUTTON_FILE)) {
+//            readyButtonTex = manager.get(READY_BUTTON_FILE, Texture.class);
+//            readyButtonTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        }
+//
+//        if (manager.isLoaded(DVD_FILE)) {
+//            dvdTex = manager.get(DVD_FILE, Texture.class);
+//            dvdTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        }
+//
+//        if (manager.isLoaded(SNACK_FILE)) {
+//            snackTex = manager.get(SNACK_FILE, Texture.class);
+//            snackTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//        }
     }
 
     /**
@@ -231,6 +217,7 @@ public class RestStopMode implements Screen, InputProcessor {
         active = true;
         fadeIn = true;
         fadeOpacity = 1.0f;
+        delay = 0;
 
         // Textures
         backgroundTex = new Texture(BACKGROUND_FILE);
@@ -294,34 +281,40 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     private void draw() {
         canvas.beginHUDDrawing();
+//        System.out.println(fadeOpacity);
         // TODO FIX FADE-IN
-//        if (fadeIn) {
-//            canvas.drawFade(fadeOpacity);
-//            if (fadeOpacity - 0.0f <= 0.001f) {
-//                fadeIn = false;
-//            } else {
-//                fadeOpacity -= 0.05f;
-//            }
-//        }
-
-        canvas.draw(backgroundTex, 0, 0);
-
-        // Draw the shelf and items
-        // Blue overlay if selected
-        shelf.draw(canvas);
-        for (RestStopItem i : items) {
-            Color overlay = Color.WHITE;
-            if (i.clickStatus == BUTTON_UP) {
-                overlay = Color.BLUE;
+        if (fadeIn) {
+            canvas.drawFade(fadeOpacity);
+            if (fadeOpacity > 0.1f){ //) && !(Math.abs(fadeOpacity - 0.01f) <= 0.0001f)) {
+                fadeOpacity -= 0.05f;
             }
-            i.draw(canvas,overlay);
+            else {
+                if (delay < 50) {
+                    delay++;
+                }
+                else {
+                    fadeIn = false;
+                }
+            }
         }
 
-        // draw the ready button
-        canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * 0.92f, SCREEN_DIMENSIONS.y * 0.02f,
-                readyButtonTex.getWidth()*READY_BUTTON_SCALING, readyButtonTex.getHeight()*READY_BUTTON_SCALING);
+        if (!fadeIn) {
+            canvas.draw(backgroundTex, 0, 0);
 
+            // Draw the shelf and items
+            // Blue overlay if selected
+            shelf.draw(canvas);
+            for (RestStopItem i : items) {
+                Color overlay = Color.WHITE;
+                if (i.clickStatus == BUTTON_UP) {
+                    overlay = Color.BLUE;
+                }
+                i.draw(canvas, overlay);
+            }
 
+            // draw the ready button
+            canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * 0.92f, SCREEN_DIMENSIONS.y * 0.02f, readyButtonTex.getWidth() * READY_BUTTON_SCALING, readyButtonTex.getHeight() * READY_BUTTON_SCALING);
+        }
         canvas.endHUDDrawing();
     }
 
@@ -351,6 +344,7 @@ public class RestStopMode implements Screen, InputProcessor {
         backgroundTex.dispose();
         backgroundTex = null;
         // TODO add others
+
     }
 
     /**

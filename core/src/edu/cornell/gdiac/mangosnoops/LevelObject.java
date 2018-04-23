@@ -178,7 +178,6 @@ public class LevelObject {
         String ext = file.substring(file.lastIndexOf('.') + 1);
         if (ext.equals("xlsx") || ext.equals("xls")) {
             parseExcel("levels/" + file);
-            System.out.println(levelEndY);
         }
 
         // if JSON file
