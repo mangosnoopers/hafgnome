@@ -317,10 +317,10 @@ public class GameplayController {
 		snackTexture = new Texture(SNACK_FILE);
 		Image.updateScreenDimensions(canvas);
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,dvdTexture, 0.146f, 0.128f, 2, true);
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,dvdTexture, 0.146f, 0.128f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
 		inventory.load(i);
 
 	}

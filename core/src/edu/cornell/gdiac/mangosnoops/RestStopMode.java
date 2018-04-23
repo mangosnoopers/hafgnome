@@ -39,13 +39,15 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Number of items per shelf */
     private static final int ITEMS_PER_SHELF = 5;
 
-    // ITEMS
+    // ITEMS TODO comment these
     private Array<RestStopItem> items;
     private Image shelf;
     private int numMovies;
     private int numSnacks;
     private int numBooks;
     private Inventory playerInv;
+    private static final int SELECTED = 0;
+    private static final int UNSELECTED = 0;
 
     // OTHER DOODADS
     /** AssetManager to be loading in the background */
@@ -82,10 +84,6 @@ public class RestStopMode implements Screen, InputProcessor {
     private static int STANDARD_HEIGHT = 900;
     /** Ration of the bar height to the screen */
     private static float BAR_HEIGHT_RATIO = 0.25f;
-    /** The y-coordinate of the center of the ready button */
-    private float centerY;
-    /** The x-coordinate of the center of the ready button */
-    private float centerX;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
@@ -190,21 +188,6 @@ public class RestStopMode implements Screen, InputProcessor {
         }
     }
 
-    /**
-     * Creates an inventory of items for this rest stop.
-     * @return the inventory
-     */
-    private Inventory createInventory() {
-        float shelf_ox = 0.69f;
-        float shelf_oy = 0.1f;
-        float shelf_relsca = 1.0f;
-        float shelf_cb = 0.0f;
-        float slot_width = (shelfTex.getWidth() / ITEMS_PER_SHELF) / canvas.getWidth();
-        float slot_height = (shelfTex.getHeight() / NUM_SHELVES - INV_SHELF_OFFSET) / canvas.getHeight();
-        return new Inventory(shelf_ox, shelf_oy, shelf_relsca, shelf_cb, shelfTex,
-                             slot_width, slot_height, NUM_SHELVES*ITEMS_PER_SHELF, true);
-    }
-
     public void setPlayerInv(Inventory inv) { playerInv = inv; }
     public Inventory getPlayerInv() { return playerInv; }
 
@@ -230,17 +213,17 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // Get item quantities for this rest stop
         Random rand = new Random();
-        numSnacks = rand.nextInt(2) + 3; // nextInt(high-low) + low
-        numBooks = rand.nextInt(2) + 1;
-        numMovies = rand.nextInt(1) + 1;
+
+        // TODO: MAKE THESE REAL
+//        numSnacks = rand.nextInt(2) + 3; // nextInt(high-low) + low
+//        numBooks = rand.nextInt(2) + 1;
+        numSnacks = rand.nextInt(2) + 2; // nextInt(high-low) + low
+        numBooks = rand.nextInt(1) + 1;
+        numMovies = rand.nextInt(1);
 
         // Generate the items
         items = new Array<RestStopItem>();
         generateItems();
-
-        // TODO CHANGe this also in draw
-        centerX = SCREEN_DIMENSIONS.x * 0.92f + readyButtonTex.getWidth()/2.0f;
-        centerY = SCREEN_DIMENSIONS.y * 0.02f + readyButtonTex.getWidth()/2.0f;
 
         // Create inventory and add items to it
 //        Image.updateScreenDimensions(canvas);
@@ -281,7 +264,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private void draw() {
         canvas.beginHUDDrawing();
 //        System.out.println(fadeOpacity);
-        // TODO FIX FADE-IN
+        // TODO FIX FADE-IN, add fade-out
         if (fadeIn) {
             canvas.drawFade(fadeOpacity);
             if (fadeOpacity > 0.1f){ //) && !(Math.abs(fadeOpacity - 0.01f) <= 0.0001f)) {
@@ -295,9 +278,7 @@ public class RestStopMode implements Screen, InputProcessor {
                     fadeIn = false;
                 }
             }
-        }
-
-        if (!fadeIn) {
+        } else {
             canvas.draw(backgroundTex, 0, 0);
 
             // Draw the shelf and items
@@ -305,14 +286,21 @@ public class RestStopMode implements Screen, InputProcessor {
             shelf.draw(canvas);
             for (RestStopItem i : items) {
                 Color overlay = Color.WHITE;
-                if (i.clickStatus == BUTTON_UP) {
-                    overlay = Color.BLUE;
+                if (i.clickStatus == BUTTON_UP) { // TODO FIX W DEBOUNCE: && i.toggleState == SELECTED) {
+                    overlay = Color.CHARTREUSE;
                 }
                 i.draw(canvas, overlay);
             }
 
-            // draw the ready button
-            canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * 0.92f, SCREEN_DIMENSIONS.y * 0.02f, readyButtonTex.getWidth() * READY_BUTTON_SCALING, readyButtonTex.getHeight() * READY_BUTTON_SCALING);
+            // draw the ready button - colored if pressed down
+            Color readyColor = Color.WHITE;
+            if (readyStatus == BUTTON_DOWN) {
+                readyColor = Color.CHARTREUSE;
+            }
+            canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * 0.92f, SCREEN_DIMENSIONS.y * 0.02f,
+                    readyButtonTex.getWidth() * READY_BUTTON_SCALING,
+                    readyButtonTex.getHeight() * READY_BUTTON_SCALING,
+                    readyColor);
         }
         canvas.endHUDDrawing();
     }
@@ -333,6 +321,31 @@ public class RestStopMode implements Screen, InputProcessor {
             draw();
 
             if (readyStatus == BUTTON_UP && listener != null) {
+                // update inventory when player is done
+                // TODO - impose better limits on how many can be selected
+                int numSelected = 0;
+                for (RestStopItem i : items) {
+                    if (i.clickStatus == BUTTON_UP && numSelected < 3) {
+                        // Convert to inventory item
+                        Inventory.Item it = new Inventory.Item(i.type);
+                        System.out.println(i.type);
+                        // TODO Change thi s to not be stupid
+                        switch (i.type) {
+                            case SNACK:
+                                playerInv.getSnackSlot().incAmount(1);
+                                System.out.println("storing a snack");
+                                break;
+                            case DVD:
+                                playerInv.getMovieSlot().incAmount(1);
+                                break;
+                            // TODO - book case (rn books are snacks)
+                            default:
+                                break;
+                        }
+                        numSelected += 1;
+                    }
+                }
+
                 listener.exitScreen(this,0);
             }
         }
@@ -360,9 +373,6 @@ public class RestStopMode implements Screen, InputProcessor {
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
-
-        centerY = (int)(BAR_HEIGHT_RATIO*height);
-        centerX = width/2;
         heightY = height;
     }
 
@@ -401,34 +411,41 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return whether the input was processed (whether to hand the event to other listeners)
      */
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
-        System.out.println("TOUCHDOWNN");
 
         if (readyStatus == BUTTON_UP) {
             return true;
         }
 
-        for (RestStopItem i : items) {
-            if (i.clickStatus == BUTTON_UP) {
-                return true;
-            }
-        }
-
-        // Check if ready button was pressed
-        // Flip to match graphics coordinates
+        // CHECK IF THINGS ARE PRESSED
+        // Flip screenY to match graphics coordinates
         screenY = heightY-screenY;
-//        float distX = (screenX-(centerX))*(screenX-(centerX));
-        float distX = (screenX-(centerX));
-        float distY = (screenY-(centerY));
 
-//        float distY = (screenY-(centerY))*(screenY-(centerY));
+        // TODO MAKE this nicer for when there is a real ready button asset
+        // Check if ready button was pressed
+        // coordinates of ready button bottom center
+        float halfReadyWidth = readyButtonTex.getWidth()*READY_BUTTON_SCALING*0.5f;
+        float halfReadyHeight = readyButtonTex.getHeight()*READY_BUTTON_SCALING*0.5f;
+        float readyMX = SCREEN_DIMENSIONS.x*0.92f + halfReadyWidth;
+        float readyMY = SCREEN_DIMENSIONS.y*0.02f + halfReadyHeight;
 
-        if (distX < readyButtonTex.getWidth() && distY < readyButtonTex.getHeight()) {
+        // If clicking on ready button, set to BUTTON_DOWN
+        if (Math.abs(screenX - readyMX) < halfReadyWidth && Math.abs(screenY - readyMY) < halfReadyHeight) {
             readyStatus = BUTTON_DOWN;
         }
 
         // TODO: also check for items on shelf
         // if in click area, change click status to button down
         for (RestStopItem i : items) {
+            // coordinates of center of item
+            float halfItemWidth = i.texture.getWidth()*ITEM_SIZE_SCALE*0.5f;
+            float halfItemHeight = i.texture.getHeight()*ITEM_SIZE_SCALE*0.5f;
+            float mx = i.position.x*SCREEN_DIMENSIONS.x + halfItemWidth;
+            float my = i.position.y*SCREEN_DIMENSIONS.y + halfItemHeight;
+
+            if (Math.abs(screenX - mx) < halfItemHeight&& Math.abs(screenY - my) < halfItemHeight) {
+                i.clickStatus = BUTTON_DOWN;
+                i.toggleState = i.toggleState == UNSELECTED ? SELECTED : UNSELECTED;
+            }
 
         }
 
@@ -503,13 +520,18 @@ public class RestStopMode implements Screen, InputProcessor {
     }
 
     private class RestStopItem extends Image {
+        /** The click status of a rest stop item - unclicked, touch down, or touch up */
         private int clickStatus;
+        /** The type of item */
         private Inventory.Item.ItemType type;
+        /** The state of the item - selected or unselected */
+        private int toggleState;
 
         private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
             super(x,y,relSca,tex);
             this.clickStatus = clickStatus;
             type = t;
+            toggleState = UNSELECTED;
         }
     }
 
