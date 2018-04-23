@@ -206,7 +206,6 @@ public class RestStopMode implements Screen, InputProcessor {
     }
 
     public void setPlayerInv(Inventory inv) { playerInv = inv; }
-
     public Inventory getPlayerInv() { return playerInv; }
 
     public RestStopMode(GameCanvas canvas, AssetManager manager) {
@@ -321,7 +320,7 @@ public class RestStopMode implements Screen, InputProcessor {
 
     // SCREEN METHODS
 
-    /** Called when this screen becomes the current screen for a {@link Game}. */
+    /** Called when this screen becomes the current screen for a game. */
     public void show () {
         active = true;
     }

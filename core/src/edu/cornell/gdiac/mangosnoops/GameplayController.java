@@ -188,7 +188,6 @@ public class GameplayController {
 	 * @param assets  Asset list to track which assets where loaded
 	 */
 	public void preLoadContent(AssetManager manager, Array<String> assets) {
-		System.out.println("loading");
 		manager.load(WHEEL_FILE,Texture.class);
 		assets.add(WHEEL_FILE);
 		manager.load(VROOM_STICK_FILE, Texture.class);
@@ -294,7 +293,6 @@ public class GameplayController {
 			texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 			return texture;
 		}
-		System.out.println(file + " is null");
 		return null;
 	}
 
@@ -341,9 +339,7 @@ public class GameplayController {
 	/**
 	 * Returns a reference to the car.
 	 */
-	public Car getCar() {
-		return yonda;
-	}
+	public Car getCar() { return yonda; }
 
 	/**
 	 * Returns a reference to the road.
@@ -380,6 +376,9 @@ public class GameplayController {
 	 */
 	public Inventory getInventory(){ return inventory; }
 
+	/** Set the inventory */
+	public void setInventory(Inventory i) { inventory = i; }
+
     /**
      * Returns a reference to the visor
      */
@@ -401,8 +400,6 @@ public class GameplayController {
 		yonda.setDashTexture(dashTexture);
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
-
-		System.out.println(healthGaugeTexture == null);
 
 		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
 		rearviewBackground = new Image(0.63f, 0.71f, 0.3f, rearviewBackgroundTexture);

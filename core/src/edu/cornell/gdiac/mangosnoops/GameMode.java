@@ -48,10 +48,6 @@ public class GameMode implements Screen {
 		OVER
 	}
 
-	// LEVEL FILES TODO implement moving to next level
-	private static String[] LEVELS = new String[]{"test_level0.xlsx", "test_level0.xlsx"};
-	private static int currLevel;
-
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
@@ -189,34 +185,6 @@ public class GameMode implements Screen {
 		gameplayController.preLoadContent(manager,assets);
 	}
 
-	/** Load gameplay content when a new level is created */
-	public void loadGameplay(AssetManager manager) {
-		gameplayController.preLoadContent(manager,assets);
-		gameplayController.loadContent(manager);
-	}
-
-	/** Start the next level with the given level name and inventory.
-	 * This resets the gameplay controller. */
-	public void startNewLevel() {
-		currLevel += 1;
-
-		// Reached the last level - game over state FIXME possibly?
-		if (currLevel == LEVELS.length) {
-			gameState = GameState.OVER;
-			return;
-		}
-
-		try {
-			gameplayController = new GameplayController(new LevelObject(LEVELS[currLevel]), canvas);
-			gameState = GameState.PLAY;
-			gameplayController.start(canvas.getWidth() / 2.0f, 0);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		} catch (InvalidFormatException e) {
-			System.out.println(e.getMessage());
-		}
-	}
-
 	/** 
 	 * Loads the assets for this game.
 	 * 
@@ -295,6 +263,8 @@ public class GameMode implements Screen {
 	/** Get the player's inventory */
 	public Inventory getInventory() { return gameplayController.getInventory(); }
 
+	/** Set the player's inventory */
+	public void setInventory(Inventory i) { gameplayController.setInventory(i); }
 
 	/**
 	 * Creates a new game with the given drawing context.
@@ -302,7 +272,7 @@ public class GameMode implements Screen {
 	 * This constructor initializes the models and controllers for the game.  The
 	 * view has already been initialized by the root class.
 	 */
-	public GameMode(GameCanvas canvas) {
+	public GameMode(GameCanvas canvas, String levelName) {
 	    // TODO DO SOMETHING ELSE W THE EXCEPTIONS
 	    try {
             this.canvas = canvas;
@@ -312,11 +282,10 @@ public class GameMode implements Screen {
             // Null out all pointers, 0 out all ints, etc.
             gameState = GameState.INTRO;
             assets = new Array<String>();
-            currLevel = 0; // start at beginning
 
             // Create the controllers.
             inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(LEVELS[currLevel]), canvas);
+            gameplayController = new GameplayController(new LevelObject(levelName), canvas);
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
             soundController = new SoundController();
         } catch (IOException e) {
@@ -651,6 +620,7 @@ public class GameMode implements Screen {
 			if (exitToRestStop && listener != null) {
 //				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);
+				active = false;
 			}
 
 			//FIXME: idk what the below is for
