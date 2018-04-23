@@ -382,10 +382,10 @@ public class GameplayController {
 		snackTexture = new Texture(SNACK_FILE);
 		Image.updateScreenDimensions(canvas);
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,dvdTexture, 0.146f, 0.128f, 2);
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.15f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,0));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,0));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
 		inventory.load(i);
 		satTextures = new HashMap<String, Texture>();
 	}
@@ -486,11 +486,6 @@ public class GameplayController {
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
 		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.15f, 2);
-		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
-		inventory.load(i);
 		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 
 		road.setRoadTexture(roadTexture);

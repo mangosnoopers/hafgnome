@@ -328,12 +328,10 @@ public class RestStopMode implements Screen, InputProcessor {
                     if (i.clickStatus == BUTTON_UP && numSelected < 3) {
                         // Convert to inventory item
                         Inventory.Item it = new Inventory.Item(i.type);
-                        System.out.println(i.type);
                         // TODO Change thi s to not be stupid
                         switch (i.type) {
                             case SNACK:
                                 playerInv.getSnackSlot().incAmount(1);
-                                System.out.println("storing a snack");
                                 break;
                             case DVD:
                                 playerInv.getMovieSlot().incAmount(1);
