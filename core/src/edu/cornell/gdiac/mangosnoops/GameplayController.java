@@ -116,7 +116,7 @@ public class GameplayController {
 	/** The texture file for the exit */
 	private static final String EXIT_FILE = "images/exit.png";
 	/** The texture file for the dash */
-	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
+	private static final String DASH_FILE = "images/DashHUD/Dash.png";
 	/** The file for the health gauge */
 	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
 	/** The file for the health gauge pointer */
@@ -459,8 +459,8 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
-		healthGaugePointer = new Image(0.4f, 0.06f, 0.09f, healthPointerTexture);
+		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
+		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
 		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
 		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
@@ -475,10 +475,10 @@ public class GameplayController {
 		}
 		events = level.getEvents();
 
-		wheel = new Wheel(0.193f,0.22f, 0.5f, 60, wheelTexture);
+		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
-		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.128f, 2);
+		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.15f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
@@ -703,7 +703,7 @@ public class GameplayController {
                         ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-                        nosh.setMoodShifting(true, false);
+//                        nosh.setMoodShifting(true, false);
 					}
 					break;
 				case CREEPY: // ned likes, nosh dislikes
@@ -711,7 +711,7 @@ public class GameplayController {
                         ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-						nosh.setMoodShifting(true, false);
+//						nosh.setMoodShifting(true, false);
 					}
 					break;
 				case JAZZ: // ned likes, nosh dislikes
@@ -719,12 +719,12 @@ public class GameplayController {
 						ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-                        nosh.setMoodShifting(true, false);
+//                        nosh.setMoodShifting(true, false);
 					}
 					break;
 				case COMEDY: // ned dislikes, nosh likes
 					if(ned.isAwake()){
-						ned.setMoodShifting(true, false);
+//						ned.setMoodShifting(true, false);
 					}
 					if(nosh.isAwake()){
 						nosh.setMoodShifting(true, true);
