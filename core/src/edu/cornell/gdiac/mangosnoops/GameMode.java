@@ -49,8 +49,8 @@ public class GameMode implements Screen {
 	}
 
 	// LEVEL FILES TODO implement moving to next level
-	private static String[] TEST_LEVELS = new String[]{"test_level0.xlsx", "test_level0.xlsx"};
-	private static int currLevel = 0;
+	private static String[] LEVELS = new String[]{"test_level0.xlsx", "test_level0.xlsx"};
+	private static int currLevel;
 
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
@@ -112,6 +112,8 @@ public class GameMode implements Screen {
 	private float fadeOutOpacity;
 	/** Whether or not to exit to the rest stop */
 	private boolean exitToRestStop;
+	/** Fade delay */
+	private int delay;
 
 	/** Factor used to compute where we are in scrolling process */
 	private static final float TIME_MODIFIER    = 0.06f;
@@ -187,7 +189,33 @@ public class GameMode implements Screen {
 		gameplayController.preLoadContent(manager,assets);
 	}
 
-	public GameplayController getGPC() { return gameplayController; }
+	/** Load gameplay content when a new level is created */
+	public void loadGameplay(AssetManager manager) {
+		gameplayController.preLoadContent(manager,assets);
+		gameplayController.loadContent(manager);
+	}
+
+	/** Start the next level with the given level name and inventory.
+	 * This resets the gameplay controller. */
+	public void startNewLevel() {
+		currLevel += 1;
+
+		// Reached the last level - game over state FIXME possibly?
+		if (currLevel == LEVELS.length) {
+			gameState = GameState.OVER;
+			return;
+		}
+
+		try {
+			gameplayController = new GameplayController(new LevelObject(LEVELS[currLevel]), canvas);
+			gameState = GameState.PLAY;
+			gameplayController.start(canvas.getWidth() / 2.0f, 0);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (InvalidFormatException e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
 	/** 
 	 * Loads the assets for this game.
@@ -280,13 +308,15 @@ public class GameMode implements Screen {
             this.canvas = canvas;
             active = false;
             fadeOutOpacity = 0.0f;
+            delay = 0;
             // Null out all pointers, 0 out all ints, etc.
             gameState = GameState.INTRO;
             assets = new Array<String>();
+            currLevel = 0; // start at beginning
 
             // Create the controllers.
             inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(TEST_LEVELS[currLevel]), canvas);
+            gameplayController = new GameplayController(new LevelObject(LEVELS[currLevel]), canvas);
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
             soundController = new SoundController();
         } catch (IOException e) {
@@ -548,14 +578,21 @@ public class GameMode implements Screen {
 
 		// Draw fade out to rest stop
 		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {
-			// TODO FINISH THE FADE
-//            canvas.drawFade(fadeOutOpacity);
-//			// ready to exit gamemode when the fade out is complete
-//			if (fadeOutOpacity - 1.0f <= 0.001f) {
-				exitToRestStop = true;
-//			} else {
-//				fadeOutOpacity += 0.05f; // make it increasingly opaque
-//			}
+			// TODO FINISH THE FADE make this not sus
+			canvas.drawFade(fadeOutOpacity);
+			if (!(Math.abs(fadeOutOpacity - 1.0f) <= 0.001f)) {
+				fadeOutOpacity += 0.05f;
+			}
+			else {
+				if (delay < 50) {
+					delay++;
+				}
+
+				else {
+					// ready to exit gamemode when the fade out is complete
+					exitToRestStop = true;
+				}
+			}
 		}
 
 		// Draw messages
