@@ -2,13 +2,16 @@ package edu.cornell.gdiac.mangosnoops.hudentity;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.Image;
 import org.json.*;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 
 public class SATQuestions extends Image {
 
@@ -22,15 +25,21 @@ public class SATQuestions extends Image {
     private int currAns;
     private HashMap<String, Texture> images; // Keys are the file names of the textures, values are respective Textures
     private Texture bubble; // Texture of the background bubble
-    Random rand = new Random(0);
+    Random rand = new Random();
     private int timer; // Used to time how long to do a right/wrong animation
 
     public SATQuestions(HashMap<String, Texture> i, Texture b) {
         super();
-        JSONObject jsonob = new JSONObject(file);
-        questions = jsonob.getJSONArray("questions");
-        images = i;
-        bubble = b;
+        try{
+            Scanner scanner = new Scanner(new File(file));
+            JSONObject jsonob = new JSONObject(scanner.useDelimiter("\\A").next());
+            scanner.close();
+            questions = jsonob.getJSONArray("questions");
+            images = i;
+            bubble = b;
+        } catch(Exception e) {
+            System.out.println("JSON Parsing Error for SATQuestions");
+        }
     }
 
     /** Called when an SAT event happens.
@@ -40,8 +49,12 @@ public class SATQuestions extends Image {
             active = true;
             JSONObject curr = questions.getJSONObject(rand.nextInt(questions.length()));
             currQuestion = curr.getString("text");
-            currImageA = images.get(curr.getString("SatQuestions"+"imageA"));
-            currImageB = images.get(curr.getString("SatQuestions"+"imageB")); //null if no image B
+            if(currImageB == null ){
+                currImageA = images.get("SatQuestions/"+curr.getString("imageA"));
+            } else {
+                currImageA = images.get("SatQuestions/"+curr.getString("imageA"));
+                currImageB = images.get("SatQuestions/"+curr.getString("imageB"));
+            }
             currAns = curr.getInt("correct");
         }
     }
@@ -71,6 +84,7 @@ public class SATQuestions extends Image {
     }
 
     public void update(Vector2 p, int numPressed, Child ned) {
+        System.out.println(numPressed);
         if(active) {
             if(currImageB == null) { //numerical question
                 if(numPressed == currAns) {
@@ -88,18 +102,26 @@ public class SATQuestions extends Image {
         }
     }
 
-    public void draw(GameCanvas canvas) {
+    private static final float X = 0.35f;
+    private static final float Y = 0.95f;
+    private static final float TEXT_XOFFSET = 0.01f;
+    private static final float TEXT_YOFFSET = 0.02f;
+
+    public void draw(GameCanvas canvas, BitmapFont font) {
         if(active) { //question is present but hasn't been answered yet
-            canvas.draw(bubble, Color.WHITE, 0, bubble.getHeight(), 0.8f*canvas.getWidth(), 0.9f*canvas.getHeight(), 0,
+            canvas.draw(bubble, Color.WHITE, 0, bubble.getHeight(), X*canvas.getWidth(), Y*canvas.getHeight(), 0,
                             0.3f*SCREEN_DIMENSIONS.x/bubble.getWidth(), 0.3f*SCREEN_DIMENSIONS.x/bubble.getWidth());
+            canvas.drawText(currQuestion, font, (X+TEXT_XOFFSET)*canvas.getWidth(), (Y-TEXT_YOFFSET)*canvas.getHeight());
+            float bubbleWidth = 0.3f*SCREEN_DIMENSIONS.x;
+            float bubbleHeight = 0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth();
             if(currImageB == null) { //numerical question
-                canvas.draw(currImageA, Color.WHITE, 0, currImageA.getHeight(), 0.8f*canvas.getWidth(), 0.9f*canvas.getHeight(), 0,
-                            0.3f*SCREEN_DIMENSIONS.x/currImageA.getWidth(), 0.3f*SCREEN_DIMENSIONS.x/currImageA.getWidth());
+                canvas.draw(currImageA, Color.WHITE, 0.5f*currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.5f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
+                            bubbleHeight/currImageA.getWidth(), bubbleHeight/currImageA.getWidth());
             } else { //choose the picture question
-                canvas.draw(currImageA, Color.WHITE, 0, currImageA.getHeight(), 0.95f*canvas.getWidth(), 0.9f*canvas.getHeight(), 0,
-                        0.15f*SCREEN_DIMENSIONS.x/currImageA.getWidth(), 0.15f*SCREEN_DIMENSIONS.x/currImageA.getWidth());
-                canvas.draw(currImageB, Color.WHITE, 0, currImageB.getHeight(), 0.8f*canvas.getWidth(), 0.9f*canvas.getHeight(), 0,
-                        0.15f*SCREEN_DIMENSIONS.x/currImageB.getWidth(), 0.15f*SCREEN_DIMENSIONS.x/currImageB.getWidth());
+                canvas.draw(currImageA, Color.WHITE, 0.5f*currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.5f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
+                        0.15f*bubbleHeight/currImageA.getWidth(), 0.15f*bubbleHeight/currImageA.getWidth());
+                canvas.draw(currImageB, Color.WHITE, 0.5f*currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.5f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
+                        0.15f*bubbleHeight/currImageB.getWidth(), 0.15f*bubbleHeight/currImageB.getWidth());
             }
         } else if(true) { //question has been answered correctly
 

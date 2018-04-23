@@ -352,6 +352,7 @@ public class GameplayController {
 		satTextures.put(SAT_WHALE_FILE, satWhale);
 		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
 		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
+		satQuestions = new SATQuestions(satTextures, satBubble);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -378,7 +379,7 @@ public class GameplayController {
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
-		satQuestions = new SATQuestions(satTextures, satBubble);
+		satTextures = new HashMap<String, Texture>();
 	}
 
 	/**
@@ -637,6 +638,7 @@ public class GameplayController {
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
   		boolean mousePressed = input.isMousePressed();
+  		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x);
 			vroomStick.update(new Vector2(in), dr.y);
@@ -844,6 +846,6 @@ public class GameplayController {
 		//Draw visor
 		visor.draw(canvas);
 
-		satQuestions.draw(canvas);
+		satQuestions.draw(canvas, displayFont);
 	}
 }
