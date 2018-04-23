@@ -37,18 +37,20 @@ public class InputController {
 	private boolean mouseClicked;
 	/**Last recorded state of the mouse button **/
 	private boolean prevMouseClicked;
-    /** Vector location of click */
-    private Vector2 clickPos;
-    /** Change in x of the input */
-    private float dx;
-    /** Change in y of the input */
+	/** Vector location of click */
+	private Vector2 clickPos;
+	/** Change in x of the input */
+	private float dx;
+	/** Change in y of the input */
 	private float dy;
+	/** Keyboard inputted number */
+	private int numKeyPressed;
 
 	/**
-     * Creates a new input controller.
-     */
-    public InputController() {
-    }
+	 * Creates a new input controller.
+	 */
+	public InputController() {
+	}
 
 	/**
 	 * @return the change in x of the input.
@@ -88,6 +90,14 @@ public class InputController {
 	 * @return true if the mouse was clicked on the last recorded instance
 	 */
 	public boolean isPrevMousePressed(){ return prevMouseClicked; }
+
+	/**
+	 * @return the keyboard number input. If a number was not inputted,
+	 * return -1.
+	 */
+	public int getNumKeyPressed() {
+		return numKeyPressed;
+	}
 	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
@@ -96,15 +106,38 @@ public class InputController {
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R)) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
-        if (mouseClicked) {
-            clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            dx = Gdx.input.getDeltaX();
-            dy = Gdx.input.getDeltaY();
+		if(Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
+			numKeyPressed = 0;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
+			numKeyPressed = 1;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
+			numKeyPressed = 2;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
+			numKeyPressed = 3;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
+			numKeyPressed = 4;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_5)) {
+			numKeyPressed = 5;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_6)) {
+			numKeyPressed = 6;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_7)) {
+			numKeyPressed = 7;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_8)) {
+			numKeyPressed = 8;
+		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_9)) {
+			numKeyPressed = 9;
+		} else {
+			numKeyPressed = -1;
+		}
+		if (mouseClicked) {
+			clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+			dx = Gdx.input.getDeltaX();
+			dy = Gdx.input.getDeltaY();
 			//System.out.println(mouseClicked);
-//            System.out.println("Mouse at: "+ clickPos);
-        } else {
-            clickPos = null;
-        }
+			//            System.out.println("Mouse at: "+ clickPos);
+		} else {
+			clickPos = null;
+		}
 	}
 
 }

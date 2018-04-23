@@ -6,18 +6,17 @@ import edu.cornell.gdiac.mangosnoops.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ObjectMap;
-import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.Random;
 
-public class Child {
+
+public class Child extends Image{
 
     /** The type of Gnome this is */
     private ChildType ctype;
 
-    private Vector2 pos;
     private ObjectMap<Mood,FilmStrip> childTextures;
-    private static final int SLACK = 50; //pixel leeway in inChildArea TODO maybe remove
 
     private boolean gettingSad; //is gradually getting happier
     private boolean gettingHappy; //is gradually getting sadder
@@ -38,13 +37,13 @@ public class Child {
     private float speechBubbleOffsetY = -2;
 
     /** Spped for child animation */
-    private static final float ANIMATION_SPEED = 0.1f;
+    private static float ANIMATION_SPEED;
 
     /** Current animation frame for animations */
     private float animationFrame;
 
     /** How many animation frames there are */
-    private static final int NUM_ANIMATION_FRAMES = 19;
+    private static final int NUM_ANIMATION_FRAMES = 2;
 
     /** The current FilmStrip */
     private FilmStrip currentFilmStrip;
@@ -79,6 +78,15 @@ public class Child {
      * Constructor
      */
     public Child(ChildType type) {
+        super(0,0,0, null);
+        if(type == ChildType.NED){
+            position = new Vector2(0.76f, 0.83f);
+        } else{
+            position = new Vector2(0.91f, 0.83f);
+        }
+        Random rand = new Random();
+        int animSpeedInt = rand.nextInt(5) + 20;
+        ANIMATION_SPEED = animSpeedInt / 100;
         ctype = type;
         happiness = HAPPY_UBOUND;
     }
@@ -184,8 +192,6 @@ public class Child {
      */
     private Mood prevMood;
     public void update(float delta, Vector2 in) {
-
-
         animationFrame += ANIMATION_SPEED;
         if (animationFrame >= NUM_ANIMATION_FRAMES) {
             animationFrame -= NUM_ANIMATION_FRAMES;
@@ -219,7 +225,7 @@ public class Child {
                           NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                       }
                   }
-                   System.out.println(NED_SPEECH_BUBBLE_COORDS);
+//                   System.out.println(NED_SPEECH_BUBBLE_COORDS);
                }
                if(this.ctype == ChildType.NOSH){
                    NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
@@ -228,7 +234,7 @@ public class Child {
                            NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
                        }
                    }
-                   System.out.println(NOSH_SPEECH_BUBBLE_COORDS);
+//                   System.out.println(NOSH_SPEECH_BUBBLE_COORDS);
 
                }
            }
@@ -245,30 +251,24 @@ public class Child {
      * draws the child on the given canvas
      * @param canvas
      */
+    @Override
     public void draw(GameCanvas canvas) {
         if(childTextures == null) { return; }
 
         /* FIXME: rearWidth used to be based on rearview mirror but it's different now */
         float rearWidth = 50 * canvas.getHeight()/(50*3.5f);
-        if(ctype == ChildType.NOSH) {
-            pos = new Vector2(canvas.getWidth() - rearWidth/3.5f,canvas.getHeight()*0.95f);
-        } else {
-            pos = new Vector2(canvas.getWidth() - rearWidth/1.5f,canvas.getHeight()*0.95f);
-        }
 
         currentFilmStrip = childTextures.get(getCurrentMood());
-        /* FIXME: fix me */
-        // currentFilmStrip.setFrame((int) animationFrame);
-        currentFilmStrip.setFrame(0);
+        currentFilmStrip.setFrame((int) animationFrame);
         float ox = 0.5f* currentFilmStrip.getRegionWidth();
-        float oy = currentFilmStrip.getRegionHeight();
+        float oy = 0.5f* currentFilmStrip.getRegionHeight();
+        float drawY = position.y * canvas.getHeight() + currentShakeAmount;
 
-        canvas.draw(currentFilmStrip, Color.WHITE, ox, oy, pos.x, pos.y, 0,
+        canvas.draw(currentFilmStrip, Color.WHITE, ox, oy, position.x*canvas.getWidth(), drawY, 0,
                 0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight(),
                 0.5f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight());
+        }
 
-
-    }
 
     public void drawSpeechBubble(GameCanvas canvas, Texture speechBubble) {
         if (getCurrentMood() == Mood.CRITICAL) {
@@ -288,8 +288,6 @@ public class Child {
             }
 
         }
-
-
     }
 
 
@@ -297,11 +295,16 @@ public class Child {
      * Returns true if the mouse is positioned inside the area of the wheel.
      * The wheel must not be null.
      *
-     * @param p the vector giving the mouse click's (x,y) screen coordinates
+     * @param in the vector giving the mouse click's (x,y) screen coordinates
      */
-    public boolean inChildArea(Vector2 p) {
-        //TODO: do we need this? Currently cannot click on children
-        return (p!=null) && (Math.abs(pos.x-p.x) < SLACK) && (Math.abs(100-p.y) < SLACK);
+    public boolean inChildArea(Vector2 in) {
+//        System.out.println("input: " + in.x + " " + in.y);
+//        System.out.println("X: " + (position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f) + " " + (position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f));
+//        System.out.println("Y: " + (position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f) + " " + (position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f));
+        return (in.x <= position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f)
+                && (in.x >= position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f)
+                && (SCREEN_DIMENSIONS.y - in.y <= position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f)
+                && (SCREEN_DIMENSIONS.y - in.y >= position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f);
     }
 
 }

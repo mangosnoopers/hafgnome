@@ -19,7 +19,7 @@ public class Image {
     /** An optional buffer given to the object in order to 'pad' its area of effectiveness**/
     protected float controlBuffer;
     /** Dimensions of the screen **/
-    protected static Vector2 SCREEN_DIMENSIONS;
+    public static Vector2 SCREEN_DIMENSIONS;
 
     /** The maximimum amount of offset that is applied to
      *  the drawing coordinates, for the "shake" effect */
@@ -71,17 +71,31 @@ public class Image {
         shakeDeltaSum = 0;
     }
 
+    public Image() {
+        //used for visor lol
+    }
+
     public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);
-        relativeScale = relSca/(float)tex.getHeight();
-        texture = tex;
+        if(tex == null){
+            relativeScale = 0;
+            texture = null;
+        }else{
+            relativeScale = relSca/(float)tex.getHeight();
+            texture = tex;
+        }
         controlBuffer = 0;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex) {
         position = new Vector2(x,y);
-        relativeScale = relSca/(float)tex.getHeight();
-        texture = tex;
+        if(tex == null){
+            relativeScale = 0;
+            texture = null;
+        }else{
+            relativeScale = relSca/(float)tex.getHeight();
+            texture = tex;
+        }
         controlBuffer = cb;
     }
 
@@ -117,4 +131,17 @@ public class Image {
                 relativeScale*canvas.getHeight());
     }
 
+    public void draw(GameCanvas canvas, float ang) {
+
+        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
+        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, ang,
+                relativeScale*canvas.getHeight(),
+                relativeScale*canvas.getHeight());
+    }
+
+    public void drawFromCenter(GameCanvas canvas) {
+        canvas.draw(texture, Color.WHITE, texture.getWidth() * 0.5f, texture.getHeight() * 0.5f, position.x * SCREEN_DIMENSIONS.x,
+                position.y * SCREEN_DIMENSIONS.y + currentShakeAmount, 0, relativeScale * SCREEN_DIMENSIONS.y, relativeScale * SCREEN_DIMENSIONS.y);
+
+    }
 }

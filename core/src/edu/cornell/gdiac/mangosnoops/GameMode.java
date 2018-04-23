@@ -2,7 +2,7 @@
  * GameMode.java
  *
  * This is the primary class file for running the game.  You should study this file for
- * ideas on how to structure your own root class. This class follows a 
+ * ideas on how to structure your own root class. This class follows a
  * model-view-controller pattern fairly strictly.
  *
  * Author: Walker M. White
@@ -31,14 +31,14 @@ import java.io.IOException;
  * The primary controller class for the game.
  *
  * While GDXRoot is the root class, it delegates all of the work to the player mode
- * classes. This is the player mode class for running the game. In initializes all 
+ * classes. This is the player mode class for running the game. In initializes all
  * of the other classes in the game and hooks them together.  It also provides the
  * basic game loop (update-draw).
  */
 public class GameMode implements Screen {
-	/** 
- 	 * Track the current state of the game for the update loop.
- 	 */
+	/**
+	 * Track the current state of the game for the update loop.
+	 */
 	public enum GameState {
 		/** Before the game has started */
 		INTRO,
@@ -57,23 +57,9 @@ public class GameMode implements Screen {
 	private static String CLOUDS_FILE = "images/clouds.png";
 	/** The file for the sky image */
 	private static String SKY_FILE = "images/sky.png";
-	/** The file for the rear view mirror */
-	private static final String REARVIEW_MIRROR_FILE = "images/DashHUD/rearview.png";
-	/** Rearview mirror stuff */
-	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
-	private static final String REARVIEW_COVER = "images/rearview_cover.png";
-	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
 
-	/** Sun effect that will be overlayed */
-	private static final String SUN_FILE = "images/sun_1.jpg";
-	private static final String SUN2_FILE = "images/sun_2.jpg";
-	private static final String SUN3_FILE = "images/sun_3.png";
-	private static final String WHITE_FILE = "images/white.png";
-
-	/** The file for the angry speech bubble */
-	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -84,22 +70,12 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
-	/** Texture of the clouds */
-	private Texture clouds;
 	/** Texture of the sky */
 	private Texture sky;
 	/** Texture of the dash **/
 	private Texture dash;
 	/** Death Screen */
 	private Texture deathModule;
-	/** Texture of sun effect */
-	private Texture sun;
-	private Texture sun2;
-	private Texture sun3;
-	private Texture white;
-	/** Texture of the angry speech bubble */
-	private Texture speechBubble;
-
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
@@ -113,12 +89,8 @@ public class GameMode implements Screen {
 
 	/** Factor used to compute where we are in scrolling process */
 	private static final float TIME_MODIFIER    = 0.06f;
-	/** Offset for the shell counter message on the screen */
-	private static final float COUNTER_OFFSET   = 5.0f;
 	/** Offset for the game over message on the screen */
 	private static final float GAME_OVER_OFFSET = 40.0f;
-	/** Origin of health gauge */
-	private static final Vector2 HEALTH_GAUGE_ORIGIN = new Vector2(0.0f,0.0f);
 
 	/** Reference to drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
@@ -140,13 +112,13 @@ public class GameMode implements Screen {
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
 
-	/** 
+	/**
 	 * Preloads the assets for this game.
-	 * 
+	 *
 	 * The asset manager for LibGDX is asynchronous.  That means that you
-	 * tell it what to load and then wait while it loads them.  This is 
+	 * tell it what to load and then wait while it loads them.  This is
 	 * the first step: telling it what to load.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void preLoadContent(AssetManager manager) {
@@ -154,25 +126,11 @@ public class GameMode implements Screen {
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
 
-		// Load the clouds
-		manager.load(CLOUDS_FILE, Texture.class);
 		// Load sky
 		manager.load(SKY_FILE, Texture.class);
-		// Load speech bubble
-		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
-		assets.add(SPEECH_BUBBLE_FILE);
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
-		// Load sun effect
-		manager.load(SUN_FILE, Texture.class);
-		assets.add(SUN_FILE);
-		manager.load(SUN2_FILE, Texture.class);
-		assets.add(SUN2_FILE);
-		manager.load(SUN3_FILE, Texture.class);
-		assets.add(SUN3_FILE);
-		manager.load(WHITE_FILE, Texture.class);
-		assets.add(WHITE_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -180,19 +138,19 @@ public class GameMode implements Screen {
 		size2Params.fontParameters.size = FONT_SIZE;
 		manager.load(FONT_FILE, BitmapFont.class, size2Params);
 		assets.add(FONT_FILE);
-		
+
 		// Preload gameplay content
 		gameplayController.preLoadContent(manager,assets);
 	}
 
-	/** 
+	/**
 	 * Loads the assets for this game.
-	 * 
+	 *
 	 * The asset manager for LibGDX is asynchronous.  That means that you
-	 * tell it what to load and then wait while it loads them.  This is 
+	 * tell it what to load and then wait while it loads them.  This is
 	 * the second step: extracting assets from the manager after it has
 	 * finished loading them.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void loadContent(AssetManager manager) {
@@ -209,55 +167,32 @@ public class GameMode implements Screen {
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		}
 
-		if (manager.isLoaded(CLOUDS_FILE)) {
-			clouds = manager.get(CLOUDS_FILE, Texture.class);
-		}
-
 		if (manager.isLoaded(SKY_FILE)) {
-			sky = manager.get(CLOUDS_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(SPEECH_BUBBLE_FILE)) {
-			speechBubble = manager.get(SPEECH_BUBBLE_FILE, Texture.class);
+			sky = manager.get(SKY_FILE, Texture.class);
 		}
 
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
 		}
 
-		if (manager.isLoaded(SUN_FILE)) {
-			sun = manager.get(SUN_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(SUN2_FILE)) {
-			sun2 = manager.get(SUN2_FILE, Texture.class);
-		}
-		if (manager.isLoaded(SUN3_FILE)) {
-			sun3 = manager.get(SUN3_FILE, Texture.class);
-		}
-
-		if (manager.isLoaded(WHITE_FILE)) {
-			white = manager.get(WHITE_FILE, Texture.class);
-		}
-
 		// Load gameplay content
 		gameplayController.loadContent(manager);
 	}
 
-	/** 
+	/**
 	 * Unloads the assets for this game.
-	 * 
-	 * This method erases the static variables.  It also deletes the associated textures 
+	 *
+	 * This method erases the static variables.  It also deletes the associated textures
 	 * from the asset manager.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void unloadContent(AssetManager manager) {
-    	for(String s : assets) {
-    		if (manager.isLoaded(s)) {
-    			manager.unload(s);
-    		}
-    	}
+		for(String s : assets) {
+			if (manager.isLoaded(s)) {
+				manager.unload(s);
+			}
+		}
 	}
 
 	/** Get the player's inventory */
@@ -291,10 +226,9 @@ public class GameMode implements Screen {
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
-
 		}
 	}
-	
+
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
@@ -304,8 +238,8 @@ public class GameMode implements Screen {
 		collisionController = null;
 		canvas = null;
 	}
-	
-	
+
+
 	/**
 	 * Update the game state.
 	 *
@@ -355,7 +289,8 @@ public class GameMode implements Screen {
 					break;
 			}
 		} catch (Exception e) {
-			// TODO get rid of this block probably
+			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -369,16 +304,16 @@ public class GameMode implements Screen {
 
 		// Check if game is over
 		if (gameplayController.getCar().isDestroyed()) {
-            gameState = GameState.OVER;
-        }
+			gameState = GameState.OVER;
+		}
 
 		// Update Based on input
-        gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
+		gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
 		gameplayController.resolveActions(inputController, delta);
 
 		// Update child states TODO: idk
 		gameplayController.resolveChildren(counter, gameplayController.getCar().getNed(),
-											gameplayController.getCar().getNosh(), gameplayController.getRadio());
+				gameplayController.getCar().getNosh(), gameplayController.getRadio());
 
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
@@ -401,10 +336,6 @@ public class GameMode implements Screen {
 		counter += 1;
 	}
 
-	private int rotate = 0;
-	private boolean up = true;
-	private int del = 0;
-	
 	/**
 	 * Draw the status of this player mode.
 	 *
@@ -413,11 +344,9 @@ public class GameMode implements Screen {
 	 * prefer this in lecture.
 	 */
 	private void draw(float delta) {
-
 		canvas.clearScreen();
 
-
-        gameplayController.getRoad().draw(canvas);
+		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez
 		for (Gnome g : gameplayController.getGnomez()) {
@@ -429,121 +358,7 @@ public class GameMode implements Screen {
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
 
-		// Clouds
-		canvas.draw(clouds, Color.WHITE, 0, 0, 0.25f*canvas.getHeight(), 0.715f*canvas.getHeight(), 0,
-				(float)canvas.getHeight()/(float)clouds.getWidth(), (float)canvas.getHeight()/(float)clouds.getHeight());
-
-		//Gnomez
-		for (Gnome g : gameplayController.getGnomez()) {
-			g.draw(canvas);
-		}
-
-		//Draw sun effect part 1
-		if(gameplayController.sunShine && !gameplayController.getVisor().isOpen()) {
-			canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-			canvas.draw(white, new Color(1, 1, 0, 0.7f), 0, 0, 0, 0, 0,
-					canvas.getWidth(), canvas.getHeight());
-			canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
-			canvas.draw(white, new Color(1, 0.7f, 0, 0.7f), 0, 0, 0, 0, 0,
-					canvas.getWidth(), canvas.getHeight());
-		} else if (gameplayController.sunShine) {
-			canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-			canvas.draw(white, new Color(1, 1, 0, 0.3f), 0, 0, 0, 0, 0,
-					canvas.getWidth(), canvas.getHeight());
-			canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
-			canvas.draw(white, new Color(1, 0.7f, 0, 0.3f), 0, 0, 0, 0, 0,
-					canvas.getWidth(), canvas.getHeight());
-		}
-
-		///**  Draw Dash and Interactive HUD Elements **///
-		gameplayController.getCar().drawDash(canvas);
-
-		// Vroom Stick
-		gameplayController.getVroomStick().draw(canvas);
-
-		// Wheel
-		gameplayController.getWheel().draw(canvas);
-
-		// Radio
-		gameplayController.getRadio().draw(canvas, displayFont);
-
-
-		// Health gauge and pointer
-		Color healthGaugeColor = Color.WHITE;
-        if (gameplayController.getCar().getIsDamaged()) {
-        	healthGaugeColor = Color.RED;
-		}
-        gameplayController.getHealthGauge().draw(canvas, healthGaugeColor);
-
-		// FIXME: this is a mess
-		gameplayController.getRearviewBackground().draw(canvas);
-		gameplayController.getRearviewEnemy().draw(canvas);
-		gameplayController.getRearviewSeats().draw(canvas);
-		gameplayController.getRearviewCover().draw(canvas);
-		// Draw Ned and Nosh
-		gameplayController.getCar().getNosh().draw(canvas);
-		gameplayController.getCar().getNed().draw(canvas);
-
-        /*
-		// Draw rearview background
-		canvas.draw(rearviewBackground,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
-					0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-					canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-
-
-		// Draw rearview seats
-		canvas.draw(rearviewSeats,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
-				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-
-		// Draw rearview cover
-		canvas.draw(rearviewCover,Color.WHITE,rearviewBackground.getWidth()*0.5f,rearviewBackground.getHeight()*0.5f,
-				0.844f*canvas.getWidth(),0.871f*canvas.getHeight(),0,
-				canvas.getHeight()/(rearviewBackground.getHeight()*3.5f),canvas.getHeight()/(rearviewBackground.getHeight()*3.5f));
-				*/
-
-		//Draw inventory
-		gameplayController.getInventory().draw(canvas);
-
-		// Draw speech bubbles, if necessary
-		if (!gameplayController.getRoad().reachedEndOfLevel()) {
-			gameplayController.getCar().getNed().drawSpeechBubble(canvas, speechBubble);
-			gameplayController.getCar().getNosh().drawSpeechBubble(canvas, speechBubble);
-		}
-
-		del++;
-		//Draw sun effect part 2
-		if(gameplayController.sunShine) {
-			if(del > 10) {
-				del = 0;
-				if(up) {
-					rotate ++;
-					if(rotate > 5) up = false;
-				} else {
-					rotate --;
-					if(rotate < 0) up = true;
-				}
-			}
-			canvas.draw(sun3, Color.WHITE, 0.5f*sun3.getWidth(), 0.5f*sun3.getHeight(), 0.32f*canvas.getWidth(), 0.98f*canvas.getHeight(), 0,
-					((float).3*canvas.getWidth()+rotate*100)/sun3.getWidth(), ((float).3*canvas.getWidth()+rotate*100)/sun3.getWidth());
-			canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-			if(!gameplayController.getVisor().isOpen()) {
-				canvas.draw(sun2, new Color(1, 1, 1, (float)rotate/20.0f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
-						((float)1.25*canvas.getWidth())/sun.getWidth()+rotate, ((float)1.25*canvas.getWidth())/sun.getWidth()+rotate);
-				canvas.draw(sun, new Color(1, 1, 1, 0.4f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
-						((float)1.25*canvas.getWidth())/sun.getWidth(), ((float)1.25*canvas.getWidth())/sun.getWidth());
-			} else {
-				canvas.draw(sun2, new Color(1, 1, 1, 0.2f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
-						((float)1.25*canvas.getWidth())/sun.getWidth(), ((float)1.25*canvas.getWidth())/sun.getWidth());
-				canvas.draw(sun, new Color(1, 1, 1, 0.2f), 0.25f*sun.getWidth(), 0.75f*sun.getHeight(), 0.2f*canvas.getWidth(), canvas.getHeight(), 0,
-						((float)1.25*canvas.getWidth())/sun.getWidth(), ((float)1.25*canvas.getWidth())/sun.getWidth());
-			}
-			canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
-		}
-
-		//Draw visor
-		gameplayController.getVisor().draw(canvas);
-
+		gameplayController.draw(canvas);
 
 		// Draw fade out to rest stop
 		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {
@@ -574,7 +389,8 @@ public class GameMode implements Screen {
 					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
 				} else {
 					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
-							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0, ((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
+							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0,
+							((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
 				}
 				break;
 			case PLAY:
@@ -585,16 +401,12 @@ public class GameMode implements Screen {
 
 		// Flush information to the graphic buffer.
 		canvas.endHUDDrawing();
-
-//		if (gameplayController.getCar().getIsDamaged()) {
-//		    canvas.drawDamageIndicator(gameplayController.getCar().getDamageDisplayAlpha());
-//        }
 	}
-	
+
 	/**
-	 * Called when the Screen is resized. 
+	 * Called when the Screen is resized.
 	 *
-	 * This can happen at any point during a non-paused state but will never happen 
+	 * This can happen at any point during a non-paused state but will never happen
 	 * before a call to show().
 	 *
 	 * @param width  The new width in pixels
@@ -616,6 +428,7 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
+
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if (exitToRestStop && listener != null) {
 //				gameState = GameState.OVER;
@@ -623,7 +436,7 @@ public class GameMode implements Screen {
 				active = false;
 			}
 
-			//FIXME: idk what the below is for
+			// This is used to return back to GDXRoot - can help to transition to diff screens
 //			if (inputController.didExit() && listener != null) {
 //				listener.exitScreen(this, 0);
 //			}
@@ -632,8 +445,8 @@ public class GameMode implements Screen {
 
 	/**
 	 * Called when the Screen is paused.
-	 * 
-	 * This is usually when it's not active or visible on screen. An Application is 
+	 *
+	 * This is usually when it's not active or visible on screen. An Application is
 	 * also paused before it is destroyed.
 	 */
 	public void pause() {
@@ -648,7 +461,7 @@ public class GameMode implements Screen {
 	public void resume() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/**
 	 * Called when this screen becomes the current screen for a Game.
 	 */

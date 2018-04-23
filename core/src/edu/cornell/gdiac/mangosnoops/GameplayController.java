@@ -21,6 +21,8 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
@@ -29,14 +31,12 @@ import com.badlogic.gdx.graphics.Texture;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 import edu.cornell.gdiac.util.FilmStrip;
-
+import java.util.HashMap;
 /**
  * Controller to handle gameplay interactions.
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
-	/** The change in x, computed based on the wheel angle */
-	private float rotationMagnitude;
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -67,11 +67,13 @@ public class GameplayController {
 	private RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
-	
+	private SATQuestions satQuestions;
+
 	private Image healthGauge;
 	private Image rearviewBackground;
 	private Image rearviewSeats;
 	private Image rearviewCover;
+	private Image healthGaugePointer;
 
 	private ObjectSet<Image> hudObjects;
 	/** If there is sun shining right now */
@@ -109,7 +111,7 @@ public class GameplayController {
 	/** The texture file for the exit */
 	private static final String EXIT_FILE = "images/exit.png";
 	/** The texture file for the dash */
-	private static final String DASH_FILE = "images/DashHUD/dashv2.png";
+	private static final String DASH_FILE = "images/DashHUD/Dash.png";
 	/** The file for the health gauge */
 	private static final String HEALTH_GAUGE_FILE = "images/DashHUD/gauge.png";
 	/** The file for the health gauge pointer */
@@ -121,6 +123,20 @@ public class GameplayController {
 	/** The texture files for all Items **/
 	private static final String DVD_FILE = "images/Items/dvd.png";
 	private static final String SNACK_FILE = "images/Items/snack.png";
+	/** Sun effect that will be overlayed */
+	private static final String SUN_FILE = "images/sun_1.jpg";
+	private static final String SUN2_FILE = "images/sun_2.jpg";
+	private static final String SUN3_FILE = "images/sun_3.png";
+	private static final String WHITE_FILE = "images/white.png";
+	/** The file for the angry speech bubble */
+	private static final String SPEECH_BUBBLE_FILE = "images/speechbubble.png";
+	/** SAT Questions */
+	private static final String SAT_BUBBLE_FILE = "SatQuestions/satbubble.png";
+	private static final String SAT_ARMADILLO_FILE = "SatQuestions/armadillo.png";
+	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
+	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
+	/** The font file to use for scores */
+	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -166,7 +182,22 @@ public class GameplayController {
 	/** Texture of the rear view mirror */
 	private Texture rearviewBackgroundTexture;
 	private Texture rearviewSeatsTexture;
-	private Texture rearviewCoverTexture;
+	/** Texture of sun effect */
+	private Texture sun;
+	private Texture sun2;
+	private Texture sun3;
+	private Texture white;
+	/** Texture of the angry speech bubble */
+	private Texture speechBubble;
+	/** SAT Questions */
+	private Texture satBubble;
+	private Texture satArmadillo;
+	private Texture satWhale;
+	private Texture satLemonMan;
+	private HashMap<String, Texture> satTextures;
+
+	/** The font for giving messages to the player */
+	private BitmapFont displayFont;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
@@ -244,6 +275,24 @@ public class GameplayController {
         assets.add(VISOR_OPEN_FILE);
         manager.load(VISOR_CLOSED_FILE, Texture.class);
         assets.add(VISOR_OPEN_FILE);
+		manager.load(SUN_FILE, Texture.class);
+		assets.add(SUN_FILE);
+		manager.load(SUN2_FILE, Texture.class);
+		assets.add(SUN2_FILE);
+		manager.load(SUN3_FILE, Texture.class);
+		assets.add(SUN3_FILE);
+		manager.load(WHITE_FILE, Texture.class);
+		assets.add(WHITE_FILE);
+		manager.load(SPEECH_BUBBLE_FILE, Texture.class);
+		assets.add(SPEECH_BUBBLE_FILE);
+		manager.load(SAT_BUBBLE_FILE, Texture.class);
+		assets.add(SAT_BUBBLE_FILE);
+		manager.load(SAT_ARMADILLO_FILE, Texture.class);
+		assets.add(SAT_ARMADILLO_FILE);
+		manager.load(SAT_WHALE_FILE, Texture.class);
+		assets.add(SAT_WHALE_FILE);
+		manager.load(SAT_LEMONMAN_FILE, Texture.class);
+		assets.add(SAT_LEMONMAN_FILE);
 	}
 
 	/**
@@ -262,13 +311,13 @@ public class GameplayController {
 		gnomeTexture = createTexture(manager, GNOME_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
-		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 1);
-		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 1);
+		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
+		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 2);
 		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
 		nosh_critical = new FilmStrip(createTexture(manager, NOSH_CRITICAL_FILE), 1, 1);
 		nosh_sleep= new FilmStrip(createTexture(manager, NOSH_SLEEP_FILE), 1, 1);
-		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 4, 5);
-		ned_neutral = new FilmStrip(createTexture(manager,NED_NEUTRAL_FILE), 1, 1);
+		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 1, 2);
+		ned_neutral = new FilmStrip(createTexture(manager,NED_NEUTRAL_FILE), 1, 2);
 		ned_sad = new FilmStrip(createTexture(manager, NED_SAD_FILE), 1, 1);
 		ned_critical = new FilmStrip(createTexture(manager, NED_CRITICAL_FILE), 1, 1);
 		ned_sleep = new FilmStrip(createTexture(manager, NED_SLEEP_FILE), 1, 1);
@@ -282,9 +331,26 @@ public class GameplayController {
 		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
-		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
         visorOpen = createTexture(manager, VISOR_OPEN_FILE);
         visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
+        sun = createTexture(manager, SUN_FILE);
+		sun2 = createTexture(manager, SUN2_FILE);
+		sun3 = createTexture(manager, SUN3_FILE);
+		white = createTexture(manager, WHITE_FILE);
+		speechBubble = createTexture(manager, SPEECH_BUBBLE_FILE);
+		if (manager.isLoaded(FONT_FILE)) {
+			displayFont = manager.get(FONT_FILE,BitmapFont.class);
+		} else {
+			displayFont = null;
+		}
+		satBubble = createTexture(manager, SAT_BUBBLE_FILE);
+		satArmadillo = createTexture(manager, SAT_ARMADILLO_FILE);
+		satTextures.put(SAT_ARMADILLO_FILE, satArmadillo);
+		satWhale = createTexture(manager, SAT_WHALE_FILE);
+		satTextures.put(SAT_WHALE_FILE, satWhale);
+		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
+		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
+		satQuestions = new SATQuestions(satTextures, satBubble);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -311,7 +377,6 @@ public class GameplayController {
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
-
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
 		dvdTexture = new Texture(DVD_FILE);
 		snackTexture = new Texture(SNACK_FILE);
@@ -322,7 +387,7 @@ public class GameplayController {
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
 		inventory.load(i);
-
+		satTextures = new HashMap<String, Texture>();
 	}
 
 	/**
@@ -362,6 +427,7 @@ public class GameplayController {
 	public VroomStick getVroomStick() { return vroomStick; }
 
 	public Image getHealthGauge() { return healthGauge; }
+	public Image getHealthGaugePointer() { return healthGaugePointer; }
 	public Image getRearviewBackground() { return rearviewBackground; }
 	public Image getRearviewSeats() { return rearviewSeats; }
 	public Image getRearviewCover() { return rearviewCover; }
@@ -401,12 +467,14 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		healthGauge = new Image(0.35f, 0.023f, 0.175f, healthGaugeTexture);
-		rearviewBackground = new Image(0.63f, 0.71f, 0.3f, rearviewBackgroundTexture);
-		rearviewSeats = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
-		rearviewCover = new Image(0.63f, 0.71f, 0.3f, rearviewSeatsTexture);
+		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
+		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
+		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
+        rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-		for(Gnome g: level.getGnomez()){
+        for(Gnome g: level.getGnomez()){
 			gnomez.add(new Gnome(g));
 		}
 		// TODO CHANGE THIS LOL
@@ -415,16 +483,19 @@ public class GameplayController {
 		}
 		events = level.getEvents();
 
-		wheel = new Wheel(0.193f,0.22f, 0.5f, 60, wheelTexture);
+		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
-		radio = new Radio(0.66f, 0.06f, 0.07f, 0, radioknobTexture, level.getSongs());
-		visor = new Visor(visorOpen, visorClosed);
+		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
+		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.15f, 2);
+		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,3));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,1));
+		inventory.load(i);
+		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
-
-		rearviewEnemy = new RearviewEnemy(0.843f, 0.81f, 0.18f,0, rearviewGnomeTexture);
 
 		// Add all HUD objects to hudObjects
 		hudObjects.add(vroomStick);
@@ -436,6 +507,9 @@ public class GameplayController {
 		hudObjects.add(rearviewBackground);
 		hudObjects.add(rearviewCover);
 		hudObjects.add(rearviewSeats);
+		hudObjects.add(getCar().getNed());
+		hudObjects.add(getCar().getNosh());
+		hudObjects.add(healthGaugePointer);
 
   }
 
@@ -444,7 +518,6 @@ public class GameplayController {
 	 */
 	public void reset() {
 		road.reset();
-		rotationMagnitude = 0;
 		yonda.reset();
 		inventory.reset();
 		wheel = null;
@@ -453,6 +526,8 @@ public class GameplayController {
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
+		visor = null;
+		satQuestions.reset();
 	}
 
 	/**
@@ -494,14 +569,11 @@ public class GameplayController {
 	protected void destroy(RoadObject o) {
 	    // TODO: carry out actions that occur on death of object o
 		switch(o.getType()) {
-			case CAR:
-				break;
 			case GNOME:
 				break;
 			default:
 				break;
 		}
-
 	}
 
 	/**
@@ -514,7 +586,7 @@ public class GameplayController {
 	 * @param nosh Nosh
 	 */
 	public void handleEvents(float delta, Child ned, Child nosh) {
-		if (events.size != 0) {
+		if (nextEvent < events.size && events.size != 0) {
 			float dy = road.getSpeed() * delta; // change in y position
 			ypos += dy; // add it to y position tracker
 			Event first = events.get(nextEvent);
@@ -544,12 +616,12 @@ public class GameplayController {
 						}
 						break;
 					case SAT_QUESTION:
-						// TODO
+						satQuestions.askQuestion();
 						break;
 					default:
 						break;
 				}
-				events.removeIndex(nextEvent);
+				nextEvent += 1;
 			}
 		}
 	}
@@ -575,6 +647,7 @@ public class GameplayController {
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
   		boolean mousePressed = input.isMousePressed();
+  		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x);
 			vroomStick.update(new Vector2(in), dr.y);
@@ -638,7 +711,7 @@ public class GameplayController {
                         ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-                        nosh.setMoodShifting(true, false);
+//                        nosh.setMoodShifting(true, false);
 					}
 					break;
 				case CREEPY: // ned likes, nosh dislikes
@@ -646,7 +719,7 @@ public class GameplayController {
                         ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-						nosh.setMoodShifting(true, false);
+//						nosh.setMoodShifting(true, false);
 					}
 					break;
 				case JAZZ: // ned likes, nosh dislikes
@@ -654,12 +727,12 @@ public class GameplayController {
 						ned.setMoodShifting(true, true);
 					}
 					if(nosh.isAwake()){
-                        nosh.setMoodShifting(true, false);
+//                        nosh.setMoodShifting(true, false);
 					}
 					break;
 				case COMEDY: // ned dislikes, nosh likes
 					if(ned.isAwake()){
-						ned.setMoodShifting(true, false);
+//						ned.setMoodShifting(true, false);
 					}
 					if(nosh.isAwake()){
 						nosh.setMoodShifting(true, true);
@@ -668,54 +741,11 @@ public class GameplayController {
 				default:
 					break;
 			}
-//			if (ned.isAwake()) {
-//				if (r.getCurrentStationNed()) {
-//					ned.setHappy();
-//				} else {
-//					ned.decreaseHappiness();
-//				}
-//			}
-//
-//			// check radio for nosh
-//			if (nosh.isAwake()) {
-//				if (r.getCurrentStationNosh()) {
-//					nosh.setHappy();
-//				} else {
-//					nosh.decreaseHappiness();
-//				}
-//			}
 		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-            ned.setMoodShifting(true, false);
+//            ned.setMoodShifting(true, false);
         } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-            nosh.setMoodShifting(true, false);
+//            nosh.setMoodShifting(true, false);
         }
-
-
-        // TODO: eventually remove this random stuff, commenting out for testing
-//		Random generator = new Random();
-//		float ned_prob = 0.3f;
-//		float nosh_prob = 0.3f;
-//
-//		float rearviewProb = 0.3f;
-//
-//		// check every 100 frames
-//		if (counter % 100 == 0) {
-//			// make ned sleepy with given probability
-//			if (generator.nextFloat() <= ned_prob) {
-////				ned.setAsleep();
-//				ned.setMoodShifting(true, false);
-//			}
-//			// make nosh sleepy with given probability
-//			if (generator.nextFloat() <= nosh_prob) {
-//				nosh.setAsleep();
-//			}
-//
-//			// Create rearview enemy with given probability
-//			if (generator.nextFloat() <= rearviewProb) {
-//				rearviewEnemy.create();
-//			}
-//
-//		}
 
 	}
 
@@ -723,6 +753,7 @@ public class GameplayController {
 	public void resolveItemDrop(InputController inputController) {
 //		System.out.println("prevClick: "+inputController.isPrevMousePressed());
 //		System.out.println("currClick: "+inputController.isMousePressed());
+
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			if (yonda.getNosh().inChildArea(droppedPos)) {
 				//TODO ITEM CHECKS FOR NOSH
@@ -768,5 +799,62 @@ public class GameplayController {
 			i.applyShake();
 		}
 
+	}
+
+	public void draw(GameCanvas canvas) {
+		//Gnomez
+		for (Gnome g : gnomez) {
+			g.draw(canvas);
+		}
+
+		//Draw sun effect part 1
+		visor.drawSunA(canvas, sunShine);
+
+		///**  Draw Dash and Interactive HUD Elements **///
+		yonda.drawDash(canvas);
+
+		// Vroom Stick
+		vroomStick.draw(canvas);
+
+		// Wheel
+		wheel.draw(canvas);
+
+		// Radio
+		radio.draw(canvas, displayFont);
+
+		// Health gauge and pointer
+		Color healthGaugeColor = Color.WHITE;
+		if (yonda.getIsDamaged()) {
+			healthGaugeColor = Color.RED;
+		}
+		healthGauge.draw(canvas, healthGaugeColor);
+		healthGaugePointer.draw(canvas, -yonda.getHealthPointerAng());
+
+		// FIXME: this is a mess
+		rearviewBackground.draw(canvas);
+		rearviewEnemy.draw(canvas);
+		rearviewSeats.draw(canvas);
+		rearviewCover.draw(canvas);
+		// Draw Ned and Nosh
+		yonda.getNosh().draw(canvas);
+		yonda.getNed().draw(canvas);
+
+		//Draw inventory
+		inventory.draw(canvas);
+		inventory.drawItemInHand(canvas);
+
+		// Draw speech bubbles, if necessary
+		if (!road.reachedEndOfLevel()) {
+			yonda.getNed().drawSpeechBubble(canvas, speechBubble);
+			yonda.getNosh().drawSpeechBubble(canvas, speechBubble);
+		}
+
+		//Draw sun effect part 2
+		visor.drawSunB(canvas, sunShine);
+
+		//Draw visor
+		visor.draw(canvas);
+
+		satQuestions.draw(canvas, displayFont);
 	}
 }

@@ -92,6 +92,7 @@ public class Inventory extends Image {
             }
         }
 
+
 //        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
 //            //released mouse, check areas w/ this vector in (store, children, dvd player)
 //            cancelTake();
@@ -115,7 +116,7 @@ public class Inventory extends Image {
                 float ix = s.getSlotItem().getTexture().getWidth()*0.5f; //center of item
                 float iy = s.getSlotItem().getTexture().getHeight()*0.5f;
                 float x = s.realHitbox.getX() + 0.5f*s.realHitbox.getWidth(); //centerOfSlot, already in screen dimensions
-                float y = s.realHitbox.getY() + 0.5f*s.realHitbox.getHeight() + currentShakeAmount;
+                float y = s.realHitbox.getY() + 0.7f*s.realHitbox.getHeight() + currentShakeAmount;
 
                 for(int i=0; i<s.amount; i++) {
                     canvas.draw(s.getSlotItem().getTexture(), Color.WHITE, ix, iy, x-itemOffset*SCREEN_DIMENSIONS.x*i, y, 0,
@@ -124,9 +125,11 @@ public class Inventory extends Image {
                 }
             }
         }
+    }
+    public static void drawItemInHand(GameCanvas canvas){
         if(itemInHand != null && itemInHand.texture!=null) {
             canvas.draw(itemInHand.getTexture(), Color.WHITE, itemInHand.getTexture().getWidth()*0.5f, itemInHand.getTexture().getHeight()*0.5f,
-                            itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*SCREEN_DIMENSIONS.y, itemInHand.relativeScale*SCREEN_DIMENSIONS.y);
+                    itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*SCREEN_DIMENSIONS.y, itemInHand.relativeScale*SCREEN_DIMENSIONS.y);
         }
     }
 
@@ -248,9 +251,6 @@ public class Inventory extends Image {
 
         /** Increment the amount by i */
         public void incAmount(int i) { amount += i; }
-
-
-
     }
 
     public static class Item{
@@ -274,15 +274,28 @@ public class Inventory extends Image {
         public Item (float x, float y,ItemType itemType){
             position = new Vector2(x,y);
             this.itemType = itemType;
-            texture = itemTextures.get(itemType);
-            relativeScale = relativeScales.get(itemType);
+            if(itemType == null){
+                texture = null;
+                relativeScale = 0;
+            }
+            else{
+                texture = itemTextures.get(itemType);
+                relativeScale = relativeScales.get(itemType);
+            }
+
         }
 
         public Item (ItemType itemType) {
             position = null;
             this.itemType = itemType;
-            texture = itemTextures.get(itemType);
-            relativeScale = relativeScales.get(itemType);
+            if(itemType == null){
+                texture = null;
+                relativeScale = 0;
+            }
+            else{
+                texture = itemTextures.get(itemType);
+                relativeScale = relativeScales.get(itemType);
+            }
         }
 
         public static void setTexturesAndScales(Texture dvd, float dvdScale, Texture snack, float snackScale){
