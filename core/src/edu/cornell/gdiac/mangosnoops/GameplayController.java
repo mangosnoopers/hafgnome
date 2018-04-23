@@ -384,8 +384,8 @@ public class GameplayController {
 		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
 		inventory = new Inventory(0.4756f,0.0366f, 0,0,dvdTexture, 0.146f, 0.128f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,0));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,0));
 		inventory.load(i);
 		satTextures = new HashMap<String, Texture>();
 	}

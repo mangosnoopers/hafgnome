@@ -170,8 +170,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			playing = new GameMode(canvas,LEVELS[currLevel]);
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
-			playing.setScreenListener(this);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode
+			playing.setScreenListener(this);
 			setScreen(playing);
 
 			reststop.dispose();
