@@ -11,6 +11,12 @@
          "imageA":"lemonMan.png",
          "imageB":"N/A",
          "correct":2
+      },
+      {  
+         "text":"How many MANGOS is he holding?",
+         "imageA":"lemonMan.png",
+         "imageB":"N/A",
+         "correct":0
       }
    ]
 }

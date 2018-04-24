@@ -9,6 +9,7 @@
 package edu.cornell.gdiac.mangosnoops.Menus;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -449,6 +450,11 @@ public class StartMenuMode implements Screen, InputProcessor {
      * @return whether to hand the event to other listeners.
      */
     public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.F) {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        } else if(keycode == Input.Keys.ESCAPE) {
+            Gdx.graphics.setWindowedMode(1600,900);
+        }
         return true;
     }
 
