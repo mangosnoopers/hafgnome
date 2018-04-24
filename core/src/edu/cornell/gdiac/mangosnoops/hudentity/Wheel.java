@@ -30,7 +30,7 @@ public class Wheel extends Image {
      */
     public void update(Vector2 in, float dx) {
         // change wheel angle and lateral screen movement
-        if (in != null && inArea(in)) {
+        if ((in != null && inArea(in)) || dx != 0) {
             if (ang >= -90 && ang <= 90) {
                 ang -= dx;
             }

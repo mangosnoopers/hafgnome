@@ -98,6 +98,7 @@ public class InputController {
 	public int getNumKeyPressed() {
 		return numKeyPressed;
 	}
+
 	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
@@ -138,6 +139,29 @@ public class InputController {
 		} else {
 			clickPos = null;
 		}
+
+        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+            System.out.println(dx);
+            if(dx > 10){
+                dx -= 4;
+            } else if(dx > 0) {
+                dx = dx*1.03f;
+            } else {
+                dx = 1;
+                dx = dx*6;
+            }
+        } else if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+            if (dx < -10) {
+                dx -= 4;
+            } else if(dx < 0) {
+                dx = dx*1.03f;
+            } else {
+                dx = -1;
+                dx = dx*6;
+            }
+        } else {
+            dx = 0;
+        }
 	}
 
 }
