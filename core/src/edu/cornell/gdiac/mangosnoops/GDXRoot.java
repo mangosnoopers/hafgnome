@@ -49,7 +49,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private StartMenuMode start;
 
 	// LEVEL FILES TODO implement moving to next level
-	private static final String[] LEVELS = new String[]{"test_level0.xlsx", "test_level0.xlsx"};
+	private static final String[] LEVELS = new String[]{"test_level0.xlsx", "test_level1.xlsx"};
 	private static int currLevel;
 
 	/**
@@ -167,6 +167,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			playing.dispose();
 			playing = null;
 		} else if (screen == reststop) {
+			currLevel = (currLevel + 1) % LEVELS.length; // TODO : something that will end the game at last level
 			playing = new GameMode(canvas,LEVELS[currLevel]);
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
