@@ -514,7 +514,6 @@ public class GameplayController {
 	public void reset() {
 		road.reset();
 		yonda.reset();
-		inventory.reset();
 		wheel = null;
 		radio = null;
 		gnomez = new Array<Gnome>(level.getGnomez().size);
