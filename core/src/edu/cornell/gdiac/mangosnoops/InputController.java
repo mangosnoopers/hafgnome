@@ -103,10 +103,24 @@ public class InputController {
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
+		//Full screen/Escape Full Screen
+		if(Gdx.input.isKeyPressed(Input.Keys.F)) {
+			Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+		}
+		else if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+			Gdx.graphics.setWindowedMode(1600,900);
+		}
+
+		//Exit Screen
+		if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+			Gdx.app.exit();
+		}
+
+		//Read input for Gameplay
 		prevMouseClicked = mouseClicked;
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R)) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-		exitPressed  = (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+		//Process number input for SAT Question
 		if(Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
 			numKeyPressed = 0;
 		} else if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
@@ -130,6 +144,7 @@ public class InputController {
 		} else {
 			numKeyPressed = -1;
 		}
+		//Process mouse input
 		if (mouseClicked) {
 			clickPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 			dx = Gdx.input.getDeltaX();
@@ -139,27 +154,25 @@ public class InputController {
 		} else {
 			clickPos = null;
 		}
-
-        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+		//Process WASD/Arrow input (for turning wheel)
+        if(Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             System.out.println(dx);
             if(dx > 10){
                 dx -= 4;
             } else if(dx > 0) {
                 dx = dx*1.03f;
             } else {
-                dx = 1;
-                dx = dx*6;
+                dx = 6;
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+        } else if(Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if (dx < -10) {
                 dx -= 4;
             } else if(dx < 0) {
                 dx = dx*1.03f;
             } else {
-                dx = -1;
-                dx = dx*6;
+                dx = -6;
             }
-        } else {
+        } else if(!mouseClicked) {
             dx = 0;
         }
 	}

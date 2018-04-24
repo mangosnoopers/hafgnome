@@ -57,6 +57,7 @@ public class SATQuestions extends Image {
             currQuestion = curr.getString("text");
             if(curr.getString("imageB").equals("N/A")){
                 currImageA = images.get("SatQuestions/"+curr.getString("imageA"));
+                currImageB = null;
             } else {
                 currImageA = images.get("SatQuestions/"+curr.getString("imageA"));
                 currImageB = images.get("SatQuestions/"+curr.getString("imageB"));
@@ -137,7 +138,6 @@ public class SATQuestions extends Image {
 
 
     public void draw(GameCanvas canvas, BitmapFont font) {
-        font.setColor(new Color(0, 0, 0, 1));
         if(active){
             canvas.draw(bubble, Color.WHITE, 0, bubble.getHeight(), X*canvas.getWidth(), Y*canvas.getHeight(), 0,
                     0.3f*SCREEN_DIMENSIONS.x/bubble.getWidth(), 0.3f*SCREEN_DIMENSIONS.x/bubble.getWidth());
@@ -149,17 +149,22 @@ public class SATQuestions extends Image {
                     0.3f*SCREEN_DIMENSIONS.x/bubble.getWidth(), 0.3f*SCREEN_DIMENSIONS.x/bubble.getWidth());
         }
         if(active || answered != -1) { //question is present but hasn't been answered yet
+            font.setColor(new Color(0, 0, 0, 1));
             canvas.drawText(currQuestion, font, (X+TEXT_XOFFSET)*canvas.getWidth(), (Y-TEXT_YOFFSET)*canvas.getHeight());
             float bubbleWidth = 0.3f*SCREEN_DIMENSIONS.x;
             float bubbleHeight = 0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth();
             if(currImageB == null) { //numerical question
                 canvas.draw(currImageA, Color.WHITE, 0.5f*currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
                             bubbleHeight/currImageA.getWidth(), bubbleHeight/currImageA.getWidth());
+                font.setColor(new Color(0, 0, 0, 1));
+                canvas.drawText("Type the answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             } else { //choose the picture question
                 canvas.draw(currImageA, Color.WHITE, currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
                         0.75f*bubbleHeight/currImageA.getWidth(), 0.75f*bubbleHeight/currImageA.getWidth());
                 canvas.draw(currImageB, Color.WHITE, 0, 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
                         0.75f*bubbleHeight/currImageB.getWidth(), 0.75f*bubbleHeight/currImageB.getWidth());
+                font.setColor(new Color(0, 0, 0, 1));
+                canvas.drawText("Click on the right one.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             }
         }
     }
