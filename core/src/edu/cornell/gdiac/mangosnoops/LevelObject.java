@@ -378,7 +378,7 @@ public class LevelObject {
                 x -= LANE_X;
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
                 if (enemyStr.equals("gnome")) {
-                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.BASIC);
+                    Gnome enemy = new Gnome(x, y);
                     gnomez.add(enemy);
                     // TODO add texture here? maybe?
 
@@ -387,11 +387,11 @@ public class LevelObject {
 //                    System.out.println("enemy x: " + x + "enemy y: " + y);
 
                 } else if (enemyStr.equals("flamingo")) {
-                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.FLAMINGO);
-                    gnomez.add(enemy);
+                    //Gnome enemy = new Gnome(x, y, Gnome.GnomeType.FLAMINGO);
+                    //gnomez.add(enemy);
                 } else if (enemyStr.equals("grill start")) {
-                    Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
-                    gnomez.add(enemy);
+                    //Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
+                    //gnomez.add(enemy);
                     // TODO: grill end
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");
