@@ -826,6 +826,7 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
+						// TODO: make this last for a duration of time
 						yonda.getNosh().setMood(Child.Mood.HAPPY);
 						yonda.getNed().setMood(Child.Mood.HAPPY);
 					} else if (inventory.inArea(droppedPos)){
@@ -839,7 +840,7 @@ public class GameplayController {
 			inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
-		
+
 	}
 
 	public void shakeHUD() {
