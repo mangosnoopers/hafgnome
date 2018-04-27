@@ -655,13 +655,20 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 
-//		for(int i=0; i<gnomez.size; i++){
-//			System.out.println("gnome["+i+"]: " + gnomez.get(i).getY());
-//		}
 		// Update world objects (road and gnome positions)
         road.update(delta);
         for (Enemy e : enemiez) {
             e.update(delta, road.getSpeed());
+
+            /* FIXME: idk if its best to have this here */
+            if (horn.isHonking()) {
+            	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
+            		Flamingo f = (Flamingo) e;
+            		if (e.getY() < f.getFlyAwayDistance()) {
+						((Flamingo) e).setFlyingAway();
+					}
+				}
+			}
         }
 
         // Update the HUD
