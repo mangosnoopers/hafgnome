@@ -17,6 +17,7 @@ public class Child extends Image{
     private ChildType ctype;
 
     private ObjectMap<Mood,FilmStrip> childTextures;
+    Texture speechBubble;
 
     private boolean gettingSad; //is gradually getting happier
     private boolean gettingHappy; //is gradually getting sadder
@@ -77,11 +78,13 @@ public class Child extends Image{
     /**
      * Constructor
      */
-    public Child(ChildType type) {
+    public Child(ChildType type, Texture sb) {
         super(0,0,0, null);
         if(type == ChildType.NED){
+            NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
             position = new Vector2(0.76f, 0.83f);
         } else{
+            NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
             position = new Vector2(0.91f, 0.83f);
         }
         Random rand = new Random();
@@ -89,6 +92,7 @@ public class Child extends Image{
         ANIMATION_SPEED = animSpeedInt / 100;
         ctype = type;
         happiness = HAPPY_UBOUND;
+        speechBubble = sb;
     }
 
     /**
@@ -219,7 +223,6 @@ public class Child extends Image{
             speechBubbleOffsetY *= -1;
            if(prevMood!=getCurrentMood()){
                if(this.ctype == ChildType.NED){
-                  NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                   if(NOSH_SPEECH_BUBBLE_COORDS != null){
                       while(Math.abs(NED_SPEECH_BUBBLE_COORDS.x-NOSH_SPEECH_BUBBLE_COORDS.x)<0.1f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y-NOSH_SPEECH_BUBBLE_COORDS.y)<0.1f ){
                           NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
@@ -228,7 +231,6 @@ public class Child extends Image{
 //                   System.out.println(NED_SPEECH_BUBBLE_COORDS);
                }
                if(this.ctype == ChildType.NOSH){
-                   NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
                    if(NED_SPEECH_BUBBLE_COORDS != null) {
                        while (Math.abs(NED_SPEECH_BUBBLE_COORDS.x - NOSH_SPEECH_BUBBLE_COORDS.x) < 0.1f || Math.abs(NED_SPEECH_BUBBLE_COORDS.y - NOSH_SPEECH_BUBBLE_COORDS.y) < 0.1f) {
                            NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
@@ -270,13 +272,9 @@ public class Child extends Image{
         }
 
 
-    public void drawSpeechBubble(GameCanvas canvas, Texture speechBubble) {
+    public void drawSpeechBubble(GameCanvas canvas) {
         if (getCurrentMood() == Mood.CRITICAL) {
-            float speechX;
-            float speechY;
-            ;
             if (getType() == ChildType.NED) {
-
                 canvas.draw(speechBubble, Color.WHITE, speechBubble.getWidth()*0.5f, speechBubble.getHeight()*0.5f,
                         Child.NED_SPEECH_BUBBLE_COORDS.x*canvas.getWidth(), Child.NED_SPEECH_BUBBLE_COORDS.y*canvas.getHeight(),
                         0, 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getWidth(), 0.9f*scale*(float)canvas.getHeight()/(float)speechBubble.getHeight() );
@@ -301,10 +299,10 @@ public class Child extends Image{
 //        System.out.println("input: " + in.x + " " + in.y);
 //        System.out.println("X: " + (position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f) + " " + (position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f));
 //        System.out.println("Y: " + (position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f) + " " + (position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f));
-        return (in.x <= position.x*SCREEN_DIMENSIONS.x + currentFilmStrip.getRegionWidth()*0.5f)
-                && (in.x >= position.x*SCREEN_DIMENSIONS.x - currentFilmStrip.getRegionWidth()*0.5f)
-                && (SCREEN_DIMENSIONS.y - in.y <= position.y*SCREEN_DIMENSIONS.y + currentFilmStrip.getRegionHeight()*0.5f)
-                && (SCREEN_DIMENSIONS.y - in.y >= position.y*SCREEN_DIMENSIONS.y - currentFilmStrip.getRegionHeight()*0.5f);
+        return (in.x <= position.x*c.getWidth() + currentFilmStrip.getRegionWidth()*0.5f)
+                && (in.x >= position.x*c.getWidth() - currentFilmStrip.getRegionWidth()*0.5f)
+                && (c.getHeight() - in.y <= position.y*c.getHeight() + currentFilmStrip.getRegionHeight()*0.5f)
+                && (c.getHeight() - in.y >= position.y*c.getHeight() - currentFilmStrip.getRegionHeight()*0.5f);
     }
 
 }

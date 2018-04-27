@@ -443,6 +443,185 @@ public class GameCanvas {
 		holder.setRegion(image);
 		draw(holder,tint,ox,oy,x,y,angle,sx,sy);
 	}
+
+	public enum TextureOrigin {
+		MIDDLE,
+		TOP_LEFT,
+		TOP_RIGHT,
+		BOTTOM_LEFT,
+		BOTTOM_RIGHT,
+	}
+
+	/**	Nice new draw method that is resize-friendly yay. :D
+	 *
+	 * @param image Texture of the image
+	 * @param o Where the origin is located for the Texture, see enum.
+	 * @param x Scale where x-coord is on screen, relative to canvas width (0.5 = middle, 1 = right)
+	 * @param y scale where y-coord is on screen, relative to canvas height (0.5 = middle, 1 = top)
+	 * @param scale Scale of texture based on either width/height
+	 * @param widthScale True if scale is based on canvas width, false if based on canvas height
+	 * @param angle Angle this texture is drawn in
+	 * @param c Color tint of the image
+	 */
+	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle, Color c) {
+		Vector2 oxy = new Vector2();
+		switch(o) {
+			case MIDDLE:
+				oxy.x = image.getWidth()*0.5f;
+				oxy.y = image.getHeight()*0.5f;
+				break;
+			case TOP_LEFT:
+				oxy.y = image.getHeight();
+				break;
+			case TOP_RIGHT:
+				oxy.x = image.getWidth();
+				oxy.y = image.getHeight();
+				break;
+			case BOTTOM_LEFT:
+				break;
+			case BOTTOM_RIGHT:
+				oxy.x = image.getWidth();
+				break;
+			default:
+				break;
+		}
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getWidth();
+		else s = scale*getHeight()/image.getHeight();
+//		System.out.println("x: " + oxy.x + " y: " + oxy.y + " xpos: " + x*getWidth() + " ypos: " + y*getHeight() + " angle: " + angle + " scale: " + s);
+		draw(image, c, oxy.x, oxy.y, x*getWidth(), y*getHeight(), angle, s, s);
+	}
+	/** Default color is white. */
+	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle) {
+		draw(image, o, x, y, scale, widthScale, angle, Color.WHITE);
+	}
+	/** Default angle is 0 and color is white. */
+	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {
+		draw(image, o, x, y, scale, widthScale, 0, Color.WHITE);
+	}
+	/** Default angle is 0. */
+	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, Color c) {
+		draw(image, o, x, y, scale, widthScale, 0, c);
+	}
+	/** With shake amount */
+	public void drawShake(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle, Color c, float shakeAmnt) {
+		Vector2 oxy = new Vector2();
+		switch(o) {
+			case MIDDLE:
+				oxy.x = image.getWidth()*0.5f;
+				oxy.y = image.getHeight()*0.5f;
+				break;
+			case TOP_LEFT:
+				oxy.y = image.getHeight();
+				break;
+			case TOP_RIGHT:
+				oxy.x = image.getWidth();
+				oxy.y = image.getHeight();
+				break;
+			case BOTTOM_LEFT:
+				break;
+			case BOTTOM_RIGHT:
+				oxy.x = image.getWidth();
+				break;
+			default:
+				break;
+		}
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getWidth();
+		else s = scale*getHeight()/image.getHeight();
+		draw(image, c, oxy.x, oxy.y, x*getWidth(), y*getHeight()+shakeAmnt, angle, s, s);
+	}
+
+	public boolean inArea(Vector2 p, Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {
+		int xb = 0; //x bottom bound
+		int xt = 0; //x top bound
+		int yb = 0;
+		int yt = 0;
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getWidth();
+		else s = scale*getHeight()/image.getHeight();
+		switch(o) {
+			case MIDDLE:
+				xb=(int)(x*getWidth()-s*0.5f*image.getWidth());
+				xt=(int)(x*getWidth()+s*0.5f*image.getWidth());
+				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
+				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
+				break;
+			case TOP_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getWidth());
+				yb=(int)(y*getHeight()-s*image.getHeight());
+				yt=getHeight();
+				break;
+			case TOP_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getWidth());
+				xt=getWidth();
+				yb=(int)(y*getHeight()-s*image.getHeight());
+				yt=getHeight();
+				break;
+			case BOTTOM_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getWidth());
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getHeight());
+				break;
+			case BOTTOM_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getWidth());
+				xt=getWidth();
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getHeight());
+				break;
+			default:
+				break;
+		}
+		return p.x > xb && p.x < xt && (getHeight()-p.y) > yb && (getHeight()-p.y) < yt;
+	}
+
+	public boolean inArea(Vector2 p, Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float cb) {
+		// BASICALLY COPIED FROM ABOVE METHOD LOL I LOVE CODE DUPLICATION
+		int xb = 0; //x bottom bound
+		int xt = 0; //x top bound
+		int yb = 0;
+		int yt = 0;
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getWidth();
+		else s = scale*getHeight()/image.getHeight();
+		switch(o) {
+			case MIDDLE:
+				xb=(int)(x*getWidth()-s*0.5f*image.getWidth());
+				xt=(int)(x*getWidth()+s*0.5f*image.getWidth());
+				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
+				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
+				break;
+			case TOP_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getWidth());
+				yb=(int)(y*getHeight()-s*image.getHeight());
+				yt=getHeight();
+				break;
+			case TOP_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getWidth());
+				xt=getWidth();
+				yb=(int)(y*getHeight()-s*image.getHeight());
+				yt=getHeight();
+				break;
+			case BOTTOM_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getWidth());
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getHeight());
+				break;
+			case BOTTOM_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getWidth());
+				xt=getWidth();
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getHeight());
+				break;
+			default:
+				break;
+		}
+		return p.x > xb-cb && p.x < xt+cb && (getHeight()-p.y) > yb-cb && (getHeight()-p.y) < yt+cb;
+	}
 	
 	/**
 	 * Draws the tinted texture region (filmstrip) at the given position.

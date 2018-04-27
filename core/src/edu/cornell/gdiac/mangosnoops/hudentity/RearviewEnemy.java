@@ -71,21 +71,17 @@ public class RearviewEnemy extends Image {
         }
 
         if (isDying || isAlive) {
-            float ox = 0.5f * texture.getWidth();
-            float oy = 0.5f * texture.getHeight();
-            float drawY = position.y*SCREEN_DIMENSIONS.y + currentHeight + currentShakeAmount;
-            canvas.draw(texture, Color.WHITE, ox, oy, position.x*SCREEN_DIMENSIONS.x, drawY, 0,
-                    relativeScale*canvas.getHeight(),
-                    relativeScale*canvas.getHeight());
+            canvas.drawShake(texture, GameCanvas.TextureOrigin.MIDDLE, position.x, position.y,
+                    relativeScale, false, 0, Color.WHITE, currentShakeAmount + currentHeight);
         }
     }
 
     public void update(float deltaSpeed) {
-        if (isAlive && currentHeight < DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y) {
-            currentHeight += (currentSpeed * deltaSpeed * SCREEN_DIMENSIONS.y);
+        if (isAlive && currentHeight < DAMAGE_HEIGHT*c.getHeight()) {
+            currentHeight += (currentSpeed * deltaSpeed * c.getHeight());
         }
-        if(currentHeight > DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y){
-            currentHeight = DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y;
+        if(currentHeight > DAMAGE_HEIGHT*c.getHeight()){
+            currentHeight = DAMAGE_HEIGHT*c.getHeight();
         }
 
         //Make gnome fly off
@@ -104,7 +100,7 @@ public class RearviewEnemy extends Image {
     }
 
     public boolean isAttackingCar() {
-        return isAlive && (currentHeight >= DAMAGE_HEIGHT*SCREEN_DIMENSIONS.y);
+        return isAlive && (currentHeight >= DAMAGE_HEIGHT*c.getHeight());
     }
 
     /** Creates a "new" rearview enemy, if there isn't already one. */

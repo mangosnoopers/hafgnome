@@ -45,6 +45,9 @@ public class CollisionController {
 	/** A factor to determine the gnome and car have collided. */
 	private static final float HIT_RANGE = 0.15f;
 
+	private static final float CAR_YRANGE_END = -10f;
+	private static final float CAR_YRANGE_START  = -10.5f;
+
 	// These cannot be modified after the controller is constructed.
 	// If these change, make a new constructor.
 	/** Width of the collision geometry */
@@ -85,13 +88,13 @@ public class CollisionController {
 	 * This is the main (incredibly unoptimized) collision detetection method.
 	 *
 	 * FIXME: remove camera, canvas params, oh god, what a mess
-	 * @param gnomez List of live gnomes to check
+	 * @param enemies List of live gnomes to check
 	 * @param yonda  Player's car
 	 */
-	public void processCollisions(Array<Gnome> gnomez, Car yonda, GameplayController controller) {
+	public void processCollisions(Array<Enemy> enemies, Car yonda, GameplayController controller) {
 		processBounds(yonda);
-		for (Gnome g : gnomez) {
-			handleCollision(yonda, g, controller);
+		for (Enemy e : enemies) {
+			handleCollision(yonda, e, controller);
 		}
 	}
 
@@ -108,30 +111,40 @@ public class CollisionController {
 	}
 
 	/**
+	 * Process the actions that need to take place when an enemy
+	 * collides with the car, namely:
+	 *   - Reduce car health
+	 *   - Shake the HUD
+	 *   - Update childrens' moods
+     *   - Destroy enemy
+	 *   - Destroy car if health is gone
+	 * @param c the car
+	 * @param e the enemy
+	 * @param s the master shaker
+	 */
+	private void processCarHitActions(Car c, Enemy e, Image s) {
+		c.damage();
+		c.shakeCar();
+		s.applyShake();
+		c.getNed().setMood(Child.Mood.SAD);
+		c.getNosh().setMood(Child.Mood.SAD);
+		if (c.getHealth() == 0) c.setDestroyed(true);
+		e.setDestroyed(true);
+	}
+
+	/**
 	 * Collide a gnome with a car.
 	 * FIXME: remove canvas param
 	 */
-	private void handleCollision(Car c, Gnome g, GameplayController controller) {
-//		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
-//							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
-//			if(g.getY() < GNOME_INRANGE) {
-//				g.setDestroyed(true);
-//			}
-//		}
-//
-//		else {
-			if (g.getY() < -10 && g.getY() > -10.5 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
-				c.damage();
-				c.shakeCar();
-				controller.shakeHUD();
-				c.getNed().setMood(Child.Mood.SAD);
-				c.getNosh().setMood(Child.Mood.SAD);
-				g.setDestroyed(true);
+	private void handleCollision(Car c, Enemy e, GameplayController controller) {
+		boolean isFlamingo = e.getType() == RoadObject.ObjectType.FLAMINGO;
+		boolean isFlyingFlamingo = isFlamingo && ((Flamingo) e).isFlyingAway();
 
-				if (c.getHealth() == 0)
-					c.setDestroyed(true);
-			}
+		boolean eInYRange = e.getY() > CAR_YRANGE_START && e.getY() < CAR_YRANGE_END;
+        boolean eInXRange = Math.abs(e.getX() - c.position.x) < HIT_RANGE;
 
-//		}
+        if (eInXRange && eInYRange) {
+            if (!isFlyingFlamingo) processCarHitActions(c, e, controller.getMasterShaker());
+        }
 	}
 }

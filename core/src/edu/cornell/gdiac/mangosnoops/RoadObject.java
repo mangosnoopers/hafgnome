@@ -46,6 +46,8 @@ public abstract class RoadObject {
     public enum ObjectType {
         /** A gnome, currently immortal */
         GNOME,
+        FLAMINGO,
+        GRILL,
         /** The player car, which lives until it collides with a gnome */
         CAR,
     }

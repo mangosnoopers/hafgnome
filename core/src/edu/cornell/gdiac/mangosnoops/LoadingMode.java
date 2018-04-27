@@ -488,14 +488,16 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param keycode the key pressed
 	 * @return whether to hand the event to other listeners. 
 	 */
-	public boolean keyDown(int keycode) { 
-		return true; 
+	public boolean keyDown(int keycode) {
+		if(keycode == Input.Keys.ESCAPE) {
+			Gdx.graphics.setWindowedMode(1600,900);
+		}
+		return true;
 	}
 
 	/** 
 	 * Called when a key is typed (UNSUPPORTED)
 	 *
-	 * @param keycode the key typed
 	 * @return whether to hand the event to other listeners. 
 	 */
 	public boolean keyTyped(char character) { 

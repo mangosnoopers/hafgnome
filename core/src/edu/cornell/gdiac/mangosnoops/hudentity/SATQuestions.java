@@ -157,14 +157,14 @@ public class SATQuestions extends Image {
                 canvas.draw(currImageA, Color.WHITE, 0.5f*currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
                             bubbleHeight/currImageA.getWidth(), bubbleHeight/currImageA.getWidth());
                 font.setColor(new Color(0, 0, 0, 1));
-                canvas.drawText("Type the answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
+                canvas.drawText("Type to answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             } else { //choose the picture question
                 canvas.draw(currImageA, Color.WHITE, currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
                         0.75f*bubbleHeight/currImageA.getWidth(), 0.75f*bubbleHeight/currImageA.getWidth());
                 canvas.draw(currImageB, Color.WHITE, 0, 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
                         0.75f*bubbleHeight/currImageB.getWidth(), 0.75f*bubbleHeight/currImageB.getWidth());
                 font.setColor(new Color(0, 0, 0, 1));
-                canvas.drawText("Click on the right one.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
+                canvas.drawText("Click to answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             }
         }
     }
