@@ -80,7 +80,8 @@ public class GameplayController {
 	private Image rearviewCover;
 	private Image healthGaugePointer;
 
-	private ObjectSet<Image> hudObjects;
+	private Image masterShaker; //apply shake to this object and will shake all HUDObjects
+
 	/** If there is sun shining right now */
 	public boolean sunShine;
 
@@ -235,6 +236,8 @@ public class GameplayController {
 	public enum Region {
 		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
 	}
+
+	public Image getMasterShaker() { return masterShaker; }
 
 	/**
 	 * Preloads the assets for this game.
@@ -499,7 +502,8 @@ public class GameplayController {
 	public void start(float x, float y) {
 		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
 		touchscreen = new TouchScreen(radio, offTouchscreen, dvdSlot);
-		hudObjects = new ObjectSet<Image>();
+//		hudObjects = new ObjectSet<Image>();
+		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
 		yonda.getNed().setChildFilmStrips(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
@@ -541,22 +545,6 @@ public class GameplayController {
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
-
-		// Add all HUD objects to hudObjects
-		hudObjects.add(vroomStick);
-		hudObjects.add(radio);
-		hudObjects.add(inventory);
-		hudObjects.add(rearviewEnemy);
-		hudObjects.add(wheel);
-		hudObjects.add(healthGauge);
-		hudObjects.add(rearviewBackground);
-		hudObjects.add(rearviewCover);
-		hudObjects.add(rearviewSeats);
-		hudObjects.add(getCar().getNed());
-		hudObjects.add(getCar().getNosh());
-		hudObjects.add(healthGaugePointer);
-		hudObjects.add(horn);
-
   }
 
 	/**
@@ -743,9 +731,7 @@ public class GameplayController {
 			getCar().takeExit();
 		}
 
-		for (Image i : hudObjects) {
-			i.updateShake(delta);
-		}
+		masterShaker.updateShake(delta);
 
 	}
 
@@ -840,13 +826,6 @@ public class GameplayController {
 			inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
-
-	}
-
-	public void shakeHUD() {
-		for (Image i : hudObjects) {
-			i.applyShake();
-		}
 
 	}
 

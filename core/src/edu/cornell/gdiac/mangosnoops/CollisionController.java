@@ -110,13 +110,6 @@ public class CollisionController {
 		//if(c.getX() > width) c.setY(width);
 	}
 
-	private void handleKidCollision(Child c) {
-		if(c.getCurrentMood() != Child.Mood.SAD && c.getCurrentMood() != Child.Mood.CRITICAL) {
-			c.setMood(Child.Mood.CRITICAL);//c.setMood(Child.Mood.SAD);
-			c.setMoodShifting(true, false);
-		}
-	}
-
 	/**
 	 * Process the actions that need to take place when an enemy
 	 * collides with the car, namely:
@@ -125,13 +118,14 @@ public class CollisionController {
 	 *   - Update childrens' moods
      *   - Destroy enemy
 	 *   - Destroy car if health is gone
-	 * @param c
-	 * @param g
+	 * @param c the car
+	 * @param e the enemy
+	 * @param s the master shaker
 	 */
-	private void processCarHitActions(Car c, Enemy e, GameplayController g) {
+	private void processCarHitActions(Car c, Enemy e, Image s) {
 		c.damage();
 		c.shakeCar();
-		g.shakeHUD();
+		s.applyShake();
 		c.getNed().setMood(Child.Mood.SAD);
 		c.getNosh().setMood(Child.Mood.SAD);
 		if (c.getHealth() == 0) c.setDestroyed(true);
@@ -150,7 +144,7 @@ public class CollisionController {
         boolean eInXRange = Math.abs(e.getX() - c.position.x) < HIT_RANGE;
 
         if (eInXRange && eInYRange) {
-            if (!isFlyingFlamingo) processCarHitActions(c, e, controller);
+            if (!isFlyingFlamingo) processCarHitActions(c, e, controller.getMasterShaker());
         }
 	}
 }

@@ -26,21 +26,21 @@ public class Image {
 
     /** The current offset that is applied to the dash drawing
      *  coordinates, for the "shake" effect */
-    protected float currentShakeAmount = 0;
+    protected static float currentShakeAmount = 0;
 
     /** The current shake magnitude */
-    private float currentShakeMagnitude = 0;
+    private static float currentShakeMagnitude = 0;
 
     /** Whether or not the object is shaking from a collision */
-    protected boolean isShaking = false;
+    protected static boolean isShaking = false;
 
     /** How quickly the shake ends, in range (0, 1)
      *  smaller value => depletes more quickly */
-    protected float SHAKE_DEPLETION = 0.95f;
+    protected final float SHAKE_DEPLETION = 0.95f;
 
     /** The sum of the deltas passed to every update call once a
      *  shake begins */
-    protected float shakeDeltaSum = 0;
+    protected static float shakeDeltaSum = 0;
 
     GameCanvas.TextureOrigin origin;
 
@@ -72,7 +72,7 @@ public class Image {
     }
 
     public Image() {
-        //used for visor lol
+        //used for master shaker lol
     }
 
     public Image(float x, float y, float relSca, Texture tex) {
