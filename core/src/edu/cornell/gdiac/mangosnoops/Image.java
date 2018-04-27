@@ -17,8 +17,8 @@ public class Image {
     /** An optional buffer given to the object in order to 'pad' its area of effectiveness**/
     protected float controlBuffer;
     /** Dimensions of the screen **/
-    public static Vector2 SCREEN_DIMENSIONS;
-    private static GameCanvas c;
+    protected static Vector2 SCREEN_DIMENSIONS;
+    protected static GameCanvas c;
 
     /** The maximimum amount of offset that is applied to
      *  the drawing coordinates, for the "shake" effect */

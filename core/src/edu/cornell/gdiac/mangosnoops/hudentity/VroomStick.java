@@ -24,15 +24,17 @@ public class VroomStick extends Image {
     private double length;
     private float ang = 0;
     private float ENGAGE_ANGLE = -35;
+    private float relScaDiv;
 
     public VroomStick(float x, float y, float relSca, float cb, Texture tex ) {
         super(x,y,relSca,cb,tex);
         engaged = false;
+        relScaDiv = relativeScale/texture.getHeight();
 
-        hitbox = new Rectangle(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
-                                position.y*SCREEN_DIMENSIONS.y + 0.63f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale,
-                                0.28f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
-                                0.35f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale);
+        hitbox = new Rectangle(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relScaDiv,
+                position.y*SCREEN_DIMENSIONS.y + 0.63f*texture.getHeight()*SCREEN_DIMENSIONS.y*relScaDiv,
+                0.28f*texture.getWidth()*SCREEN_DIMENSIONS.y*relScaDiv,
+                0.35f*texture.getHeight()*SCREEN_DIMENSIONS.y*relScaDiv);
     }
 
     @Override
@@ -41,10 +43,7 @@ public class VroomStick extends Image {
             return;
         }
 
-        float drawY = position.y * canvas.getHeight() + currentShakeAmount;
-
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), drawY,
-                        ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
+        super.draw(canvas, ang);
     }
 
     public void update(Vector2 in, float dy) {
@@ -70,9 +69,9 @@ public class VroomStick extends Image {
             ang = 0;
         }
 
-        if(hitbox.getY()+hitbox.getHeight() > position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale){
-            hitbox.setPosition(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relativeScale,
-                                 position.y*SCREEN_DIMENSIONS.y + 0.652f*texture.getHeight()*SCREEN_DIMENSIONS.y*relativeScale);
+        if(hitbox.getY()+hitbox.getHeight() > position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relScaDiv){
+            hitbox.setPosition(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relScaDiv,
+                    position.y*SCREEN_DIMENSIONS.y + 0.652f*texture.getHeight()*SCREEN_DIMENSIONS.y*relScaDiv);
         }
     }
 

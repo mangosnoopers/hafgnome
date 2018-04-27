@@ -862,6 +862,14 @@ public class GameplayController {
 		///**  Draw Dash and Interactive HUD Elements **///
 		yonda.drawDash(canvas);
 
+        // Health gauge and pointer
+        Color healthGaugeColor = Color.WHITE;
+        if (yonda.getIsDamaged()) {
+            healthGaugeColor = Color.RED;
+        }
+        healthGauge.draw(canvas, healthGaugeColor);
+        healthGaugePointer.draw(canvas, -yonda.getHealthPointerAng());
+
 		// Vroom Stick
 		vroomStick.draw(canvas);
 
@@ -876,14 +884,6 @@ public class GameplayController {
 
 		// Horn
 		horn.draw(canvas);
-
-		// Health gauge and pointer
-		Color healthGaugeColor = Color.WHITE;
-		if (yonda.getIsDamaged()) {
-			healthGaugeColor = Color.RED;
-		}
-		healthGauge.draw(canvas, healthGaugeColor);
-		healthGaugePointer.draw(canvas, -yonda.getHealthPointerAng());
 
 		// FIXME: this is a mess
 		rearviewBackground.draw(canvas);
