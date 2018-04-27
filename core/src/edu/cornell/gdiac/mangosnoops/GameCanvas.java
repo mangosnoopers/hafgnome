@@ -562,8 +562,22 @@ public class GameCanvas {
 		font.draw(spriteBatch, layout, x, y);
     }
 
-    /**
-     * Draws text centered on the screen.
+	/**
+	 * Draws text on the screen with a specific color.
+	 */
+	public void drawText(String text, BitmapFont font, float x, float y, Color color) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+
+		GlyphLayout layout = new GlyphLayout(font,text);
+		font.setColor(color);
+		font.draw(spriteBatch, layout, x, y);
+	}
+
+	/**
+	 * Draws text centered on the screen.
      *
      * @param text The string to draw
      * @param font The font to use

@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import java.util.Random;
+
 public class Inventory extends Image {
 
     private static Item itemInHand;
@@ -169,7 +171,7 @@ public class Inventory extends Image {
         }
     }
 
-    // TODO: MAKE THESE NOT SUSPICIOUS WHEN IM NOT TIRED
+    // TODO: MAKE THESE NOT SUSPICIOUS WHEN IM NOT TIRED -steph
     public Slot getSnackSlot() { return slots.get(1); }
     public Slot getMovieSlot() { return slots.get(0); }
 
@@ -263,7 +265,7 @@ public class Inventory extends Image {
 
         private Vector2 position;
 
-        private static ObjectMap<ItemType, Texture> itemTextures;
+        private static ObjectMap<ItemType, Array<Texture>> itemTextures;
         private static ObjectMap<ItemType, Float> relativeScales;
 
         public enum ItemType {
@@ -279,7 +281,10 @@ public class Inventory extends Image {
                 relativeScale = 0;
             }
             else{
-                texture = itemTextures.get(itemType);
+                Array<Texture> texs = itemTextures.get(itemType);
+                Random rand = new Random();
+                int idx = rand.nextInt(texs.size);
+                texture = texs.get(idx);
                 relativeScale = relativeScales.get(itemType);
             }
 
@@ -293,18 +298,23 @@ public class Inventory extends Image {
                 relativeScale = 0;
             }
             else{
-                texture = itemTextures.get(itemType);
+                Array<Texture> texs = itemTextures.get(itemType);
+                Random rand = new Random();
+                int idx = rand.nextInt(texs.size);
+                texture = texs.get(idx);
                 relativeScale = relativeScales.get(itemType);
             }
         }
 
-        public static void setTexturesAndScales(Texture dvd, float dvdScale, Texture snack, float snackScale){
-            itemTextures = new ObjectMap<ItemType, Texture>();
+        public static void setTexturesAndScales(Array<Texture> dvds, float dvdScale,
+                                                Array<Texture> snacks, float snackScale){
+            itemTextures = new ObjectMap<ItemType, Array<Texture>>();
             relativeScales = new ObjectMap<ItemType, Float>();
-            itemTextures.put(ItemType.DVD, dvd);
-            itemTextures.put(ItemType.SNACK, snack);
-            relativeScales.put(ItemType.DVD, dvdScale/(itemTextures.get(ItemType.DVD).getHeight()));
-            relativeScales.put(ItemType.SNACK, snackScale/(itemTextures.get(ItemType.SNACK).getHeight()));
+            itemTextures.put(ItemType.DVD, dvds);
+            itemTextures.put(ItemType.SNACK, snacks);
+            // FIXME - assuming all items are the same size
+            relativeScales.put(ItemType.DVD, dvdScale/(itemTextures.get(ItemType.DVD).get(0).getHeight()));
+            relativeScales.put(ItemType.SNACK, snackScale/(itemTextures.get(ItemType.SNACK).get(0).getHeight()));
         }
 
         public ItemType getItemType() {
