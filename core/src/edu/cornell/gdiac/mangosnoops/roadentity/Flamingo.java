@@ -18,7 +18,7 @@ public class Flamingo extends Enemy {
      * Makes the Flamingo fly away. This should mean that:
      *  - Colliding with the Flamingo won't affect the car
      *  - The Flamingo will move up and to the right, out of view
-     *  - The Flamingo use its flying animation.
+     *  - The Flamingo uses its flying animation
      */
     public void setFlyingAway() {
         throw new UnsupportedOperationException();
