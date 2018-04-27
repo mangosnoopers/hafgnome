@@ -669,12 +669,15 @@ public class GameplayController {
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
   		boolean mousePressed = input.isMousePressed();
   		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
+  		horn.updateHonk(delta);
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x);
 			vroomStick.update(new Vector2(in), dr.y);
 			radio.update(new Vector2(in), dr.x);
+			horn.update(new Vector2(in), delta);
 			inventory.update(new Vector2(in), mousePressed);
 			visor.update(new Vector2(in), input.isPrevMousePressed());
+
 		}
 		else{
 			wheel.update(null, dr.x);
