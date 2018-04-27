@@ -8,7 +8,7 @@ public class Gnome extends Enemy {
      * @param y initial y-position of the gnome
      */
     public Gnome(float x, float y) {
-        super(x, y, EnemyType.GNOME);
+        super(x, y, ObjectType.GNOME);
     }
 
     /**
@@ -18,6 +18,6 @@ public class Gnome extends Enemy {
      * @param g the gnome to copy
      */
     public Gnome(Gnome g) {
-        super(g.getX(), g.getY(), EnemyType.GNOME);
+        super(g.getX(), g.getY(), ObjectType.GNOME);
     }
 }
