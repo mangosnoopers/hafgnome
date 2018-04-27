@@ -56,6 +56,10 @@ public class RestStopMode implements Screen, InputProcessor {
     private int numCanTake;
     /** Number of items selected so far */
     private int numSelected;
+    /** Number of each specific item selected so far */
+    private int numSnacksSelected;
+    private int numBooksSelected;
+    private int numMoviesSelected;
     /** Maximum items that can be taken from the rest stop */
     private static final int MAX_CAN_TAKE = 3;
 
@@ -258,6 +262,7 @@ public class RestStopMode implements Screen, InputProcessor {
         // TODO - change 2 to inventory max size lol
         numCanTake = Math.min(rand.nextInt(MAX_CAN_TAKE) + 1, 2);
         numSelected = 0;
+        numSnacksSelected = 0; numBooksSelected = 0; numMoviesSelected = 0;
     }
 
     /**
@@ -356,8 +361,9 @@ public class RestStopMode implements Screen, InputProcessor {
                 SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
                 IND_SCALING, IND_SCALING);
         // Snack text
-        canvas.drawText("x 3", displayFont,SCREEN_DIMENSIONS.x*textRelX,
-                SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
+        int totalNumSnacks = playerInv.getNumSnacks() + numSnacksSelected;
+        canvas.drawText("x " + totalNumSnacks, displayFont,
+                SCREEN_DIMENSIONS.x*textRelX,SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
 
         // Books: TODO
         Texture book = mango;
@@ -367,7 +373,8 @@ public class RestStopMode implements Screen, InputProcessor {
 //                SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
 //                IND_SCALING, IND_SCALING);
 //        // Book text
-//        canvas.drawText("x 3", displayFont,SCREEN_DIMENSIONS.x*textRelX,
+        //int totalNumBooks = playerInv.getNumBooks() + numBooksSelected;
+//        canvas.drawText("x " + totalNumBooks, displayFont,SCREEN_DIMENSIONS.x*textRelX,
 //                SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
 
         // Movies
@@ -377,7 +384,8 @@ public class RestStopMode implements Screen, InputProcessor {
                 SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
                 IND_SCALING, IND_SCALING);
         // Movie text
-        canvas.drawText("x 3", displayFont,SCREEN_DIMENSIONS.x*textRelX,
+        int totalNumMovies = playerInv.getNumMovies() + numMoviesSelected;
+        canvas.drawText("x " + totalNumMovies, displayFont,SCREEN_DIMENSIONS.x*textRelX,
                 SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
     }
 
@@ -539,8 +547,34 @@ public class RestStopMode implements Screen, InputProcessor {
                     // case 2: item was unselected and is now selected - increase items taken
                     if (oldToggleState == SELECTED && i.toggleState == UNSELECTED) {
                         numSelected -= 1;
+
+                        // also update the amount for the specific item
+                        switch (i.type) {
+                            case SNACK:
+                                numSnacksSelected -= 1;
+                                break;
+                            case DVD:
+                                numMoviesSelected -= 1;
+                                break;
+                            // TODO - book case (rn books are snacks)
+                            default:
+                                break;
+                        }
                     } else if (oldToggleState == UNSELECTED & i.toggleState == SELECTED) {
                         numSelected += 1;
+
+                        // also update the amount for the specific item
+                        switch (i.type) {
+                            case SNACK:
+                                numSnacksSelected += 1;
+                                break;
+                            case DVD:
+                                numMoviesSelected += 1;
+                                break;
+                            // TODO - book case (rn books are snacks)
+                            default:
+                                break;
+                        }
                     }
                 }
 

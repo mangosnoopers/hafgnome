@@ -174,6 +174,8 @@ public class Inventory extends Image {
     // TODO: MAKE THESE NOT SUSPICIOUS WHEN IM NOT TIRED -steph
     public Slot getSnackSlot() { return slots.get(1); }
     public Slot getMovieSlot() { return slots.get(0); }
+    public int getNumSnacks() { return slots.get(1).amount; }
+    public int getNumMovies() { return slots.get(0).amount; }
 
     public void cancelTake(){
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
