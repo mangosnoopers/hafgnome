@@ -64,7 +64,7 @@ public class Radio extends Image {
     }
 
     public Radio(float x, float y, float relSize, float cb, Texture tex, ObjectMap<String,Genre> songs) {
-        super(x, y, relSize, cb, tex);
+        super(x, y, relSize, cb, tex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Create Station list
         Stations = new Array<Station>();
@@ -156,19 +156,11 @@ public class Radio extends Image {
      * @param canvas
      */
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
-        displayFont.setColor(Color.WHITE);
         if (texture == null) {
             return;
         }
-
-        float oxk = 0.5f * texture.getWidth();
-        float oyk = 0.5f * texture.getHeight();
-
-        float drawY = position.y * canvas.getHeight() + currentShakeAmount;
-
-        canvas.draw(texture, Color.WHITE, oxk, oyk, position.x * canvas.getWidth(), drawY, knobAng,
-                relativeScale * canvas.getHeight(), relativeScale * canvas.getHeight());
-
+        super.draw(canvas, knobAng);
+        displayFont.setColor(Color.WHITE);
         canvas.drawText(getCurrentStationName(), displayFont, 0.75f * canvas.getWidth(), 0.3f * canvas.getHeight());
     }
 

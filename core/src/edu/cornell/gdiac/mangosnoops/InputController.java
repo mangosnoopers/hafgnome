@@ -45,6 +45,8 @@ public class InputController {
 	private float dy;
 	/** Keyboard inputted number */
 	private int numKeyPressed;
+	/** Whether or not keyboard turn was inputted */
+	private boolean turnPressed;
 
 	/**
 	 * Creates a new input controller.
@@ -90,6 +92,11 @@ public class InputController {
 	 * @return true if the mouse was clicked on the last recorded instance
 	 */
 	public boolean isPrevMousePressed(){ return prevMouseClicked; }
+
+	/**
+	 * @return true if a turn was inputted by keyboard
+	 */
+	public boolean isTurnPressed(){ return turnPressed; }
 
 	/**
 	 * @return the keyboard number input. If a number was not inputted,
@@ -154,9 +161,10 @@ public class InputController {
 		} else {
 			clickPos = null;
 		}
+		turnPressed = false;
 		//Process WASD/Arrow input (for turning wheel)
         if(Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            System.out.println(dx);
+			turnPressed = true;
             if(dx > 10){
                 dx -= 4;
             } else if(dx > 0) {
@@ -165,6 +173,7 @@ public class InputController {
                 dx = 6;
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			turnPressed = true;
             if (dx < -10) {
                 dx -= 4;
             } else if(dx < 0) {
