@@ -15,14 +15,14 @@ public abstract class Enemy extends RoadObject{
     /** How fast we change frames (one frame per 4 calls to update) */
     private float animationSpeed = 0.25f;
     /** The number of animation frames in our filmstrip */
-    private int   numAnimationFrames = 11;
+    private int   numAnimationFrames;
 
     // ATTRIBUTES
     /** Current animation frame for this ship */
     private float animeframe;
 
     /** How high the enemy hovers in the world */
-    private final float HOVER_DISTANCE = 4.309f;
+    private float hoverDistance = 4.309f;
 
     /** speed of road */
     private float currSpeed;
@@ -60,6 +60,22 @@ public abstract class Enemy extends RoadObject{
     }
 
     /**
+     * Set a new hover distance.
+     * @param newHoverDistance the new hover distance
+     */
+    public void setHoverDistance(float newHoverDistance) {
+        hoverDistance = newHoverDistance;
+    }
+
+    /**
+     * Get the current hover distance.
+     * @return new hover distance
+     */
+    public float getHoverDistance() {
+        return hoverDistance;
+    }
+
+    /**
      * Set the FilmStrip of this Enemy.
      *
      * @param texture the FilmStrip texture
@@ -67,6 +83,7 @@ public abstract class Enemy extends RoadObject{
      * @param cols the number of columns in the texture
      */
     public void setFilmStrip(Texture texture, int rows, int cols) {
+        numAnimationFrames = rows * cols - 1;
         animator = new FilmStrip(texture,rows,cols,rows * cols);
         radius = animator.getRegionHeight() / 2.0f;
         origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
@@ -85,9 +102,6 @@ public abstract class Enemy extends RoadObject{
         super.update(delta);
 
         animeframe += animationSpeed;
-        if (animeframe >= numAnimationFrames) {
-            animeframe -= numAnimationFrames;
-        }
 
         setY(getY()-currSpeed * enemySpeed * delta);
         if (getY() < -12) {
@@ -98,8 +112,11 @@ public abstract class Enemy extends RoadObject{
     }
 
     public void draw(GameCanvas canvas) {
+        if (animeframe >= numAnimationFrames) {
+            animeframe -= numAnimationFrames;
+        }
         animator.setFrame((int) animeframe);
-        canvas.drawRoadObject(animator, getX(), getY(), HOVER_DISTANCE, enemyWidth, enemyHeight, 90, 0);
+        canvas.drawRoadObject(animator, getX(), getY(), hoverDistance, enemyWidth, enemyHeight, 90, 0);
     }
 
     public void setSpeed (float s) {
