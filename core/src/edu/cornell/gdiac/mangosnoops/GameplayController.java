@@ -50,6 +50,8 @@ public class GameplayController {
 	private Radio radio;
 	/** Inventory */
 	private Inventory inventory;
+	/** Inventory at the beginning of the level */
+	private Inventory initialInventory;
 	/** Visor */
     private Visor visor;
 	/** Contains location for the previous click, used for debouncing */
@@ -233,6 +235,15 @@ public class GameplayController {
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
 	private Array<Enemy> backing;
+
+	// INVENTORY CONSTANTS
+	private static final float INV_X_LEFT = 0.4756f;
+	private static final float INV_Y_BOTTOM = 0.0366f;
+	private static final float INV_SLOT_WIDTH = 0.146f;
+	private static final float INV_SLOT_HEIGHT = 0.15f;
+	private static final int INV_RELSCA = 0;
+	private static final int INV_CB = 0;
+	private static final int INV_NUM_SLOTS = 2;
 
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
@@ -433,12 +444,23 @@ public class GameplayController {
 		snackTextures.add(new Texture(SNACK1_FILE));
 
 		Image.updateScreenDimensions(canvas);
+		// create the default inventory
 		Inventory.Item.setTexturesAndScales(dvdTextures,0.12f,snackTextures,0.135f);
-		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.15f, 2);
+		inventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
+					 INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
 		inventory.load(i);
+
+		// create a copy of the default inventory
+		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
+							INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
+		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,1));
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,3));
+		initialInventory.load(iCopy);
+
 		satTextures = new HashMap<String, Texture>();
 	}
 
@@ -494,8 +516,19 @@ public class GameplayController {
 	 */
 	public Inventory getInventory(){ return inventory; }
 
-	/** Set the inventory */
-	public void setInventory(Inventory i) { inventory = i; }
+	/** Set the inventory and creates a copy of it */
+	public void setInventory(Inventory i) {
+		inventory = i;
+
+		// create a copy
+		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
+							INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
+		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,inventory.getNumMovies()));
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,inventory.getNumSnacks()));
+		initialInventory.load(iCopy);
+
+	}
 
     /**
      * Returns a reference to the visor
@@ -572,6 +605,16 @@ public class GameplayController {
 		nextEvent = 0;
 		visor = null;
 		satQuestions.reset();
+
+		// reset inventory
+		inventory = initialInventory;
+		// create a copy
+		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
+				INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
+		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,inventory.getNumMovies()));
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,inventory.getNumSnacks()));
+		initialInventory.load(iCopy);
 	}
 
 	/**
