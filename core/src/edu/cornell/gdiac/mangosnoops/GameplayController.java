@@ -703,7 +703,7 @@ public class GameplayController {
   		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
   		horn.updateHonk(delta);
         if(in != null) {
-			wheel.update(new Vector2(in), dr.x);
+			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
 			vroomStick.update(new Vector2(in), dr.y);
 			radio.update(new Vector2(in), dr.x);
 			horn.update(new Vector2(in), delta);
@@ -712,7 +712,7 @@ public class GameplayController {
 
 		}
 		else{
-			wheel.update(null, dr.x);
+			wheel.update(null, dr.x, input.isTurnPressed());
 			vroomStick.update(null, dr.y);
 			radio.update(null, dr.x);
 			inventory.update(null, mousePressed);

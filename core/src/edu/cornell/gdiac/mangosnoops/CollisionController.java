@@ -143,15 +143,6 @@ public class CollisionController {
 	 * FIXME: remove canvas param
 	 */
 	private void handleCollision(Car c, Enemy e, GameplayController controller) {
-//		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
-//							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
-//			if(g.getY() < GNOME_INRANGE) {
-//				g.setDestroyed(true);
-//			}
-//		}
-//
-//		else {
-
 		boolean isFlamingo = e.getType() == RoadObject.ObjectType.FLAMINGO;
 		boolean isFlyingFlamingo = isFlamingo && ((Flamingo) e).isFlyingAway();
 
