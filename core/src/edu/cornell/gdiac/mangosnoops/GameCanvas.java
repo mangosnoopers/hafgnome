@@ -503,6 +503,34 @@ public class GameCanvas {
 	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, Color c) {
 		draw(image, o, x, y, scale, widthScale, 0, c);
 	}
+	/** With shake amount */
+	public void drawShake(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle, Color c, float shakeAmnt) {
+		Vector2 oxy = new Vector2();
+		switch(o) {
+			case MIDDLE:
+				oxy.x = image.getWidth()*0.5f;
+				oxy.y = image.getHeight()*0.5f;
+				break;
+			case TOP_LEFT:
+				oxy.y = image.getHeight();
+				break;
+			case TOP_RIGHT:
+				oxy.x = image.getWidth();
+				oxy.y = image.getHeight();
+				break;
+			case BOTTOM_LEFT:
+				break;
+			case BOTTOM_RIGHT:
+				oxy.x = image.getWidth();
+				break;
+			default:
+				break;
+		}
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getWidth();
+		else s = scale*getHeight()/image.getHeight();
+		draw(image, c, oxy.x, oxy.y, x*getWidth(), y*getHeight()+shakeAmnt, angle, s, s);
+	}
 
 	public boolean inArea(Vector2 p, Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {
 		int xb = 0; //x bottom bound
@@ -547,6 +575,52 @@ public class GameCanvas {
 				break;
 		}
 		return p.x > xb && p.x < xt && (getHeight()-p.y) > yb && (getHeight()-p.y) < yt;
+	}
+
+	public boolean inArea(Vector2 p, Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float cb) {
+		// BASICALLY COPIED FROM ABOVE METHOD LOL I LOVE CODE DUPLICATION
+		int xb = 0; //x bottom bound
+		int xt = 0; //x top bound
+		int yb = 0;
+		int yt = 0;
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getWidth();
+		else s = scale*getHeight()/image.getHeight();
+		switch(o) {
+			case MIDDLE:
+				xb=(int)(x*getWidth()-s*0.5f*image.getWidth());
+				xt=(int)(x*getWidth()+s*0.5f*image.getWidth());
+				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
+				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
+				break;
+			case TOP_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getWidth());
+				yb=(int)(y*getHeight()-s*image.getHeight());
+				yt=getHeight();
+				break;
+			case TOP_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getWidth());
+				xt=getWidth();
+				yb=(int)(y*getHeight()-s*image.getHeight());
+				yt=getHeight();
+				break;
+			case BOTTOM_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getWidth());
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getHeight());
+				break;
+			case BOTTOM_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getWidth());
+				xt=getWidth();
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getHeight());
+				break;
+			default:
+				break;
+		}
+		return p.x > xb-cb && p.x < xt+cb && (getHeight()-p.y) > yb-cb && (getHeight()-p.y) < yt+cb;
 	}
 	
 	/**

@@ -3,8 +3,6 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
-import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 
 public class Image {
 
@@ -20,6 +18,7 @@ public class Image {
     protected float controlBuffer;
     /** Dimensions of the screen **/
     public static Vector2 SCREEN_DIMENSIONS;
+    private static GameCanvas c;
 
     /** The maximimum amount of offset that is applied to
      *  the drawing coordinates, for the "shake" effect */
@@ -43,9 +42,10 @@ public class Image {
      *  shake begins */
     protected float shakeDeltaSum = 0;
 
+    GameCanvas.TextureOrigin origin;
+
     /** Update the shake amount. */
     protected void updateShake(float delta) {
-
         if (isShaking) {
             shakeDeltaSum += delta;
             currentShakeMagnitude *= SHAKE_DEPLETION;
@@ -81,10 +81,11 @@ public class Image {
             relativeScale = 0;
             texture = null;
         }else{
-            relativeScale = relSca/(float)tex.getHeight();
+            relativeScale = relSca;
             texture = tex;
         }
         controlBuffer = 0;
+        origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex) {
@@ -93,13 +94,25 @@ public class Image {
             relativeScale = 0;
             texture = null;
         }else{
-            relativeScale = relSca/(float)tex.getHeight();
+            relativeScale = relSca;
             texture = tex;
         }
         controlBuffer = cb;
+        origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
+    }
+
+    public Image(float x, float y, float relSca, Texture tex, GameCanvas.TextureOrigin o) {
+        this(x, y, relSca, tex);
+        origin = o;
+    }
+
+    public Image(float x, float y, float relSca, float cb, Texture tex, GameCanvas.TextureOrigin o) {
+        this(x, y, relSca, cb, tex);
+        origin = o;
     }
 
     public static void updateScreenDimensions(GameCanvas canvas){
+        c = canvas;
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(), canvas.getHeight());
     }
 
@@ -109,39 +122,22 @@ public class Image {
      *  @param p the vector giving the mouse's (x,y) screen coordinates
      */
     public boolean inArea(Vector2 p) {
-        return ((p.x > position.x*SCREEN_DIMENSIONS.x - (0.5f*texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
-                && (p.x < position.x*SCREEN_DIMENSIONS.x + (0.5f*texture.getWidth()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
-                && (SCREEN_DIMENSIONS.y - p.y > position.y*SCREEN_DIMENSIONS.y - (0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer))
-                && (SCREEN_DIMENSIONS.y - p.y < position.y*SCREEN_DIMENSIONS.y + (0.5f*texture.getHeight()*relativeScale*SCREEN_DIMENSIONS.y + controlBuffer)));
+        return c.inArea(p, texture, origin, position.x, position.y,
+                relativeScale, false, controlBuffer);
     }
 
     public void draw(GameCanvas canvas) {
-
-        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, 0,
-                relativeScale*canvas.getHeight(),
-                relativeScale*canvas.getHeight());
+        canvas.drawShake(texture, origin, position.x, position.y,
+                relativeScale, false, 0, Color.WHITE, currentShakeAmount);
     }
 
     public void draw(GameCanvas canvas, Color tint) {
-
-        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
-        canvas.draw(texture, tint, 0, 0, position.x*canvas.getWidth(), yWithOffset, 0,
-                relativeScale*canvas.getHeight(),
-                relativeScale*canvas.getHeight());
+        canvas.drawShake(texture, origin, position.x, position.y,
+                relativeScale, false, 0, tint, currentShakeAmount);
     }
 
     public void draw(GameCanvas canvas, float ang) {
-
-        float yWithOffset = position.y * canvas.getHeight() + currentShakeAmount;
-        canvas.draw(texture, Color.WHITE, 0, 0, position.x*canvas.getWidth(), yWithOffset, ang,
-                relativeScale*canvas.getHeight(),
-                relativeScale*canvas.getHeight());
-    }
-
-    public void drawFromCenter(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE, texture.getWidth() * 0.5f, texture.getHeight() * 0.5f, position.x * SCREEN_DIMENSIONS.x,
-                position.y * SCREEN_DIMENSIONS.y + currentShakeAmount, 0, relativeScale * SCREEN_DIMENSIONS.y, relativeScale * SCREEN_DIMENSIONS.y);
-
+        canvas.drawShake(texture, origin, position.x, position.y,
+                relativeScale, false, ang, Color.WHITE, currentShakeAmount);
     }
 }

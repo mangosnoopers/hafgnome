@@ -15,7 +15,7 @@ public class Wheel extends Image {
 
 
     public Wheel(float x, float y, float relSize, float cb, Texture tex){
-        super(x, y ,relSize, cb, tex);
+        super(x, y ,relSize, cb, tex, GameCanvas.TextureOrigin.MIDDLE);
     }
 
     /** Translates an angle to left/right movement */
@@ -28,9 +28,9 @@ public class Wheel extends Image {
      * @param in where the mouse clicked (null if no click)
      * @param dx the change in x in the user's input
      */
-    public void update(Vector2 in, float dx) {
+    public void update(Vector2 in, float dx, boolean keyboardTurn) {
         // change wheel angle and lateral screen movement
-        if ((in != null && inArea(in)) || dx != 0) {
+        if ((in != null && inArea(in)) || (keyboardTurn && dx != 0)) {
             if (ang >= -90 && ang <= 90) {
                 ang -= dx;
             }
@@ -55,10 +55,7 @@ public class Wheel extends Image {
             return;
         }
 
-        float ox = 0.5f * texture.getWidth();
-        float oy = 0.5f * texture.getHeight();
-
-        canvas.draw(texture, Color.WHITE, ox, oy, position.x*canvas.getWidth(), currentShakeAmount+position.y*canvas.getHeight(), ang, relativeScale*canvas.getHeight(), relativeScale*canvas.getHeight());
+        super.draw(canvas, ang);
     }
 
     public String toString(){
