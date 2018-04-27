@@ -522,7 +522,7 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		horn = new Horn(0.12f, 0.12f, 0.17f, 0, rearviewGnomeTexture);
+		horn = new Horn(0.17f, 0.2f, 0.17f, 0, rearviewGnomeTexture);
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
