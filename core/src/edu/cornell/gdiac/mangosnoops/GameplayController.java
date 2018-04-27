@@ -2,15 +2,15 @@
 /*
  * GameplayController.java
  *
- * For many of you, this class will seem like the most unusual one in the entire project.  
- * It implements a lot of functionality that looks like it should go into the various 
+ * For many of you, this class will seem like the most unusual one in the entire project.
+ * It implements a lot of functionality that looks like it should go into the various
  * GameObject subclasses. However, a lot of this functionality involves the creation or
- * destruction of objects.  We cannot do this without a lot of cyclic dependencies, 
+ * destruction of objects.  We cannot do this without a lot of cyclic dependencies,
  * which are bad.
  *
- * You will notice that gameplay-wise, most of the features in this class are 
- * interactions, not actions. This demonstrates why a software developer needs to 
- * understand the difference between these two.  
+ * You will notice that gameplay-wise, most of the features in this class are
+ * interactions, not actions. This demonstrates why a software developer needs to
+ * understand the difference between these two.
  *
  * You will definitely need to modify this file in Part 2 of the lab. However, you are
  * free to modify any file you want.  You are also free to add new classes and assets.
@@ -68,6 +68,9 @@ public class GameplayController {
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 	private SATQuestions satQuestions;
+
+	/** The Horn! */
+	private Horn horn;
 
 	private Image healthGauge;
 	private Image rearviewBackground;
@@ -483,6 +486,8 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
+		horn = new Horn(0.12f, 0.12f, 0.17f, 0, rearviewGnomeTexture);
+
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
 		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
@@ -526,6 +531,7 @@ public class GameplayController {
 		hudObjects.add(getCar().getNed());
 		hudObjects.add(getCar().getNosh());
 		hudObjects.add(healthGaugePointer);
+		hudObjects.add(horn);
 
   }
 
@@ -836,6 +842,9 @@ public class GameplayController {
 
 		// Radio
 		radio.draw(canvas, displayFont);
+
+		// Horn
+		horn.draw(canvas);
 
 		// Health gauge and pointer
 		Color healthGaugeColor = Color.WHITE;
