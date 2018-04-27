@@ -161,7 +161,7 @@ public class Radio extends Image {
         }
         super.draw(canvas, knobAng);
         displayFont.setColor(Color.WHITE);
-        canvas.drawText(getCurrentStationName(), displayFont, 0.75f * canvas.getWidth(), 0.3f * canvas.getHeight());
+        canvas.drawText(getCurrentStationName(), displayFont, 0.7f * canvas.getWidth(), 0.3f * canvas.getHeight());
     }
 
 
