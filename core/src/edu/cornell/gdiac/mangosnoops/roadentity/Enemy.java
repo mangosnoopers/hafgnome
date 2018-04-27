@@ -28,10 +28,10 @@ public abstract class Enemy extends RoadObject{
     private float currSpeed;
 
     /** enemy width */
-    private static final float enemyWidth = 0.15f;
+    private float enemyWidth = 0.15f;
 
     /** enemy height */
-    private static final float enemyHeight = 0.08f;
+    private float enemyHeight = 0.08f;
 
     /** speed of enemy relative to road, FIXME: change this prob */
     private float enemySpeed = 2f;
@@ -81,6 +81,22 @@ public abstract class Enemy extends RoadObject{
      */
     public float getHoverDistance() {
         return hoverDistance;
+    }
+
+    /**
+     * Set new enemy width
+     * @param newWidth
+     */
+    public void setEnemyWidth(float newWidth) {
+        enemyWidth = newWidth;
+    }
+
+    /**
+     * Set new enemy height
+     * @param newHeight
+     */
+    public void setEnemyHeight(float newHeight) {
+        enemyHeight = newHeight;
     }
 
     /**

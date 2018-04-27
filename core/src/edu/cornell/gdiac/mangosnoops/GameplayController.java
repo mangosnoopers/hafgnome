@@ -90,6 +90,10 @@ public class GameplayController {
 	/** The Flamingo FilmStrip information */
 	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
 	private static final int FLAMINGO_FILMSTRIP_COLS = 6;
+	private static final int FLAMINGO_STAND_START = 0;
+	private static final int FLAMINGO_STAND_END = 4;
+	private static final int FLAMINGO_FLY_START = 4;
+	private static final int FLAMINGO_FLY_END = 5;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -506,7 +510,9 @@ public class GameplayController {
 			if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             	e.setFilmStrip(flamingoTexture, FLAMINGO_FILMSTRIP_ROWS, FLAMINGO_FILMSTRIP_COLS);
             	Flamingo f = (Flamingo) e;
-				f.setAnimationBounds(0, 4);
+				f.setAnimationBounds(FLAMINGO_STAND_START, FLAMINGO_STAND_END);
+				f.setEnemyWidth(0.2f);
+				f.setEnemyHeight(0.1f);
 			}
 		}
 		events = level.getEvents();
@@ -667,7 +673,8 @@ public class GameplayController {
             	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             		Flamingo f = (Flamingo) e;
             		if (e.getY() < f.getFlyAwayDistance()) {
-						((Flamingo) e).setFlyingAway();
+            		    f.setAnimationBounds(FLAMINGO_FLY_START, FLAMINGO_FLY_END);
+						f.setFlyingAway();
 					}
 				}
 			}

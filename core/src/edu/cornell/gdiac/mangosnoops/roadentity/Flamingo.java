@@ -34,7 +34,6 @@ public class Flamingo extends Enemy {
      */
     public void setFlyingAway() {
         isFlyingAway = true;
-        setAnimationBounds(4, 5);
     }
 
     /**
@@ -65,6 +64,5 @@ public class Flamingo extends Enemy {
     public void setAnimationBounds(int minFrame, int maxFrame) {
         minAnimFrame = minFrame;
         maxAnimFrame = maxFrame;
-        System.out.println("Set max anim frame to " + maxAnimFrame);
     }
 }

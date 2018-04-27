@@ -33,7 +33,6 @@ public class Horn extends Image {
         if (!isHonking) {
             honkTimeRemaining = HONK_LENGTH;
             isHonking = true;
-            System.out.println("Honked");
         }
     }
 
@@ -64,7 +63,7 @@ public class Horn extends Image {
 
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
-        canvas.drawText(isHonking + " " + honkTimeRemaining, new BitmapFont(), 100, 100);
+        //canvas.drawText(isHonking + " " + honkTimeRemaining, new BitmapFont(), 100, 100);
     }
 
 }
