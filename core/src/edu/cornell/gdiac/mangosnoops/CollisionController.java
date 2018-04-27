@@ -120,6 +120,7 @@ public class CollisionController {
 //		}
 //
 //		else {
+
 			if (e.getY() < -10 && e.getY() > -10.5 && Math.abs(e.getX() - c.position.x) < HIT_RANGE) {
 				c.damage();
 				c.shakeCar();

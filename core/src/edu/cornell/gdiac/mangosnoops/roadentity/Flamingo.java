@@ -11,7 +11,7 @@ public class Flamingo extends Enemy {
      * @param y initial y-position of Flamingo
      */
     public Flamingo(float x, float y) {
-        super(x, y, EnemyType.FLAMINGO);
+        super(x, y, ObjectType.FLAMINGO);
     }
 
     /**

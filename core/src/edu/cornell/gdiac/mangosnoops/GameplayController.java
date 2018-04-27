@@ -79,6 +79,15 @@ public class GameplayController {
 	/** If there is sun shining right now */
 	public boolean sunShine;
 
+	// FilmStrip information
+	/** The Gnome FilmStrip information */
+	private static final int GNOME_FILMSTRIP_ROWS = 1;
+	private static final int GNOME_FILMSTRIP_COLS = 12;
+
+	/** The Flamingo FilmStrip information */
+	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
+	private static final int FLAMINGO_FILMSTRIP_COLS = 6;
+
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
@@ -87,6 +96,8 @@ public class GameplayController {
     /** The texture file for the gnomes */
 	private static final String GNOME_FILE = "images/Enemies/gnome.png";
 	private static final String REARVIEW_GNOME_FILE = "images/Enemies/gnome_rear.png";
+	/** The texture file for the flamingo */
+	private static final String FLAMINGO_FILE = "images/Enemies/flamingo.png";
 	/** The texture file for the radio knob */
 	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
 	/** The texture files for Nosh's moods */
@@ -152,6 +163,8 @@ public class GameplayController {
 	/** Texture for the gnomes */
 	private Texture gnomeTexture;
 	private Texture rearviewGnomeTexture;
+	/** Texture for the flamingo */
+	private Texture flamingoTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
@@ -293,6 +306,8 @@ public class GameplayController {
 		assets.add(SAT_WHALE_FILE);
 		manager.load(SAT_LEMONMAN_FILE, Texture.class);
 		assets.add(SAT_LEMONMAN_FILE);
+		manager.load(FLAMINGO_FILE, Texture.class);
+		assets.add(FLAMINGO_FILE);
 	}
 
 	/**
@@ -309,6 +324,7 @@ public class GameplayController {
 		wheelTexture = createTexture(manager,WHEEL_FILE);
 		vroomStickTexture = createTexture(manager, VROOM_STICK_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
+		flamingoTexture = createTexture(manager, FLAMINGO_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
 		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
@@ -479,7 +495,12 @@ public class GameplayController {
 		}
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
-			e.setTexture(gnomeTexture);
+            if (e.getType() == RoadObject.ObjectType.GNOME) {
+            	e.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
+			}
+			if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
+            	e.setFilmStrip(flamingoTexture, FLAMINGO_FILMSTRIP_ROWS, FLAMINGO_FILMSTRIP_COLS);
+			}
 		}
 		events = level.getEvents();
 

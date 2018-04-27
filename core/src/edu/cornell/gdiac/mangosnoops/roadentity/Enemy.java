@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.mangosnoops.roadentity;
 
 import com.badlogic.gdx.graphics.g3d.particles.influencers.ColorInfluencer;
+import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.*;
 
@@ -12,15 +13,13 @@ import java.util.Random;
 public abstract class Enemy extends RoadObject{
     // CONSTANTS
     /** How fast we change frames (one frame per 4 calls to update) */
-    private static final float ANIMATION_SPEED = 0.25f;
+    private float animationSpeed = 0.25f;
     /** The number of animation frames in our filmstrip */
-    private static final int   NUM_ANIM_FRAMES = 11;
+    private int   numAnimationFrames = 11;
 
     // ATTRIBUTES
     /** Current animation frame for this ship */
     private float animeframe;
-    /** The type of Gnome this is */
-    private EnemyType enemyType;
 
     /** How high the enemy hovers in the world */
     private final float HOVER_DISTANCE = 4.309f;
@@ -37,15 +36,9 @@ public abstract class Enemy extends RoadObject{
     /** speed of enemy relative to road, FIXME: change this prob */
     private float enemySpeed = 2f;
 
-    /**
-     * Enum specifying the type of enemy this is.
-     *
-     * (For after Gameplay Prototype)
-     */
-    public enum EnemyType {
-        /** Default Type */
-        GNOME, FLAMINGO, GRILL
-    }
+    /** the type of this enemy */
+    private ObjectType enemyType;
+
 
     /**
      * Returns the type of this object.
@@ -55,10 +48,10 @@ public abstract class Enemy extends RoadObject{
      * @return the type of this object.
      */
     public ObjectType getType() {
-        return ObjectType.GNOME;
+        return enemyType;
     }
 
-    public Enemy(float x, float y, EnemyType type) {
+    public Enemy(float x, float y, ObjectType type) {
         setX(x);
         setY(y);
         Random rand = new Random();
@@ -66,8 +59,15 @@ public abstract class Enemy extends RoadObject{
         enemyType = type;
     }
 
-    public void setTexture(Texture texture) {
-        animator = new FilmStrip(texture,1,12,12);
+    /**
+     * Set the FilmStrip of this Enemy.
+     *
+     * @param texture the FilmStrip texture
+     * @param rows the number of rows in the texture
+     * @param cols the number of columns in the texture
+     */
+    public void setFilmStrip(Texture texture, int rows, int cols) {
+        animator = new FilmStrip(texture,rows,cols,rows * cols);
         radius = animator.getRegionHeight() / 2.0f;
         origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
     }
@@ -84,9 +84,9 @@ public abstract class Enemy extends RoadObject{
     public void update(float delta, float newSpeed) {
         super.update(delta);
 
-        animeframe += ANIMATION_SPEED;
-        if (animeframe >= NUM_ANIM_FRAMES) {
-            animeframe -= NUM_ANIM_FRAMES;
+        animeframe += animationSpeed;
+        if (animeframe >= numAnimationFrames) {
+            animeframe -= numAnimationFrames;
         }
 
         setY(getY()-currSpeed * enemySpeed * delta);
