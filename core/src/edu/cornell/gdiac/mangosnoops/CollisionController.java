@@ -107,31 +107,28 @@ public class CollisionController {
 		//if(c.getX() > width) c.setY(width);
 	}
 
+	private void handleKidCollision(Child c) {
+		if(c.getCurrentMood() != Child.Mood.SAD && c.getCurrentMood() != Child.Mood.CRITICAL) {
+			c.setMood(Child.Mood.CRITICAL);//c.setMood(Child.Mood.SAD);
+			c.setMoodShifting(true, false);
+		}
+	}
+
 	/**
 	 * Collide a gnome with a car.
 	 * FIXME: remove canvas param
 	 */
 	private void handleCollision(Car c, Gnome g, GameplayController controller) {
-//		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
-//							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
-//			if(g.getY() < GNOME_INRANGE) {
-//				g.setDestroyed(true);
-//			}
-//		}
-//
-//		else {
-			if (g.getY() < -10 && g.getY() > -10.5 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
-				c.damage();
-				c.shakeCar();
-				controller.shakeHUD();
-				c.getNed().setMood(Child.Mood.SAD);
-				c.getNosh().setMood(Child.Mood.SAD);
-				g.setDestroyed(true);
+		if (g.getY() < -10 && g.getY() > -10.5 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
+			c.damage();
+			c.shakeCar();
+			controller.shakeHUD();
+			handleKidCollision(c.getNed());
+			handleKidCollision(c.getNosh());
+			g.setDestroyed(true);
 
-				if (c.getHealth() == 0)
-					c.setDestroyed(true);
+			if (c.getHealth() == 0)
+				c.setDestroyed(true);
 			}
-
-//		}
 	}
 }

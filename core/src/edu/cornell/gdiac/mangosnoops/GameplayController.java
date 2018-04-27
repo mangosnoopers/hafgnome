@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.DefaultValueLoaderDecorator;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -68,6 +69,7 @@ public class GameplayController {
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 	private SATQuestions satQuestions;
+	private TouchScreen touchscreen;
 
 	private Image healthGauge;
 	private Image rearviewBackground;
@@ -135,6 +137,9 @@ public class GameplayController {
 	private static final String SAT_ARMADILLO_FILE = "SatQuestions/armadillo.png";
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
+	/** Touchscreen */
+	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
+	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
@@ -195,6 +200,9 @@ public class GameplayController {
 	private Texture satWhale;
 	private Texture satLemonMan;
 	private HashMap<String, Texture> satTextures;
+	/** Touchscreen */
+	private Texture offTouchscreen;
+	private Texture dvdSlot;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -293,6 +301,11 @@ public class GameplayController {
 		assets.add(SAT_WHALE_FILE);
 		manager.load(SAT_LEMONMAN_FILE, Texture.class);
 		assets.add(SAT_LEMONMAN_FILE);
+		manager.load(OFF_TOUCHSCREEN_FILE, Texture.class);
+		assets.add(OFF_TOUCHSCREEN_FILE);
+		manager.load(DVD_SLOT_FILE, Texture.class);
+		assets.add(DVD_SLOT_FILE);
+
 	}
 
 	/**
@@ -338,6 +351,7 @@ public class GameplayController {
 		sun3 = createTexture(manager, SUN3_FILE);
 		white = createTexture(manager, WHITE_FILE);
 		speechBubble = createTexture(manager, SPEECH_BUBBLE_FILE);
+		yonda.addSpeechBubbleTexture(speechBubble);
 		if (manager.isLoaded(FONT_FILE)) {
 			displayFont = manager.get(FONT_FILE,BitmapFont.class);
 		} else {
@@ -351,6 +365,8 @@ public class GameplayController {
 		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
 		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
 		satQuestions = new SATQuestions(satTextures, satBubble);
+		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
+		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -459,6 +475,8 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
+		touchscreen = new TouchScreen(radio, offTouchscreen, dvdSlot);
 		hudObjects = new ObjectSet<Image>();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
@@ -485,7 +503,6 @@ public class GameplayController {
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
-		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
 		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 
 		road.setRoadTexture(roadTexture);
@@ -749,43 +766,35 @@ public class GameplayController {
 //		System.out.println("currClick: "+inputController.isMousePressed());
 
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
-			if (yonda.getNosh().inChildArea(droppedPos)) {
-				//TODO ITEM CHECKS FOR NOSH
-				switch (inventory.getItemInHand().getItemType()) {
-					case SNACK:
+			switch (inventory.getItemInHand().getItemType()) {
+				case SNACK:
+					if(yonda.getNosh().inChildArea(droppedPos)) {
 						yonda.getNosh().setMood(Child.Mood.HAPPY);
-						break;
-					case DVD:
-						if(!yonda.getNosh().isAwake()) {
-							inventory.cancelTake();
-							break;
-						}
-						yonda.getNosh().setMood(Child.Mood.SLEEP);
-						break;
-				}
-			} else if (yonda.getNed().inChildArea(droppedPos)) {
-				//TODO ITEM CHECKS FOR NED
-				switch (inventory.getItemInHand().getItemType()) {
-					case SNACK:
+					} else if(yonda.getNed().inChildArea(droppedPos)) {
 						yonda.getNed().setMood(Child.Mood.HAPPY);
-						break;
-					case DVD:
-						if(!yonda.getNed().isAwake()) {
-							inventory.cancelTake();
-							break;
-						}
-						yonda.getNed().setMood(Child.Mood.SLEEP);
-						break;
-				}
-			} else if (inventory.inArea(droppedPos)){
-				inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
-			} else {
-				inventory.cancelTake();
-				return;
+					} else if (inventory.inArea(droppedPos)) {
+						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
+					} else {
+						inventory.cancelTake();
+						return;
+					}
+					break;
+				case DVD:
+					if(touchscreen.inDvdSlot(droppedPos)) {
+						yonda.getNosh().setMood(Child.Mood.HAPPY);
+						yonda.getNed().setMood(Child.Mood.HAPPY);
+					} else if (inventory.inArea(droppedPos)){
+						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
+					} else {
+						inventory.cancelTake();
+						return;
+					}
+					break;
 			}
-		inventory.setItemInHand(null);
+			inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
+		
 	}
 
 	public void shakeHUD() {
@@ -813,6 +822,9 @@ public class GameplayController {
 		// Wheel
 		wheel.draw(canvas);
 
+		//TouchScreen
+		touchscreen.draw(canvas);
+
 		// Radio
 		radio.draw(canvas, displayFont);
 
@@ -839,8 +851,8 @@ public class GameplayController {
 
 		// Draw speech bubbles, if necessary
 		if (!road.reachedEndOfLevel()) {
-			yonda.getNed().drawSpeechBubble(canvas, speechBubble);
-			yonda.getNosh().drawSpeechBubble(canvas, speechBubble);
+			yonda.getNed().drawSpeechBubble(canvas);
+			yonda.getNosh().drawSpeechBubble(canvas);
 		}
 
 		//Draw sun effect part 2
