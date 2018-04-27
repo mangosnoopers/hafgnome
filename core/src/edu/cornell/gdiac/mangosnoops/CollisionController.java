@@ -110,6 +110,13 @@ public class CollisionController {
 		//if(c.getX() > width) c.setY(width);
 	}
 
+	private void handleKidCollision(Child c) {
+		if(c.getCurrentMood() != Child.Mood.SAD && c.getCurrentMood() != Child.Mood.CRITICAL) {
+			c.setMood(Child.Mood.CRITICAL);//c.setMood(Child.Mood.SAD);
+			c.setMoodShifting(true, false);
+		}
+	}
+
 	/**
 	 * Process the actions that need to take place when an enemy
 	 * collides with the car, namely:
@@ -154,6 +161,5 @@ public class CollisionController {
         if (eInXRange && eInYRange) {
             if (!isFlyingFlamingo) processCarHitActions(c, e, controller);
         }
-
 	}
 }
