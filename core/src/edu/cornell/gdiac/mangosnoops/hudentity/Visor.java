@@ -48,16 +48,13 @@ public class Visor extends Image {
 
     public boolean inArea(Vector2 p) {
         if(open) {
-            return canvas.inArea(p, openVisor, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
+            return c.inArea(p, openVisor, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
         } else {
-            return canvas.inArea(p, closedVisor, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
+            return c.inArea(p, closedVisor, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
         }
     }
 
-    GameCanvas canvas;
-
     public void draw(GameCanvas canvas) {
-        this.canvas = canvas;
         if(open) {
             canvas.draw(openVisor, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
         } else {

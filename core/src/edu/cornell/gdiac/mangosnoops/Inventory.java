@@ -67,7 +67,7 @@ public class Inventory extends Image {
 
     public Slot slotInArea(Vector2 in){
         for (Slot s: slots){
-            if(s.inHitbox(new Vector2(in.x,SCREEN_DIMENSIONS.y-in.y))){
+            if(s.inHitbox(new Vector2(in.x,c.getHeight()-in.y))){
                 return s;
                 }
             }
@@ -80,15 +80,15 @@ public class Inventory extends Image {
 //    boolean prevMousePressed;
     public void update(Vector2 in, boolean mousePressed){
         for(Slot s : slots) {
-            s.realHitbox.setPosition(s.getHitbox().getX() * SCREEN_DIMENSIONS.x, s.getHitbox().getY() * SCREEN_DIMENSIONS.y);
-            s.realHitbox.setSize(s.getHitbox().getWidth() * SCREEN_DIMENSIONS.x,s.getHitbox().getHeight() * SCREEN_DIMENSIONS.y);
+            s.realHitbox.setPosition(s.getHitbox().getX() * c.getWidth(), s.getHitbox().getY() * c.getHeight());
+            s.realHitbox.setSize(s.getHitbox().getWidth() * c.getWidth(),s.getHitbox().getHeight() * c.getHeight());
         }
         if(in != null) {
             if (itemInHand == null && inArea(in)) {
                 itemInHand = take(slotInArea(in));
             }
             if (itemInHand != null) {
-                itemInHandPosition = new Vector2(in.x, SCREEN_DIMENSIONS.y - in.y);
+                itemInHandPosition = new Vector2(in.x, c.getHeight() - in.y);
             }
         }
 
@@ -119,8 +119,8 @@ public class Inventory extends Image {
                 float y = s.realHitbox.getY() + 0.7f*s.realHitbox.getHeight() + currentShakeAmount;
 
                 for(int i=0; i<s.amount; i++) {
-                    canvas.draw(s.getSlotItem().getTexture(), Color.WHITE, ix, iy, x-itemOffset*SCREEN_DIMENSIONS.x*i, y, 0,
-                            s.getSlotItem().relativeScale * SCREEN_DIMENSIONS.y, s.getSlotItem().relativeScale * SCREEN_DIMENSIONS.y);
+                    canvas.draw(s.getSlotItem().getTexture(), Color.WHITE, ix, iy, x-itemOffset*c.getWidth()*i, y, 0,
+                            s.getSlotItem().relativeScale * c.getHeight(), s.getSlotItem().relativeScale * c.getHeight());
 
                 }
             }
@@ -129,7 +129,7 @@ public class Inventory extends Image {
     public static void drawItemInHand(GameCanvas canvas){
         if(itemInHand != null && itemInHand.texture!=null) {
             canvas.draw(itemInHand.getTexture(), Color.WHITE, itemInHand.getTexture().getWidth()*0.5f, itemInHand.getTexture().getHeight()*0.5f,
-                    itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*SCREEN_DIMENSIONS.y, itemInHand.relativeScale*SCREEN_DIMENSIONS.y);
+                    itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*c.getHeight(), itemInHand.relativeScale*c.getHeight());
         }
     }
 
@@ -195,7 +195,7 @@ public class Inventory extends Image {
             this.slotItem = null;
             this.amount = 0;
             hitbox = new Rectangle(x_left,y_bottom,width,height);
-            realHitbox = new Rectangle(x_left*SCREEN_DIMENSIONS.x,y_bottom*SCREEN_DIMENSIONS.y,width*SCREEN_DIMENSIONS.x,height*SCREEN_DIMENSIONS.y);
+            realHitbox = new Rectangle(x_left*c.getWidth(),y_bottom*c.getHeight(),width*c.getWidth(),height*c.getHeight());
         }
 
         public Slot(int invPos, float x_left, float y_bottom, float width, float height, Item.ItemType slotItem, int amount){
@@ -203,7 +203,7 @@ public class Inventory extends Image {
             this.slotItem = new Item(slotItem);
             this.amount = amount;
             hitbox = new Rectangle(x_left,y_bottom,width,height);
-            realHitbox = new Rectangle(x_left*SCREEN_DIMENSIONS.x,y_bottom*SCREEN_DIMENSIONS.y,width*SCREEN_DIMENSIONS.x,height*SCREEN_DIMENSIONS.y);
+            realHitbox = new Rectangle(x_left*c.getWidth(),y_bottom*c.getHeight(),width*c.getWidth(),height*c.getHeight());
         }
 
         public Slot (Slot s){
@@ -220,8 +220,8 @@ public class Inventory extends Image {
             this.amount = amount;
             this.hitbox = new Rectangle(inv.position.x, inv.position.y+invPos*inv.slotsDimensions.y,
                                         inv.slotsDimensions.x, inv.slotsDimensions.y);
-            this.realHitbox = new Rectangle(hitbox.getX()*SCREEN_DIMENSIONS.x,hitbox.getY()*SCREEN_DIMENSIONS.y,
-                                            hitbox.getWidth()*SCREEN_DIMENSIONS.x,hitbox.getHeight()*SCREEN_DIMENSIONS.y);
+            this.realHitbox = new Rectangle(hitbox.getX()*c.getWidth(),hitbox.getY()*c.getHeight(),
+                                            hitbox.getWidth()*c.getWidth(),hitbox.getHeight()*c.getHeight());
         }
 
         private boolean inHitbox( Vector2 in){
