@@ -156,7 +156,6 @@ public class InputController {
 		}
 		//Process WASD/Arrow input (for turning wheel)
         if(Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            System.out.println(dx);
             if(dx > 10){
                 dx -= 4;
             } else if(dx > 0) {

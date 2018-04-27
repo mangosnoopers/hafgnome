@@ -94,12 +94,12 @@ public class Car extends RoadObject {
     /** Neddy boi */
     private Child ned;
 
+    private Texture speechBubble;
+
     public Car() {
         angle = 0.0f;
         active = true;
         health = 100;
-        nosh = new Child(Child.ChildType.NOSH);
-        ned = new Child(Child.ChildType.NED);
         healthPointerAng = 50.0f;
         takingExit = false;
         carTeleported = false;
@@ -107,6 +107,12 @@ public class Car extends RoadObject {
         timeToDisplayDamageIndicator = 10;
 
         position = new Vector2(CAR_START_POS);
+    }
+
+    public void addSpeechBubbleTexture(Texture sb) {
+        speechBubble = sb;
+        nosh = new Child(Child.ChildType.NOSH, sb);
+        ned = new Child(Child.ChildType.NED, sb);
     }
 
     /**
@@ -224,8 +230,8 @@ public class Car extends RoadObject {
         active = true;
 
         //reset childs
-        nosh = new Child(Child.ChildType.NOSH);
-        ned = new Child(Child.ChildType.NED);
+        nosh = new Child(Child.ChildType.NOSH, speechBubble);
+        ned = new Child(Child.ChildType.NED, speechBubble);
 
         //reset health
         health = 100;

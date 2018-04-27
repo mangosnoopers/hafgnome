@@ -484,6 +484,11 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
     public boolean keyDown (int keycode) {
+        if(keycode == Input.Keys.F) {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        } else if(keycode == Input.Keys.ESCAPE) {
+            Gdx.graphics.setWindowedMode(1600,900);
+        }
         return true;
     }
 
