@@ -2,15 +2,15 @@
 /*
  * GameplayController.java
  *
- * For many of you, this class will seem like the most unusual one in the entire project.  
- * It implements a lot of functionality that looks like it should go into the various 
+ * For many of you, this class will seem like the most unusual one in the entire project.
+ * It implements a lot of functionality that looks like it should go into the various
  * GameObject subclasses. However, a lot of this functionality involves the creation or
- * destruction of objects.  We cannot do this without a lot of cyclic dependencies, 
+ * destruction of objects.  We cannot do this without a lot of cyclic dependencies,
  * which are bad.
  *
- * You will notice that gameplay-wise, most of the features in this class are 
- * interactions, not actions. This demonstrates why a software developer needs to 
- * understand the difference between these two.  
+ * You will notice that gameplay-wise, most of the features in this class are
+ * interactions, not actions. This demonstrates why a software developer needs to
+ * understand the difference between these two.
  *
  * You will definitely need to modify this file in Part 2 of the lab. However, you are
  * free to modify any file you want.  You are also free to add new classes and assets.
@@ -55,7 +55,7 @@ public class GameplayController {
 	/** Contains location for the previous click, used for debouncing */
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
-	private Array<Gnome> gnomez;
+	private Array<Enemy> enemiez;
 	/** An array of events for this level */
 	private Array<Event> events;
 	/** The next event to happen */
@@ -71,6 +71,9 @@ public class GameplayController {
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
 
+	/** The Horn! */
+	private Horn horn;
+
 	private Image healthGauge;
 	private Image rearviewBackground;
 	private Image rearviewSeats;
@@ -81,6 +84,19 @@ public class GameplayController {
 	/** If there is sun shining right now */
 	public boolean sunShine;
 
+	// FilmStrip information
+	/** The Gnome FilmStrip information */
+	private static final int GNOME_FILMSTRIP_ROWS = 1;
+	private static final int GNOME_FILMSTRIP_COLS = 12;
+
+	/** The Flamingo FilmStrip information */
+	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
+	private static final int FLAMINGO_FILMSTRIP_COLS = 6;
+	private static final int FLAMINGO_STAND_START = 0;
+	private static final int FLAMINGO_STAND_END = 4;
+	private static final int FLAMINGO_FLY_START = 4;
+	private static final int FLAMINGO_FLY_END = 5;
+
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
@@ -89,6 +105,8 @@ public class GameplayController {
     /** The texture file for the gnomes */
 	private static final String GNOME_FILE = "images/Enemies/gnome.png";
 	private static final String REARVIEW_GNOME_FILE = "images/Enemies/gnome_rear.png";
+	/** The texture file for the flamingo */
+	private static final String FLAMINGO_FILE = "images/Enemies/flamingo.png";
 	/** The texture file for the radio knob */
 	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
 	/** The texture files for Nosh's moods */
@@ -157,6 +175,8 @@ public class GameplayController {
 	/** Texture for the gnomes */
 	private Texture gnomeTexture;
 	private Texture rearviewGnomeTexture;
+	/** Texture for the flamingo */
+	private Texture flamingoTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
@@ -209,7 +229,7 @@ public class GameplayController {
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
-	private Array<Gnome> backing;
+	private Array<Enemy> backing;
 
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
@@ -301,11 +321,12 @@ public class GameplayController {
 		assets.add(SAT_WHALE_FILE);
 		manager.load(SAT_LEMONMAN_FILE, Texture.class);
 		assets.add(SAT_LEMONMAN_FILE);
+		manager.load(FLAMINGO_FILE, Texture.class);
+		assets.add(FLAMINGO_FILE);
 		manager.load(OFF_TOUCHSCREEN_FILE, Texture.class);
 		assets.add(OFF_TOUCHSCREEN_FILE);
 		manager.load(DVD_SLOT_FILE, Texture.class);
 		assets.add(DVD_SLOT_FILE);
-
 	}
 
 	/**
@@ -322,6 +343,7 @@ public class GameplayController {
 		wheelTexture = createTexture(manager,WHEEL_FILE);
 		vroomStickTexture = createTexture(manager, VROOM_STICK_FILE);
 		gnomeTexture = createTexture(manager, GNOME_FILE);
+		flamingoTexture = createTexture(manager, FLAMINGO_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
 		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
@@ -385,10 +407,10 @@ public class GameplayController {
 	 */
 	public GameplayController(LevelObject level, GameCanvas canvas) {
 		this.level = level;
-		gnomez = new Array<Gnome>();
+		enemiez = new Array<Enemy>();
 		events = new Array<Event>();
 		yonda = new Car();
-		backing = new Array<Gnome>();
+		backing = new Array<Enemy>();
 		road = new Road(level.getLevelEndY());
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -415,7 +437,7 @@ public class GameplayController {
 	 *
 	 * @return a reference to all the gnomes
 	 */
-	public Array<Gnome> getGnomez() { return gnomez; }
+	public Array<Enemy> getEnemiez() { return enemiez; }
 
 	/**
 	 * Returns a reference to the car.
@@ -485,6 +507,8 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
+		horn = new Horn(0.12f, 0.12f, 0.17f, 0, rearviewGnomeTexture);
+
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
 		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
@@ -492,12 +516,21 @@ public class GameplayController {
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-        for(Gnome g: level.getGnomez()){
-			gnomez.add(new Gnome(g));
+        for(Enemy e: level.getEnemiez()){
+			enemiez.add(e);
 		}
 		// TODO CHANGE THIS LOL
-		for (Gnome g : gnomez) {
-			g.setTexture(gnomeTexture);
+		for (Enemy e : enemiez) {
+            if (e.getType() == RoadObject.ObjectType.GNOME) {
+            	e.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
+			}
+			if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
+            	e.setFilmStrip(flamingoTexture, FLAMINGO_FILMSTRIP_ROWS, FLAMINGO_FILMSTRIP_COLS);
+            	Flamingo f = (Flamingo) e;
+				f.setAnimationBounds(FLAMINGO_STAND_START, FLAMINGO_STAND_END);
+				f.setEnemyWidth(0.2f);
+				f.setEnemyHeight(0.1f);
+			}
 		}
 		events = level.getEvents();
 
@@ -522,6 +555,7 @@ public class GameplayController {
 		hudObjects.add(getCar().getNed());
 		hudObjects.add(getCar().getNosh());
 		hudObjects.add(healthGaugePointer);
+		hudObjects.add(horn);
 
   }
 
@@ -533,7 +567,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		gnomez = new Array<Gnome>(level.getGnomez().size);
+		enemiez = new Array<Enemy>(level.getEnemiez().size);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -550,19 +584,19 @@ public class GameplayController {
 	 */
 	public void garbageCollect() {
 		// INVARIANT: backing and objects are disjoint
-		for (Gnome g : gnomez) {
-			if (g.isDestroyed()) {
-				destroy(g);
+		for (Enemy e : enemiez) {
+			if (e.isDestroyed()) {
+				destroy(e);
 			} else {
-				backing.add(g);
+				backing.add(e);
 			}
 		}
 
 		// Swap the backing store and the objects.
 		// This is essentially stop-and-copy garbage collection
-		Array<Gnome> tmp = backing;
-		backing = gnomez;
-		gnomez = tmp;
+		Array<Enemy> tmp = backing;
+		backing = enemiez;
+		enemiez = tmp;
 		backing.clear();
 	}
 
@@ -645,13 +679,21 @@ public class GameplayController {
 	 */
 	public void resolveActions(InputController input, float delta) {
 
-//		for(int i=0; i<gnomez.size; i++){
-//			System.out.println("gnome["+i+"]: " + gnomez.get(i).getY());
-//		}
 		// Update world objects (road and gnome positions)
         road.update(delta);
-        for (Gnome g : gnomez) {
-            g.update(delta, road.getSpeed());
+        for (Enemy e : enemiez) {
+            e.update(delta, road.getSpeed());
+
+            /* FIXME: idk if its best to have this here */
+            if (horn.isHonking()) {
+            	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
+            		Flamingo f = (Flamingo) e;
+            		if (e.getY() < f.getFlyAwayDistance()) {
+            		    f.setAnimationBounds(FLAMINGO_FLY_START, FLAMINGO_FLY_END);
+						f.setFlyingAway();
+					}
+				}
+			}
         }
 
         // Update the HUD
@@ -659,12 +701,15 @@ public class GameplayController {
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
   		boolean mousePressed = input.isMousePressed();
   		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
+  		horn.updateHonk(delta);
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x);
 			vroomStick.update(new Vector2(in), dr.y);
 			radio.update(new Vector2(in), dr.x);
+			horn.update(new Vector2(in), delta);
 			inventory.update(new Vector2(in), mousePressed);
 			visor.update(new Vector2(in), input.isPrevMousePressed());
+
 		}
 		else{
 			wheel.update(null, dr.x);
@@ -806,8 +851,8 @@ public class GameplayController {
 
 	public void draw(GameCanvas canvas) {
 		//Gnomez
-		for (Gnome g : gnomez) {
-			g.draw(canvas);
+		for (Enemy e : enemiez) {
+			e.draw(canvas);
 		}
 
 		//Draw sun effect part 1
@@ -827,6 +872,9 @@ public class GameplayController {
 
 		// Radio
 		radio.draw(canvas, displayFont);
+
+		// Horn
+		horn.draw(canvas);
 
 		// Health gauge and pointer
 		Color healthGaugeColor = Color.WHITE;
