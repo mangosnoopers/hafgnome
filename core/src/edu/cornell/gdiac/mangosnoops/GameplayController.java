@@ -121,8 +121,10 @@ public class GameplayController {
 	private static final String REARVIEW_COVER = "images/rearview_cover.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 	/** The texture files for all Items **/
-	private static final String DVD_FILE = "images/Items/dvd.png";
-	private static final String SNACK_FILE = "images/Items/snack.png";
+	private static final String DVD0_FILE = "images/Items/dvd0.png";
+	private static final String DVD1_FILE = "images/Items/dvd1.png";
+	private static final String SNACK0_FILE = "images/Items/snack0.png";
+	private static final String SNACK1_FILE = "images/Items/snack1.png";
 	/** Sun effect that will be overlayed */
 	private static final String SUN_FILE = "images/sun_1.jpg";
 	private static final String SUN2_FILE = "images/sun_2.jpg";
@@ -167,8 +169,8 @@ public class GameplayController {
 	private FilmStrip ned_critical;
 	private FilmStrip ned_sleep;
 	/** Textures for items **/
-	private Texture dvdTexture;
-	private Texture snackTexture;
+	private Array<Texture> dvdTextures;
+	private Array<Texture> snackTextures;
 	/** Textures for visor states */
 	private Texture visorOpen;
 	private Texture visorClosed;
@@ -249,10 +251,14 @@ public class GameplayController {
 		assets.add(NED_CRITICAL_FILE);
 		manager.load(NED_SLEEP_FILE, Texture.class);
 		assets.add(NED_SLEEP_FILE);
-		manager.load(DVD_FILE,Texture.class);
-		assets.add(DVD_FILE);
-		manager.load(SNACK_FILE,Texture.class);
-		assets.add(SNACK_FILE);
+		manager.load(DVD0_FILE,Texture.class);
+		assets.add(DVD0_FILE);
+		manager.load(DVD1_FILE,Texture.class);
+		assets.add(DVD1_FILE);
+		manager.load(SNACK0_FILE,Texture.class);
+		assets.add(SNACK0_FILE);
+		manager.load(SNACK1_FILE,Texture.class);
+		assets.add(SNACK1_FILE);
 		manager.load(GRASS_FILE, Texture.class);
 		assets.add(GRASS_FILE);
 		manager.load(ROAD_FILE, Texture.class);
@@ -321,8 +327,6 @@ public class GameplayController {
 		ned_sad = new FilmStrip(createTexture(manager, NED_SAD_FILE), 1, 1);
 		ned_critical = new FilmStrip(createTexture(manager, NED_CRITICAL_FILE), 1, 1);
 		ned_sleep = new FilmStrip(createTexture(manager, NED_SLEEP_FILE), 1, 1);
-		dvdTexture = createTexture(manager,DVD_FILE);
-		snackTexture = createTexture(manager,SNACK_FILE);
 		roadTexture = createTexture(manager, ROAD_FILE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
@@ -377,11 +381,18 @@ public class GameplayController {
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
+
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
-		dvdTexture = new Texture(DVD_FILE);
-		snackTexture = new Texture(SNACK_FILE);
+		// Item textures
+		dvdTextures = new Array<Texture>();
+		dvdTextures.add(new Texture(DVD0_FILE));
+		dvdTextures.add(new Texture(DVD1_FILE));
+		snackTextures = new Array<Texture>();
+		snackTextures.add(new Texture(SNACK0_FILE));
+		snackTextures.add(new Texture(SNACK1_FILE));
+
 		Image.updateScreenDimensions(canvas);
-		Inventory.Item.setTexturesAndScales(dvdTexture,0.1f,snackTexture,0.1f);
+		Inventory.Item.setTexturesAndScales(dvdTextures,0.12f,snackTextures,0.135f);
 		inventory = new Inventory(0.4756f,0.0366f, 0,0,wheelTexture, 0.146f, 0.15f, 2);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
