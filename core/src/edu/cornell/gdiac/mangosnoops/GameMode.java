@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
+import edu.cornell.gdiac.mangosnoops.roadentity.Enemy;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.util.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -318,7 +319,7 @@ public class GameMode implements Screen {
 		// Check for collisions
 		totalTime += (delta*1000); // Seconds to milliseconds
 		float offset =  canvas.getWidth() - (totalTime * TIME_MODIFIER) % canvas.getWidth();
-		collisionController.processCollisions(gameplayController.getGnomez(),gameplayController.getCar(), gameplayController);
+		collisionController.processCollisions(gameplayController.getEnemiez(),gameplayController.getCar(), gameplayController);
 
 		// Play resulting sound
 		soundController.play(gameplayController.getRadio());
@@ -349,8 +350,8 @@ public class GameMode implements Screen {
 		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez
-		for (Gnome g : gameplayController.getGnomez()) {
-			g.draw(canvas);
+		for (Enemy e : gameplayController.getEnemiez()) {
+			e.draw(canvas);
 		}
 
 		canvas.drawWorld();

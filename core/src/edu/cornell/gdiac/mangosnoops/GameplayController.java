@@ -54,7 +54,7 @@ public class GameplayController {
 	/** Contains location for the previous click, used for debouncing */
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
-	private Array<Gnome> gnomez;
+	private Array<Enemy> enemiez;
 	/** An array of events for this level */
 	private Array<Event> events;
 	/** The next event to happen */
@@ -201,7 +201,7 @@ public class GameplayController {
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
-	private Array<Gnome> backing;
+	private Array<Enemy> backing;
 
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
@@ -369,10 +369,10 @@ public class GameplayController {
 	 */
 	public GameplayController(LevelObject level, GameCanvas canvas) {
 		this.level = level;
-		gnomez = new Array<Gnome>();
+		enemiez = new Array<Enemy>();
 		events = new Array<Event>();
 		yonda = new Car();
-		backing = new Array<Gnome>();
+		backing = new Array<Enemy>();
 		road = new Road(level.getLevelEndY());
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -399,7 +399,7 @@ public class GameplayController {
 	 *
 	 * @return a reference to all the gnomes
 	 */
-	public Array<Gnome> getGnomez() { return gnomez; }
+	public Array<Enemy> getEnemiez() { return enemiez; }
 
 	/**
 	 * Returns a reference to the car.
@@ -474,12 +474,12 @@ public class GameplayController {
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-        for(Gnome g: level.getGnomez()){
-			gnomez.add(new Gnome(g));
+        for(Enemy e: level.getEnemiez()){
+			enemiez.add(e);
 		}
 		// TODO CHANGE THIS LOL
-		for (Gnome g : gnomez) {
-			g.setTexture(gnomeTexture);
+		for (Enemy e : enemiez) {
+			e.setTexture(gnomeTexture);
 		}
 		events = level.getEvents();
 
@@ -516,7 +516,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		gnomez = new Array<Gnome>(level.getGnomez().size);
+		enemiez = new Array<Enemy>(level.getEnemiez().size);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -533,19 +533,19 @@ public class GameplayController {
 	 */
 	public void garbageCollect() {
 		// INVARIANT: backing and objects are disjoint
-		for (Gnome g : gnomez) {
-			if (g.isDestroyed()) {
-				destroy(g);
+		for (Enemy e : enemiez) {
+			if (e.isDestroyed()) {
+				destroy(e);
 			} else {
-				backing.add(g);
+				backing.add(e);
 			}
 		}
 
 		// Swap the backing store and the objects.
 		// This is essentially stop-and-copy garbage collection
-		Array<Gnome> tmp = backing;
-		backing = gnomez;
-		gnomez = tmp;
+		Array<Enemy> tmp = backing;
+		backing = enemiez;
+		enemiez = tmp;
 		backing.clear();
 	}
 
@@ -633,8 +633,8 @@ public class GameplayController {
 //		}
 		// Update world objects (road and gnome positions)
         road.update(delta);
-        for (Gnome g : gnomez) {
-            g.update(delta, road.getSpeed());
+        for (Enemy e : enemiez) {
+            e.update(delta, road.getSpeed());
         }
 
         // Update the HUD
@@ -797,8 +797,8 @@ public class GameplayController {
 
 	public void draw(GameCanvas canvas) {
 		//Gnomez
-		for (Gnome g : gnomez) {
-			g.draw(canvas);
+		for (Enemy e : enemiez) {
+			e.draw(canvas);
 		}
 
 		//Draw sun effect part 1
