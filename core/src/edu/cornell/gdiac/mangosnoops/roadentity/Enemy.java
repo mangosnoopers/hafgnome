@@ -10,13 +10,13 @@ import com.badlogic.gdx.graphics.*;
 import java.util.Random;
 
 public abstract class Enemy extends RoadObject{
-    //CONSTANTS
+    // CONSTANTS
     /** How fast we change frames (one frame per 4 calls to update) */
     private static final float ANIMATION_SPEED = 0.25f;
     /** The number of animation frames in our filmstrip */
     private static final int   NUM_ANIM_FRAMES = 11;
 
-    //ATTRIBUTES
+    // ATTRIBUTES
     /** Current animation frame for this ship */
     private float animeframe;
     /** The type of Gnome this is */

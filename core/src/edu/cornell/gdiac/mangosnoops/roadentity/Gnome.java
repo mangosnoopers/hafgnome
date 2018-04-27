@@ -4,8 +4,8 @@ public class Gnome extends Enemy {
 
     /**
      * Create a new Gnome at position (x, y).
-     * @param x x-position of the gnome
-     * @param y y-position of the gnome
+     * @param x initial x-position of the gnome
+     * @param y initial y-position of the gnome
      */
     public Gnome(float x, float y) {
         super(x, y, EnemyType.GNOME);
