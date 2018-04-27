@@ -26,6 +26,9 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
+import org.json.JSONObject;
+
+import java.io.*;
 
 /**
  * Root class for a LibGDX.  
@@ -48,9 +51,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	private RestStopMode reststop;
 	private StartMenuMode start;
 
-	// LEVEL FILES TODO implement moving to next level
+	/** Level files - currLevel is the level that will be played */
 	private static final String[] LEVELS = new String[]{"test_level0.xlsx", "test_level1.xlsx"};
 	private static int currLevel;
+
+	/** Rest stop files - REST_STOPS[currLevel] is the rest stop after LEVELS[currLevel] */
+	private static final String[] REST_STOPS = new String[]{"rest_stop0.json", "rest_stop1.json"};
+
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -123,6 +130,39 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas.resize();
 		super.resize(width,height);
 	}
+
+	/**
+	 * Save the game file as a JSON.
+	 * The JSON includes the inventory, current level, whether or not to load
+	 * into the rest stop, and a UNIX time stamp of when it was saved.
+	 *
+	 * @param inv the player's inventory at time of saving
+	 * @param entering True if the game is saved while the player enters the rest stop,
+	 *                 false when the game is saved while they are exiting
+	 */
+	private void saveGame(Inventory inv, boolean entering) {
+		// create the JSON object
+		JSONObject json = new JSONObject();
+		json.put("numSnacks", inv.getNumSnacks());
+		json.put("numBooks", 0); // TODO - Fix
+		json.put("numMovies", inv.getNumMovies());
+		json.put("currentLevel", currLevel);
+		// load into rest stop if saved while entering, otherwise load into the level
+		json.put("loadIntoReststop", entering);
+		// UNIX timestamp - seconds since 1/1/1970
+		json.put("timestamp", System.currentTimeMillis() / 1000L);
+
+		// write to the file
+		String flag = entering ? "entering" : "exiting";
+		String filename = "levels/savedlevels/saved_" + flag + "_reststop" + currLevel + ".json";
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
+			bw.write(json.toString());
+			bw.close();
+		} catch (IOException e) {
+			System.out.println("IO exception when saving");
+		}
+	}
 	
 	/**
 	 * The given screen has made a request to exit its player mode.
@@ -158,8 +198,9 @@ public class GDXRoot extends Game implements ScreenListener {
 				start = null;
 			}
 		} else if (screen == playing) {
-			reststop = new RestStopMode(canvas,manager);
+			reststop = new RestStopMode(canvas,manager,REST_STOPS[currLevel]);
 			reststop.setPlayerInv(playing.getInventory());
+			saveGame(playing.getInventory(),true); // save the game when entering
 			reststop.setScreenListener(this);
 			Gdx.input.setInputProcessor(reststop);
 			setScreen(reststop);
@@ -167,6 +208,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			playing.dispose();
 			playing = null;
 		} else if (screen == reststop) {
+			// save the game when exiting the rest stop
+			saveGame(reststop.getPlayerInv(),false);
+
+			// load the next level
 			currLevel = (currLevel + 1) % LEVELS.length; // TODO : something that will end the game at last level
 			playing = new GameMode(canvas,LEVELS[currLevel]);
 			playing.preLoadContent(manager);

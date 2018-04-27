@@ -9,8 +9,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.ScreenListener;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Random;
+import java.util.Scanner;
 
 public class RestStopMode implements Screen, InputProcessor {
     // ASSETS - TODO maintain in an array (assets)
@@ -224,6 +228,12 @@ public class RestStopMode implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * Create a rest stop with a random quantity of items and a random max
+     * number of items that can be taken.
+     * @param canvas
+     * @param manager
+     */
     public RestStopMode(GameCanvas canvas, AssetManager manager) {
         this.canvas = canvas;
         this.manager = manager;
@@ -265,6 +275,67 @@ public class RestStopMode implements Screen, InputProcessor {
         numSnacksSelected = 0; numBooksSelected = 0; numMoviesSelected = 0;
     }
 
+
+    /**
+     * Create a rest stop from the given JSON file.
+     * @param canvas
+     * @param manager
+     * @param filename
+     */
+    public RestStopMode(GameCanvas canvas, AssetManager manager, String filename) {
+        this.canvas = canvas;
+        this.manager = manager;
+        assets = new Array<String>();
+        SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
+        active = true;
+        fadeIn = true;
+        fadeOpacity = 1.0f;
+        delay = 0;
+
+        // Textures
+        backgroundTex = new Texture(BACKGROUND_FILE);
+        shelfTex = new Texture(SHELF_FILE);
+        dvdTexs = new Array<Texture>();
+        dvdTexs.add(new Texture(DVD0_FILE)); dvdTexs.add(new Texture(DVD1_FILE));
+        snackTexs = new Array<Texture>();
+        snackTexs.add(new Texture(SNACK0_FILE)); snackTexs.add(new Texture(SNACK1_FILE));
+        readyButtonTex = new Texture(READY_BUTTON_FILE);
+
+        // Load font
+        loadFont();
+
+        // Create shelf image in middle of screen
+        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
+
+        // Parse JSON to get item quantities/max number of items player can take
+        parseJSON("levels/" + filename);
+
+        // Generate the items, initialize some more variables
+        items = new Array<RestStopItem>();
+        generateItems();
+        numSelected = 0;
+        numSnacksSelected = 0; numBooksSelected = 0; numMoviesSelected = 0;
+    }
+
+    /**
+     * Parse the JSON file that gives information about this rest stop.
+     * @param f Path to the JSON file, relative to assets folder
+     */
+    private void parseJSON(String f) {
+        try {
+            Scanner scanner = new Scanner(new File(f));
+            JSONObject json = new JSONObject(scanner.useDelimiter("\\A").next());
+            scanner.close();
+            numCanTake = json.getInt("numCanTake");
+            numSnacks = json.getInt("numSnacks");
+            numBooks = json.getInt("numBooks");
+            numMovies = json.getInt("numMovies");
+        } catch (FileNotFoundException e) {
+            // TODO better error handling
+            System.out.println("Rest stop file not found");
+        }
+    }
+
     /**
      * Sets the ScreenListener for this mode
      *
@@ -272,18 +343,6 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
-    }
-
-    /**
-     * Update the status of this player mode.
-     *
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    private void update(float delta) {
     }
 
     /**
@@ -400,11 +459,11 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param delta The time in seconds since the last render. */
     public void render (float delta) {
         if (active) {
-            update(delta);
             draw();
 
+            // Check if player wants to exit rest stop
             if (readyStatus == BUTTON_UP && listener != null) {
-                // update inventory when player is done
+                // Add selected items to their inventory
                 for (RestStopItem i : items) {
                     if (i.toggleState == SELECTED) {
                         switch (i.type) {
@@ -421,6 +480,10 @@ public class RestStopMode implements Screen, InputProcessor {
                     }
                 }
 
+                // Save the game
+                // TODO
+
+                // Exit the screen
                 listener.exitScreen(this,0);
             }
         }
