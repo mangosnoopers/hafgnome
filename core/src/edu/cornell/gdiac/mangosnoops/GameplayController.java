@@ -46,8 +46,6 @@ public class GameplayController {
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
 	private VroomStick vroomStick;
-	/** Location and animation information for the wheel */
-	private Radio radio;
 	/** Inventory */
 	private Inventory inventory;
 	/** Inventory at the beginning of the level */
@@ -72,6 +70,9 @@ public class GameplayController {
 	private float ypos;
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
+	private GPS gps;
+	private Radio radio;
+	private DvdPlayer dvdPlayer;
 
 	/** The Horn! */
 	private Horn horn;
@@ -161,8 +162,12 @@ public class GameplayController {
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
 	/** Touchscreen */
+	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
 	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
+	private static final String BUTTON_GPS_FILE = "images/DashHUD/buttonGps.png";
+	private static final String BUTTON_RADIO_FILE = "images/DashHUD/buttonRadio.png";
+	private static final String BUTTON_DVD_FILE = "images/DashHUD/buttonDvd.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
@@ -226,8 +231,12 @@ public class GameplayController {
 	private Texture satLemonMan;
 	private HashMap<String, Texture> satTextures;
 	/** Touchscreen */
+	private Texture onTouchscreen;
 	private Texture offTouchscreen;
 	private Texture dvdSlot;
+	private Texture buttonGps;
+	private Texture buttonRadio;
+	private Texture buttonDvd;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -343,10 +352,18 @@ public class GameplayController {
 		assets.add(SAT_LEMONMAN_FILE);
 		manager.load(FLAMINGO_FILE, Texture.class);
 		assets.add(FLAMINGO_FILE);
+		manager.load(ON_TOUCHSCREEN_FILE, Texture.class);
+		assets.add(ON_TOUCHSCREEN_FILE);
 		manager.load(OFF_TOUCHSCREEN_FILE, Texture.class);
 		assets.add(OFF_TOUCHSCREEN_FILE);
 		manager.load(DVD_SLOT_FILE, Texture.class);
 		assets.add(DVD_SLOT_FILE);
+		manager.load(BUTTON_GPS_FILE, Texture.class);
+		assets.add(BUTTON_GPS_FILE);
+		manager.load(BUTTON_RADIO_FILE, Texture.class);
+		assets.add(BUTTON_RADIO_FILE);
+		manager.load(BUTTON_DVD_FILE, Texture.class);
+		assets.add(BUTTON_DVD_FILE);
 	}
 
 	/**
@@ -405,8 +422,12 @@ public class GameplayController {
 		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
 		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
 		satQuestions = new SATQuestions(satTextures, satBubble);
+		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
 		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
+		buttonGps = createTexture(manager, BUTTON_GPS_FILE);
+		buttonRadio = createTexture(manager, BUTTON_RADIO_FILE);
+		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
 	}
 
 	private Texture createTexture(AssetManager manager, String file) {
@@ -544,8 +565,10 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+		gps = new GPS();
 		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
-		touchscreen = new TouchScreen(radio, offTouchscreen, dvdSlot);
+		dvdPlayer = new DvdPlayer();
+		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
 //		hudObjects = new ObjectSet<Image>();
 		masterShaker = new Image();
         sunShine = false;
@@ -747,7 +770,7 @@ public class GameplayController {
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
 			vroomStick.update(new Vector2(in), dr.y);
-			radio.update(new Vector2(in), dr.x);
+			touchscreen.update(new Vector2(in), dr.x);
 			horn.update(new Vector2(in), delta);
 			inventory.update(new Vector2(in), mousePressed);
 			visor.update(new Vector2(in), input.isPrevMousePressed());
@@ -756,7 +779,7 @@ public class GameplayController {
 		else{
 			wheel.update(null, dr.x, input.isTurnPressed());
 			vroomStick.update(null, dr.y);
-			radio.update(null, dr.x);
+			touchscreen.update(null, dr.x);
 			inventory.update(null, mousePressed);
 		}
 		resolveItemDrop(input);
@@ -866,9 +889,9 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						// TODO: make this last for a duration of time
-						yonda.getNosh().setMood(Child.Mood.HAPPY);
-						yonda.getNed().setMood(Child.Mood.HAPPY);
+						if(!dvdPlayer.playDvd("GO HOME COUNTRY GOME", 1000)) {
+							inventory.cancelTake();
+						}
 					} else if (inventory.inArea(droppedPos)){
 						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
 					} else {
@@ -909,11 +932,8 @@ public class GameplayController {
 		// Wheel
 		wheel.draw(canvas);
 
-		//TouchScreen
-		touchscreen.draw(canvas);
-
-		// Radio
-		radio.draw(canvas, displayFont);
+		// Touchscreen
+		touchscreen.draw(canvas, displayFont);
 
 		// Horn
 		horn.draw(canvas);
