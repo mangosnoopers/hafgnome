@@ -85,13 +85,13 @@ public class CollisionController {
 	 * This is the main (incredibly unoptimized) collision detetection method.
 	 *
 	 * FIXME: remove camera, canvas params, oh god, what a mess
-	 * @param gnomez List of live gnomes to check
+	 * @param enemies List of live gnomes to check
 	 * @param yonda  Player's car
 	 */
-	public void processCollisions(Array<Gnome> gnomez, Car yonda, GameplayController controller) {
+	public void processCollisions(Array<Enemy> enemies, Car yonda, GameplayController controller) {
 		processBounds(yonda);
-		for (Gnome g : gnomez) {
-			handleCollision(yonda, g, controller);
+		for (Enemy e : enemies) {
+			handleCollision(yonda, e, controller);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class CollisionController {
 	 * Collide a gnome with a car.
 	 * FIXME: remove canvas param
 	 */
-	private void handleCollision(Car c, Gnome g, GameplayController controller) {
+	private void handleCollision(Car c, Enemy e, GameplayController controller) {
 //		if(c.nedAwake() && (c.getNed().getCurrentMood() == Child.Mood.HAPPY
 //							|| c.getNed().getCurrentMood() == Child.Mood.NEUTRAL)) {
 //			if(g.getY() < GNOME_INRANGE) {
@@ -120,13 +120,13 @@ public class CollisionController {
 //		}
 //
 //		else {
-			if (g.getY() < -10 && g.getY() > -10.5 && Math.abs(g.getX() - c.position.x) < HIT_RANGE) {
+			if (e.getY() < -10 && e.getY() > -10.5 && Math.abs(e.getX() - c.position.x) < HIT_RANGE) {
 				c.damage();
 				c.shakeCar();
 				controller.shakeHUD();
 				c.getNed().setMood(Child.Mood.SAD);
 				c.getNosh().setMood(Child.Mood.SAD);
-				g.setDestroyed(true);
+				e.setDestroyed(true);
 
 				if (c.getHealth() == 0)
 					c.setDestroyed(true);

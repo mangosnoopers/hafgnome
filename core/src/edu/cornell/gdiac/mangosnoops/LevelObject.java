@@ -33,7 +33,7 @@ public class LevelObject {
     /** Mapping between the level's song genres and its song mp3 files */
     private ObjectMap<String,Genre> songs;
     /** Array of enemies for the level */
-    private Array<Gnome> gnomez;
+    private Array<Enemy> enemiez;
     /** An array of events for the level.
      *  The first element in the array is the event to happen the soonest. */
     private Array<Event> events;
@@ -146,7 +146,7 @@ public class LevelObject {
     /**
      * Return an array of enemies for this level.
      */
-    public Array<Gnome> getGnomez() { return gnomez; }
+    public Array<Enemy> getEnemiez() { return enemiez; }
 
     /**
      * Return an array of events for this level.
@@ -171,7 +171,7 @@ public class LevelObject {
 
         // Initialize collections -- TODO: inventory
         songs = new ObjectMap<String,Genre>();
-        gnomez = new Array<Gnome>();
+        enemiez = new Array<Enemy>();
         events = new Array<Event>();
 
         // if Excel file
@@ -378,8 +378,8 @@ public class LevelObject {
                 x -= LANE_X;
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
                 if (enemyStr.equals("gnome")) {
-                    Gnome enemy = new Gnome(x, y);
-                    gnomez.add(enemy);
+                    Gnome gnome = new Gnome(x, y);
+                    enemiez.add(gnome);
                     // TODO add texture here? maybe?
 
                     // TODO DELETE:
@@ -387,8 +387,8 @@ public class LevelObject {
 //                    System.out.println("enemy x: " + x + "enemy y: " + y);
 
                 } else if (enemyStr.equals("flamingo")) {
-                    //Gnome enemy = new Gnome(x, y, Gnome.GnomeType.FLAMINGO);
-                    //gnomez.add(enemy);
+                    Flamingo flamingo = new Flamingo(x, y);
+                    enemiez.add(flamingo);
                 } else if (enemyStr.equals("grill start")) {
                     //Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
                     //gnomez.add(enemy);
