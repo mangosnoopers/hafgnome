@@ -39,6 +39,12 @@ public abstract class Enemy extends RoadObject{
     /** the type of this enemy */
     private ObjectType enemyType;
 
+    /** The minimum animation frame */
+    protected int minAnimFrame;
+
+    /** The maximum animation frame */
+    protected int maxAnimFrame;
+
 
     /**
      * Returns the type of this object.
@@ -55,7 +61,9 @@ public abstract class Enemy extends RoadObject{
         setX(x);
         setY(y);
         Random rand = new Random();
-        animeframe = (float) rand.nextInt(11);
+        minAnimFrame = 0;
+        maxAnimFrame = 0;
+        animeframe = 0;
         enemyType = type;
     }
 
@@ -84,6 +92,8 @@ public abstract class Enemy extends RoadObject{
      */
     public void setFilmStrip(Texture texture, int rows, int cols) {
         numAnimationFrames = rows * cols - 1;
+        minAnimFrame = 0;
+        maxAnimFrame = numAnimationFrames;
         animator = new FilmStrip(texture,rows,cols,rows * cols);
         radius = animator.getRegionHeight() / 2.0f;
         origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
@@ -112,8 +122,8 @@ public abstract class Enemy extends RoadObject{
     }
 
     public void draw(GameCanvas canvas) {
-        if (animeframe >= numAnimationFrames) {
-            animeframe -= numAnimationFrames;
+        if (animeframe >= maxAnimFrame) {
+            animeframe = minAnimFrame;
         }
         animator.setFrame((int) animeframe);
         canvas.drawRoadObject(animator, getX(), getY(), hoverDistance, enemyWidth, enemyHeight, 90, 0);

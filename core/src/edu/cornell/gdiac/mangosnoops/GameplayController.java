@@ -505,6 +505,8 @@ public class GameplayController {
 			}
 			if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             	e.setFilmStrip(flamingoTexture, FLAMINGO_FILMSTRIP_ROWS, FLAMINGO_FILMSTRIP_COLS);
+            	Flamingo f = (Flamingo) e;
+				f.setAnimationBounds(0, 4);
 			}
 		}
 		events = level.getEvents();
