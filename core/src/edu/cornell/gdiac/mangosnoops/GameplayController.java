@@ -62,7 +62,7 @@ public class GameplayController {
 	private int nextEvent;
 	/** Rearview enemy instance. The way it's handled right now, there is only
 	 *  one at a time. FIXME: could change that if necessary */
-	private RearviewEnemy rearviewEnemy;
+	protected RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 	private SATQuestions satQuestions;
@@ -88,8 +88,8 @@ public class GameplayController {
 
 	// FilmStrip information
 	/** The Gnome FilmStrip information */
-	private static final int GNOME_FILMSTRIP_ROWS = 1;
-	private static final int GNOME_FILMSTRIP_COLS = 12;
+	protected static final int GNOME_FILMSTRIP_ROWS = 1;
+	protected static final int GNOME_FILMSTRIP_COLS = 12;
 
 	/** The Flamingo FilmStrip information */
 	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
@@ -177,8 +177,8 @@ public class GameplayController {
 	/** Texture for the vroomstick */
 	private Texture vroomStickTexture;
 	/** Texture for the gnomes */
-	private Texture gnomeTexture;
-	private Texture rearviewGnomeTexture;
+	protected  Texture gnomeTexture;
+	protected  Texture rearviewGnomeTexture;
 	/** Texture for the flamingo */
 	private Texture flamingoTexture;
 	/** Texture for the radio knob */
