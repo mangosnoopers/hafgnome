@@ -193,7 +193,7 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // top shelf - snacks
         for (int i = 0; i < numSnacks; i++) {
-            Texture t = snackTexs.get(1);
+            Texture t = snackTexs.get(0);
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
                     slotX, slotY, ITEM_SIZE_SCALE, t));
             slotX += 0.09;
@@ -356,7 +356,7 @@ public class RestStopMode implements Screen, InputProcessor {
         float indRelY = 0.95f; // relative y location for item sprite
 
         // Snacks
-        Image mangoInd = new Image(indRelX,indRelY,IND_SCALING,snackTexs.get(1),GameCanvas.TextureOrigin.MIDDLE);
+        Image mangoInd = new Image(indRelX,indRelY,IND_SCALING,snackTexs.get(0),GameCanvas.TextureOrigin.MIDDLE);
         mangoInd.draw(canvas);
 
         // Snack text
@@ -473,42 +473,23 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return whether the input was processed (whether to hand the event to other listeners)
      */
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
-
         if (readyStatus == BUTTON_UP) {
             return true;
         }
 
-        // CHECK IF THINGS ARE PRESSED
-        // Flip screenY to match graphics coordinates
-        screenY = (int)SCREEN_DIMENSIONS.y-screenY;
-
         // Check if ready button was pressed
-        // coordinates of ready button bottom center
-        // TODO: FIX FOR SMALLER RESOLUTIONS
-        float halfReadyWidth = readyButtonTex.getWidth()*READY_BUTTON_SCALING.x*0.5f;
-        float halfReadyHeight = readyButtonTex.getHeight()*READY_BUTTON_SCALING.y*0.5f;
-        float readyMX = SCREEN_DIMENSIONS.x*READY_BUTTON_REL.x + halfReadyWidth;
-        float readyMY = SCREEN_DIMENSIONS.y*READY_BUTTON_REL.y + halfReadyHeight;
-
-        // If clicking on ready button, set to BUTTON_DOWN
-        if (Math.abs(screenX - readyMX) < halfReadyWidth && Math.abs(screenY - readyMY) < halfReadyHeight) {
+        Vector2 mousePos = new Vector2(screenX, screenY);
+        if (readyButton.inArea(mousePos)) {
             readyStatus = BUTTON_DOWN;
         }
 
         // If clicking on an item, change click status to button down
         for (RestStopItem i : items) {
-            // coordinates of center of item
-            float halfItemWidth = i.texture.getWidth()*ITEM_SIZE_SCALE*0.5f;
-            float halfItemHeight = i.texture.getHeight()*ITEM_SIZE_SCALE*0.5f;
-            float mx = i.position.x*SCREEN_DIMENSIONS.x + halfItemWidth;
-            float my = i.position.y*SCREEN_DIMENSIONS.y + halfItemHeight;
-
-            if (Math.abs(screenX - mx) < halfItemHeight&& Math.abs(screenY - my) < halfItemHeight) {
+            if (i.inArea(mousePos)) {
                 i.clickStatus = BUTTON_DOWN;
             }
 
         }
-
         return false;
     }
 

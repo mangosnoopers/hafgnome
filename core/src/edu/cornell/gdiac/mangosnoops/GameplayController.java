@@ -887,7 +887,7 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						if(!dvdPlayer.playDvd("GO HOME COUNTRY GNOME", 1000)) {
+						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
 							inventory.cancelTake();
 						}
 					} else if (inventory.inArea(droppedPos)){
