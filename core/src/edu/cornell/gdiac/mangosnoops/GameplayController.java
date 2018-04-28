@@ -408,7 +408,7 @@ public class GameplayController {
 		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
 	}
 
-	private Texture createTexture(AssetManager manager, String file) {
+	protected Texture createTexture(AssetManager manager, String file) {
 		if (manager.isLoaded(file)) {
 			Texture texture = manager.get(file, Texture.class);
 			texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -881,6 +881,7 @@ public class GameplayController {
 	}
 
 	public void draw(GameCanvas canvas) {
+
 		//Gnomez
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
