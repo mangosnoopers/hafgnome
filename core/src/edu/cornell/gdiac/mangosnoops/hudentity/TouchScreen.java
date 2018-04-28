@@ -68,7 +68,7 @@ public class TouchScreen {
         //Draw screens
         switch(currScreen) {
             case GPS:
-                gps.draw(canvas);
+                gps.draw(canvas, displayFont);
                 break;
             case RADIO:
                 radio.draw(canvas, displayFont);

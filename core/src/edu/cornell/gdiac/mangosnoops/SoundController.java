@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 
 public class SoundController {
-
-    Array<Music> music;
+    /** All played music */
+    private Array<Music> music;
 
     /**
      * Object Constructor

@@ -19,6 +19,6 @@ public class GPS extends Image {
 
     }
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
-        canvas.drawTextCenterOrigin("You haven't bought a GPS yet.", displayFont, 0.85f, 0.24f);
+        canvas.drawTextCenterOrigin("Gnomes may be a' comin.", displayFont, 0.85f, 0.24f);
     }
 }
