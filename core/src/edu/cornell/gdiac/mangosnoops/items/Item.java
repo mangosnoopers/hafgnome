@@ -11,7 +11,7 @@ public class Item extends Image {
 
     /** An enum for item types */
     public enum ItemType {
-        DVD, SNACK
+        DVD, SNACK, BOOK
     }
 
     /**
@@ -38,6 +38,9 @@ public class Item extends Image {
     public Texture getTexture() {
         return texture;
     }
+
+    /** Return this item's name */
+    public String getName() { return name; }
 
     @Override
     /** Print the item's type */

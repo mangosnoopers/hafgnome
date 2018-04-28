@@ -105,6 +105,9 @@ public class GameplayController {
 	private static final String CHIPS = "chips";
 	private static final String GNOME_COUNTRY = "Gnome Country for Old Men";
 	private static final String SILENCE_GNOMES = "Silence of the Gnomes";
+	private static final String GNOME_STARS = "The Gnome in Our Stars";
+	private static final String TEST_PREP = "Test Prep";
+	private static final String SCI_FI = "Sci Fi";
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -154,6 +157,9 @@ public class GameplayController {
 	private static final String SILENCE_DVD_FILE = "images/Items/Silence of the Gnomes.png";
 	private static final String CHIPS_FILE = "images/Items/chips.png";
 	private static final String MANGO_FILE = "images/Items/mango.png";
+	private static final String GNOME_STARS_FILE = "images/Items/The Gnome in Our Stars.png";
+	private static final String TEST_PREP_FILE = "images/Items/Test Prep.png";
+	private static final String SCI_FI_FILE = "images/Items/Sci Fi.png";
 	/** Sun effect that will be overlayed */
 	private static final String SUN_FILE = "images/sun_1.jpg";
 	private static final String SUN2_FILE = "images/sun_2.jpg";
@@ -289,6 +295,12 @@ public class GameplayController {
 		assets.add(NED_CRITICAL_FILE);
 		manager.load(NED_SLEEP_FILE, Texture.class);
 		assets.add(NED_SLEEP_FILE);
+		manager.load(GNOME_STARS_FILE,Texture.class);
+		assets.add(GNOME_STARS_FILE);
+		manager.load(TEST_PREP_FILE,Texture.class);
+		assets.add(TEST_PREP_FILE);
+		manager.load(SCI_FI_FILE,Texture.class);
+		assets.add(SCI_FI_FILE);
 		manager.load(GNOMECOUNTRY_DVD_FILE,Texture.class);
 		assets.add(GNOMECOUNTRY_DVD_FILE);
 		manager.load(SILENCE_DVD_FILE,Texture.class);
@@ -421,6 +433,9 @@ public class GameplayController {
 		itemTextures.put(GNOME_COUNTRY, new Texture(GNOMECOUNTRY_DVD_FILE));
 		itemTextures.put(CHIPS, new Texture(CHIPS_FILE));
 		itemTextures.put(MANGO, new Texture(MANGO_FILE));
+		itemTextures.put(GNOME_STARS, new Texture(GNOME_STARS_FILE));
+		itemTextures.put(TEST_PREP, new Texture(TEST_PREP_FILE));
+		itemTextures.put(SCI_FI, new Texture(SCI_FI_FILE));
 	}
 
 	/**
@@ -728,7 +743,7 @@ public class GameplayController {
 			vroomStick.update(new Vector2(in), dr.y);
 			radio.update(new Vector2(in), dr.x);
 			horn.update(new Vector2(in), delta);
-			inventory.update(new Vector2(in), mousePressed);
+			inventory.update(new Vector2(in));
 			visor.update(new Vector2(in), input.isPrevMousePressed());
 
 		}
@@ -736,7 +751,7 @@ public class GameplayController {
 			wheel.update(null, dr.x, input.isTurnPressed());
 			vroomStick.update(null, dr.y);
 			radio.update(null, dr.x);
-			inventory.update(null, mousePressed);
+			inventory.update(null);
 		}
 		resolveItemDrop(input);
 		rearviewEnemy.update(delta*0.0004f);

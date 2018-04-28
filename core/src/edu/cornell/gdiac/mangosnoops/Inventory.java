@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Inventory {
@@ -19,30 +21,32 @@ public class Inventory {
     private static Vector2 itemInHandPosition;
     private Slot lastSlotTakenFromState;
     private Slot lastSlotTakenFrom;
-    /** All of the slots in the inventory */
-    private Array<Slot> slots;
-    /** Dimensions of the slot */
-    private Vector2 slotsDimensions;
-    /** Offset between each item drawn within a slot */
-    private float itemOffset = 0.01f;
 
     /** The filepath to the JSON containing all item data */
     private static final String FILE = "items.json";
-    /** A JSON array of all the items */
+    /** A JSON array of all the item data */
     private JSONArray items;
     /** A mapping of item names to textures */
     private ObjectMap<String,Texture> textures;
+    /** All of the slots in the inventory */
+    private Array<Slot> slots;
 
     /** Constants for drawing inventory */
-    private static final float X_LEFT = 0.4756f;
     private static final float Y_BOTTOM = 0.0366f;
     private static final float SLOT_WIDTH = 0.146f;
     private static final float SLOT_HEIGHT = 0.15f;
-    private static final float RELSCA = 0.0f;
-    private static final float CB = 0.0f;
     private static final int NUM_SLOTS = 2;
 
     /** Constants for drawing items */
+    /** The relative y-coordinate of the snack slot */
+    private static final float SNACK_SLOT_Y = Y_BOTTOM + SLOT_HEIGHT;
+    /** The relative y-coordinate of the DVD/book slot */
+    private static final float DVDBOOK_SLOT_Y = Y_BOTTOM;
+    /** The relative x-coordinate of the leftmost item of a slot */
+    private static final float SLOT_LEFTMOST_X = 0.4756f;
+    /** Offset between each item drawn within a slot */
+    private static final float ITEM_OFFSET = 0.05f;
+    /** Relative scales of items */
     private static final float snackRelSca = 0.135f;
     private static final float bookRelSca = 0.12f;
     private static final float dvdRelSca = 0.12f;
@@ -52,33 +56,50 @@ public class Inventory {
     private static final String CHIPS = "chips";
     private static final String GNOME_COUNTRY = "Gnome Country for Old Men";
     private static final String SILENCE_GNOMES = "Silence of the Gnomes";
+    private static final String GNOME_STARS = "The Gnome in Our Stars";
+    private static final String TEST_PREP = "Test Prep";
+    private static final String SCI_FI = "Sci Fi";
 
-    /** The snack slot */
+    /** The snack slot and its index in the slot array */
     private Slot snackSlot;
-    /** The DVD/book slot */
+    private static final int SNACK_SLOT_IDX = 0;
+    /** The DVD/book slot and its index in the slot array */
     private Slot dvdBookSlot;
+    private static final int DVDBOOK_SLOT_IDX = 1;
 
     /** Create an empty inventory with a constant number of slots. */
     public Inventory(ObjectMap<String,Texture> ts) {
+        // read the inventory data from the JSON
+        readJSON();
+        textures = ts;
+
+        // initialize the two slots
+        dvdBookSlot = new Slot();
+        snackSlot = new Slot();
+
+        // add slots to the slot array
+        slots = new Array<Slot>(NUM_SLOTS);
+        slots.add(snackSlot); slots.add(dvdBookSlot);
+    }
+
+    /** Create an inventory based on a given array of slots. */
+    public Inventory(ObjectMap<String,Texture> ts, Array<Slot> s) {
+        readJSON();
+        textures = ts;
+        slots = s;
+    }
+
+    /** Read data from the JSON file containing all item information. */
+    public void readJSON() {
         try {
-            // read the inventory data from the JSON
             Scanner scanner = new Scanner(new File(FILE));
             JSONObject json = new JSONObject(scanner.useDelimiter("\\A").next());
             scanner.close();
             items = json.getJSONArray("items");
-
-            textures = ts;
-            slotsDimensions = new Vector2(SLOT_WIDTH, SLOT_HEIGHT);
-
-            // initialize the two slots, then add them to the slots array
-            dvdBookSlot = new Slot(0, X_LEFT, Y_BOTTOM, SLOT_WIDTH, SLOT_HEIGHT);
-            snackSlot = new Slot(1, X_LEFT, Y_BOTTOM + SLOT_HEIGHT, SLOT_WIDTH, SLOT_HEIGHT);
-            slots = new Array<Slot>(NUM_SLOTS);
-            slots.add(snackSlot);
-            slots.add(dvdBookSlot);
-        } catch (Exception e) {
-            System.out.println("Error in parsing the JSON item data");
+        } catch (IOException e) {
+            System.out.println("Error parsing item JSON");
         }
+
     }
 
     /** Empties the inventory. */
@@ -90,9 +111,13 @@ public class Inventory {
         slots = new Array<Slot>(slots.size);
     }
 
-    /** TODO: Return a copy of this inventory. */
+    /** Return a copy of this inventory. */
     public Inventory copy() {
-        return new Inventory(textures);
+        Array<Slot> newSlots = new Array<Slot>();
+        for (Slot s : slots) {
+            newSlots.add(s.copy());
+        }
+        return new Inventory(textures, newSlots);
     }
 
     /**
@@ -101,6 +126,7 @@ public class Inventory {
      */
     public void addSnack(String n) {
         Snack s = new Snack(0,0,0, textures.get(n), Item.ItemType.SNACK, n);
+        snackSlot.addItem(s);
     }
 
     /**
@@ -112,6 +138,7 @@ public class Inventory {
         Movie m = new Movie(0,0,0,
                             textures.get(n), Item.ItemType.DVD, n,
                             jsonM.getInt("duration"));
+        dvdBookSlot.addItem(m);
     }
 
     /**
@@ -143,42 +170,34 @@ public class Inventory {
 
     /////
 
-    /** Loads an array of slots into this inventory. */
-    public void load(Array<Slot> inv){
-        // If the given number of slots is fewer than inventory size, pad with nulls
-        if(inv.size < slots.size){
-            for(int i=0; i<(slots.size-inv.size); i++){
-                inv.add(null);
-            }
-        }
-        // If inventory is smaller than number of given slots, truncate
-        if(inv.size > slots.size){
-            for(int i=0; i<(inv.size-slots.size); i++){
-                inv.pop();
-            }
-        }
-        slots = inv;
-    }
-
-    /** Checks if user's input is in area of any of the slots */
-    public boolean inArea(Vector2 in){
+    /**
+     * Checks if user's input is in area of any of the slots
+     * @param in the location of the user's click
+     */
+    public boolean inArea(Vector2 in) {
         return (slotInArea(in) != null);
     }
 
-    /** Check if user's input is in area of any of the slots */
+    /**
+     * Check if user's input is in area of any of the slots
+     * @param in the location of the user's click
+     */
     public Slot slotInArea(Vector2 in){
         for (Slot s: slots){
-            if(s.inHitbox(new Vector2(in.x,c.getHeight()-in.y))){
+            if(s.inHitbox(new Vector2(in.x, Gdx.graphics.getHeight()-in.y))){
                 return s;
                 }
             }
         return null;
     }
 
-    public void update(Vector2 in, boolean mousePressed){
+    public void update(Vector2 in){
+        float cw = Gdx.graphics.getWidth();  // canvas width
+        float ch = Gdx.graphics.getHeight(); // canvas height
+
         for(Slot s : slots) {
-            s.realHitbox.setPosition(s.getHitbox().getX() * c.getWidth(), s.getHitbox().getY() * c.getHeight());
-            s.realHitbox.setSize(s.getHitbox().getWidth() * c.getWidth(),s.getHitbox().getHeight() * c.getHeight());
+            s.realHitbox.setPosition(s.getHitbox().getX() * cw, s.getHitbox().getY() * ch);
+            s.realHitbox.setSize(s.getHitbox().getWidth() * cw,s.getHitbox().getHeight() * ch);
         }
 
         if (in != null) {
@@ -186,7 +205,7 @@ public class Inventory {
                 itemInHand = take(slotInArea(in));
             }
             if (itemInHand != null) {
-                itemInHandPosition = new Vector2(in.x, c.getHeight() - in.y);
+                itemInHandPosition = new Vector2(in.x, ch - in.y);
             }
         }
 
@@ -219,8 +238,12 @@ public class Inventory {
 
     public static void drawItemInHand(GameCanvas canvas){
         if(itemInHand != null && itemInHand.texture!=null) {
-            canvas.draw(itemInHand.getTexture(), Color.WHITE, itemInHand.getTexture().getWidth()*0.5f, itemInHand.getTexture().getHeight()*0.5f,
-                    itemInHandPosition.x,itemInHandPosition.y,0,itemInHand.relativeScale*c.getHeight(), itemInHand.relativeScale*c.getHeight());
+            canvas.draw(itemInHand.getTexture(), Color.WHITE,
+                    itemInHand.getTexture().getWidth()*0.5f,
+                    itemInHand.getTexture().getHeight()*0.5f,
+                    itemInHandPosition.x,itemInHandPosition.y,0,
+                    itemInHand.relativeScale*Gdx.graphics.getHeight(),
+                    itemInHand.relativeScale*Gdx.graphics.getHeight());
         }
     }
 
@@ -278,73 +301,79 @@ public class Inventory {
     }
 
     // SLOT INNER CLASS
-    private class Slot{
-        private int invPos;
-        private Item slotItem;
+    private class Slot {
+        /** An array of item objects in this slot */
+        private Array<Item> items;
+        /** The number of items in this slot */
         private int amount;
-        private Rectangle hitbox;
-        private Rectangle realHitbox;
 
-        public Slot(int invPos, float x_left, float y_bottom, float width, float height){
-            this.invPos = invPos;
-            this.slotItem = null;
-            this.amount = 0;
-            hitbox = new Rectangle(x_left,y_bottom,width,height);
-            realHitbox = new Rectangle(x_left*c.getWidth(),y_bottom*c.getHeight(),width*c.getWidth(),height*c.getHeight());
+        /**
+         * Create an empty slot.
+         */
+        private Slot() {
+            items = new Array<Item>();
+            amount = 0;
         }
 
-        public Slot(int invPos, float x_left, float y_bottom, float width, float height, Item.ItemType slotItem, int amount){
-            this.invPos = invPos;
-            this.slotItem = new Item(slotItem);
-            this.amount = amount;
-            hitbox = new Rectangle(x_left,y_bottom,width,height);
-            realHitbox = new Rectangle(x_left*c.getWidth(),y_bottom*c.getHeight(),width*c.getWidth(),height*c.getHeight());
+        /**
+         * Create a slot from an array of items.
+         * @param i an array of items
+         */
+        private Slot(Array<Item> i) {
+            items = i;
+            amount = i.size;
         }
 
-        public Slot (Slot s){
-            this.invPos = s.invPos;
-            this.slotItem = s.slotItem;
-            this.amount = s.amount;
-            this.hitbox = s.hitbox;
-            this.realHitbox = s.realHitbox;
+        /**
+         * Get the item in the slot based on where the user clicked.
+         * @param click the location of the user's click
+         * @returns the item if the user clicked on one, null otherwise
+         */
+        private Item getItemAt(Vector2 click) {
+            for (Item i : items) {
+                if (i.inArea(click)) {
+                    return i;
+                }
+            }
+
+            // click was not on any item in this slot
+            return null;
         }
 
-        public Slot(Array<Slot> slots, Inventory inv, Item.ItemType slotItem, int amount){
-            this.invPos = slots.size;
-            this.slotItem = new Item(slotItem);
-            this.amount = amount;
-            this.hitbox = new Rectangle(inv.position.x, inv.position.y+invPos*inv.slotsDimensions.y,
-                                        inv.slotsDimensions.x, inv.slotsDimensions.y);
-            this.realHitbox = new Rectangle(hitbox.getX()*c.getWidth(),hitbox.getY()*c.getHeight(),
-                                            hitbox.getWidth()*c.getWidth(),hitbox.getHeight()*c.getHeight());
+        /**
+         * Adds an item with the given name to this slot.
+         * @param name the item name
+         */
+        private void addItem(String name) {
+
         }
 
-        private boolean inHitbox( Vector2 in){
-            return realHitbox.contains(in);
+        /**
+         * Adds an item to this slot.
+         * @param i the item
+         */
+        private void addItem(Item i) {
+
         }
 
-        public Item getSlotItem(){
-            return slotItem;
+        /**
+         * Takes an item out of this slot.
+         */
+        private void removeItem() {
+
         }
 
-        public Rectangle getHitbox() {
-            return hitbox;
+        /**
+         * Return a copy of this slot.
+         */
+        private Slot copy() {
+            Slot s = new Slot();
+            for (Item i : items) {
+                s.addItem(new Item(i.position.x, i.position.y, i.relativeScale, i.texture,
+                        i.getItemType(), i.getName()));
+            }
+            return s;
         }
-
-        public Rectangle getRealHitbox() {
-            return realHitbox;
-        }
-
-        public void setRealHitbox(Rectangle rhitbox) {
-            this.realHitbox = rhitbox;
-        }
-
-        public String toString(){
-            return ("Slot #"+invPos) ;
-        }
-
-        /** Increment the amount by i */
-        public void incAmount(int i) { amount += i; }
     }
 
 }

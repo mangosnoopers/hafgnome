@@ -446,10 +446,12 @@ public class RestStopMode implements Screen, InputProcessor {
                     if (i.toggleState == SELECTED) {
                         switch (i.getItemType()) {
                             case SNACK:
-                                playerInv.getSnackSlot().incAmount(1);
+                                // TODO
+//                                playerInv.getSnackSlot().incAmount(1);
                                 break;
                             case DVD:
-                                playerInv.getMovieSlot().incAmount(1);
+                                // TODO
+//                                playerInv.getMovieSlot().incAmount(1);
                                 break;
                             // TODO - book case (rn books are snacks)
                             default:

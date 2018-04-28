@@ -21,5 +21,23 @@
       "type": "movie",
       "image": "images/Items/Silence of the Gnomes.png",
       "duration": 500
+    },
+    {
+      "name": "The Gnome in Our Stars",
+      "type": "book",
+      "image": "images/Items/The Gnome in Our Stars",
+      "likedBy": "nosh"
+    },
+    {
+      "name": "Test Prep",
+      "type": "book",
+      "image": "images/Items/Test Prep.png",
+      "likedBy": "ned"
+    },
+    {
+      "name": "Sci Fi",
+      "type": "book",
+      "image": "images/Items/Sci Fi.png",
+      "likedBy": "nosh"
     }
 }
