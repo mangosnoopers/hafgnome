@@ -446,7 +446,6 @@ public class GameplayController {
 	 */
 	public GameplayController(LevelObject level, GameCanvas canvas) {
 		this.level = level;
-        radio = new Radio(radioknobTexture, level.getSongs());
 		enemiez = new Array<Enemy>();
 		events = new Array<Event>();
 		yonda = new Car();
@@ -567,7 +566,7 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		gps = new GPS();
-		radio = new Radio(radioknobTexture, level.getSongs());
+		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
 		dvdPlayer = new DvdPlayer();
 		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
 //		hudObjects = new ObjectSet<Image>();
@@ -583,7 +582,6 @@ public class GameplayController {
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
-
 		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
 		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
@@ -891,7 +889,7 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						if(!dvdPlayer.playDvd("GO HOME COUNTRY GNOME", 1000)) {
+						if(!dvdPlayer.playDvd("GO HOME COUNTRY GOME", 1000)) {
 							inventory.cancelTake();
 						}
 					} else if (inventory.inArea(droppedPos)){

@@ -432,10 +432,15 @@ public class GameMode implements Screen {
 
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if (exitToRestStop && listener != null) {
-				soundController.reset();
+//				gameState = GameState.OVER;
 				listener.exitScreen(this, 0);
 				active = false;
 			}
+
+			// This is used to return back to GDXRoot - can help to transition to diff screens
+//			if (inputController.didExit() && listener != null) {
+//				listener.exitScreen(this, 0);
+//			}
 		}
 	}
 
