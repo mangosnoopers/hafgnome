@@ -49,7 +49,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private StartMenuMode start;
 
 	// LEVEL FILES TODO implement moving to next level
-	private static final String[] LEVELS = new String[]{"test_level0.xlsx", "test_level1.xlsx"};
+	private static final String[] LEVELS = new String[]{"tutorial", "test_level0.xlsx", "test_level1.xlsx"};
 	private static int currLevel;
 
 	/**
