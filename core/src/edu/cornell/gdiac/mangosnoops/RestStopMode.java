@@ -186,41 +186,39 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     private void generateItems() {
         // starting position - top left slot of the shelf
-        float slotX = 0.3f;
-        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
-
-        // random generator for which item texture to use
-        Random rand = new Random();
+        float slotX = 0.35f;
+        float slotY = 0.66f;
+//        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
 
         // top shelf - snacks
         for (int i = 0; i < numSnacks; i++) {
-            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
+            Texture t = snackTexs.get(1);
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
                     slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
+            slotX += 0.09;
         }
 
-        slotX = 0.3f;
-        slotY = (shelfTex.getHeight() * 0.36f) / canvas.getHeight();
+        slotX = 0.35f;
+        slotY = 0.36f;
 
-        // middle shelf - books
-        for (int i = 0; i < numBooks; i++) {
-            // TODO change to books
-            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
-                    slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
-        }
+//        // middle shelf - books
+//        for (int i = 0; i < numBooks; i++) {
+//            // TODO change to books
+//            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
+//            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
+//                    slotX, slotY, ITEM_SIZE_SCALE, t));
+//            slotX += (shelfTex.getWidth() / 6.0f) / canvas.getWidth();
+//        }
 
-        slotX = 0.3f;
-        slotY = (shelfTex.getHeight() * 0.16f) / canvas.getHeight();
+        slotX = 0.35f;
+        slotY = 0.23f;
 
         // bottom shelf - movies
-        for (int i = 0; i < numMovies; i++) {
-            Texture t = dvdTexs.get(rand.nextInt(dvdTexs.size));
+        for (int i = 0; i < numMovies + 1; i++) {
+            Texture t = dvdTexs.get(0);
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
                     slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
+            slotX += 0.09;
         }
     }
 
@@ -649,7 +647,7 @@ public class RestStopMode implements Screen, InputProcessor {
         private Color overlay;
 
         private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
-            super(x,y,relSca,tex);
+            super(x,y,relSca,tex,GameCanvas.TextureOrigin.MIDDLE);
             this.clickStatus = clickStatus;
             type = t;
             toggleState = UNSELECTED;
