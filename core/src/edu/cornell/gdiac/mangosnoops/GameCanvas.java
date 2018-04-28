@@ -774,7 +774,19 @@ public class GameCanvas {
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, layout, x, y+offset);
     }
-    
+
+    public void drawTextCenterOrigin(String text, BitmapFont font, float x, float y) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+
+		GlyphLayout layout = new GlyphLayout(font,text);
+		float xpos = x*getWidth() - (layout.width) / 2.0f;
+		float ypos = y*getHeight() + (layout.height) / 2.0f;
+		font.setColor(Color.WHITE);
+		font.draw(spriteBatch, layout, xpos, ypos);
+	}
 
 	/**
 	 * Enumeration of supported BlendStates.

@@ -37,6 +37,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final int BUTTON_UP = 2;
     /** Ready button is clicked when the player is ready to return to the road */
     private int readyStatus;
+    private Image readyButton;
 
     // ITEMS
     /** An array of the items at the rest stop */
@@ -91,10 +92,10 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Scaling of inventory items */
     private static final float ITEM_SIZE_SCALE = 0.12f;
     /** Relative coordinates and scaling of the ready button */
-    private static final float READY_BUTTON_SCALING = 0.13f;
-    private static final Vector2 READY_BUTTON_REL = new Vector2(0.92f,0.02f);
+    private static final Vector2 READY_BUTTON_SCALING = new Vector2(0.08f,0.08f);
+    private static final Vector2 READY_BUTTON_REL = new Vector2(0.93f,0.02f);
     /** Scaling for textures used to indicate # of items in inventory */
-    private static final float IND_SCALING = 0.12f;
+    private static final float IND_SCALING = 0.09f;
     /** Relative padding between each item in the indicator */
     private static final float IND_PADDING = 0.02f;
 
@@ -186,41 +187,39 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     private void generateItems() {
         // starting position - top left slot of the shelf
-        float slotX = 0.3f;
-        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
-
-        // random generator for which item texture to use
-        Random rand = new Random();
+        float slotX = 0.35f;
+        float slotY = 0.66f;
+//        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
 
         // top shelf - snacks
         for (int i = 0; i < numSnacks; i++) {
-            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
+            Texture t = snackTexs.get(1);
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
                     slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
+            slotX += 0.09;
         }
 
-        slotX = 0.3f;
-        slotY = (shelfTex.getHeight() * 0.36f) / canvas.getHeight();
+        slotX = 0.35f;
+        slotY = 0.36f;
 
-        // middle shelf - books
-        for (int i = 0; i < numBooks; i++) {
-            // TODO change to books
-            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
-                    slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
-        }
+//        // middle shelf - books
+//        for (int i = 0; i < numBooks; i++) {
+//            // TODO change to books
+//            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
+//            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
+//                    slotX, slotY, ITEM_SIZE_SCALE, t));
+//            slotX += (shelfTex.getWidth() / 6.0f) / canvas.getWidth();
+//        }
 
-        slotX = 0.3f;
-        slotY = (shelfTex.getHeight() * 0.16f) / canvas.getHeight();
+        slotX = 0.35f;
+        slotY = 0.23f;
 
         // bottom shelf - movies
-        for (int i = 0; i < numMovies; i++) {
-            Texture t = dvdTexs.get(rand.nextInt(dvdTexs.size));
+        for (int i = 0; i < numMovies + 1; i++) {
+            Texture t = dvdTexs.get(0);
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
                     slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
+            slotX += 0.09;
         }
     }
 
@@ -246,8 +245,9 @@ public class RestStopMode implements Screen, InputProcessor {
         // Load font
         loadFont();
 
-        // Create shelf image in middle of screen
+        // Create images
         shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
+        readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex);
 
         // Get item quantities for this rest stop and generate the items
         Random rand = new Random();
@@ -319,11 +319,12 @@ public class RestStopMode implements Screen, InputProcessor {
             if (readyStatus == BUTTON_DOWN) {
                 readyColor = Color.CHARTREUSE;
             }
-            canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * READY_BUTTON_REL.x,
-                    SCREEN_DIMENSIONS.y * READY_BUTTON_REL.y,
-                    readyButtonTex.getWidth() * READY_BUTTON_SCALING,
-                    readyButtonTex.getHeight() * READY_BUTTON_SCALING,
-                    readyColor);
+            readyButton.draw(canvas, readyColor);
+//            canvas.draw(readyButtonTex, SCREEN_DIMENSIONS.x * READY_BUTTON_REL.x,
+//                    SCREEN_DIMENSIONS.y * READY_BUTTON_REL.y,
+//                    SCREEN_DIMENSIONS.x * READY_BUTTON_SCALING.x,
+//                    SCREEN_DIMENSIONS.y * READY_BUTTON_SCALING.y,
+//                    readyColor);
 
             // Draw current inventory quantities
             drawPlayerInv();
@@ -350,39 +351,27 @@ public class RestStopMode implements Screen, InputProcessor {
 
     /** Draw the current inventory quantities */
     private void drawPlayerInv() {
-        float indRelX = 0.01f; // relative x location for item sprite
-        float textRelX = 0.06f; // relative x location for text
-        float indRelY = 0.97f; // relative y location for item sprite
-        float oyOff = 0.7f;
+        float indRelX = 0.03f; // relative x location for item sprite
+        float textRelX = 0.07f; // relative x location for text
+        float indRelY = 0.95f; // relative y location for item sprite
 
         // Snacks
-        Texture mango = snackTexs.get(1);
-        canvas.draw(mango,Color.WHITE, 0.0f, mango.getHeight() * oyOff,
-                SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
-                IND_SCALING, IND_SCALING);
+        Image mangoInd = new Image(indRelX,indRelY,IND_SCALING,snackTexs.get(1),GameCanvas.TextureOrigin.MIDDLE);
+        mangoInd.draw(canvas);
+
         // Snack text
         int totalNumSnacks = playerInv.getNumSnacks() + numSnacksSelected;
         canvas.drawText("x " + totalNumSnacks, displayFont,
                 SCREEN_DIMENSIONS.x*textRelX,SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
 
         // Books: TODO
-        Texture book = mango;
-//        Texture book = snackTexs.get(0);
-//        indRelY -= (mango.getHeight()*IND_SCALING)/SCREEN_DIMENSIONS.y + IND_PADDING;
-//        canvas.draw(book, Color.WHITE, 0.0f, book.getHeight() * oyOff,
-//                SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
-//                IND_SCALING, IND_SCALING);
-//        // Book text
-        //int totalNumBooks = playerInv.getNumBooks() + numBooksSelected;
-//        canvas.drawText("x " + totalNumBooks, displayFont,SCREEN_DIMENSIONS.x*textRelX,
-//                SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
+        Texture book = snackTexs.get(1);
 
         // Movies
-        Texture dvd = dvdTexs.get(0);
-        indRelY -= (book.getHeight()*IND_SCALING)/SCREEN_DIMENSIONS.y + IND_PADDING;
-        canvas.draw(dvd, Color.WHITE, 0.0f, dvd.getHeight() * oyOff,
-                SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
-                IND_SCALING, IND_SCALING);
+        indRelY = 0.85f;
+        Image dvdInd = new Image(indRelX,indRelY,IND_SCALING,dvdTexs.get(0), GameCanvas.TextureOrigin.MIDDLE);
+        dvdInd.draw(canvas);
+
         // Movie text
         int totalNumMovies = playerInv.getNumMovies() + numMoviesSelected;
         canvas.drawText("x " + totalNumMovies, displayFont,SCREEN_DIMENSIONS.x*textRelX,
@@ -444,6 +433,8 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param height The new height in pixels
      */
     public void resize (int width, int height) {
+        displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
+                height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
         SCREEN_DIMENSIONS = new Vector2(width,height);
     }
 
@@ -493,8 +484,9 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // Check if ready button was pressed
         // coordinates of ready button bottom center
-        float halfReadyWidth = readyButtonTex.getWidth()*READY_BUTTON_SCALING*0.5f;
-        float halfReadyHeight = readyButtonTex.getHeight()*READY_BUTTON_SCALING*0.5f;
+        // TODO: FIX FOR SMALLER RESOLUTIONS
+        float halfReadyWidth = readyButtonTex.getWidth()*READY_BUTTON_SCALING.x*0.5f;
+        float halfReadyHeight = readyButtonTex.getHeight()*READY_BUTTON_SCALING.y*0.5f;
         float readyMX = SCREEN_DIMENSIONS.x*READY_BUTTON_REL.x + halfReadyWidth;
         float readyMY = SCREEN_DIMENSIONS.y*READY_BUTTON_REL.y + halfReadyHeight;
 
@@ -649,7 +641,7 @@ public class RestStopMode implements Screen, InputProcessor {
         private Color overlay;
 
         private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
-            super(x,y,relSca,tex);
+            super(x,y,relSca,tex,GameCanvas.TextureOrigin.MIDDLE);
             this.clickStatus = clickStatus;
             type = t;
             toggleState = UNSELECTED;
