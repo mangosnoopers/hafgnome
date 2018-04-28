@@ -9,9 +9,15 @@ import edu.cornell.gdiac.mangosnoops.hudentity.FlashingImage;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 import edu.cornell.gdiac.mangosnoops.hudentity.RearviewEnemy;
 import edu.cornell.gdiac.mangosnoops.roadentity.Enemy;
+import edu.cornell.gdiac.mangosnoops.roadentity.Flamingo;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 import edu.cornell.gdiac.mangosnoops.roadentity.Road;
+import org.apache.poi.ss.formula.functions.T;
 
+/**
+ * This class controls the tutorial sequence. It makes the assumption
+ * that Enemies are destroyed when they collide with the player.
+ */
 public class TutorialController extends GameplayController {
 
     /** Texture files */
@@ -45,6 +51,7 @@ public class TutorialController extends GameplayController {
         LEARN_STEERING,
         LEARN_VROOMING,
         LEARN_NED_SNACK,
+        LEARN_HONK,
         DONE
     }
 
@@ -52,10 +59,16 @@ public class TutorialController extends GameplayController {
 
     /** Flags to indicate that one-time events have occurred */
     private boolean createdRearviewGnome = false;
+    private boolean createdFlamingos = false;
     private boolean madeNedMad = false;
 
     /** Gnome that appears until you dodge it */
     private Gnome gnome;
+    private Array<Flamingo> flamingos;
+
+    /** If an enemy makes it past this Y value without getting
+     *  destroyed, then it must have not hit the player. */
+    private float ENEMY_Y_THRESHOLD = -13f;
 
     public TutorialController(GameCanvas canvas) {
         super(canvas, 500, new Array<Enemy>(), new Array<Event>(), new ObjectMap<String, Radio.Genre>());
@@ -69,6 +82,7 @@ public class TutorialController extends GameplayController {
         tutMirror = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
         tutVroom = new FlashingImage(0.193f, 0.2f,0.3f, tutVroomTexture);
         tutHorn = new FlashingImage(0.12f, 0.12f, 0.17f, tutHornTexture);
+
         tutVisor = new FlashingImage(0.1f, 0.85f, 0.16f, tutVisorTexture);
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
 
@@ -76,8 +90,9 @@ public class TutorialController extends GameplayController {
         gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
         getEnemiez().add(gnome);
 
-        state = TutorialState.LEARN_STEERING;
+        flamingos = new Array<Flamingo>();
 
+        state = TutorialState.LEARN_STEERING;
 
     }
 
@@ -110,13 +125,62 @@ public class TutorialController extends GameplayController {
         tutInventoryTexture = createTexture(manager, TUT_INVENTORY_FILE);
     }
 
+    /**
+     * Create and initialize the flamingos. This should only happen once.
+     */
+    private void createFlamingos() {
+        flamingos.add(new Flamingo(-0.2f, 10));
+        flamingos.add(new Flamingo(0f, 10));
+        flamingos.add(new Flamingo(0.2f, 10));
+        for (Flamingo f : flamingos) {
+            f.setFilmStrip(flamingoTexture, FLAMINGO_FILMSTRIP_ROWS, FLAMINGO_FILMSTRIP_COLS);
+            getEnemiez().add(f);
+        }
+    }
+
+    /**
+     * Reset the Flamingos if and only if one of them
+     * got destroyed, which implies that one of them
+     * collided with the player.
+     */
+    private void resetFlamingos() {
+
+        boolean atLeastOneDestroyed = false;
+        for (Flamingo f : flamingos) {
+            atLeastOneDestroyed |= f.isDestroyed();
+        }
+
+        if (atLeastOneDestroyed) {
+            getEnemiez().clear();
+            for (Flamingo f : flamingos) {
+                f.setDestroyed(false);
+                getEnemiez().add(f);
+                f.setY(10);
+            }
+        }
+    }
+
+    /**
+     * @return whether or not the user made it past the flamingos
+     */
+    private boolean madeItPastFlamingos() {
+        boolean madeIt = true;
+        for (Flamingo f : flamingos) {
+            madeIt &= (f.getY() < ENEMY_Y_THRESHOLD && !f.isDestroyed());
+        }
+        return madeIt;
+
+    }
+
     public void resolveActions(InputController input, float delta) {
+
         super.resolveActions(input, delta);
 
         tutKeys.update(delta);
         tutVroom.update(delta);
         tutInventory.update(delta);
         tutMirror.update(delta);
+        tutHorn.update(delta);
 
         switch (state) {
             case LEARN_STEERING:
@@ -127,7 +191,7 @@ public class TutorialController extends GameplayController {
                     gnome.setY(10);
                 }
 
-                if (gnome.getY() < -13 && !gnome.isDestroyed()) {
+                if (gnome.getY() < ENEMY_Y_THRESHOLD && !gnome.isDestroyed()) {
                     gnome.setDestroyed(true);
                     tutKeys.setVisible(false);
                     state = TutorialState.LEARN_VROOMING;
@@ -142,17 +206,30 @@ public class TutorialController extends GameplayController {
 
                 if (!rearviewEnemy.exists()) {
                     tutVroom.setVisible(false);
-                    state = TutorialState.LEARN_NED_SNACK;
+                    state = TutorialState.LEARN_HONK;
                 }
+                break;
+            case LEARN_HONK:
+                tutHorn.setVisible(true);
+                if (!createdFlamingos) {
+                    createFlamingos();
+                    createdFlamingos = true;
+                }
+                if (madeItPastFlamingos()) {
+                    tutHorn.setVisible(false);
+                    state = TutorialState.LEARN_NED_SNACK;
+                } else {
+                    resetFlamingos();
+                }
+
                 break;
             case LEARN_NED_SNACK:
                 tutMirror.setVisible(true);
                 tutInventory.setVisible(true);
                 if (!madeNedMad) {
-                    getCar().getNed().setMood(Child.Mood.CRITICAL);
                     madeNedMad = true;
                 }
-                if (getCar().getNed().getCurrentMood() != Child.Mood.CRITICAL) {
+                if (getCar().getNed().getCurrentMood() == Child.Mood.HAPPY) {
                     tutMirror.setVisible(false);
                     tutInventory.setVisible(false);
                     state = TutorialState.DONE;

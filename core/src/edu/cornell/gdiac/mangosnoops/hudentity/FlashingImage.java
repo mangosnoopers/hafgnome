@@ -46,7 +46,6 @@ public class FlashingImage extends Image {
 
     public void update(float delta) {
         deltaSum += delta;
-        System.out.println(deltaSum);
         if (deltaSum > FLASHING_RATE) {
             deltaSum = 0;
             hidden = !hidden;
