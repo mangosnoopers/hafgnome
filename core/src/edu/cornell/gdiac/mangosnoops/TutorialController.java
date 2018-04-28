@@ -64,6 +64,7 @@ public class TutorialController extends GameplayController {
     private boolean createdRearviewGnome = false;
     private boolean createdFlamingos = false;
     private boolean madeNedMad = false;
+    private boolean finishedTutorial = false;
 
     /** Gnome that appears until you dodge it */
     private Gnome gnome;
@@ -184,6 +185,12 @@ public class TutorialController extends GameplayController {
 
         super.resolveActions(input, delta);
 
+        /** Make sure road is some arbitrarily far distance away
+         *  so the tutorial doesn't end */
+        if (!finishedTutorial) getRoad().setRoadExitY(500);
+
+        System.out.println(getRoad().getRoadExitY());
+
         tutKeys.update(delta);
         tutVroom.update(delta);
         tutInventory.update(delta);
@@ -247,6 +254,12 @@ public class TutorialController extends GameplayController {
                     state = TutorialState.DONE;
                 }
                 break;
+            case DONE:
+                if (!finishedTutorial) {
+                    finishedTutorial = true;
+                    getRoad().setRoadExitY(1);
+                }
+
         }
 
     }
