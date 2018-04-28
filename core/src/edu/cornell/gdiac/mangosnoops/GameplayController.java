@@ -93,12 +93,12 @@ public class GameplayController {
 	protected static final int GNOME_FILMSTRIP_COLS = 12;
 
 	/** The Flamingo FilmStrip information */
-	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
-	private static final int FLAMINGO_FILMSTRIP_COLS = 6;
-	private static final int FLAMINGO_STAND_START = 0;
-	private static final int FLAMINGO_STAND_END = 4;
-	private static final int FLAMINGO_FLY_START = 4;
-	private static final int FLAMINGO_FLY_END = 5;
+	protected static final int FLAMINGO_FILMSTRIP_ROWS = 1;
+	protected static final int FLAMINGO_FILMSTRIP_COLS = 6;
+	protected static final int FLAMINGO_STAND_START = 0;
+	protected static final int FLAMINGO_STAND_END = 4;
+	protected static final int FLAMINGO_FLY_START = 4;
+	protected static final int FLAMINGO_FLY_END = 5;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -185,7 +185,7 @@ public class GameplayController {
 	protected  Texture gnomeTexture;
 	protected  Texture rearviewGnomeTexture;
 	/** Texture for the flamingo */
-	private Texture flamingoTexture;
+	protected Texture flamingoTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
