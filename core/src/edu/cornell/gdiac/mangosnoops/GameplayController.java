@@ -56,16 +56,11 @@ public class GameplayController {
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
 	private Array<Enemy> enemiez;
-	/** An array of events for this level */
-	private Array<Event> events;
 	/** The next event to happen */
 	private int nextEvent;
-	/** Object containing all information about the current level. This includes
-	 *  everything specific to a level: the songs, enemies, events, etc. */
-	private LevelObject level;
 	/** Rearview enemy instance. The way it's handled right now, there is only
 	 *  one at a time. FIXME: could change that if necessary */
-	private RearviewEnemy rearviewEnemy;
+	protected RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 	private SATQuestions satQuestions;
@@ -74,8 +69,12 @@ public class GameplayController {
 	private Radio radio;
 	private DvdPlayer dvdPlayer;
 
+	/** An array of events for this level */
+	private Array<Event> events;
 	/** The Horn! */
 	private Horn horn;
+
+	private ObjectMap<String,Radio.Genre> songs;
 
 	private Image healthGauge;
 	private Image rearviewBackground;
@@ -90,8 +89,8 @@ public class GameplayController {
 
 	// FilmStrip information
 	/** The Gnome FilmStrip information */
-	private static final int GNOME_FILMSTRIP_ROWS = 1;
-	private static final int GNOME_FILMSTRIP_COLS = 12;
+	protected static final int GNOME_FILMSTRIP_ROWS = 1;
+	protected static final int GNOME_FILMSTRIP_COLS = 12;
 
 	/** The Flamingo FilmStrip information */
 	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
@@ -183,8 +182,8 @@ public class GameplayController {
 	/** Texture for the vroomstick */
 	private Texture vroomStickTexture;
 	/** Texture for the gnomes */
-	private Texture gnomeTexture;
-	private Texture rearviewGnomeTexture;
+	protected  Texture gnomeTexture;
+	protected  Texture rearviewGnomeTexture;
 	/** Texture for the flamingo */
 	private Texture flamingoTexture;
 	/** Texture for the radio knob */
@@ -430,7 +429,7 @@ public class GameplayController {
 		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
 	}
 
-	private Texture createTexture(AssetManager manager, String file) {
+	protected Texture createTexture(AssetManager manager, String file) {
 		if (manager.isLoaded(file)) {
 			Texture texture = manager.get(file, Texture.class);
 			texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -442,19 +441,20 @@ public class GameplayController {
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
-	 * @param level is the Level information
 	 */
-	public GameplayController(LevelObject level, GameCanvas canvas) {
-		this.level = level;
-        radio = new Radio(radioknobTexture, level.getSongs());
-		enemiez = new Array<Enemy>();
-		events = new Array<Event>();
+	public GameplayController(GameCanvas canvas, float endY,
+							  Array<Enemy> enemies,
+							  Array<Event> e,
+							  ObjectMap<String,Radio.Genre> s) {
+		songs = s;
+		enemiez = enemies;
 		yonda = new Car();
 		backing = new Array<Enemy>();
-		road = new Road(level.getLevelEndY());
+		road = new Road(endY);
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
+		events = e;
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
 		// Item textures
@@ -589,9 +589,6 @@ public class GameplayController {
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-        for(Enemy e: level.getEnemiez()){
-			enemiez.add(e);
-		}
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
             if (e.getType() == RoadObject.ObjectType.GNOME) {
@@ -605,7 +602,6 @@ public class GameplayController {
 				f.setEnemyHeight(0.1f);
 			}
 		}
-		events = level.getEvents();
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
@@ -624,7 +620,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(level.getEnemiez().size);
+		enemiez = new Array<Enemy>(enemiez.size);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -909,6 +905,7 @@ public class GameplayController {
 	}
 
 	public void draw(GameCanvas canvas) {
+
 		//Gnomez
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
