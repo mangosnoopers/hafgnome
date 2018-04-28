@@ -2,19 +2,19 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 
 public class SoundController {
 
-    /** Map between Station and its music file **/
-    private ObjectMap<Radio.Station, Music> stationToMusic;
+    Array<Music> music;
 
     /**
      * Object Constructor
      */
     public SoundController(){
-        stationToMusic = new ObjectMap<Radio.Station, Music>();
+        music = new Array<Music>();
     }
 
     /**
@@ -29,18 +29,13 @@ public class SoundController {
 
         if (lastStation != currentStation){
             if (lastStation != null) {
-                stopAudio(stationToMusic.get(lastStation));
-                stationToMusic.remove(lastStation);
+                lastStation.getAudio().pause();
             }
             if (currentStation != null) {
-                Music audio = Gdx.audio.newMusic(Gdx.files.internal(currentStation.getAudioFile()));
-                stationToMusic.put(currentStation, audio);
-                stationToMusic.get(currentStation).play();
-                stationToMusic.get(currentStation).setLooping(true);
+                currentStation.getAudio().play();
+                music.add(currentStation.getAudio());
             }
-            //r.getCurrentStation().playAudio();
         }
-        return;
     }
 
     /** Stops audio and disposes the file **/
@@ -59,16 +54,10 @@ public class SoundController {
 
     /** Rest method **/
     public void reset() {
-        if (stationToMusic != null && stationToMusic.size > 0) {
-            for (Radio.Station s : stationToMusic.keys()) {
-                if (stationToMusic.get(s).isPlaying()) {
-                    stopAudio(stationToMusic.get(s));
-                }
-            }
+        for(Music m : music) {
+            stopAudio(m);
         }
-        stationToMusic = new ObjectMap<Radio.Station, Music>();
     }
-
 
 }
 

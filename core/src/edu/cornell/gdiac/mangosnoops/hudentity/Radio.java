@@ -12,18 +12,17 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import edu.cornell.gdiac.mangosnoops.Image;
 
-import java.awt.*;
-import java.io.File;
-import java.util.List;
-
-public class Radio extends Image {
+public class Radio {
     /** Rotation speed */
     private static final float ROTATION_SPEED = 0.05f;
+
+    private Image knob;
+    private Image slider;
 
     /** Current angle of the radioknob */
     private float knobAng;
     /** List of available stations **/
-    private Array<Station> Stations;
+    private static Array<Station> stations;
     /** The last played station **/
     Station lastStation;
     /** The current playing station **/
@@ -37,39 +36,13 @@ public class Radio extends Image {
         POP, THUG, COMEDY, NONE
     }
 
-    /** TODO: delete */
-    private int clicks;
-
-    //TODO delete, this is only here to test until JSON parser is completed
-    private ObjectMap<String,String> testMap;
-    private void genTestMap(){
-        testMap = new ObjectMap<String, String>();
-        testMap.put("CREEPY", "bensound-creepy.mp3");
-        testMap.put("DANCE", "bensound-dance.mp3");
-        testMap.put("JAZZ", "bensound-jazzcomedy.mp3");
-    }
-
-
-    // TODO: shouldn't need this constructor?
-    public Radio(float x, float y, float relSize, float cb, Texture tex) {
-        super(x, y, relSize, cb, tex);
+    public Radio(Texture tex, ObjectMap<String,Genre> songs) {
+        knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Create Station list
-        Stations = new Array<Station>();
-
-        // TODO Take this out, it is only here for testing until JSON parser is complete
-        genTestMap();
-        updateStations(testMap);
-
-    }
-
-    public Radio(float x, float y, float relSize, float cb, Texture tex, ObjectMap<String,Genre> songs) {
-        super(x, y, relSize, cb, tex, GameCanvas.TextureOrigin.MIDDLE);
-
-        // Create Station list
-        Stations = new Array<Station>();
+        stations = new Array<Station>();
         for (String songname : songs.keys()) {
-            Stations.add(new Station(songs.get(songname), songname));
+            stations.add(new Station(songs.get(songname), songname));
         }
     }
 
@@ -77,13 +50,7 @@ public class Radio extends Image {
 
     public Station getCurrentStation(){ return currentStation; }
 
-    /**
-     * Return the current position of the radio.
-     * @return pos
-     */
-    public Vector2 getPos() {
-        return position;
-    }
+    public static Array<Station> getStations() { return stations; }
 
     /**
      * Return the current angle of the radio knob.
@@ -92,18 +59,16 @@ public class Radio extends Image {
     public float getknobAng() { return knobAng; }
 
     /**
-     * return name of the current playing station
      * @return current station name
      */
     public String getCurrentStationName() {
         if(currentStation != null) {
-            return currentStation.toString();
+            return currentStation.getStationName();
         }
         return "";
     }
 
     /**
-     * return genre of the current playing station
      * @return current station genre
      */
     public Genre getCurrentStationGenre(){
@@ -114,17 +79,27 @@ public class Radio extends Image {
     }
 
     /**
+     * @return current station name
+     */
+    public String getCurrentStationSong() {
+        if(currentStation != null) {
+            return currentStation.getAudioFile().substring(11,currentStation.getAudioFile().length()-4);
+        }
+        return "";
+    }
+
+    /**
      * Sets current list of songs for this radio, mp3 link format
      * (name in assets)
      * @param genreMP3Map
      */
     public void updateStations(ObjectMap<String,String> genreMP3Map){
-        if(Stations != null){
-            Stations.clear();
+        if(stations != null){
+            stations.clear();
         }
         for(String g : genreMP3Map.keys()){
             Station s = new Station(Genre.valueOf(g), genreMP3Map.get(g));
-            Stations.add(s);
+            stations.add(s);
         }
     }
 
@@ -141,11 +116,11 @@ public class Radio extends Image {
         }
         lastStation = currentStation;
         if (stationNumber > 10 && stationNumber < 100) {
-            currentStation = Stations.get(0);
+            currentStation = stations.get(0);
         } else if (stationNumber > 120 && stationNumber < 190) {
-            currentStation = Stations.get(1);
+            currentStation = stations.get(1);
         } else if (stationNumber > 220 && stationNumber < 300) {
-            currentStation = Stations.get(2);
+            currentStation = stations.get(2);
         } else {
             currentStation = null;
         }
@@ -156,12 +131,10 @@ public class Radio extends Image {
      * @param canvas
      */
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
-        if (texture == null) {
-            return;
-        }
-        super.draw(canvas, knobAng);
-        displayFont.setColor(Color.WHITE);
-        canvas.drawText(getCurrentStationName(), displayFont, 0.7f * canvas.getWidth(), 0.3f * canvas.getHeight());
+        knob.draw(canvas, knobAng);
+        displayFont.setColor(Color.FIREBRICK);
+        canvas.drawTextCenterOrigin(getCurrentStationName() + "\n", displayFont, 0.85f, 0.3f);
+        canvas.drawTextCenterOrigin("\n" + getCurrentStationSong(), displayFont, 0.85f, 0.3f);
     }
 
 
@@ -174,7 +147,7 @@ public class Radio extends Image {
     public void update(Vector2 in, float dx) {
         Vector2 src = new Vector2(0.0f,5.0f);
         //System.out.println("From update Radio: " + in);
-        if (in != null && inArea(in)) {
+        if (in != null && knob.inArea(in)) {
             knobAng -= (in.angle(src) * ROTATION_SPEED);
 
             if (knobAng <= -360.0f) {
@@ -185,17 +158,17 @@ public class Radio extends Image {
     }
 
     /**
-     * Inner Class for the individual stations of the radio
+     * Inner Class for the individual stations of the radio =========================================================
      *
      */
     public class Station{
         /** The name of this station **/
         private String name;
         /** The name of the file for the audio **/
-        private String audioFile;
+        private String audioFileName;
         /**Station genre **/
         private Genre genre;
-
+        private Music audio;
 
         /**
          * Class constructor. Sets name of song to name of file, minus its
@@ -204,10 +177,39 @@ public class Radio extends Image {
          * @param g the genre of the radio station
          */
         public Station(Genre g, String filename) {
-            name = filename.substring(11,filename.length()-4);
-            audioFile = filename;
+            switch(g) {
+                case CREEPY:
+                    name = "Creepy";
+                    break;
+                case DANCE:
+                    name = "Dance";
+                    break;
+                case ACTION:
+                    name = "Action";
+                    break;
+                case JAZZ:
+                    name = "Jazz";
+                    break;
+                case POP:
+                    name = "Pop";
+                    break;
+                case THUG:
+                    name = "Thug";
+                    break;
+                case COMEDY:
+                    name = "Comedy";
+                    break;
+                default:
+                    name = "NONE";
+                    break;
+            }
+            audioFileName = filename;
+            audio = Gdx.audio.newMusic(Gdx.files.internal(filename));
+            audio.setLooping(true);
             genre = g;
         }
+
+        public String getStationName() { return name; }
 
         /**
          * Returns genre of the station
@@ -219,16 +221,8 @@ public class Radio extends Image {
          * Returns a reference to the audio file string
          * @return reference to station's audiofile string
          */
-        public String getAudioFile(){ return audioFile; }
+        public String getAudioFile(){ return audioFileName; }
 
-        @Override
-        public String toString(){
-            return name;
-        }
-
-    }
-
-    public String toString(){
-        return "Radio";
+        public Music getAudio() { return audio; }
     }
 }

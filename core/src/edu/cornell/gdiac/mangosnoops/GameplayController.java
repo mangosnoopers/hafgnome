@@ -566,7 +566,7 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		gps = new GPS();
-		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
+		radio = new Radio(radioknobTexture, level.getSongs());
 		dvdPlayer = new DvdPlayer();
 		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
 //		hudObjects = new ObjectSet<Image>();
