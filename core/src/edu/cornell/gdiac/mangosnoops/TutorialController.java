@@ -28,6 +28,7 @@ public class TutorialController extends GameplayController {
     private static final String TUT_HORN_FILE = "images/Tutorial/tut_horn.png";
     private static final String TUT_VISOR_FILE = "images/Tutorial/tut_visor.png";
     private static final String TUT_INVENTORY_FILE = "images/Tutorial/tut_inventory.png";
+    private static final String TUT_ARROW = "images/Tutorial/arrow.png";
 
     /** Texture types */
     private Texture tutKeysTexture;
@@ -37,6 +38,7 @@ public class TutorialController extends GameplayController {
     private Texture tutHornTexture;
     private Texture tutVisorTexture;
     private Texture tutInventoryTexture;
+    private Texture arrowTexture;
 
     /** Images that will be flashed on the screen */
     private FlashingImage tutKeys;
@@ -46,6 +48,7 @@ public class TutorialController extends GameplayController {
     private FlashingImage tutHorn;
     private FlashingImage tutVisor;
     private FlashingImage tutInventory;
+    private FlashingImage arrow;
 
     private enum TutorialState {
         LEARN_STEERING,
@@ -86,6 +89,8 @@ public class TutorialController extends GameplayController {
         tutVisor = new FlashingImage(0.1f, 0.85f, 0.16f, tutVisorTexture);
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
 
+        arrow = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
+
         gnome = new Gnome(0, 10);
         gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
         getEnemiez().add(gnome);
@@ -112,6 +117,8 @@ public class TutorialController extends GameplayController {
         assets.add(TUT_VISOR_FILE);
         manager.load(TUT_INVENTORY_FILE, Texture.class);
         assets.add(TUT_INVENTORY_FILE);
+        manager.load(TUT_ARROW, Texture.class);
+        assets.add(TUT_ARROW);
     }
 
     public void loadContent(AssetManager manager) {
@@ -123,6 +130,7 @@ public class TutorialController extends GameplayController {
         tutHornTexture = createTexture(manager, TUT_HORN_FILE);
         tutVisorTexture = createTexture(manager, TUT_VISOR_FILE);
         tutInventoryTexture = createTexture(manager, TUT_INVENTORY_FILE);
+        arrowTexture = createTexture(manager, TUT_ARROW);
     }
 
     /**
@@ -181,6 +189,7 @@ public class TutorialController extends GameplayController {
         tutInventory.update(delta);
         tutMirror.update(delta);
         tutHorn.update(delta);
+        arrow.update(delta);
 
         switch (state) {
             case LEARN_STEERING:
@@ -226,12 +235,15 @@ public class TutorialController extends GameplayController {
             case LEARN_NED_SNACK:
                 tutMirror.setVisible(true);
                 tutInventory.setVisible(true);
+                arrow.setVisible(true);
                 if (!madeNedMad) {
+                    getCar().getNed().setMood(Child.Mood.CRITICAL);
                     madeNedMad = true;
                 }
                 if (getCar().getNed().getCurrentMood() == Child.Mood.HAPPY) {
                     tutMirror.setVisible(false);
                     tutInventory.setVisible(false);
+                    arrow.setVisible(false);
                     state = TutorialState.DONE;
                 }
                 break;
@@ -248,6 +260,7 @@ public class TutorialController extends GameplayController {
         tutHorn.draw(canvas);
         tutVisor.draw(canvas);
         tutInventory.draw(canvas);
+        arrow.draw(canvas, -35f);
 
     }
 

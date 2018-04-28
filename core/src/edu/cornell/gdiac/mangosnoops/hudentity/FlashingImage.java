@@ -52,7 +52,13 @@ public class FlashingImage extends Image {
         }
     }
 
+    @Override
     public void draw(GameCanvas canvas) {
         if (isVisibleToUser && !hidden) super.draw(canvas);
+    }
+
+    @Override
+    public void draw(GameCanvas canvas, float ang) {
+        if (isVisibleToUser && !hidden) super.draw(canvas, ang);
     }
 }
