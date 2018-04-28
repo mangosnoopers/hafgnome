@@ -107,6 +107,12 @@ public class Road extends RoadObject {
         exitTexture = t;
     }
 
+    public void setRoadExitY(float newEndY) {
+        exitY = newEndY;
+    }
+
+    public float getRoadExitY() { return exitY; }
+
     public Road(float endY) {
 
         // The exit will appear at the end of the level
