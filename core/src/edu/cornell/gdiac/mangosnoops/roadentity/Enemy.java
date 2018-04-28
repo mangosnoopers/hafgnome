@@ -130,9 +130,6 @@ public abstract class Enemy extends RoadObject{
         animeframe += animationSpeed;
 
         setY(getY()-currSpeed * enemySpeed * delta);
-        if (getY() < -12) {
-            setY(14);
-        }
 
         setSpeed(newSpeed);
     }
