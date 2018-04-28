@@ -6,40 +6,56 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import edu.cornell.gdiac.mangosnoops.items.*;
 
-import java.util.Random;
-
-public class Inventory extends Image {
-
+public class Inventory {
+    /** Stuff for taking items out of the inventory box */
     private static Item itemInHand;
-
     private static Vector2 itemInHandPosition;
-
     private Slot lastSlotTakenFromState;
-
     private Slot lastSlotTakenFrom;
-
+    /** All of the slots in the inventory */
     private Array<Slot> slots;
-
+    /** Dimensions of the slot */
     private Vector2 slotsDimensions;
-
+    /** Offset between each item drawn within a slot */
     private float itemOffset = 0.01f;
+    /** A mapping of item names to textures */
+    private ObjectMap<String,Texture> textures;
 
+    /** Constants for drawing inventory */
+    private static final float X_LEFT = 0.4756f;
+    private static final float Y_BOTTOM = 0.0366f;
+    private static final float SLOT_WIDTH = 0.146f;
+    private static final float SLOT_HEIGHT = 0.15f;
+    private static final float RELSCA = 0.0f;
+    private static final float CB = 0.0f;
+    private static final int NUM_SLOTS = 2;
 
-    public void setItemOffset(float f) { itemOffset = f; }
+    /** Constants for drawing items */
+    private static final float snackRelSca = 0.135f;
+    private static final float bookRelSca = 0.12f;
+    private static final float dvdRelSca = 0.12f;
 
-    public Inventory(float x_left, float y_bottom, float r, float cb, Texture t, float slotWidth, float slotHeight, int numSlots) {
-        super(x_left, y_bottom, r, cb, t);
-        slots = new Array<Slot>(numSlots);
-        slotsDimensions = new Vector2(slotWidth,slotHeight);
-        int temp = numSlots-1;
-        for (int i=numSlots; i > 0; i--) {
-           slots.add( new Slot(temp, x_left,y_bottom+(temp*slotHeight), slotWidth, slotHeight));
-           temp--;
-        }
+    /** The snack slot */
+    private Slot snackSlot;
+    /** The DVD/book slot */
+    private Slot dvdBookSlot;
+
+    /** Create an empty inventory with a constant number of slots. */
+    public Inventory(ObjectMap<String,Texture> ts) {
+        textures = ts;
+        slotsDimensions = new Vector2(SLOT_WIDTH, SLOT_HEIGHT);
+
+        // initialize the two slots, then add them to the slots array
+        dvdBookSlot = new Slot(0, X_LEFT, Y_BOTTOM, SLOT_WIDTH, SLOT_HEIGHT);
+        snackSlot = new Slot(1, X_LEFT, Y_BOTTOM+SLOT_HEIGHT, SLOT_WIDTH, SLOT_HEIGHT);
+        slots = new Array<Slot>(NUM_SLOTS);
+        slots.add(snackSlot); slots.add(dvdBookSlot);
     }
 
-    public void reset(){
+    /** Empties the inventory. */
+    public void reset() {
         itemInHand = null;
         itemInHandPosition = null;
         lastSlotTakenFromState = null;
@@ -47,13 +63,47 @@ public class Inventory extends Image {
         slots = new Array<Slot>(slots.size);
     }
 
+    /** TODO: Return a copy of this inventory. */
+    public Inventory copy() {
+        return new Inventory(textures);
+    }
+
+    /**
+     * Add an item to the snack slot.
+     * @param n the name of the item
+     */
+    public void addSnack(String n) {
+        Snack s = new Snack(0,0,0, textures.get(n), Item.ItemType.SNACK, n);
+    }
+
+    /**
+     * Add a movie to the DVD/book slot.
+     * @param n the name of the item
+     */
+    public void addMovie(String n) {
+        Movie m = new Movie(0,0,0,textures.get(n), Item.ItemType.DVD, n);
+
+    }
+
+    /**
+     * Add a book to the DVD/book slot.
+     * @param n the name of the item
+     */
+    public void addBook(String n) {
+        // TODO
+    }
+
+    /////
+
+    /** Loads an array of slots into this inventory. */
     public void load(Array<Slot> inv){
+        // If the given number of slots is fewer than inventory size, pad with nulls
         if(inv.size < slots.size){
             for(int i=0; i<(slots.size-inv.size); i++){
-//                inv.add(new Slot(inv, this, null, 0));
                 inv.add(null);
             }
         }
+        // If inventory is smaller than number of given slots, truncate
         if(inv.size > slots.size){
             for(int i=0; i<(inv.size-slots.size); i++){
                 inv.pop();
@@ -62,11 +112,12 @@ public class Inventory extends Image {
         slots = inv;
     }
 
-    @Override
+    /** Checks if user's input is in area of any of the slots */
     public boolean inArea(Vector2 in){
         return (slotInArea(in) != null);
     }
 
+    /** Check if user's input is in area of any of the slots */
     public Slot slotInArea(Vector2 in){
         for (Slot s: slots){
             if(s.inHitbox(new Vector2(in.x,c.getHeight()-in.y))){
@@ -76,16 +127,13 @@ public class Inventory extends Image {
         return null;
     }
 
-    public void setItemInHandPosition(Vector2 in){
-        itemInHandPosition = in;
-    }
-//    boolean prevMousePressed;
     public void update(Vector2 in, boolean mousePressed){
         for(Slot s : slots) {
             s.realHitbox.setPosition(s.getHitbox().getX() * c.getWidth(), s.getHitbox().getY() * c.getHeight());
             s.realHitbox.setSize(s.getHitbox().getWidth() * c.getWidth(),s.getHitbox().getHeight() * c.getHeight());
         }
-        if(in != null) {
+
+        if (in != null) {
             if (itemInHand == null && inArea(in)) {
                 itemInHand = take(slotInArea(in));
             }
@@ -93,13 +141,6 @@ public class Inventory extends Image {
                 itemInHandPosition = new Vector2(in.x, c.getHeight() - in.y);
             }
         }
-
-
-//        if( (itemInHand!=null)&& prevMousePressed && !mousePressed){
-//            //released mouse, check areas w/ this vector in (store, children, dvd player)
-//            cancelTake();
-//
-//        }
 
     }
 
@@ -111,14 +152,13 @@ public class Inventory extends Image {
         itemInHand = i;
     }
 
-    @Override
-    public void draw (GameCanvas canvas){
+    public void draw(GameCanvas canvas) {
         for(Slot s : slots){
             if(s != null && s.getSlotItem() != null &&s.getSlotItem().texture!=null){
                 float ix = s.getSlotItem().getTexture().getWidth()*0.5f; //center of item
                 float iy = s.getSlotItem().getTexture().getHeight()*0.5f;
                 float x = s.realHitbox.getX() + 0.5f*s.realHitbox.getWidth(); //centerOfSlot, already in screen dimensions
-                float y = s.realHitbox.getY() + 0.7f*s.realHitbox.getHeight() + currentShakeAmount;
+                float y = s.realHitbox.getY() + 0.7f*s.realHitbox.getHeight() ;
 
                 for(int i=0; i<s.amount; i++) {
                     canvas.draw(s.getSlotItem().getTexture(), Color.WHITE, ix, iy, x-itemOffset*c.getWidth()*i, y, 0,
@@ -128,6 +168,7 @@ public class Inventory extends Image {
             }
         }
     }
+
     public static void drawItemInHand(GameCanvas canvas){
         if(itemInHand != null && itemInHand.texture!=null) {
             canvas.draw(itemInHand.getTexture(), Color.WHITE, itemInHand.getTexture().getWidth()*0.5f, itemInHand.getTexture().getHeight()*0.5f,
@@ -135,8 +176,9 @@ public class Inventory extends Image {
         }
     }
 
-    /** Returns the item in this slot, removing 1 from its stored amount, if doing so depletes all items in the slot, the slot is
-     * made empty (null slotItem, amount of 0).
+    /**
+     * Returns the item in this slot, removing 1 from its stored amount, if doing
+     * so depletes all items in the slot, the slot is made empty (null slotItem, amount of 0).
      * Also saves state of slot previous to action, in case action is canceled.
      * @return slot's Item
      */
@@ -177,6 +219,7 @@ public class Inventory extends Image {
     public int getNumSnacks() { return slots.get(1).amount; }
     public int getNumMovies() { return slots.get(0).amount; }
 
+    /** Cancel the user's taking of an item. */
     public void cancelTake(){
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
         lastSlotTakenFrom.amount = lastSlotTakenFromState.amount;
@@ -186,8 +229,8 @@ public class Inventory extends Image {
         itemInHandPosition = null;
     }
 
-    public static class Slot{
-
+    // SLOT INNER CLASS
+    private class Slot{
         private int invPos;
         private Item slotItem;
         private int amount;
@@ -248,7 +291,6 @@ public class Inventory extends Image {
             this.realHitbox = rhitbox;
         }
 
-        @Override
         public String toString(){
             return ("Slot #"+invPos) ;
         }
@@ -257,84 +299,5 @@ public class Inventory extends Image {
         public void incAmount(int i) { amount += i; }
     }
 
-    public static class Item{
-
-        private ItemType itemType;
-
-        private Texture texture;
-
-        private float relativeScale;
-
-        private Vector2 position;
-
-        private static ObjectMap<ItemType, Array<Texture>> itemTextures;
-        private static ObjectMap<ItemType, Float> relativeScales;
-
-        public enum ItemType {
-            DVD, SNACK;
-
-        }
-
-        public Item (float x, float y,ItemType itemType){
-            position = new Vector2(x,y);
-            this.itemType = itemType;
-            if(itemType == null){
-                texture = null;
-                relativeScale = 0;
-            }
-            else{
-                Array<Texture> texs = itemTextures.get(itemType);
-                Random rand = new Random();
-                int idx = rand.nextInt(texs.size);
-                texture = texs.get(idx);
-                relativeScale = relativeScales.get(itemType);
-            }
-
-        }
-
-        public Item (ItemType itemType) {
-            position = null;
-            this.itemType = itemType;
-            if(itemType == null){
-                texture = null;
-                relativeScale = 0;
-            }
-            else{
-                Array<Texture> texs = itemTextures.get(itemType);
-                Random rand = new Random();
-                int idx = rand.nextInt(texs.size);
-                texture = texs.get(idx);
-                relativeScale = relativeScales.get(itemType);
-            }
-        }
-
-        public static void setTexturesAndScales(Array<Texture> dvds, float dvdScale,
-                                                Array<Texture> snacks, float snackScale){
-            itemTextures = new ObjectMap<ItemType, Array<Texture>>();
-            relativeScales = new ObjectMap<ItemType, Float>();
-            itemTextures.put(ItemType.DVD, dvds);
-            itemTextures.put(ItemType.SNACK, snacks);
-            // FIXME - assuming all items are the same size
-            relativeScales.put(ItemType.DVD, dvdScale/(itemTextures.get(ItemType.DVD).get(0).getHeight()));
-            relativeScales.put(ItemType.SNACK, snackScale/(itemTextures.get(ItemType.SNACK).get(0).getHeight()));
-        }
-
-        public ItemType getItemType() {
-            return itemType;
-        }
-
-        public Texture getTexture(){
-            return texture;
-        }
-
-        public void setRoadPosition(Vector2 roadPosition){
-            this.position = roadPosition;
-        }
-
-        @Override
-        public String toString() {
-            return itemType.toString();
-        }
-    }
 }
 

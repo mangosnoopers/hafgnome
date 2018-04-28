@@ -100,6 +100,12 @@ public class GameplayController {
 	private static final int FLAMINGO_FLY_START = 4;
 	private static final int FLAMINGO_FLY_END = 5;
 
+	/** Constants for item names */
+	private static final String MANGO = "mango";
+	private static final String CHIPS = "chips";
+	private static final String GNOME_COUNTRY = "Gnome Country for Old Men";
+	private static final String SILENCE_GNOMES = "Silence of the Gnomes";
+
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
@@ -143,11 +149,11 @@ public class GameplayController {
 	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
 	private static final String REARVIEW_COVER = "images/rearview_cover.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
-	/** The texture files for all Items **/
-	private static final String DVD0_FILE = "images/Items/dvd0.png";
-	private static final String DVD1_FILE = "images/Items/dvd1.png";
-	private static final String SNACK0_FILE = "images/Items/snack0.png";
-	private static final String SNACK1_FILE = "images/Items/snack1.png";
+	/** The texture files for all items **/
+	private static final String GNOMECOUNTRY_DVD_FILE = "images/Items/Gnome Country for Old Men.png";
+	private static final String SILENCE_DVD_FILE = "images/Items/Silence of the Gnomes.png";
+	private static final String CHIPS_FILE = "images/Items/chips.png";
+	private static final String MANGO_FILE = "images/Items/mango.png";
 	/** Sun effect that will be overlayed */
 	private static final String SUN_FILE = "images/sun_1.jpg";
 	private static final String SUN2_FILE = "images/sun_2.jpg";
@@ -196,9 +202,8 @@ public class GameplayController {
 	private FilmStrip ned_sad;
 	private FilmStrip ned_critical;
 	private FilmStrip ned_sleep;
-	/** Textures for items **/
-	private Array<Texture> dvdTextures;
-	private Array<Texture> snackTextures;
+	/** Mapping of item names to textures **/
+	private ObjectMap<String,Texture> itemTextures;
 	/** Textures for visor states */
 	private Texture visorOpen;
 	private Texture visorClosed;
@@ -235,15 +240,6 @@ public class GameplayController {
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
 	private Array<Enemy> backing;
-
-	// INVENTORY CONSTANTS
-	private static final float INV_X_LEFT = 0.4756f;
-	private static final float INV_Y_BOTTOM = 0.0366f;
-	private static final float INV_SLOT_WIDTH = 0.146f;
-	private static final float INV_SLOT_HEIGHT = 0.15f;
-	private static final int INV_RELSCA = 0;
-	private static final int INV_CB = 0;
-	private static final int INV_NUM_SLOTS = 2;
 
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
@@ -293,14 +289,14 @@ public class GameplayController {
 		assets.add(NED_CRITICAL_FILE);
 		manager.load(NED_SLEEP_FILE, Texture.class);
 		assets.add(NED_SLEEP_FILE);
-		manager.load(DVD0_FILE,Texture.class);
-		assets.add(DVD0_FILE);
-		manager.load(DVD1_FILE,Texture.class);
-		assets.add(DVD1_FILE);
-		manager.load(SNACK0_FILE,Texture.class);
-		assets.add(SNACK0_FILE);
-		manager.load(SNACK1_FILE,Texture.class);
-		assets.add(SNACK1_FILE);
+		manager.load(GNOMECOUNTRY_DVD_FILE,Texture.class);
+		assets.add(GNOMECOUNTRY_DVD_FILE);
+		manager.load(SILENCE_DVD_FILE,Texture.class);
+		assets.add(SILENCE_DVD_FILE);
+		manager.load(CHIPS_FILE,Texture.class);
+		assets.add(CHIPS_FILE);
+		manager.load(MANGO_FILE,Texture.class);
+		assets.add(MANGO_FILE);
 		manager.load(GRASS_FILE, Texture.class);
 		assets.add(GRASS_FILE);
 		manager.load(ROAD_FILE, Texture.class);
@@ -418,6 +414,15 @@ public class GameplayController {
 		return null;
 	}
 
+	/** Load the item textures and put them in their object mapping. */
+	private void loadItemTextures() {
+		itemTextures = new ObjectMap<String,Texture>();
+		itemTextures.put(SILENCE_GNOMES, new Texture(SILENCE_DVD_FILE));
+		itemTextures.put(GNOME_COUNTRY, new Texture(GNOMECOUNTRY_DVD_FILE));
+		itemTextures.put(CHIPS, new Texture(CHIPS_FILE));
+		itemTextures.put(MANGO, new Texture(MANGO_FILE));
+	}
+
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
@@ -435,31 +440,18 @@ public class GameplayController {
 		sunShine = false;
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
-		// Item textures
-		dvdTextures = new Array<Texture>();
-		dvdTextures.add(new Texture(DVD0_FILE));
-		dvdTextures.add(new Texture(DVD1_FILE));
-		snackTextures = new Array<Texture>();
-		snackTextures.add(new Texture(SNACK0_FILE));
-		snackTextures.add(new Texture(SNACK1_FILE));
+		loadItemTextures();
 
 		Image.updateScreenDimensions(canvas);
-		// create the default inventory
-		Inventory.Item.setTexturesAndScales(dvdTextures,0.12f,snackTextures,0.135f);
-		inventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
-					 INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
-		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
-		inventory.load(i);
+		// create the default inventory - 1 movie and 3 snacks
+		inventory = new Inventory(itemTextures);
+		inventory.addMovie(GNOME_COUNTRY);
+		for (int i = 0; i < 3; i++) {
+			inventory.addSnack(MANGO);
+		}
 
 		// create a copy of the default inventory
-		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
-							INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
-		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,1));
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,3));
-		initialInventory.load(iCopy);
+		initialInventory = inventory.copy();
 
 		satTextures = new HashMap<String, Texture>();
 	}
@@ -519,14 +511,7 @@ public class GameplayController {
 	/** Set the inventory and creates a copy of it */
 	public void setInventory(Inventory i) {
 		inventory = i;
-
-		// create a copy
-		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
-							INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
-		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,inventory.getNumMovies()));
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,inventory.getNumSnacks()));
-		initialInventory.load(iCopy);
+		initialInventory = inventory.copy();
 
 	}
 
@@ -606,15 +591,9 @@ public class GameplayController {
 		visor = null;
 		satQuestions.reset();
 
-		// reset inventory
+		// reset inventory and create a new copy
 		inventory = initialInventory;
-		// create a copy
-		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
-				INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
-		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,inventory.getNumMovies()));
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,inventory.getNumSnacks()));
-		initialInventory.load(iCopy);
+		initialInventory = inventory.copy();
 	}
 
 	/**

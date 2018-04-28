@@ -1,6 +1,8 @@
 {
-  "numCanTake": 3,
-  "numSnacks": 4,
-  "numBooks": 2,
-  "numMovies": 1
+  "numCanTake":3,
+  "numMango": 3,
+  "numChips": 2,
+  "numBooks": 0,
+  "numGnomeCountry": 0,
+  "numSilenceOfGnomes": 1
 }

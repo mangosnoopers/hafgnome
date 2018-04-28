@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import edu.cornell.gdiac.mangosnoops.items.Item;
 import edu.cornell.gdiac.util.ScreenListener;
 import org.json.JSONObject;
 
@@ -21,18 +23,17 @@ public class RestStopMode implements Screen, InputProcessor {
     private Array<String> assets;
     private static final String BACKGROUND_FILE = "images/restStopAssets/background.png";
     private static final String SHELF_FILE = "images/restStopAssets/shelf.png";
-    private static final String DVD0_FILE = "images/Items/dvd0.png";
-    private static final String DVD1_FILE = "images/Items/dvd1.png";
-    private static final String SNACK0_FILE = "images/Items/snack0.png";
-    private static final String SNACK1_FILE = "images/Items/snack1.png";
+    private static final String GNOMECOUNTRY_DVD_FILE = "images/Items/Gnome Country for Old Men.png";
+    private static final String SILENCE_DVD_FILE = "images/Items/Silence of the Gnomes.png";
+    private static final String CHIPS_FILE = "images/Items/chips.png";
+    private static final String MANGO_FILE = "images/Items/mango.png";
     private static final String READY_BUTTON_FILE = "images/restStopAssets/readybutton.png";
     private static String FONT_FILE = "fonts/Roboto-Regular.ttf";
     private Texture backgroundTex;
     private Texture shelfTex;
-    private Array<Texture> dvdTexs;
-    private Array<Texture> snackTexs;
     private Texture readyButtonTex;
     private BitmapFont displayFont;
+    private ObjectMap<String,Texture> itemTextures;
 
     // BUTTONS
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
@@ -48,9 +49,10 @@ public class RestStopMode implements Screen, InputProcessor {
     /** The Image corresponding to the shelf */
     private Image shelf;
     /** Number of each item that will appear at this rest stop */
-    private int numMovies;
-    private int numSnacks;
-    private int numBooks;
+    private int numMango;
+    private int numChips;
+    private int numGnomeCountry;
+    private int numSilenceOfGnomes;
     /** The player's inventory */
     private Inventory playerInv;
     /** Constants for whether an item is selected or unselected */
@@ -60,12 +62,15 @@ public class RestStopMode implements Screen, InputProcessor {
     private int numCanTake;
     /** Number of items selected so far */
     private int numSelected;
-    /** Number of each specific item selected so far */
+    /** Number of each specific item selected so far - used for the indicator */
     private int numSnacksSelected;
     private int numBooksSelected;
     private int numMoviesSelected;
-    /** Maximum items that can be taken from the rest stop */
-    private static final int MAX_CAN_TAKE = 3;
+    /** Constants for item names */
+    private static final String MANGO = "mango";
+    private static final String CHIPS = "chips";
+    private static final String GNOME_COUNTRY = "Gnome Country for Old Men";
+    private static final String SILENCE_GNOMES = "Silence of the Gnomes";
 
     // OTHER DOODADS
     /** AssetManager to be loading in the background */
@@ -176,105 +181,20 @@ public class RestStopMode implements Screen, InputProcessor {
         }
     }
 
+    /** Load the item textures and put them in their object mapping. */
+    private void loadItemTextures() {
+        itemTextures = new ObjectMap<String,Texture>();
+        itemTextures.put(SILENCE_GNOMES, new Texture(SILENCE_DVD_FILE));
+        itemTextures.put(GNOME_COUNTRY, new Texture(GNOMECOUNTRY_DVD_FILE));
+        itemTextures.put(CHIPS, new Texture(CHIPS_FILE));
+        itemTextures.put(MANGO, new Texture(MANGO_FILE));
+    }
+
     /** Set the player's inventory to inv. */
     public void setPlayerInv(Inventory inv) { playerInv = inv; }
 
     /** Get the player's inventory. */
     public Inventory getPlayerInv() { return playerInv; }
-
-    /**
-     * Generates items that can be obtained at this rest stop.
-     * 3-5 snacks, 1-3 books, 0-1 movies
-     *
-     * @return a new Inventory with the generated items
-     */
-    private void generateItems() {
-        // starting position - top left slot of the shelf
-        float slotX = 0.3f;
-        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
-
-        // random generator for which item texture to use
-        Random rand = new Random();
-
-        // top shelf - snacks
-        for (int i = 0; i < numSnacks; i++) {
-            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
-                    slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
-        }
-
-        slotX = 0.3f;
-        slotY = (shelfTex.getHeight() * 0.36f) / canvas.getHeight();
-
-        // middle shelf - books
-        for (int i = 0; i < numBooks; i++) {
-            // TODO change to books
-            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
-                    slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
-        }
-
-        slotX = 0.3f;
-        slotY = (shelfTex.getHeight() * 0.16f) / canvas.getHeight();
-
-        // bottom shelf - movies
-        for (int i = 0; i < numMovies; i++) {
-            Texture t = dvdTexs.get(rand.nextInt(dvdTexs.size));
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
-                    slotX, slotY, ITEM_SIZE_SCALE, t));
-            slotX += 0.09f;
-        }
-    }
-
-    /**
-     * Create a rest stop with a random quantity of items and a random max
-     * number of items that can be taken.
-     * @param canvas
-     * @param manager
-     */
-    public RestStopMode(GameCanvas canvas, AssetManager manager) {
-        this.canvas = canvas;
-        this.manager = manager;
-        assets = new Array<String>();
-        SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
-        active = true;
-        fadeIn = true;
-        fadeOpacity = 1.0f;
-        delay = 0;
-
-        // Textures
-        backgroundTex = new Texture(BACKGROUND_FILE);
-        shelfTex = new Texture(SHELF_FILE);
-        dvdTexs = new Array<Texture>();
-        dvdTexs.add(new Texture(DVD0_FILE)); dvdTexs.add(new Texture(DVD1_FILE));
-        snackTexs = new Array<Texture>();
-        snackTexs.add(new Texture(SNACK0_FILE)); snackTexs.add(new Texture(SNACK1_FILE));
-        readyButtonTex = new Texture(READY_BUTTON_FILE);
-
-        // Load font
-        loadFont();
-
-        // Create shelf image in middle of screen
-        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
-
-        // Get item quantities for this rest stop and generate the items
-        Random rand = new Random();
-        numSnacks = rand.nextInt(2) + 3; // nextInt(high-low) + low
-        numBooks = rand.nextInt(1) + 1;
-        numMovies = rand.nextInt(1);
-        items = new Array<RestStopItem>();
-        generateItems();
-
-        // Get how many items can be taken from the rest stop
-        // Minimum between: remaining inventory space and 1-3 items
-        // TODO - change 2 to inventory max size lol
-        numCanTake = Math.min(rand.nextInt(MAX_CAN_TAKE) + 1, 2);
-        numSelected = 0;
-        numSnacksSelected = 0; numBooksSelected = 0; numMoviesSelected = 0;
-    }
-
 
     /**
      * Create a rest stop from the given JSON file.
@@ -295,11 +215,8 @@ public class RestStopMode implements Screen, InputProcessor {
         // Textures
         backgroundTex = new Texture(BACKGROUND_FILE);
         shelfTex = new Texture(SHELF_FILE);
-        dvdTexs = new Array<Texture>();
-        dvdTexs.add(new Texture(DVD0_FILE)); dvdTexs.add(new Texture(DVD1_FILE));
-        snackTexs = new Array<Texture>();
-        snackTexs.add(new Texture(SNACK0_FILE)); snackTexs.add(new Texture(SNACK1_FILE));
         readyButtonTex = new Texture(READY_BUTTON_FILE);
+        loadItemTextures();
 
         // Load font
         loadFont();
@@ -327,12 +244,72 @@ public class RestStopMode implements Screen, InputProcessor {
             JSONObject json = new JSONObject(scanner.useDelimiter("\\A").next());
             scanner.close();
             numCanTake = json.getInt("numCanTake");
-            numSnacks = json.getInt("numSnacks");
-            numBooks = json.getInt("numBooks");
-            numMovies = json.getInt("numMovies");
+            numMango = json.getInt("numMango");
+            numChips = json.getInt("numChips");
+            // TODO: books
+            numGnomeCountry = json.getInt("numGnomeCountry");
+            numSilenceOfGnomes = json.getInt("numSilenceOfGnomes");
         } catch (FileNotFoundException e) {
             // TODO better error handling
             System.out.println("Rest stop file not found");
+        }
+    }
+
+    /**
+     * Generates items that can be obtained at this rest stop.
+     * 3-5 snacks, 1-3 books, 0-1 movies
+     *
+     * @return a new Inventory with the generated items
+     */
+    private void generateItems() {
+        // starting position - top left slot of the shelf
+        float slotX = 0.3f;
+        float slotY = (shelfTex.getHeight() * 0.56f) / canvas.getHeight();
+
+        // random generator for which item texture to use
+        Random rand = new Random();
+
+        // TOP SHELF: SNACKS
+        // mangos
+        for (int i = 0; i < numMango; i++) {
+            items.add(new RestStopItem(UNCLICKED, Item.ItemType.SNACK,
+                    slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(MANGO), MANGO));
+            slotX += 0.09f;
+        }
+        // chips
+        for (int i = 0; i < numChips; i++) {
+            items.add(new RestStopItem(UNCLICKED, Item.ItemType.SNACK,
+                    slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(CHIPS), CHIPS));
+            slotX += 0.09f;
+        }
+
+
+        // MIDDLE SHELF - BOOKS
+//        slotX = 0.3f;
+//        slotY = (shelfTex.getHeight() * 0.36f) / canvas.getHeight();
+//        for (int i = 0; i < numBooks; i++) {
+//            // TODO change to books
+//            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
+//            items.add(new RestStopItem(UNCLICKED, Item.ItemType.SNACK,
+//                    slotX, slotY, ITEM_SIZE_SCALE, t));
+//            slotX += 0.09f;
+//        }
+
+
+        // BOTTOM SHELF - MOVIES
+        slotX = 0.3f;
+        slotY = (shelfTex.getHeight() * 0.16f) / canvas.getHeight();
+        // gnome country for old men
+        for (int i = 0; i < numGnomeCountry; i++) {
+            items.add(new RestStopItem(UNCLICKED, Item.ItemType.DVD,
+                    slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(GNOME_COUNTRY), GNOME_COUNTRY));
+            slotX += 0.09f;
+        }
+        // silence of the gnomes
+        for (int i = 0; i < numSilenceOfGnomes; i++) {
+            items.add(new RestStopItem(UNCLICKED, Item.ItemType.DVD,
+                    slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(SILENCE_GNOMES), SILENCE_GNOMES));
+            slotX += 0.09f;
         }
     }
 
@@ -362,6 +339,7 @@ public class RestStopMode implements Screen, InputProcessor {
             canvas.draw(backgroundTex, 0, 0);
 
             // Draw the shelf and text on top
+            // TODO - minimum of numCanTake and remaining inventory space
             shelf.draw(canvas);
             String grammar = numCanTake == 1 ? " item" : " items";
             canvas.drawText("Take up to " + numCanTake + grammar, displayFont,
@@ -415,7 +393,7 @@ public class RestStopMode implements Screen, InputProcessor {
         float oyOff = 0.7f;
 
         // Snacks
-        Texture mango = snackTexs.get(1);
+        Texture mango = itemTextures.get(MANGO);
         canvas.draw(mango,Color.WHITE, 0.0f, mango.getHeight() * oyOff,
                 SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
                 IND_SCALING, IND_SCALING);
@@ -437,7 +415,7 @@ public class RestStopMode implements Screen, InputProcessor {
 //                SCREEN_DIMENSIONS.y*indRelY, Color.BLACK);
 
         // Movies
-        Texture dvd = dvdTexs.get(0);
+        Texture dvd = itemTextures.get(GNOME_COUNTRY);
         indRelY -= (book.getHeight()*IND_SCALING)/SCREEN_DIMENSIONS.y + IND_PADDING;
         canvas.draw(dvd, Color.WHITE, 0.0f, dvd.getHeight() * oyOff,
                 SCREEN_DIMENSIONS.x*indRelX,SCREEN_DIMENSIONS.y*indRelY, 0.0f,
@@ -466,7 +444,7 @@ public class RestStopMode implements Screen, InputProcessor {
                 // Add selected items to their inventory
                 for (RestStopItem i : items) {
                     if (i.toggleState == SELECTED) {
-                        switch (i.type) {
+                        switch (i.getItemType()) {
                             case SNACK:
                                 playerInv.getSnackSlot().incAmount(1);
                                 break;
@@ -612,7 +590,7 @@ public class RestStopMode implements Screen, InputProcessor {
                         numSelected -= 1;
 
                         // also update the amount for the specific item
-                        switch (i.type) {
+                        switch (i.getItemType()) {
                             case SNACK:
                                 numSnacksSelected -= 1;
                                 break;
@@ -627,7 +605,7 @@ public class RestStopMode implements Screen, InputProcessor {
                         numSelected += 1;
 
                         // also update the amount for the specific item
-                        switch (i.type) {
+                        switch (i.getItemType()) {
                             case SNACK:
                                 numSnacksSelected += 1;
                                 break;
@@ -701,20 +679,27 @@ public class RestStopMode implements Screen, InputProcessor {
         return true;
     }
 
-    private class RestStopItem extends Image {
+    private class RestStopItem extends Item {
         /** The click status of a rest stop item - unclicked, touch down, or touch up */
         private int clickStatus;
-        /** The type of item */
-        private Inventory.Item.ItemType type;
         /** The state of the item - selected or unselected */
         private int toggleState;
         /** The item's current overlay color - white when unselected, colored when selected */
         private Color overlay;
 
-        private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
-            super(x,y,relSca,tex);
+        /** Constructor for a rest stop item.
+         *
+         * @param clickStatus The click status of the item - unclicked, button down, button up
+         * @param type The type of item
+         * @param x The relative x-position of the item
+         * @param y The relative y-position of the item
+         * @param relSca The relative scale of the item
+         * @param t The item's texture
+         * @param n The item's name
+         */
+        private RestStopItem(int clickStatus, Item.ItemType type, float x, float y, float relSca, Texture t, String n) {
+            super(x,y,relSca,t,type,n);
             this.clickStatus = clickStatus;
-            type = t;
             toggleState = UNSELECTED;
             overlay = Color.WHITE;
         }
