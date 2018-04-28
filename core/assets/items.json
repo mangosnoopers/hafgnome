@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "name": "mango",
+      "type": "snack",
+      "image": "images/Items/mango.png"
+    },
+    {
+      "name": "chips",
+      "type": "snack",
+      "image": "images/Items/chips.png"
+    },
+    {
+      "name": "Gnome Country for Old Men",
+      "type": "movie",
+      "image": "images/Items/Gnome Country for Old Men.png",
+      "duration": 1000
+    },
+    {
+      "name": "Silence of the Gnomes",
+      "type": "movie",
+      "image": "images/Items/Silence of the Gnomes.png",
+      "duration": 500
+    }
+}

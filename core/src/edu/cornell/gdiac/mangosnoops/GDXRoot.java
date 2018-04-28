@@ -88,7 +88,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas,LEVELS[currLevel]);
-		reststop = new RestStopMode(canvas, manager);
+		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
 		start = new StartMenuMode(canvas, manager);
 
 		Gdx.graphics.setTitle("Gnomez");

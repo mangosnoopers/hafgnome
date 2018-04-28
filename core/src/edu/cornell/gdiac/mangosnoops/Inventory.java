@@ -7,6 +7,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.items.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.Scanner;
 
 public class Inventory {
     /** Stuff for taking items out of the inventory box */
@@ -20,6 +25,11 @@ public class Inventory {
     private Vector2 slotsDimensions;
     /** Offset between each item drawn within a slot */
     private float itemOffset = 0.01f;
+
+    /** The filepath to the JSON containing all item data */
+    private static final String FILE = "items.json";
+    /** A JSON array of all the items */
+    private JSONArray items;
     /** A mapping of item names to textures */
     private ObjectMap<String,Texture> textures;
 
@@ -37,6 +47,12 @@ public class Inventory {
     private static final float bookRelSca = 0.12f;
     private static final float dvdRelSca = 0.12f;
 
+    /** Constants for item names */
+    private static final String MANGO = "mango";
+    private static final String CHIPS = "chips";
+    private static final String GNOME_COUNTRY = "Gnome Country for Old Men";
+    private static final String SILENCE_GNOMES = "Silence of the Gnomes";
+
     /** The snack slot */
     private Slot snackSlot;
     /** The DVD/book slot */
@@ -44,14 +60,25 @@ public class Inventory {
 
     /** Create an empty inventory with a constant number of slots. */
     public Inventory(ObjectMap<String,Texture> ts) {
-        textures = ts;
-        slotsDimensions = new Vector2(SLOT_WIDTH, SLOT_HEIGHT);
+        try {
+            // read the inventory data from the JSON
+            Scanner scanner = new Scanner(new File(FILE));
+            JSONObject json = new JSONObject(scanner.useDelimiter("\\A").next());
+            scanner.close();
+            items = json.getJSONArray("items");
 
-        // initialize the two slots, then add them to the slots array
-        dvdBookSlot = new Slot(0, X_LEFT, Y_BOTTOM, SLOT_WIDTH, SLOT_HEIGHT);
-        snackSlot = new Slot(1, X_LEFT, Y_BOTTOM+SLOT_HEIGHT, SLOT_WIDTH, SLOT_HEIGHT);
-        slots = new Array<Slot>(NUM_SLOTS);
-        slots.add(snackSlot); slots.add(dvdBookSlot);
+            textures = ts;
+            slotsDimensions = new Vector2(SLOT_WIDTH, SLOT_HEIGHT);
+
+            // initialize the two slots, then add them to the slots array
+            dvdBookSlot = new Slot(0, X_LEFT, Y_BOTTOM, SLOT_WIDTH, SLOT_HEIGHT);
+            snackSlot = new Slot(1, X_LEFT, Y_BOTTOM + SLOT_HEIGHT, SLOT_WIDTH, SLOT_HEIGHT);
+            slots = new Array<Slot>(NUM_SLOTS);
+            slots.add(snackSlot);
+            slots.add(dvdBookSlot);
+        } catch (Exception e) {
+            System.out.println("Error in parsing the JSON item data");
+        }
     }
 
     /** Empties the inventory. */
@@ -81,8 +108,10 @@ public class Inventory {
      * @param n the name of the item
      */
     public void addMovie(String n) {
-        Movie m = new Movie(0,0,0,textures.get(n), Item.ItemType.DVD, n);
-
+        JSONObject jsonM = items.getJSONObject(getIndexOf(n));
+        Movie m = new Movie(0,0,0,
+                            textures.get(n), Item.ItemType.DVD, n,
+                            jsonM.getInt("duration"));
     }
 
     /**
@@ -91,6 +120,25 @@ public class Inventory {
      */
     public void addBook(String n) {
         // TODO
+    }
+
+    /**
+     * Gets the index of the item with name n in the JSONArray of items.
+     * @returns the index of the item if found, -1 otherwise
+     */
+    private int getIndexOf(String n) {
+        if (n.equals(MANGO)) {
+            return 0;
+        } else if (n.equals(CHIPS)) {
+            return 1;
+        } else if (n.equals(GNOME_COUNTRY)) {
+            return 2;
+        } else if (n.equals(SILENCE_GNOMES)) {
+            return 3;
+        }
+
+        return -1;
+
     }
 
     /////
