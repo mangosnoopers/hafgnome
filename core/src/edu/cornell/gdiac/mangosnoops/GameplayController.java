@@ -58,13 +58,8 @@ public class GameplayController {
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
 	private Array<Enemy> enemiez;
-	/** An array of events for this level */
-	private Array<Event> events;
 	/** The next event to happen */
 	private int nextEvent;
-	/** Object containing all information about the current level. This includes
-	 *  everything specific to a level: the songs, enemies, events, etc. */
-	private LevelObject level;
 	/** Rearview enemy instance. The way it's handled right now, there is only
 	 *  one at a time. FIXME: could change that if necessary */
 	private RearviewEnemy rearviewEnemy;
@@ -73,8 +68,12 @@ public class GameplayController {
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
 
+	/** An array of events for this level */
+	private Array<Event> events;
 	/** The Horn! */
 	private Horn horn;
+
+	private ObjectMap<String,Radio.Genre> songs;
 
 	private Image healthGauge;
 	private Image rearviewBackground;
@@ -421,18 +420,20 @@ public class GameplayController {
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
-	 * @param level is the Level information
 	 */
-	public GameplayController(LevelObject level, GameCanvas canvas) {
-		this.level = level;
-		enemiez = new Array<Enemy>();
-		events = new Array<Event>();
+	public GameplayController(GameCanvas canvas, float endY,
+							  Array<Enemy> enemies,
+							  Array<Event> e,
+							  ObjectMap<String,Radio.Genre> s) {
+		songs = s;
+		enemiez = enemies;
 		yonda = new Car();
 		backing = new Array<Enemy>();
-		road = new Road(level.getLevelEndY());
+		road = new Road(endY);
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
+		events = e;
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
 		// Item textures
@@ -544,7 +545,7 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
+		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, songs);
 		touchscreen = new TouchScreen(radio, offTouchscreen, dvdSlot);
 //		hudObjects = new ObjectSet<Image>();
 		masterShaker = new Image();
@@ -564,9 +565,6 @@ public class GameplayController {
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-        for(Enemy e: level.getEnemiez()){
-			enemiez.add(e);
-		}
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
             if (e.getType() == RoadObject.ObjectType.GNOME) {
@@ -580,7 +578,6 @@ public class GameplayController {
 				f.setEnemyHeight(0.1f);
 			}
 		}
-		events = level.getEvents();
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
@@ -599,7 +596,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(level.getEnemiez().size);
+		enemiez = new Array<Enemy>(enemiez.size);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;

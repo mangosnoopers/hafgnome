@@ -221,7 +221,11 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(levelName), canvas);
+            if (levelName != "tutorial") {
+				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+			} else {
+
+			}
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
             soundController = new SoundController();
         } catch (IOException e) {
