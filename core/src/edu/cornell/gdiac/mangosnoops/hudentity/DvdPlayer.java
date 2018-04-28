@@ -1,18 +1,19 @@
 package edu.cornell.gdiac.mangosnoops.hudentity;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 
 public class DvdPlayer {
     /** Current dvdPlaying -- is null no music is playing */
-    private String dvdPlaying;
+    private String dvdPlayingTitle;
     private int timeLeft;
+    Texture dvdPlayingTexture;
 
     public DvdPlayer (){
-        dvdPlaying = "hey";
-        timeLeft = 100;
+        dvdPlayingTitle = null;
+        timeLeft = 0;
     }
 
     /**
@@ -22,8 +23,9 @@ public class DvdPlayer {
      * @return true if starts playing, false if unsuccessful (if a movie is already playing)
      */
     public boolean playDvd(String name, int duration) {
-        if(dvdPlaying == null) {
-            dvdPlaying = name;
+        // TODO: add texture and draw that
+        if(dvdPlayingTitle == null) {
+            dvdPlayingTitle = name;
             timeLeft = duration;
             return true;
         }
@@ -32,12 +34,12 @@ public class DvdPlayer {
 
     /** Returns true if a dvd is playing right now */
     public boolean isPlayingDvd() {
-        return dvdPlaying != null;
+        return dvdPlayingTitle != null;
     }
 
     public void update() {
         if(timeLeft == 0) {
-            dvdPlaying = null;
+            dvdPlayingTitle = null;
         } else {
             timeLeft--;
         }
@@ -45,11 +47,11 @@ public class DvdPlayer {
 
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
         displayFont.setColor(Color.WHITE);
-        if(dvdPlaying == null) {
-            canvas.drawTextCenterOrigin("No DVD Inserted.", displayFont, 0.85f, 0.24f);
-            canvas.drawTextCenterOrigin("\n\nPlease insert the DVD.", displayFont, 0.85f, 0.24f);
+        if(dvdPlayingTitle == null) {
+            canvas.drawTextCenterOrigin("No DVD Inserted.\n", displayFont, 0.85f, 0.24f);
+            canvas.drawTextCenterOrigin("\nPlease insert the DVD.", displayFont, 0.85f, 0.24f);
         } else {
-            canvas.drawTextCenterOrigin(dvdPlaying, displayFont, 0.85f, 0.24f);
+            canvas.drawTextCenterOrigin(dvdPlayingTitle, displayFont, 0.85f, 0.24f);
             canvas.drawTextCenterOrigin("\n\nTime Remaining: " + timeLeft, displayFont, 0.85f, 0.24f);
         }
     }
