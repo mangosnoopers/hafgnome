@@ -48,6 +48,7 @@ public abstract class RoadObject {
         GNOME,
         FLAMINGO,
         GRILL,
+        IMAGE, // Billboards, corn, etc
         /** The player car, which lives until it collides with a gnome */
         CAR,
     }
