@@ -735,7 +735,6 @@ public class GameplayController {
         // Update the HUD
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
-  		boolean mousePressed = input.isMousePressed();
   		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
   		horn.updateHonk(delta);
         if(in != null) {
