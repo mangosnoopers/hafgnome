@@ -491,8 +491,7 @@ public class GameplayController {
         radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
-		enemiez = new Array<Enemy>();
-		events = new Array<Event>();
+		enemiez = enemies;
 		yonda = new Car();
 		backing = new Array<Enemy>();
 		road = new Road(endY);
