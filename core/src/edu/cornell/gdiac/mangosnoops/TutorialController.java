@@ -244,7 +244,6 @@ public class TutorialController extends GameplayController {
                 tutInventory.setVisible(true);
                 arrow.setVisible(true);
                 if (!madeNedMad) {
-                    getCar().getNed().setMood(Child.Mood.CRITICAL);
                     madeNedMad = true;
                 }
                 if (getCar().getNed().getCurrentMood() == Child.Mood.HAPPY) {
