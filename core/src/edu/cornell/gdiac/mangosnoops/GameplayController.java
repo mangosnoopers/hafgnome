@@ -46,8 +46,6 @@ public class GameplayController {
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
 	private VroomStick vroomStick;
-	/** Location and animation information for the wheel */
-	private Radio radio;
 	/** Inventory */
 	private Inventory inventory;
 	/** Inventory at the beginning of the level */
@@ -58,23 +56,25 @@ public class GameplayController {
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
 	private Array<Enemy> enemiez;
-	/** An array of events for this level */
-	private Array<Event> events;
 	/** The next event to happen */
 	private int nextEvent;
-	/** Object containing all information about the current level. This includes
-	 *  everything specific to a level: the songs, enemies, events, etc. */
-	private LevelObject level;
 	/** Rearview enemy instance. The way it's handled right now, there is only
 	 *  one at a time. FIXME: could change that if necessary */
-	private RearviewEnemy rearviewEnemy;
+	protected RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
 	private float ypos;
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
+	private GPS gps;
+	private Radio radio;
+	private DvdPlayer dvdPlayer;
 
+	/** An array of events for this level */
+	private Array<Event> events;
 	/** The Horn! */
 	private Horn horn;
+
+	private ObjectMap<String,Radio.Genre> songs;
 
 	private Image healthGauge;
 	private Image rearviewBackground;
@@ -89,16 +89,16 @@ public class GameplayController {
 
 	// FilmStrip information
 	/** The Gnome FilmStrip information */
-	private static final int GNOME_FILMSTRIP_ROWS = 1;
-	private static final int GNOME_FILMSTRIP_COLS = 12;
+	protected static final int GNOME_FILMSTRIP_ROWS = 1;
+	protected static final int GNOME_FILMSTRIP_COLS = 12;
 
 	/** The Flamingo FilmStrip information */
-	private static final int FLAMINGO_FILMSTRIP_ROWS = 1;
-	private static final int FLAMINGO_FILMSTRIP_COLS = 6;
-	private static final int FLAMINGO_STAND_START = 0;
-	private static final int FLAMINGO_STAND_END = 4;
-	private static final int FLAMINGO_FLY_START = 4;
-	private static final int FLAMINGO_FLY_END = 5;
+	protected static final int FLAMINGO_FILMSTRIP_ROWS = 1;
+	protected static final int FLAMINGO_FILMSTRIP_COLS = 6;
+	protected static final int FLAMINGO_STAND_START = 0;
+	protected static final int FLAMINGO_STAND_END = 4;
+	protected static final int FLAMINGO_FLY_START = 4;
+	protected static final int FLAMINGO_FLY_END = 5;
 
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
@@ -161,8 +161,12 @@ public class GameplayController {
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
 	/** Touchscreen */
+	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
 	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
+	private static final String BUTTON_GPS_FILE = "images/DashHUD/buttonGps.png";
+	private static final String BUTTON_RADIO_FILE = "images/DashHUD/buttonRadio.png";
+	private static final String BUTTON_DVD_FILE = "images/DashHUD/buttonDvd.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 
@@ -178,10 +182,10 @@ public class GameplayController {
 	/** Texture for the vroomstick */
 	private Texture vroomStickTexture;
 	/** Texture for the gnomes */
-	private Texture gnomeTexture;
-	private Texture rearviewGnomeTexture;
+	protected  Texture gnomeTexture;
+	protected  Texture rearviewGnomeTexture;
 	/** Texture for the flamingo */
-	private Texture flamingoTexture;
+	protected Texture flamingoTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	/** Textures for nosh */
@@ -226,8 +230,12 @@ public class GameplayController {
 	private Texture satLemonMan;
 	private HashMap<String, Texture> satTextures;
 	/** Touchscreen */
+	private Texture onTouchscreen;
 	private Texture offTouchscreen;
 	private Texture dvdSlot;
+	private Texture buttonGps;
+	private Texture buttonRadio;
+	private Texture buttonDvd;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -343,10 +351,18 @@ public class GameplayController {
 		assets.add(SAT_LEMONMAN_FILE);
 		manager.load(FLAMINGO_FILE, Texture.class);
 		assets.add(FLAMINGO_FILE);
+		manager.load(ON_TOUCHSCREEN_FILE, Texture.class);
+		assets.add(ON_TOUCHSCREEN_FILE);
 		manager.load(OFF_TOUCHSCREEN_FILE, Texture.class);
 		assets.add(OFF_TOUCHSCREEN_FILE);
 		manager.load(DVD_SLOT_FILE, Texture.class);
 		assets.add(DVD_SLOT_FILE);
+		manager.load(BUTTON_GPS_FILE, Texture.class);
+		assets.add(BUTTON_GPS_FILE);
+		manager.load(BUTTON_RADIO_FILE, Texture.class);
+		assets.add(BUTTON_RADIO_FILE);
+		manager.load(BUTTON_DVD_FILE, Texture.class);
+		assets.add(BUTTON_DVD_FILE);
 	}
 
 	/**
@@ -405,11 +421,15 @@ public class GameplayController {
 		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
 		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
 		satQuestions = new SATQuestions(satTextures, satBubble);
+		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
 		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
+		buttonGps = createTexture(manager, BUTTON_GPS_FILE);
+		buttonRadio = createTexture(manager, BUTTON_RADIO_FILE);
+		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
 	}
 
-	private Texture createTexture(AssetManager manager, String file) {
+	protected Texture createTexture(AssetManager manager, String file) {
 		if (manager.isLoaded(file)) {
 			Texture texture = manager.get(file, Texture.class);
 			texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -421,18 +441,20 @@ public class GameplayController {
 	/**
 	 * Creates a new GameplayController with no active elements.
 	 *
-	 * @param level is the Level information
 	 */
-	public GameplayController(LevelObject level, GameCanvas canvas) {
-		this.level = level;
-		enemiez = new Array<Enemy>();
-		events = new Array<Event>();
+	public GameplayController(GameCanvas canvas, float endY,
+							  Array<Enemy> enemies,
+							  Array<Event> e,
+							  ObjectMap<String,Radio.Genre> s) {
+		songs = s;
+		enemiez = enemies;
 		yonda = new Car();
 		backing = new Array<Enemy>();
-		road = new Road(level.getLevelEndY());
+		road = new Road(endY);
 		ypos = 0.0f;
 		nextEvent = 0;
 		sunShine = false;
+		events = e;
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
 		// Item textures
@@ -544,8 +566,10 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		radio = new Radio(0.75f, 0.225f, 0.07f, 0, radioknobTexture, level.getSongs());
-		touchscreen = new TouchScreen(radio, offTouchscreen, dvdSlot);
+		gps = new GPS();
+		radio = new Radio(radioknobTexture, songs);
+		dvdPlayer = new DvdPlayer();
+		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
 //		hudObjects = new ObjectSet<Image>();
 		masterShaker = new Image();
         sunShine = false;
@@ -559,14 +583,12 @@ public class GameplayController {
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
+
 		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
 		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
 		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
-        for(Enemy e: level.getEnemiez()){
-			enemiez.add(e);
-		}
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
             if (e.getType() == RoadObject.ObjectType.GNOME) {
@@ -580,7 +602,6 @@ public class GameplayController {
 				f.setEnemyHeight(0.1f);
 			}
 		}
-		events = level.getEvents();
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
@@ -599,7 +620,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(level.getEnemiez().size);
+		enemiez = new Array<Enemy>(enemiez.size);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -747,7 +768,7 @@ public class GameplayController {
         if(in != null) {
 			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
 			vroomStick.update(new Vector2(in), dr.y);
-			radio.update(new Vector2(in), dr.x);
+			touchscreen.update(new Vector2(in), dr.x);
 			horn.update(new Vector2(in), delta);
 			inventory.update(new Vector2(in), mousePressed);
 			visor.update(new Vector2(in), input.isPrevMousePressed());
@@ -756,7 +777,7 @@ public class GameplayController {
 		else{
 			wheel.update(null, dr.x, input.isTurnPressed());
 			vroomStick.update(null, dr.y);
-			radio.update(null, dr.x);
+			touchscreen.update(null, dr.x);
 			inventory.update(null, mousePressed);
 		}
 		resolveItemDrop(input);
@@ -866,9 +887,9 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						// TODO: make this last for a duration of time
-						yonda.getNosh().setMood(Child.Mood.HAPPY);
-						yonda.getNed().setMood(Child.Mood.HAPPY);
+						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
+							inventory.cancelTake();
+						}
 					} else if (inventory.inArea(droppedPos)){
 						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
 					} else {
@@ -884,6 +905,7 @@ public class GameplayController {
 	}
 
 	public void draw(GameCanvas canvas) {
+
 		//Gnomez
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
@@ -909,11 +931,8 @@ public class GameplayController {
 		// Wheel
 		wheel.draw(canvas);
 
-		//TouchScreen
-		touchscreen.draw(canvas);
-
-		// Radio
-		radio.draw(canvas, displayFont);
+		// Touchscreen
+		touchscreen.draw(canvas, displayFont);
 
 		// Horn
 		horn.draw(canvas);
