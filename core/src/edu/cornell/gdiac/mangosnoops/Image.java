@@ -115,7 +115,6 @@ public class Image {
         c = canvas;
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(), canvas.getHeight());
     }
-
     /**
      * Returns true if the mouse is positioned inside the area of the object
      *
