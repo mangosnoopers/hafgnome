@@ -864,6 +864,11 @@ public class GameplayController {
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
 		// check radio station and update each child's happiness based on it,
 		// checks this every 200 frames (may need to adjust)
+
+		if(dvdPlayer.isPlayingDvd()) {
+			ned.setMood(Child.Mood.HAPPY);
+			nosh.setMood(Child.Mood.HAPPY);
+		}
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
 
 			// TODO : ADD CASES FOR OTHER GENRES
