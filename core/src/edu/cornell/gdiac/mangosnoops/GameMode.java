@@ -46,7 +46,9 @@ public class GameMode implements Screen {
 		/** While we are on the road */
 		PLAY,
 		/** When the ships is dead (but shells still work) */
-		OVER
+		OVER,
+		/** When the pause method is called **/
+		PAUSED
 	}
 
 	// GRAPHICS AND SOUND RESOURCES
@@ -60,7 +62,11 @@ public class GameMode implements Screen {
 	private static String SKY_FILE = "images/sky.png";
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
-
+	/** Files for pause screen assets **/
+	private static final String PAUSE_MENU_FILE = "images/pauseMenuAssets/pause_menu.png";
+	private static final String PAUSE_EXIT_FILE = "images/pauseMenuAssets/exitPauseButton.png";
+	private static final String PAUSE_OPTIONS_FILE = "images/pauseMenuAssets/optionsPauseButton.png";
+	private static final String PAUSE_RESTART_FILE = "images/pauseMenuAssets/restartLevelPauseButton.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -77,6 +83,12 @@ public class GameMode implements Screen {
 	private Texture dash;
 	/** Death Screen */
 	private Texture deathModule;
+	/** Pause Menu Textures **/
+	private Texture pauseMenuTexture;
+	private Texture pauseOptionsButtonTexture;
+	private Texture pauseExitButtonTexture;
+	private Texture pauseRestartButtonTexture;
+
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
@@ -112,7 +124,8 @@ public class GameMode implements Screen {
 	private boolean active;
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
-
+	/** booleans in **/
+	private boolean b ;
 	/**
 	 * Preloads the assets for this game.
 	 *
@@ -132,6 +145,16 @@ public class GameMode implements Screen {
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
+
+		// Load pause menu assets
+		manager.load(PAUSE_MENU_FILE, Texture.class);
+		assets.add(PAUSE_MENU_FILE);
+		manager.load(PAUSE_EXIT_FILE, Texture.class);
+		assets.add(PAUSE_EXIT_FILE);
+		manager.load(PAUSE_OPTIONS_FILE, Texture.class);
+		assets.add(PAUSE_OPTIONS_FILE);
+		manager.load(PAUSE_RESTART_FILE, Texture.class);
+		assets.add(PAUSE_RESTART_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -167,15 +190,24 @@ public class GameMode implements Screen {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		}
-
 		if (manager.isLoaded(SKY_FILE)) {
 			sky = manager.get(SKY_FILE, Texture.class);
 		}
-
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
 		}
-
+		if (manager.isLoaded(PAUSE_MENU_FILE)) {
+			pauseMenuTexture = manager.get(PAUSE_MENU_FILE, Texture.class);
+		}
+		if (manager.isLoaded(PAUSE_EXIT_FILE)) {
+			pauseExitButtonTexture = manager.get(PAUSE_EXIT_FILE, Texture.class);
+		}
+		if (manager.isLoaded(PAUSE_OPTIONS_FILE)) {
+			pauseOptionsButtonTexture = manager.get(PAUSE_OPTIONS_FILE, Texture.class);
+		}
+		if (manager.isLoaded(PAUSE_RESTART_FILE)) {
+			pauseRestartButtonTexture = manager.get(PAUSE_RESTART_FILE, Texture.class);
+		}
 		// Load gameplay content
 		gameplayController.loadContent(manager);
 	}
@@ -286,6 +318,9 @@ public class GameMode implements Screen {
 						play(delta);
 					}
 					break;
+				case PAUSED:
+					pause_game();
+					break;
 				default:
 					break;
 			}
@@ -308,6 +343,10 @@ public class GameMode implements Screen {
 			gameState = GameState.OVER;
 		}
 
+		// Check if game has been paused
+		if(inputController.pressedPause()){
+			gameState = GameState.PAUSED;
+		}
 		// Update Based on input
 		gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
 		gameplayController.resolveActions(inputController, delta);
@@ -337,6 +376,12 @@ public class GameMode implements Screen {
 		counter += 1;
 	}
 
+	protected void pause_game(){
+		// Check if game has been unpaused
+		if(inputController.pressedPause()){
+			gameState = GameState.PLAY;
+		}
+	}
 	/**
 	 * Draw the status of this player mode.
 	 *
@@ -346,19 +391,16 @@ public class GameMode implements Screen {
 	 */
 	private void draw(float delta) {
 		canvas.clearScreen();
-
 		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez
 		for (Enemy e : gameplayController.getEnemiez()) {
 			e.draw(canvas);
 		}
-
 		canvas.drawWorld();
 
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
-
 		gameplayController.draw(canvas);
 
 		// Draw fade out to rest stop
@@ -372,7 +414,6 @@ public class GameMode implements Screen {
 				if (delay < 50) {
 					delay++;
 				}
-
 				else {
 					// ready to exit gamemode when the fade out is complete
 					exitToRestStop = true;
@@ -395,6 +436,12 @@ public class GameMode implements Screen {
 				}
 				break;
 			case PLAY:
+				break;
+			case PAUSED:
+				canvas.draw(pauseMenuTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,1,false);
+				canvas.draw(pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.2f,0.2f,false);
+				canvas.draw(pauseOptionsButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,0.2f,false);
+				canvas.draw(pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.8f,0.2f,false);
 				break;
 			default:
 				break;
@@ -429,7 +476,6 @@ public class GameMode implements Screen {
 		if (active) {
 			update(delta);
 			draw(delta);
-
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if (exitToRestStop && listener != null) {
 //				gameState = GameState.OVER;

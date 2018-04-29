@@ -184,8 +184,6 @@ public class StartMenuMode implements Screen, InputProcessor {
         startbuttonTexture = new Texture(STARTBUTTON_FILE);
         logo = new Texture(LOGO_FILE);
 
-        active = false;
-
         active = true;
     }
 

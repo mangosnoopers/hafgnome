@@ -47,7 +47,8 @@ public class InputController {
 	private int numKeyPressed;
 	/** Whether or not keyboard turn was inputted */
 	private boolean turnPressed;
-
+	/** Whether the pause button was pressed or not **/
+	private boolean pausePressed;
 	/**
 	 * Creates a new input controller.
 	 */
@@ -107,6 +108,11 @@ public class InputController {
 	}
 
 	/**
+	 * @return true if the pause button was pressed
+	 */
+	public boolean pressedPause(){ return pausePressed; }
+
+	/**
 	 * Reads the input for the player and converts the result into game logic.
 	 */
 	public void readInput() {
@@ -127,6 +133,8 @@ public class InputController {
 		prevMouseClicked = mouseClicked;
 		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R)) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
+		pausePressed = (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) ;
+
 		//Process number input for SAT Question
 		if(Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {
 			numKeyPressed = 0;
