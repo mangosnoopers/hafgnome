@@ -146,9 +146,6 @@ public class Inventory extends Image {
             lastSlotTakenFrom = s;
             Item i = s.slotItem;
             s.amount --;
-            if(s.amount == 0){
-                s.slotItem = null;
-            }
             return i;
         }
         return null;
