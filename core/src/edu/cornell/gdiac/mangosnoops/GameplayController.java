@@ -112,6 +112,14 @@ public class GameplayController {
 	private static final String FLAMINGO_FILE = "images/Enemies/flamingo.png";
 	/** The texture file for the radio knob */
 	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
+	private static final String RADIO_SLIDER_FILE = "images/RadioScreenAssets/frequencyslider.png";
+	private static final String RADIO_POINTER_FILE = "images/RadioScreenAssets/frequencyMarker.png";
+	private static final String RADIO_SOUNDON_FILE = "images/RadioScreenAssets/soundIcon.png";
+	private static final String RADIO_SOUNDOFF_FILE = "images/RadioScreenAssets/muteSoundIcon.png";
+	private static final String RADIO_NEDLIKE_FILE = "images/RadioScreenAssets/nedLike.png";
+	private static final String RADIO_NEDDISLIKE_FILE = "images/RadioScreenAssets/nedDislike.png";
+	private static final String RADIO_NOSHLIKE_FILE = "images/RadioScreenAssets/noshLike.png";
+	private static final String RADIO_NOSHDISLIKE_FILE = "images/RadioScreenAssets/noshDislike.png";
 	/** The texture files for Nosh's moods */
 	private static final String NOSH_HAPPY_FILE = "images/NoshTextures/nosh_happy.png";
 	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
@@ -188,6 +196,14 @@ public class GameplayController {
 	protected Texture flamingoTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
+	private Texture radioSlider;
+	private Texture radioPointer;
+	private Texture radioSoundOn;
+	private Texture radioSoundOff;
+	private Texture radioNedLike;
+	private Texture radioNedDislike;
+	private Texture radioNoshLike;
+	private Texture radioNoshDislike;
 	/** Textures for nosh */
 	private FilmStrip nosh_happy;
 	private FilmStrip nosh_neutral;
@@ -281,6 +297,22 @@ public class GameplayController {
 		assets.add(REARVIEW_GNOME_FILE);
 		manager.load(RADIO_KNOB_FILE, Texture.class);
 		assets.add(RADIO_KNOB_FILE);
+		manager.load(RADIO_SLIDER_FILE, Texture.class);
+		assets.add(RADIO_SLIDER_FILE);
+		manager.load(RADIO_POINTER_FILE, Texture.class);
+		assets.add(RADIO_POINTER_FILE);
+		manager.load(RADIO_SOUNDON_FILE, Texture.class);
+		assets.add(RADIO_SOUNDON_FILE);
+		manager.load(RADIO_SOUNDOFF_FILE, Texture.class);
+		assets.add(RADIO_SOUNDOFF_FILE);
+		manager.load(RADIO_NEDLIKE_FILE, Texture.class);
+		assets.add(RADIO_NEDLIKE_FILE);
+		manager.load(RADIO_NEDDISLIKE_FILE, Texture.class);
+		assets.add(RADIO_NEDDISLIKE_FILE);
+		manager.load(RADIO_NOSHLIKE_FILE, Texture.class);
+		assets.add(RADIO_NOSHLIKE_FILE);
+		manager.load(RADIO_NOSHDISLIKE_FILE, Texture.class);
+		assets.add(RADIO_NEDDISLIKE_FILE);
 		manager.load(NOSH_HAPPY_FILE, Texture.class);
 		assets.add(NOSH_HAPPY_FILE);
 		manager.load(NOSH_NEUTRAL_FILE, Texture.class);
@@ -382,6 +414,14 @@ public class GameplayController {
 		flamingoTexture = createTexture(manager, FLAMINGO_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
+		radioSlider = createTexture(manager, RADIO_SLIDER_FILE);
+		radioPointer = createTexture(manager, RADIO_POINTER_FILE);
+		radioSoundOn = createTexture(manager, RADIO_SOUNDON_FILE);
+		radioSoundOff = createTexture(manager, RADIO_SOUNDOFF_FILE);
+		radioNedLike = createTexture(manager, RADIO_NEDLIKE_FILE);
+		radioNedDislike = createTexture(manager, RADIO_NEDDISLIKE_FILE);
+		radioNoshLike = createTexture(manager, RADIO_NOSHLIKE_FILE);
+		radioNoshDislike = createTexture(manager, RADIO_NOSHDISLIKE_FILE);
 		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
 		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 2);
 		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
@@ -448,6 +488,11 @@ public class GameplayController {
 							  ObjectMap<String,Radio.Genre> s) {
 		songs = s;
 		enemiez = enemies;
+        radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
+							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
+							radioNoshDislike, songs);
+		enemiez = new Array<Enemy>();
+		events = new Array<Event>();
 		yonda = new Car();
 		backing = new Array<Enemy>();
 		road = new Road(endY);
@@ -567,10 +612,11 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		gps = new GPS();
-		radio = new Radio(radioknobTexture, songs);
+		radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
+				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
+				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
 		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
-//		hudObjects = new ObjectSet<Image>();
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
