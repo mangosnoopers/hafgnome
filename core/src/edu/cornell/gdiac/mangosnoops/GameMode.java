@@ -253,7 +253,11 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
-            gameplayController = new GameplayController(new LevelObject(levelName), canvas);
+            if (levelName != "tutorial") {
+				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+			} else {
+            	gameplayController = new TutorialController(canvas);
+			}
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
             soundController = new SoundController();
         } catch (IOException e) {
@@ -478,15 +482,10 @@ public class GameMode implements Screen {
 			draw(delta);
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if (exitToRestStop && listener != null) {
-//				gameState = GameState.OVER;
+				soundController.reset();
 				listener.exitScreen(this, 0);
 				active = false;
 			}
-
-			// This is used to return back to GDXRoot - can help to transition to diff screens
-//			if (inputController.didExit() && listener != null) {
-//				listener.exitScreen(this, 0);
-//			}
 		}
 	}
 

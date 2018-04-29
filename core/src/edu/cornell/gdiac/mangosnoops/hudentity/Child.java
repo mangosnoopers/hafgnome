@@ -32,7 +32,6 @@ public class Child extends Image{
         NED,
     }
 
-
     /** Speech bubble offset for shaky effect */
     private float speechBubbleOffsetX = 3;
     private float speechBubbleOffsetY = -2;
@@ -135,6 +134,8 @@ public class Child extends Image{
                 setAsleep();
                 break;
         }
+
+
     }
 
     /**
@@ -196,11 +197,11 @@ public class Child extends Image{
      */
     private Mood prevMood;
     public void update(float delta, Vector2 in) {
+
         animationFrame += ANIMATION_SPEED;
         if (animationFrame >= NUM_ANIMATION_FRAMES) {
             animationFrame -= NUM_ANIMATION_FRAMES;
         }
-
 
         if(isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
             if(gettingHappy) {

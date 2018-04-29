@@ -27,7 +27,7 @@ public class SATQuestions extends Image {
     private Texture bubble; // Texture of the background bubble
     Random rand = new Random();
     private int timer; // Used to time how long to do a right/wrong animation
-    private static final int TIMER_MAX = 50; //duration of timer
+    private static final int TIMER_MAX = 30; //duration of timer
     /** -1: Do not tint draw & tint bubble
      *  0: Incorrect answer, tint bubble red
      *  1: Correct answer, tint bubble green*/

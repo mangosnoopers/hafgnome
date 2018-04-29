@@ -146,9 +146,6 @@ public class Inventory extends Image {
             lastSlotTakenFrom = s;
             Item i = s.slotItem;
             s.amount --;
-            if(s.amount == 0){
-                s.slotItem = null;
-            }
             return i;
         }
         return null;
@@ -284,9 +281,7 @@ public class Inventory extends Image {
             }
             else{
                 Array<Texture> texs = itemTextures.get(itemType);
-                Random rand = new Random();
-                int idx = rand.nextInt(texs.size);
-                texture = texs.get(idx);
+                texture = texs.get(0);
                 relativeScale = relativeScales.get(itemType);
             }
 
@@ -301,9 +296,7 @@ public class Inventory extends Image {
             }
             else{
                 Array<Texture> texs = itemTextures.get(itemType);
-                Random rand = new Random();
-                int idx = rand.nextInt(texs.size);
-                texture = texs.get(idx);
+                texture = texs.get(0);
                 relativeScale = relativeScales.get(itemType);
             }
         }
