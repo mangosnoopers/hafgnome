@@ -234,6 +234,7 @@ public class GameplayController {
 	/** Texture of the rear view mirror */
 	private Texture rearviewBackgroundTexture;
 	private Texture rearviewSeatsTexture;
+	private Texture rearviewCoverTexture;
 	/** Texture of sun effect */
 	private Texture sun;
 	private Texture sun2;
@@ -446,6 +447,7 @@ public class GameplayController {
 		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
+		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
         visorOpen = createTexture(manager, VISOR_OPEN_FILE);
         visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
         sun = createTexture(manager, SUN_FILE);
@@ -636,9 +638,9 @@ public class GameplayController {
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
 
-		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
-		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
-		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
+		rearviewBackground = new Image(0.612f, 0.7f, 0.257f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.61f, 0.7f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.61f, 0.7f, 0.3f, rearviewCoverTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
 		// TODO CHANGE THIS LOL
@@ -998,10 +1000,10 @@ public class GameplayController {
 		rearviewBackground.draw(canvas);
 		rearviewEnemy.draw(canvas);
 		rearviewSeats.draw(canvas);
-		rearviewCover.draw(canvas);
 		// Draw Ned and Nosh
 		yonda.getNosh().draw(canvas);
 		yonda.getNed().draw(canvas);
+		rearviewCover.draw(canvas);
 
 		//Draw inventory
 		inventory.draw(canvas);
