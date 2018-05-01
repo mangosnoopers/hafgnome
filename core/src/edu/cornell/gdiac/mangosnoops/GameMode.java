@@ -436,7 +436,7 @@ public class GameMode implements Screen {
 				} else {
 					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
 							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0,
-							((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
+							((float)1.0f*canvas.getHeight())/deathModule.getHeight(), ((float)1.0f*canvas.getHeight())/deathModule.getHeight());
 				}
 				break;
 			case PLAY:
