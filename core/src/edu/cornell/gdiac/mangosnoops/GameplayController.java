@@ -177,6 +177,8 @@ public class GameplayController {
 	private static final String BUTTON_DVD_FILE = "images/DashHUD/buttonDvd.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
+	/** The Horn! */
+	private static final String HORN_FILE = "images/DashHUD/Horn.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -252,6 +254,8 @@ public class GameplayController {
 	private Texture buttonGps;
 	private Texture buttonRadio;
 	private Texture buttonDvd;
+	/** Horn texture */
+	private Texture hornTexture;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -395,6 +399,8 @@ public class GameplayController {
 		assets.add(BUTTON_RADIO_FILE);
 		manager.load(BUTTON_DVD_FILE, Texture.class);
 		assets.add(BUTTON_DVD_FILE);
+		manager.load(HORN_FILE, Texture.class);
+		assets.add(HORN_FILE);
 	}
 
 	/**
@@ -467,6 +473,7 @@ public class GameplayController {
 		buttonGps = createTexture(manager, BUTTON_GPS_FILE);
 		buttonRadio = createTexture(manager, BUTTON_RADIO_FILE);
 		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
+		hornTexture = createTexture(manager, HORN_FILE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -624,7 +631,7 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		horn = new Horn(0.17f, 0.2f, 0.17f, 0, rearviewGnomeTexture);
+		horn = new Horn(0.17f, 0.1845f, 0.17f, 0, hornTexture);
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
