@@ -96,7 +96,8 @@ public class GameCanvas {
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.z = CAM_HEIGHT;
 		camera.near = 0.0001f;
-		camera.rotate(0, 0, 1, 0);
+		camera.lookAt(0, 0, 0);
+		//camera.rotate(150, 0, 1, 0);
 		camera.update();
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
@@ -812,7 +813,7 @@ public class GameCanvas {
 	 */
 	public void setCameraXY(Vector2 newXY) {
 		camera.position.set(newXY.x, newXY.y, camera.position.z);
-		camera.lookAt(0, 0, 0);
+		camera.lookAt(0, 20, 0);
 	}
 
 	/**

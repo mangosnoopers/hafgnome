@@ -81,10 +81,10 @@ public class Child extends Image{
         super(0,0,0, null);
         if(type == ChildType.NED){
             NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
-            position = new Vector2(0.76f, 0.83f);
+            position = new Vector2(0.715f, 0.8f);
         } else{
             NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
-            position = new Vector2(0.91f, 0.83f);
+            position = new Vector2(0.9f, 0.78f);
         }
         Random rand = new Random();
         int animSpeedInt = rand.nextInt(5) + 20;
