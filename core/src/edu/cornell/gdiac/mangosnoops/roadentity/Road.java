@@ -73,7 +73,7 @@ public class Road extends RoadObject {
     private float VROOM_TIME_DEPRECIATION = 18f;
 
     /** Speed constants */
-    private float NORMAL_SPEED = 1.3f;
+    private float NORMAL_SPEED = 1.4f;
     private float VROOM_SPEED = 4f;
     private float SPEED_DAMPING = 0.8f;
 

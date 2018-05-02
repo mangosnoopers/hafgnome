@@ -309,7 +309,7 @@ public class GameMode implements Screen {
 						gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					}
 					else {
-						play(delta);
+//						play(delta);
 					}
 					break;
 				case PLAY:
