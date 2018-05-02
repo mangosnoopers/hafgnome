@@ -255,6 +255,7 @@ public class GameMode implements Screen {
             inputController = new InputController();
             if (levelName != "tutorial") {
 				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+				System.out.println("create" + gameplayController);
 			} else {
             	gameplayController = new TutorialController(canvas);
 			}
@@ -263,6 +264,7 @@ public class GameMode implements Screen {
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
