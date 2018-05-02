@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Random;
 
 import edu.cornell.gdiac.mangosnoops.GameplayController.*;
 
@@ -20,10 +21,8 @@ public class LevelObject {
     private float speed;
     /** Number of lanes in the level. */
     private int numLanes;
-    /** Total number of blocks defined in the level file */
-    private int totalBlocks;
-    /** Number of blocks to select from the total number of blocks */
-    private int useBlocks;
+    /** Which blocks to use from the level file */
+    private Array<Integer> useBlocks;
     /** Padding between enemies */
     private float padding;
     /** True if blocks should be stitched together randomly to form a level */
@@ -63,6 +62,7 @@ public class LevelObject {
     private static final float MOST_PADDING_MILES = 11.0f;
     /** Constants to help calculate x-coordinates of enemies */
     private static final float LANE_X = 0.2f;
+    private static final float HALF_LANE_WIDTH = 0.1f;
     private static final int LANE_X_OFFSET = 1;
     /** A constant that gives the number of pixels per one in-game mile.
      *  This can be changed, but the padding miles should remain constant. */
@@ -82,18 +82,15 @@ public class LevelObject {
     private static final int RANDOM_SELECT_ROW = 1;
     private static final int RANDOM_SELECT_COL = 3;
 
-    /** Row and column of cell for total number of blocks */
-    private static final int TOTAL_BLOCKS_ROW = 4;
-    private static final int TOTAL_BLOCKS_COL = 0;
     /** Row and column of cell for num blocks to use */
     private static final int USE_BLOCKS_ROW = 4;
-    private static final int USE_BLOCKS_COL = 1;
+    private static final int USE_BLOCKS_COL = 0;
     /** Row and column of cell for enemy padding */
     private static final int PADDING_ROW = 4;
-    private static final int PADDING_COL = 2;
+    private static final int PADDING_COL = 1;
     /** Row and column of the cell containing seed information */
     private static final int SEED_ROW = 4;
-    private static final int SEED_COL = 3;
+    private static final int SEED_COL = 2;
 
     /** Row and column of cells containing song information */
     private static final int SONGS_START_ROW = 8;
@@ -121,14 +118,9 @@ public class LevelObject {
     public int getNumLanes() { return numLanes; }
 
     /**
-     * Get the total number of blocks defined in this level file.
+     * Get the blocks to select to build this level.
      */
-    public int getTotalBlocks() { return totalBlocks; }
-
-    /**
-     * Get the number of blocks to select to build this level.
-     */
-    public int getUseBlocks() { return useBlocks; }
+    public Array<Integer> getUseBlocks() { return useBlocks; }
 
     /**
      * Get the padding between enemies for this level.
@@ -175,6 +167,7 @@ public class LevelObject {
         songs = new ObjectMap<String,Genre>();
         enemiez = new Array<Enemy>();
         events = new Array<Event>();
+        useBlocks = new Array<Integer>();
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
@@ -260,13 +253,14 @@ public class LevelObject {
             else
                 throw new RuntimeException("Invalid random selection setting");
 
-            // Total number of blocks and number of blocks to use
-            totalBlocks = Integer.parseInt(df.formatCellValue(sh.getRow(TOTAL_BLOCKS_ROW).getCell(TOTAL_BLOCKS_COL)));
-            useBlocks = Integer.parseInt(df.formatCellValue(sh.getRow(USE_BLOCKS_ROW).getCell(USE_BLOCKS_COL)));
+            // Which blocks to read from
+            String[] useBlocksStr = df.formatCellValue(sh.getRow(USE_BLOCKS_ROW).getCell((USE_BLOCKS_COL))).split(",");
+            for (int i = 0; i < useBlocksStr.length; i++) {
+                useBlocks.add(Integer.parseInt(useBlocksStr[i].trim()));
+            }
 
             // Padding between enemies
             String pStr = df.formatCellValue(sh.getRow(PADDING_ROW).getCell(PADDING_COL)).toLowerCase();
-            System.out.println(pStr);
             if (pStr.equals("less"))
                 padding = LESS_PADDING_MILES;
             else if (pStr.equals("normal"))
@@ -315,11 +309,11 @@ public class LevelObject {
             if (!randomSelect) {
                 int roadStartCol = ROAD_START_COL; // Always the first column of a block
                 int blocksProcessed = 0;
-                while (blocksProcessed < useBlocks) {
+                while (blocksProcessed < useBlocks.size) {
+                    roadStartCol = ROAD_START_COL + ((useBlocks.get(blocksProcessed) - 1) * (numLanes + 1));
                     processExcelBlock(sh, roadStartCol);
                     // Move to the next block
                     blocksProcessed += 1;
-                    roadStartCol += numLanes + 1;
                 }
             }
 
@@ -334,7 +328,8 @@ public class LevelObject {
         } catch (IOException e) {
             throw new IOException(e.getMessage());
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid padding setting");
+//            throw new RuntimeException("Invalid padding setting");
+            System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
             throw new InvalidFormatException("Input file format invalid");
         } catch (RuntimeException e) {
@@ -382,8 +377,14 @@ public class LevelObject {
             float x = LANE_X * (numLanes - LANE_X_OFFSET);
             // Check for enemies in each lane
             for (int i = 1; i <= numLanes; i++) {
-                // Calculate the x-coordinate for this enemy - decrease by 0.1 for each lane left
+                // Calculate the x-coordinate for this enemy - decrease by 0.2 for each lane left
                 x -= LANE_X;
+                // add some offset so they are not always in the middle of the lane
+                Random rand = new Random();
+                int direction = rand.nextInt(1) == 0 ? -1 : 1;
+                float offset = rand.nextFloat() * HALF_LANE_WIDTH;
+                x = x + (offset*direction);
+
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
                 if (enemyStr.equals("gnome")) {
                     Gnome gnome = new Gnome(x, y);
