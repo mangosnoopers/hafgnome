@@ -160,13 +160,15 @@ public class Road extends RoadObject {
                 if (currentSpeed > VROOM_SPEED) {
                     currentSpeed = VROOM_SPEED;
                     state = RoadState.MAX_SPEED;
-            }
+                }
+                break;
             case MAX_SPEED:
                 vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
                 if (vroomTimeLeft < 0) {
                     vroomTimeLeft = MAX_VROOM_TIME;
                     state = RoadState.DECELERATING;
                 }
+                break;
             case DECELERATING:
                 vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
                 currentSpeed -= DECELERATION * delta;
@@ -174,6 +176,7 @@ public class Road extends RoadObject {
                     currentSpeed = NORMAL_SPEED;
                     state = RoadState.NORMAL;
                 }
+                break;
         }
 
 
