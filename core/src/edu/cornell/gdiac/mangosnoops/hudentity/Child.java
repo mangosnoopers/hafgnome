@@ -95,6 +95,16 @@ public class Child extends Image{
     }
 
     /**
+     *  Decreases mood one segment
+     */
+    public void decreaseMood() {
+        if(getCurrentMood() != Mood.SLEEP) {
+            happiness -= 250;
+            if(happiness < 0) happiness = 0;
+        }
+    }
+
+    /**
      * Returns the mood of the child
      */
     public Mood getCurrentMood() {
