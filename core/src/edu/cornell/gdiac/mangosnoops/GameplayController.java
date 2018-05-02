@@ -996,7 +996,7 @@ public class GameplayController {
 		touchscreen.draw(canvas, displayFont);
 
 		// Horn
-		horn.draw(canvas);
+		horn.draw(canvas, wheel.getAng());
 
 		// FIXME: this is a mess
 		rearviewBackground.draw(canvas);
