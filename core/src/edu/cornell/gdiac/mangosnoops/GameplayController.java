@@ -965,6 +965,8 @@ public class GameplayController {
 
 	public void draw(GameCanvas canvas) {
 
+	    canvas.setCameraFOV(road.getSpeedRatio());
+
 		//Gnomez
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
