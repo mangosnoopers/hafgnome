@@ -56,9 +56,11 @@ public class LevelObject {
     /** Padding constants. Converts each cell to a certain number of miles.
      *  Don't change these (the designers are going by them), but the miles
      *  to pixels conversion can be changed */
+    private static final float LEAST_PADDING_MILES = 1.2f;
     private static final float LESS_PADDING_MILES = 2.0f;
     private static final float NORMAL_PADDING_MILES = 5.0f;
     private static final float MORE_PADDING_MILES = 8.0f;
+    private static final float MOST_PADDING_MILES = 11.0f;
     /** Constants to help calculate x-coordinates of enemies */
     private static final float LANE_X = 0.2f;
     private static final int LANE_X_OFFSET = 1;
@@ -264,14 +266,19 @@ public class LevelObject {
 
             // Padding between enemies
             String pStr = df.formatCellValue(sh.getRow(PADDING_ROW).getCell(PADDING_COL)).toLowerCase();
+            System.out.println(pStr);
             if (pStr.equals("less"))
                 padding = LESS_PADDING_MILES;
             else if (pStr.equals("normal"))
                 padding = NORMAL_PADDING_MILES;
             else if (pStr.equals("more"))
                 padding = MORE_PADDING_MILES;
+            else if (pStr.equals("least"))
+                padding = LEAST_PADDING_MILES;
+            else if (pStr.equals("most"))
+                padding = MOST_PADDING_MILES;
             else
-                throw new RuntimeException("Invalid padding setting");
+                padding = Float.parseFloat(pStr);
 
             // Seed
             seed = Integer.parseInt(df.formatCellValue(sh.getRow(SEED_ROW).getCell(SEED_COL)));
@@ -326,12 +333,13 @@ public class LevelObject {
 
         } catch (IOException e) {
             throw new IOException(e.getMessage());
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid padding setting");
         } catch (InvalidFormatException e) {
             throw new InvalidFormatException("Input file format invalid");
         } catch (RuntimeException e) {
             throw e;
         }
-
     }
 
     /** Process a block of enemies and events in an Excel level.
@@ -345,7 +353,7 @@ public class LevelObject {
         // Iterate through cells until "END" is reached in first column
         int roadCurrRow = ROAD_START_ROW;
         while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
-            // Convert miles intor the y-coordinate for this block
+            // Convert miles into the y-coordinate for this block
             float y = localMiles * MILES_TO_PIXELS;
 
             // Read the events column - first column of the block
@@ -393,6 +401,8 @@ public class LevelObject {
                     //Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
                     //gnomez.add(enemy);
                     // TODO: grill end
+                } else if (enemyStr.equals("grill end")) {
+
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");
                 }
