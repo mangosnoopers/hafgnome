@@ -131,7 +131,7 @@ public class InputController {
 
 		//Read input for Gameplay
 		prevMouseClicked = mouseClicked;
-		resetPressed = (Gdx.input.isKeyPressed(Input.Keys.R)) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
+		resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
 		pausePressed = (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) ;
 
