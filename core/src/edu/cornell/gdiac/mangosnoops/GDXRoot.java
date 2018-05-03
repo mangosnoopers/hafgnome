@@ -78,13 +78,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void create() {
 		currLevel = 0;
+		Gdx.graphics.setTitle("Gnomez");
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas,LEVELS[currLevel]);
 		reststop = new RestStopMode(canvas, manager);
 		start = new StartMenuMode(canvas, manager);
 
-		Gdx.graphics.setTitle("Gnomez");
 
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
@@ -153,6 +153,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			} else {
 				playing.setScreenListener(this);
+				//Gdx.input.setInputProcessor(playing);
 				setScreen(playing);
 				start.dispose();
 				start = null;
@@ -173,6 +174,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode
 			playing.setScreenListener(this);
+			//Gdx.input.setInputProcessor(playing);
 			setScreen(playing);
 
 			reststop.dispose();
