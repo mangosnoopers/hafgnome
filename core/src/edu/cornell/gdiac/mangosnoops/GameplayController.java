@@ -906,12 +906,12 @@ public class GameplayController {
 //                        nosh.setMoodShifting(true, false);
 					}
 					break;
-				case COMEDY: // ned dislikes, nosh likes
-					if(ned.isAwake()){
-//						ned.setMoodShifting(true, false);
+				case CLASSICAL: // ned dislikes, nosh likes
+					if(ned.getCurrentMood() == Child.Mood.HAPPY){
+						ned.setAsleep();
 					}
-					if(nosh.isAwake()){
-						nosh.setMoodShifting(true, true);
+					if(nosh.getCurrentMood() == Child.Mood.HAPPY){
+						nosh.setAsleep();
 					}
 					break;
 				default:

@@ -71,7 +71,8 @@ public class TouchScreen {
                 gps.draw(canvas, displayFont);
                 break;
             case RADIO:
-                radio.draw(canvas, displayFont);
+                if(radio.getNumStations() == 0) offScreen.draw(canvas);
+                else radio.draw(canvas, displayFont);
                 break;
             case DVD:
                 dvdPlayer.draw(canvas, displayFont);
