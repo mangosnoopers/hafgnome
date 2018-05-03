@@ -75,6 +75,7 @@ public class Image {
         //used for master shaker lol
     }
 
+
     public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);
         if(tex == null){
@@ -111,9 +112,29 @@ public class Image {
         origin = o;
     }
 
+    public static float getScreenWidth() {
+        return c.getWidth();
+    }
+
+    public static float getScreenHeight() {
+        return c.getHeight();
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
     public static void updateScreenDimensions(GameCanvas canvas){
         c = canvas;
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(), canvas.getHeight());
+    }
+
+    public void updateX(float x) {
+        position.x = x;
+    }
+
+    public void updateY(float y) {
+        position.y = y;
     }
     /**
      * Returns true if the mouse is positioned inside the area of the object

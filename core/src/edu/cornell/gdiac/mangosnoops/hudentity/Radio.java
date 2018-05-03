@@ -15,6 +15,8 @@ import edu.cornell.gdiac.mangosnoops.Image;
 public class Radio {
     /** Rotation speed */
     private static final float ROTATION_SPEED = 0.05f;
+    private static final float SLIDER_LEFTMOSTPOS = 0.757f;
+    private static final float SLIDER_RIGHTMOSTPOS = 0.943f;
 
     private Image knob;
     private Image slider;
@@ -26,6 +28,7 @@ public class Radio {
     private Image nosh_like;
     private Image nosh_dislike;
 
+    private int numStations;
 
     boolean soundOn;
     /** Current angle of the radioknob */
@@ -36,8 +39,6 @@ public class Radio {
     Station lastStation;
     /** The current playing station **/
     Station currentStation;
-    /** The number of the currently playing station **/
-    int stationNumber;
 
     /** Enum for song genres **/
     public enum Genre{
@@ -56,7 +57,7 @@ public class Radio {
                  Texture nod,
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
-        slider = new Image(0.85f, 0.15f, 0.02f, 0, s, GameCanvas.TextureOrigin.MIDDLE);
+        slider = new Image(0.85f, 0.15f, 0.02f, 20, s, GameCanvas.TextureOrigin.MIDDLE);
         pointer = new Image(0.85f, 0.17f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
         sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
         sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
@@ -64,6 +65,9 @@ public class Radio {
         ned_dislike = new Image(0.5f, 0.5f, 0.07f, 0, ned, GameCanvas.TextureOrigin.MIDDLE);
         nosh_like = new Image(0.5f, 0.5f, 0.07f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
         nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
+
+        numStations = songs.size; // TODO: add this into constructor
+        System.out.println(numStations);
 
         soundOn = true;
         // Create Station list
@@ -136,21 +140,29 @@ public class Radio {
      * is shut off
      */
     public void setStation() {
-        // TODO: make this work for < 3 songs
-        stationNumber = -(int) knobAng;
-        if (stationNumber <= 0) {
-            stationNumber = 0;
+        if(numStations != 0) {
+            int stationNumber;
+            float oneUnit = (SLIDER_RIGHTMOSTPOS - SLIDER_LEFTMOSTPOS)/numStations;
+            stationNumber = (int)((slider.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
+
+            currentStation = stations.get(stationNumber);
         }
-        lastStation = currentStation;
-        if (stationNumber > 10 && stationNumber < 100) {
-            currentStation = stations.get(0);
-        } else if (stationNumber > 120 && stationNumber < 190) {
-            currentStation = stations.get(1);
-        } else if (stationNumber > 220 && stationNumber < 300) {
-            currentStation = stations.get(2);
-        } else {
-            currentStation = null;
-        }
+
+//        stationNumber = -(int) knobAng;
+//
+//        if (stationNumber <= 0) {
+//            stationNumber = 0;
+//        }
+//        lastStation = currentStation;
+//        if (stationNumber > 10 && stationNumber < 100) {
+//            currentStation = stations.get(0);
+//        } else if (stationNumber > 120 && stationNumber < 190) {
+//            currentStation = stations.get(1);
+//        } else if (stationNumber > 220 && stationNumber < 300) {
+//            currentStation = stations.get(2);
+//        } else {
+//            currentStation = null;
+//        }
     }
 
     boolean prevClicked = false;
@@ -170,7 +182,11 @@ public class Radio {
 //            }
 //        }
 
-        if(in != null && pointer.inArea(in)) {
+        if(in != null && slider.inArea(in)) {
+            float newPos = in.x/pointer.getScreenWidth();
+            if(newPos < SLIDER_LEFTMOSTPOS) newPos = SLIDER_LEFTMOSTPOS;
+            else if(newPos > SLIDER_RIGHTMOSTPOS) newPos = SLIDER_RIGHTMOSTPOS;
+            pointer.updateX(newPos);
         }
         if(prevClicked == true && in == null && soundOn) {
             soundOn = false;
