@@ -14,30 +14,19 @@ public class TouchScreen {
     private Image buttonGps;
     private Image buttonRadio;
     private Image buttonDvd;
-    private GPS gps;
     private Radio radio;
     private DvdPlayer dvdPlayer;
     private GameCanvas c;
 
-    private enum OpenScreen {
-        GPS,
-        RADIO,
-        DVD
-    }
-    private OpenScreen currScreen;
-
-
-    public TouchScreen(GPS g, Radio r, DvdPlayer d, Texture ons, Texture ofs, Texture dvds, Texture bG, Texture bR, Texture bD) {
+    public TouchScreen(Radio r, DvdPlayer d, Texture ons, Texture ofs, Texture dvds, Texture bG, Texture bR, Texture bD) {
         onScreen = new Image(0.85f, 0.24f, 0.26f, ons, GameCanvas.TextureOrigin.MIDDLE);
         offScreen = new Image(0.85f, 0.24f, 0.26f, ofs, GameCanvas.TextureOrigin.MIDDLE);
         dvdSlot = new Image(0.85f, 0.07f, 0.01f, 100, dvds, GameCanvas.TextureOrigin.MIDDLE);
-        gps = g;
         radio = r;
         dvdPlayer = d;
         buttonGps = new Image(0.7f, 0.34f, 0.04f, bG, GameCanvas.TextureOrigin.MIDDLE);
         buttonRadio = new Image(0.7f, 0.24f, 0.04f, bR, GameCanvas.TextureOrigin.MIDDLE);
         buttonDvd = new Image(0.7f, 0.14f, 0.04f, bD, GameCanvas.TextureOrigin.MIDDLE);
-        currScreen = OpenScreen.RADIO;
     }
 
     public boolean inDvdSlot(Vector2 p) {
@@ -45,16 +34,10 @@ public class TouchScreen {
     }
 
     public void update(Vector2 p, float dx) {
-        gps.update();
-        radio.update(p , dx);
-        dvdPlayer.update();
-        if(p == null) return;
-        if(buttonGps.inArea(p)) {
-            currScreen = OpenScreen.GPS;
-        } else if(buttonRadio.inArea(p)) {
-            currScreen = OpenScreen.RADIO;
-        } else if(buttonDvd.inArea(p)) {
-            currScreen = OpenScreen.DVD;
+        if(dvdPlayer.isPlayingDvd()) {
+            dvdPlayer.update();
+        } else {
+            radio.update(p , dx);
         }
     }
 
@@ -62,23 +45,15 @@ public class TouchScreen {
         c = canvas;
         onScreen.draw(canvas);
         dvdSlot.draw(canvas);
-        buttonGps.draw(canvas);
-        buttonRadio.draw(canvas);
-        buttonDvd.draw(canvas);
+//        buttonGps.draw(canvas);
+//        buttonRadio.draw(canvas);
+//        buttonDvd.draw(canvas);
         //Draw screens
-        switch(currScreen) {
-            case GPS:
-                gps.draw(canvas, displayFont);
-                break;
-            case RADIO:
-                if(radio.getNumStations() == 0) offScreen.draw(canvas);
-                else radio.draw(canvas, displayFont);
-                break;
-            case DVD:
-                dvdPlayer.draw(canvas, displayFont);
-                break;
-            default:
-                break;
+        if(dvdPlayer.isPlayingDvd()) {
+            dvdPlayer.draw(canvas, displayFont);
+        } else {
+            if(radio.getNumStations() == 0) offScreen.draw(canvas);
+            else radio.draw(canvas, displayFont);
         }
     }
 }

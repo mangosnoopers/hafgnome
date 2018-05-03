@@ -78,6 +78,8 @@ public class Radio {
 
     public int getNumStations() { return stations.size; }
 
+    public boolean isSoundOn() { return soundOn; }
+
     /**
      * Return the current angle of the radio knob.
      * @return knobAng
@@ -155,15 +157,6 @@ public class Radio {
      * @param dx the change in x in the user's input
      */
     public void update(Vector2 in, float dx) {
-        Vector2 src = new Vector2(0.0f,5.0f);
-        //System.out.println("From update Radio: " + in);
-//        if (in != null && knob.inArea(in)) {
-//            knobAng -= (in.angle(src) * ROTATION_SPEED);
-//            if (knobAng <= -360.0f) {
-//                knobAng = 0.0f;
-//            }
-//        }
-
         if(in != null && slider.inArea(in)) {
             float newPos = in.x/pointer.getScreenWidth();
             if(newPos < SLIDER_LEFTMOSTPOS) newPos = SLIDER_LEFTMOSTPOS;

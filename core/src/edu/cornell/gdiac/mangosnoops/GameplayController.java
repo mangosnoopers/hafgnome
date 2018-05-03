@@ -28,7 +28,6 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.DefaultValueLoaderDecorator;
 import edu.cornell.gdiac.mangosnoops.hudentity.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -65,7 +64,6 @@ public class GameplayController {
 	private float ypos;
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
-	private GPS gps;
 	private Radio radio;
 	private DvdPlayer dvdPlayer;
 
@@ -501,7 +499,9 @@ public class GameplayController {
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
 		enemiez = enemies;
+        visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 		yonda = new Car();
+		yonda.setVisor(visor);
 		backing = new Array<Enemy>();
 		road = new Road(endY);
 		ypos = 0.0f;
@@ -619,12 +619,11 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
-		gps = new GPS();
 		radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
-		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
+		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
@@ -660,6 +659,7 @@ public class GameplayController {
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.19f, 0.19f,0.26f, 50, vroomStickTexture);
 		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
+		yonda.setVisor(visor);
 
 		road.setRoadTexture(roadTexture);
 		road.setGrassTexture(grassTexture);
@@ -678,7 +678,6 @@ public class GameplayController {
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
-		visor = null;
 		satQuestions.reset();
 
 		// reset inventory
@@ -878,7 +877,7 @@ public class GameplayController {
 			ned.setMood(Child.Mood.HAPPY);
 			nosh.setMood(Child.Mood.HAPPY);
 		}
-		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
+		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
 
 			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
