@@ -29,6 +29,7 @@ public class LevelObject {
     private boolean randomSelect;
     /** Random seed */
     private int seed;
+
     /** Mapping between the level's song genres and its song mp3 files */
     private ObjectMap<String,Genre> songs;
     /** Array of enemies for the level */
@@ -36,8 +37,9 @@ public class LevelObject {
     /** An array of events for the level.
      *  The first element in the array is the event to happen the soonest. */
     private Array<Event> events;
-    /** Inventory */
-    // TODO
+    /** An array of the roadside objects for this level. */
+    private Array<RoadImage> roadsideObjs;
+
     /** An internal tracker for number of miles traversed so far in the level */
     private float localMiles;
     /** Y-coordinate for end of the level */
@@ -64,6 +66,9 @@ public class LevelObject {
     private static final float LANE_X = 0.2f;
     private static final float HALF_LANE_WIDTH = 0.1f;
     private static final int LANE_X_OFFSET = 1;
+    /** x-coordinates of roadside areas */
+    private static final float LEFT_ROADSIDE_X = -0.6f;
+    private static final float RIGHT_ROADSIDE_X = 0.6f;
     /** A constant that gives the number of pixels per one in-game mile.
      *  This can be changed, but the padding miles should remain constant. */
     private static final float MILES_TO_PIXELS = 1.15f;
@@ -163,11 +168,12 @@ public class LevelObject {
     public LevelObject(String file) throws IOException, InvalidFormatException, RuntimeException {
         localMiles = 0.0f;
 
-        // Initialize collections -- TODO: inventory
+        // Initialize collections
         songs = new ObjectMap<String,Genre>();
         enemiez = new Array<Enemy>();
         events = new Array<Event>();
         useBlocks = new Array<Integer>();
+        roadsideObjs = new Array<RoadImage>();
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
@@ -177,7 +183,7 @@ public class LevelObject {
 
         // if JSON file
         else if (ext.equals("json")) {
-            parseJSON("levels/" + file);
+            parseJSON("levels/savedlevels/" + file);
         }
 
         // not a supported file type
@@ -307,11 +313,13 @@ public class LevelObject {
 
             // Iterate through desired number of blocks in order if randomSelect is false
             if (!randomSelect) {
-                int roadStartCol = ROAD_START_COL; // Always the first column of a block
+                int roadStartCol;
                 int blocksProcessed = 0;
                 while (blocksProcessed < useBlocks.size) {
+                    // Process current block
                     roadStartCol = ROAD_START_COL + ((useBlocks.get(blocksProcessed) - 1) * (numLanes + 1));
                     processExcelBlock(sh, roadStartCol);
+
                     // Move to the next block
                     blocksProcessed += 1;
                 }
@@ -328,8 +336,7 @@ public class LevelObject {
         } catch (IOException e) {
             throw new IOException(e.getMessage());
         } catch (NumberFormatException e) {
-//            throw new RuntimeException("Invalid padding setting");
-            System.out.println(e.getMessage());
+            throw new RuntimeException("Invalid padding setting");
         } catch (InvalidFormatException e) {
             throw new InvalidFormatException("Input file format invalid");
         } catch (RuntimeException e) {
@@ -369,10 +376,6 @@ public class LevelObject {
                 throw new RuntimeException("Invalid event specified");
             }
 
-            //TODO DELETE:
-//            if (!eventStr.equals(""))
-//                System.out.println(eventStr + " at y: " + y);
-
             // Starting x-coordinate for rightmost lane
             float x = LANE_X * (numLanes - LANE_X_OFFSET);
             // Check for enemies in each lane
@@ -385,29 +388,33 @@ public class LevelObject {
                 float offset = rand.nextFloat() * HALF_LANE_WIDTH;
                 x = x + (offset*direction);
 
-                String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol + i)).toLowerCase();
+                String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
+                                    (roadStartCol + i + 1)).toLowerCase();
                 if (enemyStr.equals("gnome")) {
                     Gnome gnome = new Gnome(x, y);
                     enemiez.add(gnome);
-                    // TODO add texture here? maybe?
-
-                    // TODO DELETE:
-//                    System.out.println("enemy row: " + roadCurrRow + " / col: " + i);
-//                    System.out.println("enemy x: " + x + "enemy y: " + y);
-
                 } else if (enemyStr.equals("flamingo")) {
                     Flamingo flamingo = new Flamingo(x, y);
                     enemiez.add(flamingo);
                 } else if (enemyStr.equals("grill start")) {
-                    //Gnome enemy = new Gnome(x, y, Gnome.GnomeType.GRILL);
-                    //gnomez.add(enemy);
-                    // TODO: grill end
+                    // TODO
                 } else if (enemyStr.equals("grill end")) {
-
+                    // TODO
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");
                 }
             }
+
+            // Check for left roadside objects
+            String leftRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
+                                        (roadStartCol + numLanes + 2)).toLowerCase();
+            if (leftRoadsideStr.equals("exit sign")) {
+
+            }
+
+            // Check for right roadside objects
+            String rightRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
+                                        (roadStartCol + 1)).toLowerCase();
 
             localMiles += padding;
             roadCurrRow += 1;
