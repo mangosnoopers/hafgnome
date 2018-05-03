@@ -30,6 +30,8 @@ public class Visor extends Image {
         this.white = white;
     }
 
+    public void close() { open = false; }
+
     public boolean isOpen() {
         return open;
     }
@@ -66,10 +68,10 @@ public class Visor extends Image {
     public void drawSunA(GameCanvas canvas, boolean sunShine) {
         if(sunShine && !open) {
             canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-            canvas.draw(white, new Color(1, 1, 0, 0.7f), 0, 0, 0, 0, 0,
+            canvas.draw(white, new Color(1, 1, 0, 0.9f), 0, 0, 0, 0, 0,
                     canvas.getWidth(), canvas.getHeight());
             canvas.setBlendState(GameCanvas.BlendState.NO_PREMULT);
-            canvas.draw(white, new Color(1, 0.7f, 0, 0.7f), 0, 0, 0, 0, 0,
+            canvas.draw(white, new Color(1, 0.7f, 0, 0.9f), 0, 0, 0, 0, 0,
                     canvas.getWidth(), canvas.getHeight());
         } else if (sunShine) {
             canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);

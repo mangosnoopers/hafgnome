@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import edu.cornell.gdiac.mangosnoops.*;
+import edu.cornell.gdiac.mangosnoops.hudentity.Visor;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 import edu.cornell.gdiac.util.*;
 
@@ -94,6 +95,8 @@ public class Car extends RoadObject {
     /** Neddy boi */
     private Child ned;
 
+    Visor visor;
+
     private Texture speechBubble;
 
     public Car() {
@@ -107,6 +110,14 @@ public class Car extends RoadObject {
         timeToDisplayDamageIndicator = 10;
 
         position = new Vector2(CAR_START_POS);
+    }
+
+    public void setVisor(Visor v) {
+        visor = v;
+    }
+
+    public Visor getVisor() {
+        return visor;
     }
 
     public void addSpeechBubbleTexture(Texture sb) {
@@ -218,6 +229,8 @@ public class Car extends RoadObject {
      * Reset the car to restart the game.
      */
     public void reset() {
+
+        visor = null;
 
         takingExit = false;
         carTeleported = false;

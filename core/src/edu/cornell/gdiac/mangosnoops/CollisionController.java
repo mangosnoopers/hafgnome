@@ -128,6 +128,7 @@ public class CollisionController {
 		s.applyShake();
 		c.getNed().decreaseMood();
 		c.getNosh().decreaseMood();
+		c.getVisor().close();
 		if (c.getHealth() == 0) c.setDestroyed(true);
 		e.setDestroyed(true);
 	}
