@@ -658,7 +658,7 @@ public class GameplayController {
 		}
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
-		vroomStick = new VroomStick(0.193f, 0.2f,0.3f, 0, vroomStickTexture);
+		vroomStick = new VroomStick(0.19f, 0.19f,0.26f, 50, vroomStickTexture);
 		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 
 		road.setRoadTexture(roadTexture);

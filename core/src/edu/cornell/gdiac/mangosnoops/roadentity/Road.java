@@ -64,13 +64,13 @@ public class Road extends RoadObject {
     float EXIT_GRASS_OFFSET = 0.6f;
 
     /** max # frames to vroom */
-    private float MAX_VROOM_TIME = 40;
+    private float MAX_VROOM_TIME = 30;
 
     /** frames left to vroom */
     private float vroomTimeLeft = MAX_VROOM_TIME;
 
     /** How quickly vroom time depreciates */
-    private float VROOM_TIME_DEPRECIATION = 18f;
+    private float VROOM_TIME_DEPRECIATION = 20f;
 
     /** Speed constants */
     private float NORMAL_SPEED = 1.4f;

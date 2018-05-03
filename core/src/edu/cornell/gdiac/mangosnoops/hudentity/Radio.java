@@ -57,7 +57,7 @@ public class Radio {
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
         slider = new Image(0.85f, 0.15f, 0.02f, 0, s, GameCanvas.TextureOrigin.MIDDLE);
-        pointer = new Image(0.5f, 0.5f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
+        pointer = new Image(0.85f, 0.17f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
         sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
         sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
         ned_like = new Image(0.5f, 0.5f, 0.07f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
@@ -163,21 +163,24 @@ public class Radio {
     public void update(Vector2 in, float dx) {
         Vector2 src = new Vector2(0.0f,5.0f);
         //System.out.println("From update Radio: " + in);
-        if (in != null && knob.inArea(in)) {
-            knobAng -= (in.angle(src) * ROTATION_SPEED);
-            if (knobAng <= -360.0f) {
-                knobAng = 0.0f;
-            }
+//        if (in != null && knob.inArea(in)) {
+//            knobAng -= (in.angle(src) * ROTATION_SPEED);
+//            if (knobAng <= -360.0f) {
+//                knobAng = 0.0f;
+//            }
+//        }
+
+        if(in != null && pointer.inArea(in)) {
         }
-        if(prevClicked == false && in != null && soundOn && sound_on.inArea(in)) {
+        if(prevClicked == true && in == null && soundOn) {
             soundOn = false;
             currentStation.getAudio().setVolume(0);
-        } else if(prevClicked == false && in != null && !soundOn && sound_off.inArea(in)) {
+        } else if(prevClicked == true && in == null && !soundOn) {
             soundOn = true;
             currentStation.getAudio().setVolume(1);
         }
         setStation();
-        prevClicked = in != null;
+        prevClicked = in != null && sound_on.inArea(in);
     }
 
     /**
@@ -185,9 +188,9 @@ public class Radio {
      * @param canvas
      */
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
-        knob.draw(canvas, knobAng);
+//        knob.draw(canvas, knobAng);
         slider.draw(canvas);
-//        pointer.draw(canvas);
+        pointer.draw(canvas);
         if(soundOn) sound_on.draw(canvas);
         else sound_off.draw(canvas);
 //        ned_like.draw(canvas);
