@@ -29,10 +29,11 @@ public class SoundController {
 
         if (lastStation != currentStation){
             if (lastStation != null) {
-                lastStation.getAudio().pause();
+                lastStation.getAudio().setVolume(0);
             }
             if (currentStation != null) {
-                currentStation.getAudio().play();
+                if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(1f);
+                else currentStation.getAudio().play();
                 music.add(currentStation.getAudio());
             }
         }

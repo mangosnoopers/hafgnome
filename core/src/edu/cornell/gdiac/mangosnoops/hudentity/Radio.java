@@ -28,8 +28,6 @@ public class Radio {
     private Image nosh_like;
     private Image nosh_dislike;
 
-    private int numStations;
-
     boolean soundOn;
     /** Current angle of the radioknob */
     private float knobAng;
@@ -43,7 +41,7 @@ public class Radio {
     /** Enum for song genres **/
     public enum Genre{
         CREEPY, DANCE, ACTION, JAZZ,
-        POP, THUG, COMEDY, NONE
+        POP, THUG, CLASSICAL, NONE
     }
 
     public Radio(Texture tex,
@@ -66,9 +64,6 @@ public class Radio {
         nosh_like = new Image(0.5f, 0.5f, 0.07f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
         nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
 
-        numStations = songs.size; // TODO: add this into constructor
-        System.out.println(numStations);
-
         soundOn = true;
         // Create Station list
         stations = new Array<Station>();
@@ -81,7 +76,7 @@ public class Radio {
 
     public Station getCurrentStation(){ return currentStation; }
 
-    public static Array<Station> getStations() { return stations; }
+    public int getNumStations() { return stations.size; }
 
     /**
      * Return the current angle of the radio knob.
@@ -140,29 +135,16 @@ public class Radio {
      * is shut off
      */
     public void setStation() {
+        int numStations = stations.size;
         if(numStations != 0) {
+            lastStation = currentStation;
             int stationNumber;
             float oneUnit = (SLIDER_RIGHTMOSTPOS - SLIDER_LEFTMOSTPOS)/numStations;
-            stationNumber = (int)((slider.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
-
+            stationNumber = (int)((pointer.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
+            if(stationNumber >= numStations) stationNumber = numStations-1;
             currentStation = stations.get(stationNumber);
         }
 
-//        stationNumber = -(int) knobAng;
-//
-//        if (stationNumber <= 0) {
-//            stationNumber = 0;
-//        }
-//        lastStation = currentStation;
-//        if (stationNumber > 10 && stationNumber < 100) {
-//            currentStation = stations.get(0);
-//        } else if (stationNumber > 120 && stationNumber < 190) {
-//            currentStation = stations.get(1);
-//        } else if (stationNumber > 220 && stationNumber < 300) {
-//            currentStation = stations.get(2);
-//        } else {
-//            currentStation = null;
-//        }
     }
 
     boolean prevClicked = false;
@@ -255,8 +237,8 @@ public class Radio {
                 case THUG:
                     name = "Thug";
                     break;
-                case COMEDY:
-                    name = "Comedy";
+                case CLASSICAL:
+                    name = "Classical";
                     break;
                 default:
                     name = "NONE";
