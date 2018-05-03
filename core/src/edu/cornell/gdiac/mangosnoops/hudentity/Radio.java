@@ -18,7 +18,16 @@ public class Radio {
 
     private Image knob;
     private Image slider;
+    private Image pointer;
+    private Image sound_on;
+    private Image sound_off;
+    private Image ned_like;
+    private Image ned_dislike;
+    private Image nosh_like;
+    private Image nosh_dislike;
 
+
+    boolean soundOn;
     /** Current angle of the radioknob */
     private float knobAng;
     /** List of available stations **/
@@ -36,9 +45,27 @@ public class Radio {
         POP, THUG, COMEDY, NONE
     }
 
-    public Radio(Texture tex, ObjectMap<String,Genre> songs) {
+    public Radio(Texture tex,
+                 Texture s,
+                 Texture p,
+                 Texture son,
+                 Texture soff,
+                 Texture nel,
+                 Texture ned,
+                 Texture nol,
+                 Texture nod,
+                 ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
+        slider = new Image(0.85f, 0.15f, 0.02f, 0, s, GameCanvas.TextureOrigin.MIDDLE);
+        pointer = new Image(0.5f, 0.5f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
+        sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
+        sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
+        ned_like = new Image(0.5f, 0.5f, 0.07f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
+        ned_dislike = new Image(0.5f, 0.5f, 0.07f, 0, ned, GameCanvas.TextureOrigin.MIDDLE);
+        nosh_like = new Image(0.5f, 0.5f, 0.07f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
+        nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
 
+        soundOn = true;
         // Create Station list
         stations = new Array<Station>();
         for (String songname : songs.keys()) {
@@ -126,18 +153,7 @@ public class Radio {
         }
     }
 
-    /**
-     * Draws the radio and its knob on the given canvas
-     * @param canvas
-     */
-    public void draw(GameCanvas canvas, BitmapFont displayFont) {
-        knob.draw(canvas, knobAng);
-        displayFont.setColor(Color.FIREBRICK);
-        canvas.drawTextCenterOrigin(getCurrentStationName() + "\n", displayFont, 0.85f, 0.3f);
-        canvas.drawTextCenterOrigin("\n" + getCurrentStationSong(), displayFont, 0.85f, 0.3f);
-    }
-
-
+    boolean prevClicked = false;
     /**
      * Updates the radio based on the user's input.
      *
@@ -149,12 +165,36 @@ public class Radio {
         //System.out.println("From update Radio: " + in);
         if (in != null && knob.inArea(in)) {
             knobAng -= (in.angle(src) * ROTATION_SPEED);
-
             if (knobAng <= -360.0f) {
                 knobAng = 0.0f;
             }
         }
+        if(prevClicked == false && in != null && soundOn && sound_on.inArea(in)) {
+            soundOn = false;
+            currentStation.getAudio().setVolume(0);
+        } else if(prevClicked == false && in != null && !soundOn && sound_off.inArea(in)) {
+            soundOn = true;
+            currentStation.getAudio().setVolume(1);
+        }
         setStation();
+        prevClicked = in != null;
+    }
+
+    /**
+     * Draws the radio and its knob on the given canvas
+     * @param canvas
+     */
+    public void draw(GameCanvas canvas, BitmapFont displayFont) {
+        knob.draw(canvas, knobAng);
+        slider.draw(canvas);
+//        pointer.draw(canvas);
+        if(soundOn) sound_on.draw(canvas);
+        else sound_off.draw(canvas);
+//        ned_like.draw(canvas);
+//        nosh_like.draw(canvas);
+        displayFont.setColor(Color.FIREBRICK);
+        canvas.drawTextCenterOrigin(getCurrentStationName(), displayFont, 0.83f, 0.3f);
+        canvas.drawTextCenterOrigin("\n" + getCurrentStationSong(), displayFont, 0.85f, 0.28f);
     }
 
     /**

@@ -68,6 +68,7 @@ public class GameCanvas {
 
 	private float CAM_HEIGHT = 4.32f;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
+	private float NORMAL_CAM_FOV = 67;
 
 	// Damage-indicator stuff
 	private ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -96,7 +97,8 @@ public class GameCanvas {
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.z = CAM_HEIGHT;
 		camera.near = 0.0001f;
-		camera.rotate(0, 0, 1, 0);
+		camera.lookAt(0, 0, 0);
+		//camera.rotate(150, 0, 1, 0);
 		camera.update();
 
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
@@ -812,7 +814,20 @@ public class GameCanvas {
 	 */
 	public void setCameraXY(Vector2 newXY) {
 		camera.position.set(newXY.x, newXY.y, camera.position.z);
-		camera.lookAt(0, 0, 0);
+		camera.lookAt(0, 20, 0);
+
+	}
+
+	/**
+	 * Set the camera FOV to the normal FOV amount multiplied by
+	 * @param speedRatio
+	 *
+	 * speedRatio should come from road and is currentSpeed / NORMAL_SPEED.
+	 * This should be >= 1.0. The idea is that, when the ratio is higher,
+	 * the FOV should be higher.
+	 */
+	public void setCameraFOV(float speedRatio) {
+		camera.fieldOfView = NORMAL_CAM_FOV * speedRatio;
 	}
 
 	/**
