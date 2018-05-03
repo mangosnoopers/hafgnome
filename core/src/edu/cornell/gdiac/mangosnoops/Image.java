@@ -125,6 +125,11 @@ public class Image {
                 relativeScale, false, controlBuffer);
     }
 
+    public void drawNoShake(GameCanvas canvas) {
+        canvas.draw(texture, origin, position.x, position.y,
+                relativeScale, false, 0, Color.WHITE);
+    }
+
     public void draw(GameCanvas canvas) {
         canvas.drawShake(texture, origin, position.x, position.y,
                 relativeScale, false, 0, Color.WHITE, currentShakeAmount);

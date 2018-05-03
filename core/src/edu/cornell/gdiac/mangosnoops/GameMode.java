@@ -124,8 +124,13 @@ public class GameMode implements Screen {
 	private boolean active;
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
-	/** booleans in **/
-	private boolean b ;
+	/** boolean denoting if screen if paused **/
+	private boolean isPaused ;
+	private float exitScale = 0.2f;
+	private float optionsScale = 0.2f;
+	private float restartScale = 0.2f;
+
+	//private float
 	/**
 	 * Preloads the assets for this game.
 	 *
@@ -323,6 +328,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PAUSED:
+					isPaused = true;
 					pause_game();
 					break;
 				default:
@@ -384,6 +390,7 @@ public class GameMode implements Screen {
 		// Check if game has been unpaused
 		if(inputController.pressedPause()){
 			gameState = GameState.PLAY;
+			isPaused = false;
 		}
 	}
 	/**
@@ -443,9 +450,9 @@ public class GameMode implements Screen {
 				break;
 			case PAUSED:
 				canvas.draw(pauseMenuTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,1,false);
-				canvas.draw(pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.2f,0.2f,false);
-				canvas.draw(pauseOptionsButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,0.2f,false);
-				canvas.draw(pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.8f,0.2f,false);
+				canvas.draw(pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.2f,exitScale,false);
+				canvas.draw(pauseOptionsButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,optionsScale,false);
+				canvas.draw(pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.8f,restartScale,false);
 				break;
 			default:
 				break;

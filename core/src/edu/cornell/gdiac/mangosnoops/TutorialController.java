@@ -191,7 +191,7 @@ public class TutorialController extends GameplayController {
          *  so the tutorial doesn't end */
         if (!finishedTutorial) getRoad().setRoadExitY(500);
 
-        System.out.println(getRoad().getRoadExitY());
+        //System.out.println(getRoad().getRoadExitY());
 
         tutKeys.update(delta);
         tutVroom.update(delta);
