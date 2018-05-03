@@ -43,7 +43,7 @@ public class CollisionController {
 	/** A factor to determine the gnome is close enough for Ned to shoot. */
 	private static final float GNOME_INRANGE = -9.0f;
 	/** A factor to determine the gnome and car have collided. */
-	private static final float HIT_RANGE = 0.15f;
+	private static final float HIT_RANGE = 0.08f;
 
 	private static final float CAR_YRANGE_END = -10f;
 	private static final float CAR_YRANGE_START  = -10.5f;
@@ -126,8 +126,8 @@ public class CollisionController {
 		c.damage();
 		c.shakeCar();
 		s.applyShake();
-		c.getNed().setMood(Child.Mood.SAD);
-		c.getNosh().setMood(Child.Mood.SAD);
+		c.getNed().decreaseMood();
+		c.getNosh().decreaseMood();
 		if (c.getHealth() == 0) c.setDestroyed(true);
 		e.setDestroyed(true);
 	}

@@ -23,6 +23,8 @@ public class Wheel extends Image {
         return ang / ANGLE_TO_LR;
     }
 
+    public float getAng() { return ang; }
+
     /**
      * Updates the wheel based on the user's input.
      * @param in where the mouse clicked (null if no click)

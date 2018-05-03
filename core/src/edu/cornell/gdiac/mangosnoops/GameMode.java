@@ -260,6 +260,7 @@ public class GameMode implements Screen {
             inputController = new InputController();
             if (levelName != "tutorial") {
 				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+				System.out.println("create" + gameplayController);
 			} else {
             	gameplayController = new TutorialController(canvas);
 			}
@@ -268,6 +269,7 @@ public class GameMode implements Screen {
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -312,7 +314,7 @@ public class GameMode implements Screen {
 						gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					}
 					else {
-						play(delta);
+//						play(delta);
 					}
 					break;
 				case PLAY:
@@ -443,7 +445,7 @@ public class GameMode implements Screen {
 				} else {
 					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
 							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0,
-							((float)0.9*canvas.getHeight())/deathModule.getHeight(), ((float)0.9*canvas.getHeight())/deathModule.getHeight());
+							((float)1.0f*canvas.getHeight())/deathModule.getHeight(), ((float)1.0f*canvas.getHeight())/deathModule.getHeight());
 				}
 				break;
 			case PLAY:

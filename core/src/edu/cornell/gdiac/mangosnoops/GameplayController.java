@@ -112,6 +112,14 @@ public class GameplayController {
 	private static final String FLAMINGO_FILE = "images/Enemies/flamingo.png";
 	/** The texture file for the radio knob */
 	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
+	private static final String RADIO_SLIDER_FILE = "images/RadioScreenAssets/frequencyslider.png";
+	private static final String RADIO_POINTER_FILE = "images/RadioScreenAssets/frequencyMarker.png";
+	private static final String RADIO_SOUNDON_FILE = "images/RadioScreenAssets/soundIcon.png";
+	private static final String RADIO_SOUNDOFF_FILE = "images/RadioScreenAssets/muteSoundIcon.png";
+	private static final String RADIO_NEDLIKE_FILE = "images/RadioScreenAssets/nedLike.png";
+	private static final String RADIO_NEDDISLIKE_FILE = "images/RadioScreenAssets/nedDislike.png";
+	private static final String RADIO_NOSHLIKE_FILE = "images/RadioScreenAssets/noshLike.png";
+	private static final String RADIO_NOSHDISLIKE_FILE = "images/RadioScreenAssets/noshDislike.png";
 	/** The texture files for Nosh's moods */
 	private static final String NOSH_HAPPY_FILE = "images/NoshTextures/nosh_happy.png";
 	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
@@ -169,6 +177,8 @@ public class GameplayController {
 	private static final String BUTTON_DVD_FILE = "images/DashHUD/buttonDvd.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
+	/** The Horn! */
+	private static final String HORN_FILE = "images/DashHUD/Horn.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -188,6 +198,14 @@ public class GameplayController {
 	protected Texture flamingoTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
+	private Texture radioSlider;
+	private Texture radioPointer;
+	private Texture radioSoundOn;
+	private Texture radioSoundOff;
+	private Texture radioNedLike;
+	private Texture radioNedDislike;
+	private Texture radioNoshLike;
+	private Texture radioNoshDislike;
 	/** Textures for nosh */
 	private FilmStrip nosh_happy;
 	private FilmStrip nosh_neutral;
@@ -216,6 +234,7 @@ public class GameplayController {
 	/** Texture of the rear view mirror */
 	private Texture rearviewBackgroundTexture;
 	private Texture rearviewSeatsTexture;
+	private Texture rearviewCoverTexture;
 	/** Texture of sun effect */
 	private Texture sun;
 	private Texture sun2;
@@ -236,6 +255,8 @@ public class GameplayController {
 	private Texture buttonGps;
 	private Texture buttonRadio;
 	private Texture buttonDvd;
+	/** Horn texture */
+	private Texture hornTexture;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -281,6 +302,22 @@ public class GameplayController {
 		assets.add(REARVIEW_GNOME_FILE);
 		manager.load(RADIO_KNOB_FILE, Texture.class);
 		assets.add(RADIO_KNOB_FILE);
+		manager.load(RADIO_SLIDER_FILE, Texture.class);
+		assets.add(RADIO_SLIDER_FILE);
+		manager.load(RADIO_POINTER_FILE, Texture.class);
+		assets.add(RADIO_POINTER_FILE);
+		manager.load(RADIO_SOUNDON_FILE, Texture.class);
+		assets.add(RADIO_SOUNDON_FILE);
+		manager.load(RADIO_SOUNDOFF_FILE, Texture.class);
+		assets.add(RADIO_SOUNDOFF_FILE);
+		manager.load(RADIO_NEDLIKE_FILE, Texture.class);
+		assets.add(RADIO_NEDLIKE_FILE);
+		manager.load(RADIO_NEDDISLIKE_FILE, Texture.class);
+		assets.add(RADIO_NEDDISLIKE_FILE);
+		manager.load(RADIO_NOSHLIKE_FILE, Texture.class);
+		assets.add(RADIO_NOSHLIKE_FILE);
+		manager.load(RADIO_NOSHDISLIKE_FILE, Texture.class);
+		assets.add(RADIO_NEDDISLIKE_FILE);
 		manager.load(NOSH_HAPPY_FILE, Texture.class);
 		assets.add(NOSH_HAPPY_FILE);
 		manager.load(NOSH_NEUTRAL_FILE, Texture.class);
@@ -363,6 +400,8 @@ public class GameplayController {
 		assets.add(BUTTON_RADIO_FILE);
 		manager.load(BUTTON_DVD_FILE, Texture.class);
 		assets.add(BUTTON_DVD_FILE);
+		manager.load(HORN_FILE, Texture.class);
+		assets.add(HORN_FILE);
 	}
 
 	/**
@@ -382,6 +421,14 @@ public class GameplayController {
 		flamingoTexture = createTexture(manager, FLAMINGO_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
+		radioSlider = createTexture(manager, RADIO_SLIDER_FILE);
+		radioPointer = createTexture(manager, RADIO_POINTER_FILE);
+		radioSoundOn = createTexture(manager, RADIO_SOUNDON_FILE);
+		radioSoundOff = createTexture(manager, RADIO_SOUNDOFF_FILE);
+		radioNedLike = createTexture(manager, RADIO_NEDLIKE_FILE);
+		radioNedDislike = createTexture(manager, RADIO_NEDDISLIKE_FILE);
+		radioNoshLike = createTexture(manager, RADIO_NOSHLIKE_FILE);
+		radioNoshDislike = createTexture(manager, RADIO_NOSHDISLIKE_FILE);
 		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
 		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 2);
 		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
@@ -400,6 +447,7 @@ public class GameplayController {
 		healthPointerTexture = createTexture(manager, HEALTH_POINTER_FILE);
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
+		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
         visorOpen = createTexture(manager, VISOR_OPEN_FILE);
         visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
         sun = createTexture(manager, SUN_FILE);
@@ -427,6 +475,7 @@ public class GameplayController {
 		buttonGps = createTexture(manager, BUTTON_GPS_FILE);
 		buttonRadio = createTexture(manager, BUTTON_RADIO_FILE);
 		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
+		hornTexture = createTexture(manager, HORN_FILE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -447,6 +496,10 @@ public class GameplayController {
 							  Array<Event> e,
 							  ObjectMap<String,Radio.Genre> s) {
 		songs = s;
+		enemiez = enemies;
+        radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
+							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
+							radioNoshDislike, songs);
 		enemiez = enemies;
 		yonda = new Car();
 		backing = new Array<Enemy>();
@@ -567,10 +620,11 @@ public class GameplayController {
 	 */
 	public void start(float x, float y) {
 		gps = new GPS();
-		radio = new Radio(radioknobTexture, songs);
+		radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
+				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
+				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
 		touchscreen = new TouchScreen(gps, radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
-//		hudObjects = new ObjectSet<Image>();
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
@@ -579,14 +633,14 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		horn = new Horn(0.17f, 0.2f, 0.17f, 0, rearviewGnomeTexture);
+		horn = new Horn(0.17f, 0.1845f, 0.17f, 0, hornTexture);
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
 
-		rearviewBackground = new Image(0.65f, 0.7f, 0.3f, rearviewBackgroundTexture);
-		rearviewSeats = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
-		rearviewCover = new Image(0.65f, 0.7f, 0.3f, rearviewSeatsTexture);
+		rearviewBackground = new Image(0.612f, 0.7f, 0.257f, rearviewBackgroundTexture);
+		rearviewSeats = new Image(0.61f, 0.7f, 0.3f, rearviewSeatsTexture);
+		rearviewCover = new Image(0.61f, 0.7f, 0.3f, rearviewCoverTexture);
         rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
 		// TODO CHANGE THIS LOL
@@ -819,6 +873,11 @@ public class GameplayController {
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
 		// check radio station and update each child's happiness based on it,
 		// checks this every 200 frames (may need to adjust)
+
+		if(dvdPlayer.isPlayingDvd()) {
+			ned.setMood(Child.Mood.HAPPY);
+			nosh.setMood(Child.Mood.HAPPY);
+		}
 		if (r.getCurrentStation() != null && r.getknobAng() <= 0 && counter%200 == 0) {
 
 			// TODO : ADD CASES FOR OTHER GENRES
@@ -906,6 +965,8 @@ public class GameplayController {
 
 	public void draw(GameCanvas canvas) {
 
+	    canvas.setCameraFOV(road.getSpeedRatio());
+
 		//Gnomez
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
@@ -935,16 +996,16 @@ public class GameplayController {
 		touchscreen.draw(canvas, displayFont);
 
 		// Horn
-		horn.draw(canvas);
+		horn.draw(canvas, wheel.getAng());
 
 		// FIXME: this is a mess
 		rearviewBackground.draw(canvas);
 		rearviewEnemy.draw(canvas);
 		rearviewSeats.draw(canvas);
-		rearviewCover.draw(canvas);
 		// Draw Ned and Nosh
 		yonda.getNosh().draw(canvas);
 		yonda.getNed().draw(canvas);
+		rearviewCover.draw(canvas);
 
 		//Draw inventory
 		inventory.draw(canvas);

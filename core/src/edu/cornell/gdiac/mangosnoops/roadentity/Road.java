@@ -73,19 +73,28 @@ public class Road extends RoadObject {
     private float VROOM_TIME_DEPRECIATION = 18f;
 
     /** Speed constants */
-    private float NORMAL_SPEED = 1.8f;
+    private float NORMAL_SPEED = 1.4f;
     private float VROOM_SPEED = 4f;
-    private float SPEED_DAMPING = 0.8f;
+    private float DECELERATION = 1.5f;
+    private float VROOM_ACCELERATION = 5f;
 
     /** How high the road/ground objects "hover" */
     private final float ROAD_HOVER_DISTANCE = 4.25f;
 
-    /** Whether or not the car is vrooming */
-    private boolean vrooming = false;
-    /** The current speed of the car*/
+    /** The current speed of the car */
     private float currentSpeed = NORMAL_SPEED;
-
+    /** How far away the exit starts */
     private float initialExitY;
+
+    private enum RoadState {
+        NORMAL, // Road is normal speed
+        ACCELERATING, // engaged vroom stick -> this state, speed up until VROOM_SPEED
+        DECELERATING, // not engaged vroom stick, speed is > normal, -> this state, slow down til NORMAL_SPEED
+        MAX_SPEED
+    }
+
+    /** Current state of the road */
+    private RoadState state;
 
     /** Return the current speed */
     public float getCurrentSpeed() { return currentSpeed; }
@@ -115,6 +124,8 @@ public class Road extends RoadObject {
 
     public Road(float endY) {
 
+        state = RoadState.NORMAL;
+
         // The exit will appear at the end of the level
         initialExitY = endY;
         exitY = endY;
@@ -133,21 +144,41 @@ public class Road extends RoadObject {
 
     public void update(float delta) {
 
-        // End vrooming if vroom time is over
-        if (vroomTimeLeft < 0) {
-            vrooming = false;
-            vroomTimeLeft = MAX_VROOM_TIME;
+        if (state != RoadState.NORMAL) {
+            System.out.println(state);
         }
 
-        // Compute which speed to use
-        if (vrooming) {
-            currentSpeed = VROOM_SPEED;
-            vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
-        } else if (reachedEndOfLevel()) {
-            currentSpeed = NORMAL_SPEED;
-        } else {
-            currentSpeed = currentSpeed + SPEED_DAMPING * delta * (NORMAL_SPEED - currentSpeed);
+        // Update currentSpeed based on state
+        switch (state) {
+            case NORMAL:
+                // Do nothing
+                break;
+            case ACCELERATING:
+                /* Accelerate, and if reached max speed, transition to new state
+                   and cap the speed */
+                currentSpeed += VROOM_ACCELERATION * delta;
+                if (currentSpeed > VROOM_SPEED) {
+                    currentSpeed = VROOM_SPEED;
+                    state = RoadState.MAX_SPEED;
+                }
+                break;
+            case MAX_SPEED:
+                vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
+                if (vroomTimeLeft < 0) {
+                    vroomTimeLeft = MAX_VROOM_TIME;
+                    state = RoadState.DECELERATING;
+                }
+                break;
+            case DECELERATING:
+                vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
+                currentSpeed -= DECELERATION * delta;
+                if (currentSpeed < NORMAL_SPEED) {
+                    currentSpeed = NORMAL_SPEED;
+                    state = RoadState.NORMAL;
+                }
+                break;
         }
+
 
         // Move farthest road texture towards the camera
         yPositions.set(0, yPositions.get(0) - currentSpeed * delta);
@@ -197,14 +228,31 @@ public class Road extends RoadObject {
         }
     }
 
+    /**
+     * Set "vrooming" to true, which will increase the road speed,
+     * which will subsequently decay over time, back to the normal speed.
+     */
     public void setVrooming() {
-        vrooming = true;
+        state = RoadState.ACCELERATING;
     }
 
+    /**
+     * @return the current speed of the road
+     */
     public float getSpeed() {
         return currentSpeed;
     }
 
+    /**
+     * @return current speed to normal speed ratio, capped at 2x
+     */
+    public float getSpeedRatio() {
+        return Math.min(currentSpeed / NORMAL_SPEED, 1.9f);
+    }
+
+    /**
+     * @return whether or not the Car has reached the end of the level.
+     */
     public boolean reachedEndOfLevel() {
         return exitY < -7;
     }

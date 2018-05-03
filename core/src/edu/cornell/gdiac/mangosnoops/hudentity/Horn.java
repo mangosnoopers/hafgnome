@@ -61,8 +61,8 @@ public class Horn extends Image {
         }
     }
 
-    public void draw(GameCanvas canvas) {
-        super.draw(canvas);
+    public void draw(GameCanvas canvas, float angle) {
+        super.draw(canvas, angle);
         //canvas.drawText(isHonking + " " + honkTimeRemaining, new BitmapFont(), 100, 100);
     }
 
