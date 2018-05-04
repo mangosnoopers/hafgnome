@@ -448,6 +448,7 @@ public class GameCanvas {
 
 	public enum TextureOrigin {
 		MIDDLE,
+		MIDDLE_LEFT,
 		TOP_LEFT,
 		TOP_RIGHT,
 		BOTTOM_LEFT,
@@ -470,6 +471,10 @@ public class GameCanvas {
 		switch(o) {
 			case MIDDLE:
 				oxy.x = image.getWidth()*0.5f;
+				oxy.y = image.getHeight()*0.5f;
+				break;
+			case MIDDLE_LEFT:
+				oxy.x = 0;
 				oxy.y = image.getHeight()*0.5f;
 				break;
 			case TOP_LEFT:
@@ -513,6 +518,10 @@ public class GameCanvas {
 				oxy.x = image.getWidth()*0.5f;
 				oxy.y = image.getHeight()*0.5f;
 				break;
+			case MIDDLE_LEFT:
+				oxy.x = 0;
+				oxy.y = image.getHeight()*0.5f;
+				break;
 			case TOP_LEFT:
 				oxy.y = image.getHeight();
 				break;
@@ -546,6 +555,12 @@ public class GameCanvas {
 			case MIDDLE:
 				xb=(int)(x*getWidth()-s*0.5f*image.getWidth());
 				xt=(int)(x*getWidth()+s*0.5f*image.getWidth());
+				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
+				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
+				break;
+			case MIDDLE_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth() + s*image.getWidth());
 				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
 				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
 				break;
@@ -592,6 +607,12 @@ public class GameCanvas {
 			case MIDDLE:
 				xb=(int)(x*getWidth()-s*0.5f*image.getWidth());
 				xt=(int)(x*getWidth()+s*0.5f*image.getWidth());
+				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
+				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
+				break;
+			case MIDDLE_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth() + s*image.getWidth());
 				yb=(int)(y*getHeight()-s*0.5f*image.getHeight());
 				yt=(int)(y*getHeight()+s*0.5f*image.getHeight());
 				break;

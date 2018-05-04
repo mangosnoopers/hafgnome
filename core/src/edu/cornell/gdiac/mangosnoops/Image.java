@@ -14,6 +14,8 @@ public class Image {
     /** Relative width and height divided by texture -- i.e. 0.5f will make the
      * height of the texture half of the canvas screen height (width would scale the same amount)*/
     protected float relativeScale;
+    /* Scale set at beginning of Image instantiation. Used so things may scale dynamically.*/
+    protected float ORIGINAL_SCALE;
     /** An optional buffer given to the object in order to 'pad' its area of effectiveness**/
     protected float controlBuffer;
     /** Dimensions of the screen **/
@@ -43,7 +45,6 @@ public class Image {
     protected static float shakeDeltaSum = 0;
 
     GameCanvas.TextureOrigin origin;
-
     /** Update the shake amount. */
     protected void updateShake(float delta) {
         if (isShaking) {
@@ -78,9 +79,11 @@ public class Image {
     public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);
         if(tex == null){
+            ORIGINAL_SCALE = 0;
             relativeScale = 0;
             texture = null;
         }else{
+            ORIGINAL_SCALE = relSca;
             relativeScale = relSca;
             texture = tex;
         }
@@ -91,9 +94,11 @@ public class Image {
     public Image(float x, float y, float relSca, float cb, Texture tex) {
         position = new Vector2(x,y);
         if(tex == null){
+            ORIGINAL_SCALE = 0;
             relativeScale = 0;
             texture = null;
         }else{
+            ORIGINAL_SCALE = relSca;
             relativeScale = relSca;
             texture = tex;
         }
@@ -123,6 +128,18 @@ public class Image {
     public boolean inArea(Vector2 p) {
         return c.inArea(p, texture, origin, position.x, position.y,
                 relativeScale, false, controlBuffer);
+    }
+
+    /**
+     * Same as inArea, however it detects only if the object is in the area
+     * determined by its ORIGINAL_SCALE. Useful if inArea changes the relative
+     * scale of the original texture.
+     * @param p
+     * @return
+     */
+    public boolean inAreaWOriginScale(Vector2 p) {
+        return c.inArea(p, texture, origin, position.x, position.y,
+                ORIGINAL_SCALE, false, controlBuffer);
     }
 
     public void drawNoShake(GameCanvas canvas) {
