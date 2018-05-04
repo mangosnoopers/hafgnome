@@ -366,7 +366,7 @@ public class LevelObject {
             } else if (eventStr.equals("sat question")) {
                 events.add(new Event(y, Event.EventType.SAT_QUESTION));
             } else if (!eventStr.equals("")) {
-                throw new RuntimeException("Invalid event specified");
+                throw new RuntimeException("Invalid event specified: " + eventStr);
             }
 
             //TODO DELETE:

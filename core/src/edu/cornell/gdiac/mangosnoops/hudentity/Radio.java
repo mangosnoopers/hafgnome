@@ -37,6 +37,8 @@ public class Radio {
     Station lastStation;
     /** The current playing station **/
     Station currentStation;
+    /** Whether or not the radio should play static (when they are holding down the slider)*/
+    private boolean playStatic;
 
     /** Enum for song genres **/
     public enum Genre{
@@ -65,6 +67,7 @@ public class Radio {
         nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
 
         soundOn = true;
+        playStatic = false;
         // Create Station list
         stations = new Array<Station>();
         for (String songname : songs.keys()) {
@@ -149,6 +152,8 @@ public class Radio {
 
     }
 
+    public boolean shouldPlayStatic() { return playStatic; }
+
     boolean prevClicked = false;
     /**
      * Updates the radio based on the user's input.
@@ -158,10 +163,13 @@ public class Radio {
      */
     public void update(Vector2 in, float dx) {
         if(in != null && slider.inArea(in)) {
+            playStatic = true;
             float newPos = in.x/pointer.getScreenWidth();
             if(newPos < SLIDER_LEFTMOSTPOS) newPos = SLIDER_LEFTMOSTPOS;
             else if(newPos > SLIDER_RIGHTMOSTPOS) newPos = SLIDER_RIGHTMOSTPOS;
             pointer.updateX(newPos);
+        } else {
+            playStatic = false;
         }
         if(prevClicked == true && in == null && soundOn) {
             soundOn = false;
