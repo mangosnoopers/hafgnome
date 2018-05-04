@@ -125,15 +125,7 @@ public class Child extends Image {
      * Constructor
      */
     public Child(ChildType type, Texture sb) {
-<<<<<<< HEAD
-        super(0,0,0, null);
-        if(type == ChildType.NED){
-            NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
-            position = new Vector2(0.717f, 0.81f);
-        } else{
-            NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f,0.65f),MathUtils.random(0.45f,0.75f));
-            position = new Vector2(0.865f, 0.81f);
-=======
+
         super(0, 0, 0, null);
         if (type == ChildType.NED) {
             NED_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
@@ -141,7 +133,6 @@ public class Child extends Image {
         } else {
             NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
             position = new Vector2(0.9f, 0.81f);
->>>>>>> e8ab17a88ff448d942b14b0af09cca46f34f34dd
         }
         Random rand = new Random();
         int animSpeedInt = rand.nextInt(5) + 20;
@@ -381,17 +372,11 @@ public class Child extends Image {
         float oy = 0.5f * currentFilmStrip.getRegionHeight();
         float drawY = position.y * canvas.getHeight() + currentShakeAmount;
 
-<<<<<<< HEAD
         canvas.draw(currentFilmStrip, Color.WHITE, ox, oy, position.x*canvas.getWidth(), drawY, 0,
                 0.55f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight(),
                 0.55f*(canvas.getHeight()/2.5f)/currentFilmStrip.getRegionHeight());
         }
-=======
-        canvas.draw(currentFilmStrip, Color.WHITE, ox, oy, position.x * canvas.getWidth(), drawY, 0,
-                0.5f * (canvas.getHeight() / 2.5f) / currentFilmStrip.getRegionHeight(),
-                0.5f * (canvas.getHeight() / 2.5f) / currentFilmStrip.getRegionHeight());
-    }
->>>>>>> e8ab17a88ff448d942b14b0af09cca46f34f34dd
+
 
 
     public void drawSpeechBubble(GameCanvas canvas) {

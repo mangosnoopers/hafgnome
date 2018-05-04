@@ -331,7 +331,6 @@ public class GameMode implements Screen {
 						numTimesPaused = 0;
 					}
 					if(exitFromPause){
-						System.out.println("fuckkkkk");
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
@@ -385,7 +384,6 @@ public class GameMode implements Screen {
 		if(inputController.pressedPause()){
 			gameState = GameState.PAUSED;
 			numTimesPaused += 1;
-			System.out.println(numTimesPaused);
 		}
 		// Update Based on input
 		gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
