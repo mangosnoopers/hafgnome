@@ -101,6 +101,12 @@ public class GameplayController {
 	protected static final int FLAMINGO_FLY_START = 4;
 	protected static final int FLAMINGO_FLY_END = 5;
 
+	/** Child FilmStrip information */
+	protected static final int NOSH_FILMSTRIP_ROWS = 1;
+	protected static final int NOSH_FILMSTRIP_COLS = 13;
+	protected static final int NED_FILMSTRIP_ROWS = 1;
+	protected static final int NED_FILMSTRIP_COLS = 14;
+
 	// Graphics assets for the entities
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
@@ -122,17 +128,9 @@ public class GameplayController {
 	private static final String RADIO_NOSHLIKE_FILE = "images/RadioScreenAssets/noshLike.png";
 	private static final String RADIO_NOSHDISLIKE_FILE = "images/RadioScreenAssets/noshDislike.png";
 	/** The texture files for Nosh's moods */
-	private static final String NOSH_HAPPY_FILE = "images/NoshTextures/nosh_happy.png";
-	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
-	private static final String NOSH_SAD_FILE = "images/NoshTextures/nosh_sad.png";
-	private static final String NOSH_CRITICAL_FILE = "images/NoshTextures/nosh_critical.png";
-	private static final String NOSH_SLEEP_FILE = "images/NoshTextures/nosh_sleep.png";
-	/** The texture files for Ned's moods */
-	private static final String NED_HAPPY_FILE = "images/NedTextures/ned_happy.png";
-	private static final String NED_NEUTRAL_FILE = "images/NedTextures/ned_neutral.png";
-	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
-	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
-	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
+	private static final String NOSH_FILE = "images/nosh.png";
+	/** Ned texture file */
+	private static final String NED_FILE = "images/ned.png";
 	/** The texture files for the visor states */
     private static final String VISOR_OPEN_FILE = "images/visor_open.png";
     private static final String VISOR_CLOSED_FILE = "images/visor_closed.png";
@@ -204,18 +202,10 @@ public class GameplayController {
 	private Texture radioNedDislike;
 	private Texture radioNoshLike;
 	private Texture radioNoshDislike;
-	/** Textures for nosh */
-	private FilmStrip nosh_happy;
-	private FilmStrip nosh_neutral;
-	private FilmStrip nosh_sad;
-	private FilmStrip nosh_critical;
-	private FilmStrip nosh_sleep;
-	/** Textures for ned */
-	private FilmStrip ned_happy;
-	private FilmStrip ned_neutral;
-	private FilmStrip ned_sad;
-	private FilmStrip ned_critical;
-	private FilmStrip ned_sleep;
+	/** Texture for nosh (this is a film strip  */
+	private Texture noshTexture;
+	/** Texture for ned (this is a film strip) */
+	private Texture nedTexture;
 	/** Textures for items **/
 	private Array<Texture> dvdTextures;
 	private Array<Texture> snackTextures;
@@ -287,6 +277,10 @@ public class GameplayController {
 	 * @param assets  Asset list to track which assets where loaded
 	 */
 	public void preLoadContent(AssetManager manager, Array<String> assets) {
+		manager.load(NED_FILE,Texture.class);
+		assets.add(NED_FILE);
+		manager.load(NOSH_FILE,Texture.class);
+		assets.add(NOSH_FILE);
 		manager.load(WHEEL_FILE,Texture.class);
 		assets.add(WHEEL_FILE);
 		manager.load(VROOM_STICK_FILE, Texture.class);
@@ -313,26 +307,6 @@ public class GameplayController {
 		assets.add(RADIO_NOSHLIKE_FILE);
 		manager.load(RADIO_NOSHDISLIKE_FILE, Texture.class);
 		assets.add(RADIO_NEDDISLIKE_FILE);
-		manager.load(NOSH_HAPPY_FILE, Texture.class);
-		assets.add(NOSH_HAPPY_FILE);
-		manager.load(NOSH_NEUTRAL_FILE, Texture.class);
-		assets.add(NOSH_NEUTRAL_FILE);
-		manager.load(NOSH_SAD_FILE, Texture.class);
-		assets.add(NOSH_SAD_FILE);
-		manager.load(NOSH_CRITICAL_FILE, Texture.class);
-		assets.add(NOSH_CRITICAL_FILE);
-		manager.load(NOSH_SLEEP_FILE, Texture.class);
-		assets.add(NOSH_SLEEP_FILE);
-		manager.load(NED_HAPPY_FILE, Texture.class);
-		assets.add(NED_HAPPY_FILE);
-		manager.load(NED_NEUTRAL_FILE, Texture.class);
-		assets.add(NED_NEUTRAL_FILE);
-		manager.load(NED_SAD_FILE, Texture.class);
-		assets.add(NED_SAD_FILE);
-		manager.load(NED_CRITICAL_FILE, Texture.class);
-		assets.add(NED_CRITICAL_FILE);
-		manager.load(NED_SLEEP_FILE, Texture.class);
-		assets.add(NED_SLEEP_FILE);
 		manager.load(DVD0_FILE,Texture.class);
 		assets.add(DVD0_FILE);
 		manager.load(DVD1_FILE,Texture.class);
@@ -419,16 +393,8 @@ public class GameplayController {
 		radioNedDislike = createTexture(manager, RADIO_NEDDISLIKE_FILE);
 		radioNoshLike = createTexture(manager, RADIO_NOSHLIKE_FILE);
 		radioNoshDislike = createTexture(manager, RADIO_NOSHDISLIKE_FILE);
-		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
-		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 2);
-		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
-		nosh_critical = new FilmStrip(createTexture(manager, NOSH_CRITICAL_FILE), 1, 1);
-		nosh_sleep= new FilmStrip(createTexture(manager, NOSH_SLEEP_FILE), 1, 1);
-		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 1, 2);
-		ned_neutral = new FilmStrip(createTexture(manager,NED_NEUTRAL_FILE), 1, 2);
-		ned_sad = new FilmStrip(createTexture(manager, NED_SAD_FILE), 1, 1);
-		ned_critical = new FilmStrip(createTexture(manager, NED_CRITICAL_FILE), 1, 1);
-		ned_sleep = new FilmStrip(createTexture(manager, NED_SLEEP_FILE), 1, 1);
+		nedTexture = createTexture(manager, NED_FILE);
+		noshTexture = createTexture(manager, NOSH_FILE);
 		roadTexture = createTexture(manager, ROAD_FILE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
@@ -619,8 +585,8 @@ public class GameplayController {
 		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot);
 		masterShaker = new Image();
         sunShine = false;
-		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
-		yonda.getNed().setChildFilmStrips(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+		yonda.getNosh().setChildFilmStrip(noshTexture, NOSH_FILMSTRIP_ROWS, NOSH_FILMSTRIP_COLS);
+		yonda.getNed().setChildFilmStrip(nedTexture, NED_FILMSTRIP_ROWS, NED_FILMSTRIP_COLS);
 		yonda.setDashTexture(dashTexture);
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
