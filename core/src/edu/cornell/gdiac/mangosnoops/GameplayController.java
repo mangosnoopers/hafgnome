@@ -623,7 +623,7 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		horn = new Horn(0.17f, 0.1845f, 0.17f, 0, hornTexture);
+		horn = new Horn(0.17f, 0.1845f, 0.17f, 20, hornTexture);
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
@@ -799,6 +799,7 @@ public class GameplayController {
             	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             		Flamingo f = (Flamingo) e;
             		if (e.getY() < f.getFlyAwayDistance()) {
+						if(!f.isFlyingAway()) soundController.flamingoFlapSound();
             		    f.setAnimationBounds(FLAMINGO_FLY_START, FLAMINGO_FLY_END);
 						f.setFlyingAway();
 					}

@@ -334,16 +334,13 @@ public class GameCanvas {
 	 * @param x      The x-coordinate of the bottom left corner
 	 * @param y 	 The y-coordinate of the bottom left corner
 	 */
-    public void drawBackground(Texture image, float x, float y) {
+    public void drawBackground(Texture image) {
 		if (!active) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
 
-//		float w = image.getWidth();
-        // Have to draw the background twice for continuous scrolling.
-        spriteBatch.draw(image, x,   y);
-//        spriteBatch.draw(image, x+w, y);
+		draw(image, TextureOrigin.MIDDLE, 0.5f, 0.5f, 1f, true, 0, Color.WHITE);
     }
 
 
