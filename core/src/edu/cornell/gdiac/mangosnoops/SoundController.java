@@ -14,6 +14,12 @@ public class SoundController {
     private static Music carAmbience = Gdx.audio.newMusic(Gdx.files.internal("sounds/carAmbience.mp3"));
     private static Music radioStatic = Gdx.audio.newMusic(Gdx.files.internal("sounds/radioStatic.mp3"));
     private static Music carBeep = Gdx.audio.newMusic(Gdx.files.internal("sounds/beepbeep.mp3"));
+    private static Music gnomeDeath1 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
+    private static Music gnomeDeath2 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_2.mp3"));
+    private static Music gnomeDeath3 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_3.mp3"));
+    private static Music gnomeDeath4 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_4.mp3"));
+    private static Music flamingoFlap = Gdx.audio.newMusic(Gdx.files.internal("sounds/flamingosFlap.mp3"));
+    private static Music grillRoar = Gdx.audio.newMusic(Gdx.files.internal("sounds/grillRoar.mp3"));
 
     /**
      * Object Constructor
@@ -68,6 +74,16 @@ public class SoundController {
     /** Called in resolveActions when horn is honked */
     public void beepSound() {
         carBeep.play();
+    }
+
+    /** Called in resolveActions when horn is honked */
+    public void flamingoFlapSound() {
+        flamingoFlap.play();
+    }
+
+    /** Called in CollisionController */
+    public void gnomeDeathSound() {
+        gnomeDeath1.play();
     }
 
     /** Stops audio and disposes the file **/

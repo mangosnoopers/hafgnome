@@ -204,6 +204,7 @@ public class Road extends RoadObject {
     public void draw(GameCanvas canvas) {
 
         for (Float y : yPositions) {
+
             // Draw road
             canvas.drawRoadObject(roadTexture, ROAD_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, ROAD_X_ROTATION, 0);
 

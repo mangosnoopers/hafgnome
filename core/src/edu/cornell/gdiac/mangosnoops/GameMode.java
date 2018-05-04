@@ -77,8 +77,6 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
-	/** Texture of the sky */
-	private Texture sky;
 	/** Texture of the dash **/
 	private Texture dash;
 	/** Death Screen */
@@ -145,8 +143,6 @@ public class GameMode implements Screen {
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
 
-		// Load sky
-		manager.load(SKY_FILE, Texture.class);
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
@@ -194,9 +190,6 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(BKGD_FILE)) {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-		}
-		if (manager.isLoaded(SKY_FILE)) {
-			sky = manager.get(SKY_FILE, Texture.class);
 		}
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
@@ -265,7 +258,7 @@ public class GameMode implements Screen {
 			} else {
             	gameplayController = new TutorialController(canvas, soundController);
 			}
-            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
+            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight(), soundController);
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
@@ -404,6 +397,9 @@ public class GameMode implements Screen {
 	 */
 	private void draw(float delta) {
 		canvas.clearScreen();
+		canvas.beginHUDDrawing();
+		canvas.drawBackground(background);
+		canvas.endHUDDrawing();
 		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez

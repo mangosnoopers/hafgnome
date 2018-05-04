@@ -22,7 +22,7 @@ public class Horn extends Image {
     private final static float HONK_DEPRECATION_RATE = 20;
 
     public Horn(float x, float y, float relScal, float cb, Texture tex) {
-        super(x, y, relScal, tex, GameCanvas.TextureOrigin.MIDDLE);
+        super(x, y, relScal, cb, tex, GameCanvas.TextureOrigin.MIDDLE);
         isHonking = false;
     }
 
@@ -63,7 +63,6 @@ public class Horn extends Image {
 
     public void draw(GameCanvas canvas, float angle) {
         super.draw(canvas, angle);
-        //canvas.drawText(isHonking + " " + honkTimeRemaining, new BitmapFont(), 100, 100);
     }
 
 }
