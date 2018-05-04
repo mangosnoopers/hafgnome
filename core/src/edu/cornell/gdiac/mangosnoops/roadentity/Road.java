@@ -144,9 +144,9 @@ public class Road extends RoadObject {
 
     public void update(float delta) {
 
-        if (state != RoadState.NORMAL) {
-            System.out.println(state);
-        }
+//        if (state != RoadState.NORMAL) {
+//            System.out.println(state);
+//        }
 
         // Update currentSpeed based on state
         switch (state) {

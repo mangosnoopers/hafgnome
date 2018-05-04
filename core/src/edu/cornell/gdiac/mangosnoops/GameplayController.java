@@ -778,8 +778,6 @@ public class GameplayController {
 		}
 	}
 
-	boolean prevHonking = false;
-
 	/**
 	 * Resolve the actions of all game objects
 	 *
@@ -795,7 +793,6 @@ public class GameplayController {
 
             /* FIXME: idk if its best to have this here */
             if (horn.isHonking()) {
-            	if(!prevHonking) soundController.beepSound();
             	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             		Flamingo f = (Flamingo) e;
             		if (e.getY() < f.getFlyAwayDistance()) {
@@ -805,7 +802,6 @@ public class GameplayController {
 					}
 				}
 			}
-			prevHonking = horn.isHonking();
         }
 
         // Update the HUD
@@ -818,7 +814,7 @@ public class GameplayController {
 			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
 			vroomStick.update(new Vector2(in), dr.y);
 			touchscreen.update(new Vector2(in), dr.x);
-			horn.update(new Vector2(in), delta);
+			if(horn.update(new Vector2(in), delta)) { soundController.beepSound(); }
 			inventory.update(new Vector2(in), mousePressed);
 			visor.update(new Vector2(in), input.isPrevMousePressed());
 
@@ -875,48 +871,40 @@ public class GameplayController {
 		}
 		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
 
+		    if(r.getCurrentStationGenre() != Radio.Genre.CLASSICAL) {
+		        if(!ned.isAwake()) ned.setMood(Child.Mood.SAD);
+                if(!nosh.isAwake()) nosh.setMood(Child.Mood.SAD);
+            }
+
 			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
+                case CLASSICAL: // ned dislikes, nosh likes
+                    if(ned.getCurrentMood() == Child.Mood.HAPPY){
+                        ned.setAsleep();
+                    }
+                    if(nosh.getCurrentMood() == Child.Mood.HAPPY){
+                        nosh.setAsleep();
+                    }
+                    break;
 				case DANCE: // ned likes, nosh dislikes
 					if(ned.isAwake()){
                         ned.setMoodShifting(true, true);
-					}
-					if(nosh.isAwake()){
-//                        nosh.setMoodShifting(true, false);
 					}
 					break;
 				case CREEPY: // ned likes, nosh dislikes
 					if(ned.isAwake()){
                         ned.setMoodShifting(true, true);
 					}
-					if(nosh.isAwake()){
-//						nosh.setMoodShifting(true, false);
-					}
 					break;
 				case JAZZ: // ned likes, nosh dislikes
 					if(ned.isAwake()){
 						ned.setMoodShifting(true, true);
 					}
-					if(nosh.isAwake()){
-//                        nosh.setMoodShifting(true, false);
-					}
-					break;
-				case CLASSICAL: // ned dislikes, nosh likes
-					if(ned.getCurrentMood() == Child.Mood.HAPPY){
-						ned.setAsleep();
-					}
-					if(nosh.getCurrentMood() == Child.Mood.HAPPY){
-						nosh.setAsleep();
-					}
 					break;
 				default:
 					break;
 			}
-		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-//            ned.setMoodShifting(true, false);
-        } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-//            nosh.setMoodShifting(true, false);
-        }
+		}
 
 	}
 
@@ -928,12 +916,10 @@ public class GameplayController {
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
-					if(yonda.getNosh().inChildArea(droppedPos)) {
+					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake()) {
 						yonda.getNosh().setMood(Child.Mood.HAPPY);
-					} else if(yonda.getNed().inChildArea(droppedPos)) {
+					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake()) {
 						yonda.getNed().setMood(Child.Mood.HAPPY);
-					} else if (inventory.inArea(droppedPos)) {
-						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
 					} else {
 						inventory.cancelTake();
 						return;
@@ -944,8 +930,6 @@ public class GameplayController {
 						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
 							inventory.cancelTake();
 						}
-					} else if (inventory.inArea(droppedPos)){
-						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
 					} else {
 						inventory.cancelTake();
 						return;
