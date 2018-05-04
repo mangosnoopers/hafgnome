@@ -112,6 +112,8 @@ public class Image {
         origin = o;
     }
 
+    public Texture getTexture() {return texture; }
+
     public static float getScreenWidth() {
         return c.getWidth();
     }
