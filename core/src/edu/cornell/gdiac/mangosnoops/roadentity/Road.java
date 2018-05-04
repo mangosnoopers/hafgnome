@@ -261,5 +261,6 @@ public class Road extends RoadObject {
     /** Reset the road. */
     public void reset () {
         exitY = initialExitY;
+        currentSpeed = NORMAL_SPEED;
     }
 }
