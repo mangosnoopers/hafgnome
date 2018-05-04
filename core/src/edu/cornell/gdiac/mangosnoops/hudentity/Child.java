@@ -287,7 +287,6 @@ public class Child extends Image {
         }
 
         animationFrame += ANIMATION_SPEED;
-        System.out.println(animationFrame);
         if (animationFrame >= upperFrameBound.get(getCurrentMood())) {
             animationFrame = lowerFrameBound.get(getCurrentMood());
         }
