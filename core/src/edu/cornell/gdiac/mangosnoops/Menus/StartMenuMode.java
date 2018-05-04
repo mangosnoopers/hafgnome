@@ -185,6 +185,10 @@ public class StartMenuMode implements Screen, InputProcessor {
         startbuttonTexture = new Texture(STARTBUTTON_FILE);
         logo = new Texture(LOGO_FILE);
 
+        menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
+        menuSong.play();
+        menuSong.setLooping(true);
+
         active = true;
     }
 
@@ -331,9 +335,6 @@ public class StartMenuMode implements Screen, InputProcessor {
      */
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
-        menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
-        menuSong.play();
-        menuSong.setLooping(true);
     }
 
     // PROCESSING PLAYER INPUT

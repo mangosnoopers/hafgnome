@@ -55,6 +55,8 @@ public class CollisionController {
 	/** Height of the collision geometry */
 	private float height;
 
+	private SoundController soundController;
+
 	/**
 	 * Returns width of the game window (necessary to detect out of bounds)
 	 *
@@ -79,9 +81,10 @@ public class CollisionController {
 	 * @param width   Width of the screen 
 	 * @param height  Height of the screen 
 	 */
-	public CollisionController(float width, float height) {
+	public CollisionController(float width, float height, SoundController sc) {
 		this.width = width;
 		this.height = height;
+		soundController = sc;
 	}
 	
 	/**
@@ -123,11 +126,24 @@ public class CollisionController {
 	 * @param s the master shaker
 	 */
 	private void processCarHitActions(Car c, Enemy e, Image s) {
+		switch(e.getType()) {
+			case GNOME:
+				soundController.gnomeDeathSound();
+				break;
+			case FLAMINGO:
+				soundController.flamingoFlapSound();
+				break;
+			case GRILL:
+				break;
+			default:
+				break;
+		}
 		c.damage();
 		c.shakeCar();
 		s.applyShake();
 		c.getNed().decreaseMood();
 		c.getNosh().decreaseMood();
+		c.getVisor().close();
 		if (c.getHealth() == 0) c.setDestroyed(true);
 		e.setDestroyed(true);
 	}

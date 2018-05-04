@@ -14,7 +14,11 @@ import edu.cornell.gdiac.mangosnoops.Image;
 
 public class Radio {
     /** Rotation speed */
-    private static final float ROTATION_SPEED = 0.05f;
+    private static float SLIDER_LEFTMOSTPOS = 0.7561f;
+    private static float SLIDER_RIGHTMOSTPOS = 0.9439f;
+
+    private float slider_left;
+    private float slider_right;
 
     private Image knob;
     private Image slider;
@@ -26,7 +30,6 @@ public class Radio {
     private Image nosh_like;
     private Image nosh_dislike;
 
-
     boolean soundOn;
     /** Current angle of the radioknob */
     private float knobAng;
@@ -36,13 +39,13 @@ public class Radio {
     Station lastStation;
     /** The current playing station **/
     Station currentStation;
-    /** The number of the currently playing station **/
-    int stationNumber;
+    /** Whether or not the radio should play static (when they are holding down the slider)*/
+    private boolean playStatic;
 
     /** Enum for song genres **/
     public enum Genre{
         CREEPY, DANCE, ACTION, JAZZ,
-        POP, THUG, COMEDY, NONE
+        POP, THUG, CLASSICAL, NONE
     }
 
     public Radio(Texture tex,
@@ -56,8 +59,8 @@ public class Radio {
                  Texture nod,
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
-        slider = new Image(0.85f, 0.15f, 0.02f, 0, s, GameCanvas.TextureOrigin.MIDDLE);
-        pointer = new Image(0.5f, 0.5f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
+        slider = new Image(0.85f, 0.15f, 0.02f, 20, s, GameCanvas.TextureOrigin.MIDDLE);
+        pointer = new Image(0.85f, 0.17f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
         sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
         sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
         ned_like = new Image(0.5f, 0.5f, 0.07f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
@@ -66,6 +69,7 @@ public class Radio {
         nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
 
         soundOn = true;
+        playStatic = false;
         // Create Station list
         stations = new Array<Station>();
         for (String songname : songs.keys()) {
@@ -77,7 +81,9 @@ public class Radio {
 
     public Station getCurrentStation(){ return currentStation; }
 
-    public static Array<Station> getStations() { return stations; }
+    public int getNumStations() { return stations.size; }
+
+    public boolean isSoundOn() { return soundOn; }
 
     /**
      * Return the current angle of the radio knob.
@@ -136,22 +142,19 @@ public class Radio {
      * is shut off
      */
     public void setStation() {
-        // TODO: make this work for < 3 songs
-        stationNumber = -(int) knobAng;
-        if (stationNumber <= 0) {
-            stationNumber = 0;
+        int numStations = stations.size;
+        if(numStations != 0) {
+            lastStation = currentStation;
+            int stationNumber;
+            float oneUnit = (SLIDER_RIGHTMOSTPOS - SLIDER_LEFTMOSTPOS)/numStations;
+            stationNumber = (int)((pointer.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
+            if(stationNumber >= numStations) stationNumber = numStations-1;
+            currentStation = stations.get(stationNumber);
         }
-        lastStation = currentStation;
-        if (stationNumber > 10 && stationNumber < 100) {
-            currentStation = stations.get(0);
-        } else if (stationNumber > 120 && stationNumber < 190) {
-            currentStation = stations.get(1);
-        } else if (stationNumber > 220 && stationNumber < 300) {
-            currentStation = stations.get(2);
-        } else {
-            currentStation = null;
-        }
+
     }
+
+    public boolean shouldPlayStatic() { return playStatic; }
 
     boolean prevClicked = false;
     /**
@@ -161,23 +164,27 @@ public class Radio {
      * @param dx the change in x in the user's input
      */
     public void update(Vector2 in, float dx) {
-        Vector2 src = new Vector2(0.0f,5.0f);
-        //System.out.println("From update Radio: " + in);
-        if (in != null && knob.inArea(in)) {
-            knobAng -= (in.angle(src) * ROTATION_SPEED);
-            if (knobAng <= -360.0f) {
-                knobAng = 0.0f;
-            }
+        setStation();
+        slider_left = 0.85f - 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
+        slider_right = 0.85f + 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
+        if(in != null && slider.inArea(in)) {
+            soundOn = true;
+            playStatic = true;
+            float newPos = in.x/pointer.getScreenWidth();
+            if(newPos < slider_left) newPos = slider_left;
+            else if(newPos > slider_right) newPos = slider_right;
+            pointer.updateX(newPos);
+        } else {
+            playStatic = false;
         }
-        if(prevClicked == false && in != null && soundOn && sound_on.inArea(in)) {
+        if(prevClicked == true && in == null && soundOn) {
             soundOn = false;
             currentStation.getAudio().setVolume(0);
-        } else if(prevClicked == false && in != null && !soundOn && sound_off.inArea(in)) {
+        } else if(prevClicked == true && in == null && !soundOn) {
             soundOn = true;
             currentStation.getAudio().setVolume(1);
         }
-        setStation();
-        prevClicked = in != null;
+        prevClicked = in != null && sound_on.inArea(in);
     }
 
     /**
@@ -185,9 +192,9 @@ public class Radio {
      * @param canvas
      */
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
-        knob.draw(canvas, knobAng);
+//        knob.draw(canvas, knobAng);
         slider.draw(canvas);
-//        pointer.draw(canvas);
+        pointer.draw(canvas);
         if(soundOn) sound_on.draw(canvas);
         else sound_off.draw(canvas);
 //        ned_like.draw(canvas);
@@ -236,8 +243,8 @@ public class Radio {
                 case THUG:
                     name = "Thug";
                     break;
-                case COMEDY:
-                    name = "Comedy";
+                case CLASSICAL:
+                    name = "Classical";
                     break;
                 default:
                     name = "NONE";

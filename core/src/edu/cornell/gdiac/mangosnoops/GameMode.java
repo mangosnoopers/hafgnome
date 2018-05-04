@@ -79,8 +79,6 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
-	/** Texture of the sky */
-	private Texture sky;
 	/** Texture of the dash **/
 	private Texture dash;
 	/** Death Screen */
@@ -158,8 +156,6 @@ public class GameMode implements Screen {
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
 
-		// Load sky
-		manager.load(SKY_FILE, Texture.class);
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
@@ -211,9 +207,6 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(BKGD_FILE)) {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-		}
-		if (manager.isLoaded(SKY_FILE)) {
-			sky = manager.get(SKY_FILE, Texture.class);
 		}
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
@@ -281,14 +274,14 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
+			soundController = new SoundController();
             if (levelName != "tutorial") {
-				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
 				System.out.println("create" + gameplayController);
 			} else {
-            	gameplayController = new TutorialController(canvas);
+            	gameplayController = new TutorialController(canvas, soundController);
 			}
-            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
-            soundController = new SoundController();
+            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight(), soundController);
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
@@ -322,7 +315,7 @@ public class GameMode implements Screen {
 		// Process the game input
 		inputController.readInput();
 		// Test whether to reset the game.
-		try {
+//		try {
 			switch (gameState) {
 				case INTRO:
 					gameState = GameState.PLAY;
@@ -369,10 +362,10 @@ public class GameMode implements Screen {
 				default:
 					break;
 			}
-		} catch (Exception e) {
-			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
-			System.out.println(e);
-		}
+//		} catch (Exception e) {
+//			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
+//			System.out.println(e);
+//		}
 
 	}
 
@@ -408,7 +401,7 @@ public class GameMode implements Screen {
 		collisionController.processCollisions(gameplayController.getEnemiez(),gameplayController.getCar(), gameplayController);
 
 		// Play resulting sound
-		soundController.play(gameplayController.getRadio());
+		soundController.play(gameplayController.getTouchscreen());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
@@ -495,6 +488,9 @@ public class GameMode implements Screen {
  */
 	private void draw(float delta) {
 		canvas.clearScreen();
+		canvas.beginHUDDrawing();
+		canvas.drawBackground(background);
+		canvas.endHUDDrawing();
 		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez

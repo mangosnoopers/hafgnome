@@ -12,9 +12,8 @@ public class NormalLevelController extends GameplayController {
     /** Texture types */
     private Texture billboardEndIsNearTexture;
 
-    public NormalLevelController(GameCanvas canvas, LevelObject level) {
-        super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs());
-
+    public NormalLevelController(GameCanvas canvas, LevelObject level, SoundController sc) {
+        super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc);
     }
 
     public void start(float x, float y) {
