@@ -37,6 +37,7 @@ import java.util.HashMap;
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
+	private SoundController soundController;
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -170,9 +171,6 @@ public class GameplayController {
 	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
 	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
-	private static final String BUTTON_GPS_FILE = "images/DashHUD/buttonGps.png";
-	private static final String BUTTON_RADIO_FILE = "images/DashHUD/buttonRadio.png";
-	private static final String BUTTON_DVD_FILE = "images/DashHUD/buttonDvd.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 	/** The Horn! */
@@ -250,9 +248,6 @@ public class GameplayController {
 	private Texture onTouchscreen;
 	private Texture offTouchscreen;
 	private Texture dvdSlot;
-	private Texture buttonGps;
-	private Texture buttonRadio;
-	private Texture buttonDvd;
 	/** Horn texture */
 	private Texture hornTexture;
 
@@ -392,12 +387,6 @@ public class GameplayController {
 		assets.add(OFF_TOUCHSCREEN_FILE);
 		manager.load(DVD_SLOT_FILE, Texture.class);
 		assets.add(DVD_SLOT_FILE);
-		manager.load(BUTTON_GPS_FILE, Texture.class);
-		assets.add(BUTTON_GPS_FILE);
-		manager.load(BUTTON_RADIO_FILE, Texture.class);
-		assets.add(BUTTON_RADIO_FILE);
-		manager.load(BUTTON_DVD_FILE, Texture.class);
-		assets.add(BUTTON_DVD_FILE);
 		manager.load(HORN_FILE, Texture.class);
 		assets.add(HORN_FILE);
 	}
@@ -419,6 +408,7 @@ public class GameplayController {
 		flamingoTexture = createTexture(manager, FLAMINGO_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
+		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
 		radioSlider = createTexture(manager, RADIO_SLIDER_FILE);
 		radioPointer = createTexture(manager, RADIO_POINTER_FILE);
 		radioSoundOn = createTexture(manager, RADIO_SOUNDON_FILE);
@@ -469,10 +459,6 @@ public class GameplayController {
 		satQuestions = new SATQuestions(satTextures, satBubble);
 		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
-		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
-		buttonGps = createTexture(manager, BUTTON_GPS_FILE);
-		buttonRadio = createTexture(manager, BUTTON_RADIO_FILE);
-		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
 		hornTexture = createTexture(manager, HORN_FILE);
 	}
 
@@ -492,7 +478,9 @@ public class GameplayController {
 	public GameplayController(GameCanvas canvas, float endY,
 							  Array<Enemy> enemies,
 							  Array<Event> e,
-							  ObjectMap<String,Radio.Genre> s) {
+							  ObjectMap<String,Radio.Genre> s,
+							  SoundController sc) {
+		soundController = sc;
 		songs = s;
 		enemiez = enemies;
         radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
@@ -586,6 +574,8 @@ public class GameplayController {
 	 */
     public Radio getRadio(){ return radio; }
 
+    public TouchScreen getTouchscreen() { return touchscreen; }
+
 	/**
 	 * Returns a reference to the inventory
 	 */
@@ -619,11 +609,12 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+		soundController.startAmbience();
 		radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
-		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
+		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot);
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
@@ -787,6 +778,8 @@ public class GameplayController {
 		}
 	}
 
+	boolean prevHonking = false;
+
 	/**
 	 * Resolve the actions of all game objects
 	 *
@@ -802,6 +795,7 @@ public class GameplayController {
 
             /* FIXME: idk if its best to have this here */
             if (horn.isHonking()) {
+            	if(!prevHonking) soundController.beepSound();
             	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             		Flamingo f = (Flamingo) e;
             		if (e.getY() < f.getFlyAwayDistance()) {
@@ -810,6 +804,7 @@ public class GameplayController {
 					}
 				}
 			}
+			prevHonking = horn.isHonking();
         }
 
         // Update the HUD

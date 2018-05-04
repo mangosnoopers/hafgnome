@@ -258,14 +258,14 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
+			soundController = new SoundController();
             if (levelName != "tutorial") {
-				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
 				System.out.println("create" + gameplayController);
 			} else {
-            	gameplayController = new TutorialController(canvas);
+            	gameplayController = new TutorialController(canvas, soundController);
 			}
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
-            soundController = new SoundController();
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
@@ -299,7 +299,7 @@ public class GameMode implements Screen {
 		// Process the game input
 		inputController.readInput();
 		// Test whether to reset the game.
-		try {
+//		try {
 			switch (gameState) {
 				case INTRO:
 					gameState = GameState.PLAY;
@@ -336,10 +336,10 @@ public class GameMode implements Screen {
 				default:
 					break;
 			}
-		} catch (Exception e) {
-			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
-			System.out.println(e);
-		}
+//		} catch (Exception e) {
+//			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
+//			System.out.println(e);
+//		}
 
 	}
 
@@ -373,7 +373,7 @@ public class GameMode implements Screen {
 		collisionController.processCollisions(gameplayController.getEnemiez(),gameplayController.getCar(), gameplayController);
 
 		// Play resulting sound
-		soundController.play(gameplayController.getRadio());
+		soundController.play(gameplayController.getTouchscreen());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();

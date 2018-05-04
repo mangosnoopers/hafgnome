@@ -76,8 +76,8 @@ public class TutorialController extends GameplayController {
      *  destroyed, then it must have not hit the player. */
     private float ENEMY_Y_THRESHOLD = -13f;
 
-    public TutorialController(GameCanvas canvas) {
-        super(canvas, 500, new Array<Enemy>(), new Array<Event>(), new ObjectMap<String, Radio.Genre>());
+    public TutorialController(GameCanvas canvas, SoundController sc) {
+        super(canvas, 500, new Array<Enemy>(), new Array<Event>(), new ObjectMap<String, Radio.Genre>(), sc);
 
     }
 
