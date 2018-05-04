@@ -17,6 +17,7 @@
  * LibGDX version, 2/2/2015
  */
 package edu.cornell.gdiac.mangosnoops;
+import com.badlogic.gdx.graphics.Pixmap;
 import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
@@ -79,6 +80,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create() {
 		currLevel = 0;
 		Gdx.graphics.setTitle("Gnomez");
+		setCursor("images/mouse.png");
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas,LEVELS[currLevel]);
@@ -159,14 +161,24 @@ public class GDXRoot extends Game implements ScreenListener {
 				start = null;
 			}
 		} else if (screen == playing) {
-			reststop = new RestStopMode(canvas,manager);
-			reststop.setPlayerInv(playing.getInventory());
-			reststop.setScreenListener(this);
-			Gdx.input.setInputProcessor(reststop);
-			setScreen(reststop);
+			if(playing.exitFromPause){
+				playing.exitFromPause = false;
+				start = new StartMenuMode(canvas,manager);
+				start.setScreenListener(this);
+				Gdx.input.setInputProcessor(start);
+				setScreen(start);
+				//playing.dispose();
+				//playing = null;
+			} else {
+				reststop = new RestStopMode(canvas, manager);
+				reststop.setPlayerInv(playing.getInventory());
+				reststop.setScreenListener(this);
+				Gdx.input.setInputProcessor(reststop);
+				setScreen(reststop);
+				playing.dispose();
+				playing = null;
+			}
 
-			playing.dispose();
-			playing = null;
 		} else if (screen == reststop) {
 			currLevel = (currLevel + 1) % LEVELS.length; // TODO : something that will end the game at last level
 			playing = new GameMode(canvas,LEVELS[currLevel]);
@@ -183,6 +195,16 @@ public class GDXRoot extends Game implements ScreenListener {
 			// We quit the main application
 			Gdx.app.exit();
 		}
+	}
+
+	/** Set the cursor to the image specified by
+	 * the path string
+	 * @param path
+	 */
+	public void setCursor(String path){
+		Pixmap pm = new Pixmap(Gdx.files.internal(path));
+		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm,0 ,0 ));
+		pm.dispose();
 	}
 
 }
