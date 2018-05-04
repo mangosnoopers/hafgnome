@@ -56,6 +56,8 @@ public class GameplayController {
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
 	private Array<Enemy> enemiez;
+    /** An array of enemies for this level -- is not altered, used for reset */
+    private Array<Enemy> enemiezSave;
 	/** The next event to happen */
 	private int nextEvent;
 	/** Rearview enemy instance. The way it's handled right now, there is only
@@ -486,7 +488,7 @@ public class GameplayController {
         radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
-		enemiez = enemies;
+		enemiezSave = enemies;
         visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 		yonda = new Car();
 		yonda.setVisor(visor);
@@ -665,7 +667,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(enemiez.size);
+		enemiez = new Array<Enemy>(enemiezSave);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
