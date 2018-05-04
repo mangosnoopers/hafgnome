@@ -108,6 +108,8 @@ public class GameplayController {
 	protected static final int NED_FILMSTRIP_COLS = 14;
 
 	// Graphics assets for the entities
+	/** The texture file for the visor **/
+	private static final String VISOR_FILE = "images/visor.png";
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
     /** The texture file for the vroom stick*/
@@ -209,9 +211,9 @@ public class GameplayController {
 	/** Textures for items **/
 	private Array<Texture> dvdTextures;
 	private Array<Texture> snackTextures;
-	/** Textures for visor states */
-	private Texture visorOpen;
-	private Texture visorClosed;
+
+	/** Texture for visor */
+	private Texture visorTexture;
 
 	/** Texture of the dash **/
 	private Texture dashTexture;
@@ -333,10 +335,11 @@ public class GameplayController {
 		assets.add(REARVIEW_COVER);
 		manager.load(REARVIEW_SEATS, Texture.class);
 		assets.add(REARVIEW_SEATS);
+		manager.load(VISOR_FILE, Texture.class);
+		assets.add(VISOR_FILE);
         manager.load(VISOR_OPEN_FILE, Texture.class);
         assets.add(VISOR_OPEN_FILE);
         manager.load(VISOR_CLOSED_FILE, Texture.class);
-        assets.add(VISOR_OPEN_FILE);
 		manager.load(SUN_FILE, Texture.class);
 		assets.add(SUN_FILE);
 		manager.load(SUN2_FILE, Texture.class);
@@ -404,8 +407,7 @@ public class GameplayController {
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
 		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
-        visorOpen = createTexture(manager, VISOR_OPEN_FILE);
-        visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
+        visorTexture = createTexture(manager, VISOR_FILE);
         sun = createTexture(manager, SUN_FILE);
 		sun2 = createTexture(manager, SUN2_FILE);
 		sun3 = createTexture(manager, SUN3_FILE);
@@ -455,7 +457,6 @@ public class GameplayController {
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
 		enemiezSave = enemies;
-        visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
 		yonda = new Car();
 		yonda.setVisor(visor);
 		backing = new Array<Enemy>();
@@ -617,7 +618,7 @@ public class GameplayController {
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.19f, 0.19f,0.26f, 50, vroomStickTexture);
-		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
+		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
 		road.setRoadTexture(roadTexture);
@@ -778,14 +779,14 @@ public class GameplayController {
   		boolean mousePressed = input.isMousePressed();
   		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
   		horn.updateHonk(delta);
+  		visor.update(delta);
         if(in != null) {
+            visor.resolveInput(new Vector2(in), input.isPrevMousePressed());
 			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
 			vroomStick.update(new Vector2(in), dr.y);
 			touchscreen.update(new Vector2(in), dr.x);
 			if(horn.update(new Vector2(in), delta)) { soundController.beepSound(); }
 			inventory.update(new Vector2(in), mousePressed);
-			visor.update(new Vector2(in), input.isPrevMousePressed());
-
 		}
 		else{
 			wheel.update(null, dr.x, input.isTurnPressed());
