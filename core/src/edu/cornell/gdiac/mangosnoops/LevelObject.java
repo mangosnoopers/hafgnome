@@ -299,8 +299,8 @@ public class LevelObject {
                     songs.put(songFile, Genre.JAZZ);
                 else if (genreStr.equals("thug"))
                     songs.put(songFile, Genre.THUG);
-                else if (genreStr.equals("comedy"))
-                    songs.put(songFile, Genre.COMEDY);
+                else if (genreStr.equals("classical"))
+                    songs.put(songFile, Genre.CLASSICAL);
                 else
                     throw new RuntimeException("Invalid song genre specified");
             }
@@ -366,7 +366,7 @@ public class LevelObject {
             } else if (eventStr.equals("sat question")) {
                 events.add(new Event(y, Event.EventType.SAT_QUESTION));
             } else if (!eventStr.equals("")) {
-                throw new RuntimeException("Invalid event specified");
+                throw new RuntimeException("Invalid event specified: " + eventStr);
             }
 
             //TODO DELETE:

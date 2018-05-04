@@ -331,19 +331,14 @@ public class GameCanvas {
      * To work properly, the image should be wide and high enough to fill the screen.
      * 
      * @param image  Texture to draw as an overlay
-	 * @param x      The x-coordinate of the bottom left corner
-	 * @param y 	 The y-coordinate of the bottom left corner
 	 */
-    public void drawBackground(Texture image, float x, float y) {
+    public void drawBackground(Texture image) {
 		if (!active) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
 
-//		float w = image.getWidth();
-        // Have to draw the background twice for continuous scrolling.
-        spriteBatch.draw(image, x,   y);
-//        spriteBatch.draw(image, x+w, y);
+		draw(image, TextureOrigin.MIDDLE, 0.5f, 0.5f, 1f, true, 0, Color.WHITE);
     }
 
 
@@ -455,6 +450,47 @@ public class GameCanvas {
 		BOTTOM_RIGHT,
 	}
 
+	/** Same as function below this, but for TextureRegion
+	 *
+	 * @param image Texture of the image
+	 * @param o Where the origin is located for the Texture, see enum.
+	 * @param x Scale where x-coord is on screen, relative to canvas width (0.5 = middle, 1 = right)
+	 * @param y scale where y-coord is on screen, relative to canvas height (0.5 = middle, 1 = top)
+	 * @param scale Scale of texture based on either width/height
+	 * @param widthScale True if scale is based on canvas width, false if based on canvas height
+	 * @param angle Angle this texture is drawn in
+	 * @param c Color tint of the image
+	 */
+	public void draw(TextureRegion image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle, Color c) {
+		Vector2 oxy = new Vector2();
+		switch(o) {
+			case MIDDLE:
+				oxy.x = image.getRegionWidth()*0.5f;
+				oxy.y = image.getRegionHeight()*0.5f;
+				break;
+			case TOP_LEFT:
+				oxy.y = image.getRegionHeight();
+				break;
+			case TOP_RIGHT:
+				oxy.x = image.getRegionWidth();
+				oxy.y = image.getRegionHeight();
+				break;
+			case BOTTOM_LEFT:
+				break;
+			case BOTTOM_RIGHT:
+				oxy.x = image.getRegionWidth();
+				break;
+			default:
+				break;
+		}
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getRegionWidth();
+		else s = scale*getHeight()/image.getRegionHeight();
+//		System.out.println("x: " + oxy.x + " y: " + oxy.y + " xpos: " + x*getWidth() + " ypos: " + y*getHeight() + " angle: " + angle + " scale: " + s);
+		draw(image, c, oxy.x, oxy.y, x*getWidth(), y*getHeight(), angle, s, s);
+	}
+	/** Default color is white. */
+
 	/**	Nice new draw method that is resize-friendly yay. :D
 	 *
 	 * @param image Texture of the image
@@ -506,6 +542,10 @@ public class GameCanvas {
 	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {
 		draw(image, o, x, y, scale, widthScale, 0, Color.WHITE);
 	}
+	/** Same as above but for TextureRegion. */
+	public void draw(TextureRegion image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {
+		draw(image, o, x, y, scale, widthScale, 0, Color.WHITE);
+	}
 	/** Default angle is 0. */
 	public void draw(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, Color c) {
 		draw(image, o, x, y, scale, widthScale, 0, c);
@@ -541,6 +581,51 @@ public class GameCanvas {
 		if(widthScale) s = scale*getWidth()/image.getWidth();
 		else s = scale*getHeight()/image.getHeight();
 		draw(image, c, oxy.x, oxy.y, x*getWidth(), y*getHeight()+shakeAmnt, angle, s, s);
+	}
+
+	public boolean inArea(Vector2 p, TextureRegion image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {
+		int xb = 0; //x bottom bound
+		int xt = 0; //x top bound
+		int yb = 0;
+		int yt = 0;
+		float s = 0;
+		if(widthScale) s = scale*getWidth()/image.getRegionWidth();
+		else s = scale*getHeight()/image.getRegionHeight();
+		switch(o) {
+			case MIDDLE:
+				xb=(int)(x*getWidth()-s*0.5f*image.getRegionWidth());
+				xt=(int)(x*getWidth()+s*0.5f*image.getRegionWidth());
+				yb=(int)(y*getHeight()-s*0.5f*image.getRegionHeight());
+				yt=(int)(y*getHeight()+s*0.5f*image.getRegionHeight());
+				break;
+			case TOP_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getRegionWidth());
+				yb=(int)(y*getHeight()-s*image.getRegionHeight());
+				yt=getHeight();
+				break;
+			case TOP_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getRegionWidth());
+				xt=getWidth();
+				yb=(int)(y*getHeight()-s*image.getRegionHeight());
+				yt=getHeight();
+				break;
+			case BOTTOM_LEFT:
+				xb=0;
+				xt=(int)(x*getWidth()+s*image.getRegionWidth());
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getRegionHeight());
+				break;
+			case BOTTOM_RIGHT:
+				xb=(int)(x*getWidth()-s*image.getRegionWidth());
+				xt=getWidth();
+				yb=0;
+				yt=(int)(y*getHeight()+s*image.getRegionHeight());
+				break;
+			default:
+				break;
+		}
+		return p.x > xb && p.x < xt && (getHeight()-p.y) > yb && (getHeight()-p.y) < yt;
 	}
 
 	public boolean inArea(Vector2 p, Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale) {

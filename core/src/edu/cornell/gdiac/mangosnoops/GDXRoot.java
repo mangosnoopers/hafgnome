@@ -79,7 +79,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void create() {
 		currLevel = 0;
-		Gdx.graphics.setTitle("Gnomez");
+		Gdx.graphics.setTitle("Home Away From Gnome");
 		setCursor("images/mouse.png");
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
