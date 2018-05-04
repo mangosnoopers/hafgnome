@@ -105,7 +105,7 @@ public class GameplayController {
 	protected static final int NOSH_FILMSTRIP_ROWS = 1;
 	protected static final int NOSH_FILMSTRIP_COLS = 13;
 	protected static final int NED_FILMSTRIP_ROWS = 1;
-	protected static final int NED_FILMSTRIP_COLS = 14;
+	protected static final int NED_FILMSTRIP_COLS = 15;
 
 	// Graphics assets for the entities
 	/** The texture file for the visor **/

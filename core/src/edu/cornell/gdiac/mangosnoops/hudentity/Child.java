@@ -28,13 +28,15 @@ public class Child extends Image {
      * These indices indicate which section of the filmstrip corresponds
      * to which mood
      */
-    private final static int NED_HAPPY_INDEX = 0;
-    private final static int NED_NEUTRAL_INDEX = 1;
-    private final static int NED_SLEEP_INDEX = 2;
-    private final static int NED_CRITICAL_INDEX = 3;
-    private final static int NED_SAD_START_INDEX = 4;
-    private final static int NED_SAD_END_INDEX = 12;
-    private final static int NED_SAT_INDEX = 13;
+    private final static int NED_HAPPY_START_INDEX = 0;
+    private final static int NED_HAPPY_END_INDEX = 1;
+    private final static int NED_NEUTRAL_START_INDEX = 2;
+    private final static int NED_NEUTRAL_END_INDEX = 3;
+    private final static int NED_SLEEP_INDEX = 4;
+    private final static int NED_CRITICAL_INDEX = 5;
+    private final static int NED_SAD_START_INDEX = 6;
+    private final static int NED_SAD_END_INDEX = 14;
+    private final static int NED_SAT_INDEX = 15;
 
     private final static int NOSH_HAPPY_INDEX = 0;
     private final static int NOSH_NEUTRAL_INDEX = 1;
@@ -133,9 +135,7 @@ public class Child extends Image {
             NOSH_SPEECH_BUBBLE_COORDS = new Vector2(MathUtils.random(0.3f, 0.65f), MathUtils.random(0.45f, 0.75f));
             position = new Vector2(0.9f, 0.81f);
         }
-        Random rand = new Random();
-        int animSpeedInt = rand.nextInt(5) + 20;
-        ANIMATION_SPEED = (float) animSpeedInt / 100f;
+        ANIMATION_SPEED = 0.3f;
 
         ctype = type;
         happiness = HAPPY_UBOUND;
@@ -145,14 +145,14 @@ public class Child extends Image {
         upperFrameBound = new ObjectMap<Mood, Integer>();
 
         if (type == ChildType.NED) {
-            lowerFrameBound.put(Mood.HAPPY, NED_HAPPY_INDEX);
-            lowerFrameBound.put(Mood.NEUTRAL, NED_NEUTRAL_INDEX);
+            lowerFrameBound.put(Mood.HAPPY, NED_HAPPY_START_INDEX);
+            lowerFrameBound.put(Mood.NEUTRAL, NED_NEUTRAL_START_INDEX);
             lowerFrameBound.put(Mood.SAD, NED_SAD_START_INDEX);
             lowerFrameBound.put(Mood.CRITICAL, NED_CRITICAL_INDEX);
             lowerFrameBound.put(Mood.SLEEP, NED_SLEEP_INDEX);
 
-            upperFrameBound.put(Mood.HAPPY, NED_HAPPY_INDEX);
-            upperFrameBound.put(Mood.NEUTRAL, NED_NEUTRAL_INDEX);
+            upperFrameBound.put(Mood.HAPPY, NED_HAPPY_END_INDEX);
+            upperFrameBound.put(Mood.NEUTRAL, NED_NEUTRAL_END_INDEX);
             upperFrameBound.put(Mood.SAD, NED_SAD_END_INDEX);
             upperFrameBound.put(Mood.CRITICAL, NED_CRITICAL_INDEX);
             upperFrameBound.put(Mood.SLEEP, NED_SLEEP_INDEX);
@@ -286,10 +286,9 @@ public class Child extends Image {
             animationFrame = lowerFrameBound.get(getCurrentMood());
         }
 
-        animationFrame += ANIMATION_SPEED;
-        if (animationFrame >= upperFrameBound.get(getCurrentMood())) {
-            animationFrame = lowerFrameBound.get(getCurrentMood());
-        }
+        float hi = upperFrameBound.get(getCurrentMood());
+        float lo = lowerFrameBound.get(getCurrentMood());
+        animationFrame = ((animationFrame + ANIMATION_SPEED) % hi) + lo;
 
         currentFilmStrip.setFrame((int) animationFrame);
     }
