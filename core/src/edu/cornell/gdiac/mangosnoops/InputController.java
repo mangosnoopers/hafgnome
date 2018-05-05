@@ -71,6 +71,11 @@ public class InputController {
 	public Vector2 getClickPos() { return clickPos; }
 
 	/**
+	 * @return The current mouse position
+	 */
+	public Vector2 getHoverPos() { return new Vector2(Gdx.input.getX(),Gdx.input.getY()); }
+
+	/**
 	 * @return true if the reset button was pressed.
 	 */
 	public boolean didReset() {
@@ -111,6 +116,7 @@ public class InputController {
 	 * @return true if the pause button was pressed
 	 */
 	public boolean pressedPause(){ return pausePressed; }
+
 
 	/**
 	 * Reads the input for the player and converts the result into game logic.

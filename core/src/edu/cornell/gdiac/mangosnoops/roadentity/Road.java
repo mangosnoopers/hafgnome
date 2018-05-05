@@ -144,9 +144,9 @@ public class Road extends RoadObject {
 
     public void update(float delta) {
 
-        if (state != RoadState.NORMAL) {
-            System.out.println(state);
-        }
+//        if (state != RoadState.NORMAL) {
+//            System.out.println(state);
+//        }
 
         // Update currentSpeed based on state
         switch (state) {
@@ -204,6 +204,7 @@ public class Road extends RoadObject {
     public void draw(GameCanvas canvas) {
 
         for (Float y : yPositions) {
+
             // Draw road
             canvas.drawRoadObject(roadTexture, ROAD_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, ROAD_X_ROTATION, 0);
 
@@ -260,5 +261,6 @@ public class Road extends RoadObject {
     /** Reset the road. */
     public void reset () {
         exitY = initialExitY;
+        currentSpeed = NORMAL_SPEED;
     }
 }
