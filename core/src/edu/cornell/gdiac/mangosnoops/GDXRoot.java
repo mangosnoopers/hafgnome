@@ -18,6 +18,8 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.mangosnoops.Menus.LevelMenuMode;
 import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
@@ -27,6 +29,12 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
+import org.json.JSONObject;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Root class for a LibGDX.  
@@ -44,14 +52,23 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameCanvas canvas; 
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
+	/** Player mode for the level select screen */
+	private LevelMenuMode levelSelect;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
 	private GameMode    playing;
 	private RestStopMode reststop;
 	private StartMenuMode start;
 
-	// LEVEL FILES TODO implement moving to next level
+	/** Level files - currLevel is the level that will be played */
 	private static final String[] LEVELS = new String[]{"tutorial", "level0.xlsx", "level1.xlsx"};
 	private static int currLevel;
+	private static final int NUM_TUTORIALS = 1;
+
+	/** Rest stop files - REST_STOPS[currLevel] is the rest stop after LEVELS[currLevel] */
+	private static final String[] REST_STOPS = new String[]{"rest_stop0.json", "rest_stop1.json"};
+
+	/** Saved level files */
+	private Array<String> SAVED_LEVELS = new Array<String>();
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -84,9 +101,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas,LEVELS[currLevel]);
-		reststop = new RestStopMode(canvas, manager);
+		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
 		start = new StartMenuMode(canvas, manager);
-
+		levelSelect = new LevelMenuMode(canvas, manager, LEVELS);
 
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
@@ -125,7 +142,40 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas.resize();
 		super.resize(width,height);
 	}
-	
+
+	/**
+	 * Save the game file as a JSON.
+	 * The JSON includes the inventory, current level, and a UNIX time stamp of
+	 * when it was saved.
+	 *
+	 * Levels are saved when exiting the rest stop.
+	 * Loading the level will bring you to the next level.
+	 *
+	 * @param inv the player's inventory at time of saving
+	 */
+	private void saveGame(Inventory inv) {
+		int idxWithoutTutorials = currLevel - NUM_TUTORIALS;
+
+		// create the JSON object
+		JSONObject json = new JSONObject();
+		json.put("numSnacks", inv.getNumSnacks());
+		json.put("numBooks", 0); // TODO - Fix
+		json.put("numMovies", inv.getNumMovies());
+		json.put("currentLevel", idxWithoutTutorials);
+		// UNIX timestamp - seconds since 1/1/1970
+		json.put("timestamp", System.currentTimeMillis() / 1000L);
+
+		// write to the file
+		String filename = "levels/savedlevels/saved_level" + idxWithoutTutorials + ".json";
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
+			bw.write(json.toString());
+			bw.close();
+		} catch (IOException e) {
+			System.out.println("IO exception when saving");
+		}
+	}
+
 	/**
 	 * The given screen has made a request to exit its player mode.
 	 *
@@ -148,7 +198,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading = null;
 		} else if (screen == start) {
 			if(start.levelSelectButtonClicked()) {
-
+				levelSelect.setScreenListener(this);
+				setScreen(levelSelect);
+				start.dispose();
+				start = null;
 			} else if(start.exitButtonClicked()) {
 				Gdx.app.exit();
 			} else if(start.settingsButtonClicked()) {
@@ -160,6 +213,21 @@ public class GDXRoot extends Game implements ScreenListener {
 				start.dispose();
 				start = null;
 			}
+		} else if (screen == levelSelect) {
+			if (levelSelect.getLoadPlaying()) {
+//				playing = new GameMode(canvas, levelSelect.getNextLevel());
+				playing.setScreenListener(this);
+				setScreen(playing);
+			}
+			else {
+				start = new StartMenuMode(canvas, manager);
+				start.setScreenListener(this);
+				setScreen(start);
+			}
+
+			levelSelect.dispose();
+			levelSelect = null;
+
 		} else if (screen == playing) {
 			if(playing.exitFromPause){
 				playing.exitFromPause = false;
@@ -170,8 +238,15 @@ public class GDXRoot extends Game implements ScreenListener {
 				//playing.dispose();
 				//playing = null;
 			} else {
-				reststop = new RestStopMode(canvas, manager);
+				reststop = new RestStopMode(canvas,manager,REST_STOPS[currLevel]);
 				reststop.setPlayerInv(playing.getInventory());
+
+				// increment current level index for saving purposes
+				// and for loading when exiting rest stop mode
+				currLevel = (currLevel + 1) % LEVELS.length;
+
+				// save the game when entering - to ensure game is saved even if user quits at rest stop
+				saveGame(playing.getInventory());
 				reststop.setScreenListener(this);
 				Gdx.input.setInputProcessor(reststop);
 				setScreen(reststop);
@@ -180,13 +255,14 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 
 		} else if (screen == reststop) {
-			currLevel = (currLevel + 1) % LEVELS.length; // TODO : something that will end the game at last level
+			// save the game when exiting the rest stop - loading will bring you to the next level
+			saveGame(reststop.getPlayerInv());
+
 			playing = new GameMode(canvas,LEVELS[currLevel]);
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode
 			playing.setScreenListener(this);
-			//Gdx.input.setInputProcessor(playing);
 			setScreen(playing);
 
 			reststop.dispose();
