@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.*;
 
 import java.util.Random;
 
-public abstract class Enemy extends RoadObject{
+public class Enemy extends RoadObject{
     // CONSTANTS
     /** How fast we change frames (one frame per 4 calls to update) */
     private float animationSpeed = 0.25f;
@@ -65,6 +65,16 @@ public abstract class Enemy extends RoadObject{
         maxAnimFrame = 0;
         animeframe = 0;
         enemyType = type;
+    }
+
+    public Enemy(Enemy e) {
+        setX(e.getX());
+        setY(e.getY());
+        Random rand = new Random();
+        minAnimFrame = 0;
+        maxAnimFrame = 0;
+        animeframe = 0;
+        enemyType = e.getType();
     }
 
     /**
