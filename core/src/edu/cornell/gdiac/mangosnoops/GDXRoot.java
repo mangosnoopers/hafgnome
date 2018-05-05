@@ -18,6 +18,7 @@
  */
 package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.graphics.Pixmap;
+import edu.cornell.gdiac.mangosnoops.Menus.SettingsMenu;
 import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
@@ -48,9 +49,11 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameMode    playing;
 	private RestStopMode reststop;
 	private StartMenuMode start;
+	private SettingsMenu settings;
+	private SoundController soundController;
 
 	// LEVEL FILES TODO implement moving to next level
-	private static final String[] LEVELS = new String[]{"level0.xlsx"};
+	private static final String[] LEVELS = new String[]{"tut0.xlsx", "level0.xlsx", "level1.xlsx"};
 	private static int currLevel;
 
 	/**
@@ -83,13 +86,15 @@ public class GDXRoot extends Game implements ScreenListener {
 		setCursor("images/mouse.png");
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
-		playing = new GameMode(canvas,LEVELS[currLevel]);
+		settings = new SettingsMenu();
+		soundController = new SoundController(settings);
+		playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 		reststop = new RestStopMode(canvas, manager);
-		start = new StartMenuMode(canvas, manager);
-
+		start = new StartMenuMode(canvas, manager,settings,soundController);
 
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
+		settings.preLoadContent(manager);
 		setScreen(loading);
 	}
 
@@ -140,10 +145,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.app.exit();
 		} else if (screen == loading) {
 			playing.loadContent(manager);
+			settings.loadContent(manager);
 			start.setScreenListener(this);
 			Gdx.input.setInputProcessor(start);
 			setScreen(start);
-
 			loading.dispose();
 			loading = null;
 		} else if (screen == start) {
@@ -152,7 +157,6 @@ public class GDXRoot extends Game implements ScreenListener {
 			} else if(start.exitButtonClicked()) {
 				Gdx.app.exit();
 			} else if(start.settingsButtonClicked()) {
-
 			} else {
 				playing.setScreenListener(this);
 				//Gdx.input.setInputProcessor(playing);
@@ -163,7 +167,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == playing) {
 			if(playing.exitFromPause){
 				playing.exitFromPause = false;
-				start = new StartMenuMode(canvas,manager);
+				start = new StartMenuMode(canvas,manager,settings,soundController);
 				start.setScreenListener(this);
 				Gdx.input.setInputProcessor(start);
 				setScreen(start);
@@ -181,7 +185,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		} else if (screen == reststop) {
 			currLevel = (currLevel + 1) % LEVELS.length; // TODO : something that will end the game at last level
-			playing = new GameMode(canvas,LEVELS[currLevel]);
+			playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode

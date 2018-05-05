@@ -18,17 +18,19 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
+import edu.cornell.gdiac.mangosnoops.SoundController;
 import edu.cornell.gdiac.util.ScreenListener;
 
 public class StartMenuMode implements Screen, InputProcessor {
     private static final String BACKGROUND_FILE = "images/startMenuAssets/background.png";
     private static final String EXITBUTTON_FILE = "images/startMenuAssets/justexitButton.png";
     private static final String LEVELSBUTTON_FILE = "images/startMenuAssets/justlevelsButton.png";
-    private static final String SETTINGSBUTTON_FILE = "images/startMenuAssets/justsettingsButton.png";
+    private static final String SETTINGSBUTTON_FILE = "images/startMenuAssets/justSettingsButton.png";
     private static final String STARTBUTTON_FILE = "images/startMenuAssets/juststartButton.png";
     private static final String LOGO_FILE = "images/startMenuAssets/logo.png";
 
@@ -40,6 +42,7 @@ public class StartMenuMode implements Screen, InputProcessor {
     private Texture logo;
 
     Music menuSong;
+    private SoundController soundController;
 
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
     private int   exitButton;
@@ -53,6 +56,8 @@ public class StartMenuMode implements Screen, InputProcessor {
     private GameCanvas canvas;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
+    /**Settings Menu**/
+    private SettingsMenu settings;
     /** Track all loaded assets (for unloading purposes) */
     private Array<String> assets;
     /** Whether or not this player mode is still active */
@@ -173,10 +178,12 @@ public class StartMenuMode implements Screen, InputProcessor {
         }
     }
 
-    public StartMenuMode(GameCanvas canvas, AssetManager manager) {
+    public StartMenuMode(GameCanvas canvas, AssetManager manager, SettingsMenu settings, SoundController soundController) {
         //construct each of the screens lol
         this.canvas = canvas;
         this.manager = manager;
+        this.settings = settings;
+        this.soundController = soundController;
 
         background = new Texture(BACKGROUND_FILE);
         exitbuttonTexture = new Texture(EXITBUTTON_FILE);
@@ -185,9 +192,7 @@ public class StartMenuMode implements Screen, InputProcessor {
         startbuttonTexture = new Texture(STARTBUTTON_FILE);
         logo = new Texture(LOGO_FILE);
 
-        menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
-        menuSong.play();
-        menuSong.setLooping(true);
+        soundController.playMenuSong(true);
 
         active = true;
     }
@@ -202,7 +207,9 @@ public class StartMenuMode implements Screen, InputProcessor {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
-
+        if(settings.isShowing() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            settings.update(new Vector2(Gdx.input.getX(), Gdx.input.getY()), soundController);
+        }
     }
 
     /**
@@ -213,6 +220,7 @@ public class StartMenuMode implements Screen, InputProcessor {
      * prefer this in lecture.
      */
     private void draw() {
+        canvas.clearScreen();
         canvas.beginHUDDrawing();
         canvas.draw(background, 0, 0);
         offsetX = (int)(BUTTON_SCALE*scale*startbuttonTexture.getHeight()/1.75f);
@@ -227,6 +235,9 @@ public class StartMenuMode implements Screen, InputProcessor {
                 centerX-offsetX, centerY- offsetY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
         canvas.draw(exitbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,
                 centerX+offsetX, centerY- offsetY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        if(settings.isShowing()){
+            settings.draw(canvas);
+        }
         canvas.endHUDDrawing();
     }
 
@@ -240,8 +251,7 @@ public class StartMenuMode implements Screen, InputProcessor {
         settingbuttonTexture.dispose();
         startbuttonTexture.dispose();
         logo.dispose();
-        menuSong.stop();
-        menuSong.dispose();
+        soundController.playMenuSong(false);
         background = null;
         exitbuttonTexture  = null;
         levelsbuttonTexture = null;
@@ -263,7 +273,6 @@ public class StartMenuMode implements Screen, InputProcessor {
         if(active) {
             update(delta);
             draw();
-
             // We are are ready, notify our listener
             if ((exitButton == 2 || levelsButton == 2 || settingButton == 2 || startButton == 2) && listener != null) {
                 listener.exitScreen(this, 0);
@@ -356,30 +365,33 @@ public class StartMenuMode implements Screen, InputProcessor {
             return true;
         }
 
-        // Flip to match graphics coordinates
-        screenY = heightY-screenY;
+        if(!settings.isShowing()) {
+            // Flip to match graphics coordinates
+            screenY = heightY - screenY;
+            float radius = startbuttonTexture.getWidth() * BUTTON_SCALE * scale * 0.5f;
+            float distX = Math.abs(screenX - (centerX - offsetX));
+            float distY = Math.abs(screenY - (centerY + offsetY));
+            if (distX < radius && distY < radius) {
+                startButton = 1;
+                return false;
+            }
+            distX = Math.abs(screenX - (centerX + offsetX));
+            if (distX < radius && distY < radius) {
+                levelsButton = 1;
+                return false;
+            }
+            distY = Math.abs(screenY - (centerY - offsetY));
+            if (distX < radius && distY < radius) {
+                exitButton = 1;
+                return false;
+            }
+            distX = Math.abs(screenX - (centerX - offsetX));
+            if (distX < radius && distY < radius) {
+                settingButton = 1;
+                return false;
+            }
+        }
 
-        float radius = startbuttonTexture.getWidth()*BUTTON_SCALE*scale*0.5f;
-        float distX = Math.abs(screenX-(centerX-offsetX));
-        float distY = Math.abs(screenY-(centerY+offsetY));
-        if (distX < radius && distY < radius) {
-            startButton  = 1;
-            return false;
-        }
-        distX = Math.abs(screenX-(centerX+offsetX));
-        if (distX < radius && distY < radius) {
-            levelsButton = 1;
-            return false;
-        }
-        distY = Math.abs(screenY-(centerY-offsetY));
-        if (distX < radius && distY < radius) {
-            exitButton = 1;
-            return false;
-        }
-        distX = Math.abs(screenX-(centerX+offsetX));
-        if (distX < radius && distY < radius) {
-            settingButton = 1;
-        }
         return false;
     }
 
@@ -395,18 +407,22 @@ public class StartMenuMode implements Screen, InputProcessor {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (startButton == 1) {
-            startButton = 2;
-            return false;
-        } else if (exitButton == 1) {
-            exitButton = 2;
-            return false;
-        } else if (levelsButton == 1) {
-            levelsButton = 2;
-            return false;
-        } else if (settingButton == 1) {
-            settingButton = 2;
-            return false;
+        if(!settings.isShowing()) {
+            if (startButton == 1) {
+                startButton = 2;
+                return false;
+            } else if (exitButton == 1) {
+                exitButton = 2;
+                return false;
+            } else if (levelsButton == 1) {
+                levelsButton = 2;
+                return false;
+            } else if (settingButton == 1) {
+                settingButton = 2;
+                settings.setShowing(true);
+                settingButton = 0;
+                return false;
+            }
         }
         return true;
     }

@@ -42,6 +42,8 @@ public class Car extends RoadObject {
     /** Whether or not the car teleported to the center of the road, which it
      *  does when it starts to take the exit.*/
     private boolean carTeleported;
+    /** Amount damage will be dealt with each blow */
+    private int damageDelta;
 
     /** Start position of car. */
     private static final Vector2 CAR_START_POS = new Vector2(0, -10f);
@@ -106,11 +108,14 @@ public class Car extends RoadObject {
         healthPointerAng = 50.0f;
         takingExit = false;
         carTeleported = false;
+        damageDelta = 10;
 
         timeToDisplayDamageIndicator = 10;
 
         position = new Vector2(CAR_START_POS);
     }
+
+    public void setDamageDelta(int d) { damageDelta = d; }
 
     public void setVisor(Visor v) {
         visor = v;
@@ -199,7 +204,7 @@ public class Car extends RoadObject {
         if (!isDamaged) {
             isDamaged = true;
             timeToDisplayDamageIndicator = 10;
-            setHealth(getHealth() - 10);
+            setHealth(getHealth() - damageDelta);
         }
     }
 

@@ -1,33 +1,39 @@
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import edu.cornell.gdiac.mangosnoops.Menus.SettingsMenu;
 import edu.cornell.gdiac.mangosnoops.hudentity.DvdPlayer;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 import edu.cornell.gdiac.mangosnoops.hudentity.TouchScreen;
 
 public class SoundController {
+    private SettingsMenu settings;
     /** All played music */
     private Array<Music> music;
-    private static Music carAmbience = Gdx.audio.newMusic(Gdx.files.internal("sounds/carAmbience.mp3"));
-    private static Music radioStatic = Gdx.audio.newMusic(Gdx.files.internal("sounds/radioStatic.mp3"));
-    private static Music carBeep = Gdx.audio.newMusic(Gdx.files.internal("sounds/beepbeep.mp3"));
-    private static Music gnomeDeath1 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
-    private static Music gnomeDeath2 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_2.mp3"));
-    private static Music gnomeDeath3 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_3.mp3"));
-    private static Music gnomeDeath4 = Gdx.audio.newMusic(Gdx.files.internal("sounds/gnomeGrunt_4.mp3"));
-    private static Music flamingoFlap = Gdx.audio.newMusic(Gdx.files.internal("sounds/flamingosFlap.mp3"));
-    private static Music grillRoar = Gdx.audio.newMusic(Gdx.files.internal("sounds/grillRoar.mp3"));
+    private final Music carAmbience = Gdx.audio.newMusic(Gdx.files.internal("sounds/carAmbience.mp3"));
+    private final Music menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
+
+    private final Sound radioStatic = Gdx.audio.newSound(Gdx.files.internal("sounds/radioStatic.mp3"));
+    private final Sound carBeep = Gdx.audio.newSound(Gdx.files.internal("sounds/beepbeep.mp3"));
+    private final Sound gnomeDeath1 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
+    private final Sound gnomeDeath2 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_2.mp3"));
+    private final Sound gnomeDeath3 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_3.mp3"));
+    private final Sound gnomeDeath4 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_4.mp3"));
+    private final Sound flamingoFlap = Gdx.audio.newSound(Gdx.files.internal("sounds/flamingosFlap.mp3"));
+    private final Sound grillRoar = Gdx.audio.newSound(Gdx.files.internal("sounds/grillRoar.mp3"));
 
     /**
      * Object Constructor
      */
-    public SoundController(){
+    public SoundController(SettingsMenu settings){
+        this.settings = settings;
         music = new Array<Music>();
         carAmbience.setLooping(true);
-        radioStatic.setLooping(true);
     }
 
     public void startAmbience() {
@@ -45,8 +51,8 @@ public class SoundController {
         Radio.Station currentStation = r.getCurrentStation();
         if(r.shouldPlayStatic()) {
             if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(0);
-            radioStatic.play();
-            System.out.println("STATIC " + currentStation.getAudio().getVolume());
+            radioStatic.loop();
+//            System.out.println("STATIC " + currentStation.getAudio().getVolume());
         } else {
             radioStatic.stop();
             Radio.Station lastStation = r.getLastStation();
@@ -73,6 +79,7 @@ public class SoundController {
 
     /** Called in resolveActions when horn is honked */
     public void beepSound() {
+        carBeep.stop();
         carBeep.play();
     }
 
@@ -81,9 +88,38 @@ public class SoundController {
         flamingoFlap.play();
     }
 
-    /** Called in CollisionController */
+    /** Called in CollisionController and Settings */
     public void gnomeDeathSound() {
-        gnomeDeath1.play();
+        switch (settings.getGnomeSoundSelected()) {
+            case 'A':
+                gnomeDeath1.stop();
+                gnomeDeath1.play();
+                break;
+            case 'B':
+                gnomeDeath2.stop();
+                gnomeDeath2.play();
+                break;
+            case 'C':
+                gnomeDeath3.stop();
+                gnomeDeath3.play();
+                break;
+            case 'D':
+                gnomeDeath4.stop();
+                gnomeDeath4.play();
+                break;
+            default: break;
+        }
+    }
+
+    /** Called in StartMenuMode Constructor and Dispose**/
+    public void playMenuSong(boolean playing){
+        if(playing) {
+            menuSong.play();
+            menuSong.setLooping(true);
+        } else{
+            menuSong.stop();
+            menuSong.dispose();
+        }
     }
 
     /** Stops audio and disposes the file **/
@@ -105,7 +141,7 @@ public class SoundController {
         }
     }
 
-    /** Rest method **/
+    /** Reset method **/
     public void reset() {
         carAmbience.stop();
         for(Music m : music) {
