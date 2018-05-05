@@ -1,6 +1,9 @@
 package edu.cornell.gdiac.mangosnoops.roadentity;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.mangosnoops.GameCanvas;
+import edu.cornell.gdiac.util.FilmStrip;
 
 public class Grill extends Enemy {
 
@@ -35,6 +38,19 @@ public class Grill extends Enemy {
 
     public void update(float delta) {
         super.update(delta);
-        for (Flame f : flames) { f.update(delta); }
+        /*
+        for (Flame f : flames) {
+            f.update(delta);
+        }
+        */
+    }
+
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        /*
+        for (Flame f : flames) {
+            f.draw(canvas);
+        }
+        */
     }
 }
