@@ -14,9 +14,11 @@ import edu.cornell.gdiac.mangosnoops.Image;
 
 public class Radio {
     /** Rotation speed */
-    private static final float ROTATION_SPEED = 0.05f;
-    private static final float SLIDER_LEFTMOSTPOS = 0.757f;
-    private static final float SLIDER_RIGHTMOSTPOS = 0.943f;
+    private static float SLIDER_LEFTMOSTPOS = 0.7561f;
+    private static float SLIDER_RIGHTMOSTPOS = 0.9439f;
+
+    private float slider_left;
+    private float slider_right;
 
     private Image knob;
     private Image slider;
@@ -37,6 +39,8 @@ public class Radio {
     Station lastStation;
     /** The current playing station **/
     Station currentStation;
+    /** Whether or not the radio should play static (when they are holding down the slider)*/
+    private boolean playStatic;
 
     /** Enum for song genres **/
     public enum Genre{
@@ -65,6 +69,7 @@ public class Radio {
         nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
 
         soundOn = true;
+        playStatic = false;
         // Create Station list
         stations = new Array<Station>();
         for (String songname : songs.keys()) {
@@ -149,6 +154,8 @@ public class Radio {
 
     }
 
+    public boolean shouldPlayStatic() { return playStatic; }
+
     boolean prevClicked = false;
     /**
      * Updates the radio based on the user's input.
@@ -157,11 +164,18 @@ public class Radio {
      * @param dx the change in x in the user's input
      */
     public void update(Vector2 in, float dx) {
+        setStation();
+        slider_left = 0.85f - 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
+        slider_right = 0.85f + 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
         if(in != null && slider.inArea(in)) {
+            soundOn = true;
+            playStatic = true;
             float newPos = in.x/pointer.getScreenWidth();
-            if(newPos < SLIDER_LEFTMOSTPOS) newPos = SLIDER_LEFTMOSTPOS;
-            else if(newPos > SLIDER_RIGHTMOSTPOS) newPos = SLIDER_RIGHTMOSTPOS;
+            if(newPos < slider_left) newPos = slider_left;
+            else if(newPos > slider_right) newPos = slider_right;
             pointer.updateX(newPos);
+        } else {
+            playStatic = false;
         }
         if(prevClicked == true && in == null && soundOn) {
             soundOn = false;
@@ -170,7 +184,6 @@ public class Radio {
             soundOn = true;
             currentStation.getAudio().setVolume(1);
         }
-        setStation();
         prevClicked = in != null && sound_on.inArea(in);
     }
 

@@ -2,6 +2,7 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -29,6 +30,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private Array<Texture> snackTexs;
     private Texture readyButtonTex;
     private BitmapFont displayFont;
+    private static Music bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bensound-jazzcomedy.mp3"));
 
     // BUTTONS
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
@@ -383,6 +385,7 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Called when this screen becomes the current screen for a game. */
     public void show () {
         active = true;
+        bgMusic.play();
     }
 
     /** Called when the screen should render itself.
@@ -417,6 +420,8 @@ public class RestStopMode implements Screen, InputProcessor {
 
     /** Called when this screen should release all resources. */
     public void dispose () {
+        bgMusic.stop();
+        bgMusic.dispose();
         backgroundTex.dispose();
         backgroundTex = null;
         // TODO add others

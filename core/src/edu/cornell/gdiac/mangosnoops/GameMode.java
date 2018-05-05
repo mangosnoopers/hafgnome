@@ -63,10 +63,12 @@ public class GameMode implements Screen {
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
 	/** Files for pause screen assets **/
-	private static final String PAUSE_MENU_FILE = "images/pauseMenuAssets/pause_menu.png";
-	private static final String PAUSE_EXIT_FILE = "images/pauseMenuAssets/exitPauseButton.png";
-	private static final String PAUSE_OPTIONS_FILE = "images/pauseMenuAssets/optionsPauseButton.png";
-	private static final String PAUSE_RESTART_FILE = "images/pauseMenuAssets/restartLevelPauseButton.png";
+	private static final String PAUSE_MENU_FILE = "images/PauseMenuAssets/pauseMenuBackground.png";
+	private static final String PAUSE_RESUME_FILE = "images/PauseMenuAssets/pauseResume.png";
+	private static final String PAUSE_RESTART_FILE = "images/PauseMenuAssets/pauseRestartLevel.png";
+	private static final String PAUSE_OPTIONS_FILE = "images/PauseMenuAssets/pauseSettings.png";
+	private static final String PAUSE_MAIN_MENU_FILE = "images/PauseMenuAssets/pauseMainMenu.png";
+	private static final String PAUSE_EXIT_FILE = "images/PauseMenuAssets/pauseExit.png";
 
 	// Loaded assets
 	/** The background image for the game */
@@ -77,17 +79,17 @@ public class GameMode implements Screen {
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
-	/** Texture of the sky */
-	private Texture sky;
 	/** Texture of the dash **/
 	private Texture dash;
 	/** Death Screen */
 	private Texture deathModule;
 	/** Pause Menu Textures **/
 	private Texture pauseMenuTexture;
-	private Texture pauseOptionsButtonTexture;
-	private Texture pauseExitButtonTexture;
+	private Texture pauseResumeButtonTexture;
 	private Texture pauseRestartButtonTexture;
+	private Texture pauseSettingsButtonTexture;
+	private Texture pauseMainMenuButtonTexture;
+	private Texture pauseExitButtonTexture;
 
 	/** Counter for the game */
 	private int counter;
@@ -125,12 +127,21 @@ public class GameMode implements Screen {
 	/** Listener that will update the player mode when we are done */
 	private ScreenListener listener;
 	/** boolean denoting if screen if paused **/
-	private boolean isPaused ;
-	private float exitScale = 0.2f;
-	private float optionsScale = 0.2f;
-	private float restartScale = 0.2f;
+	private int numTimesPaused;
+	boolean restartedFromPause ;
+	protected boolean exitFromPause;
+	private Image pauseMenu;
+	private Image pauseResumeButton;
+	private Image pauseRestartButton;
+	private Image pauseSettingsButton;
+	private Image pauseMainMenuButton;
+	private Image pauseExitButton;
 
-	//private float
+	/**
+	 * @return the current state of the game
+	 */
+	public GameState getGameState(){ return gameState; }
+
 	/**
 	 * Preloads the assets for this game.
 	 *
@@ -145,8 +156,6 @@ public class GameMode implements Screen {
 		manager.load(BKGD_FILE,Texture.class);
 		assets.add(BKGD_FILE);
 
-		// Load sky
-		manager.load(SKY_FILE, Texture.class);
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
@@ -154,12 +163,16 @@ public class GameMode implements Screen {
 		// Load pause menu assets
 		manager.load(PAUSE_MENU_FILE, Texture.class);
 		assets.add(PAUSE_MENU_FILE);
-		manager.load(PAUSE_EXIT_FILE, Texture.class);
-		assets.add(PAUSE_EXIT_FILE);
-		manager.load(PAUSE_OPTIONS_FILE, Texture.class);
-		assets.add(PAUSE_OPTIONS_FILE);
+		manager.load(PAUSE_RESUME_FILE, Texture.class);
+		assets.add(PAUSE_RESUME_FILE);
 		manager.load(PAUSE_RESTART_FILE, Texture.class);
 		assets.add(PAUSE_RESTART_FILE);
+		manager.load(PAUSE_OPTIONS_FILE, Texture.class);
+		assets.add(PAUSE_OPTIONS_FILE);
+		manager.load(PAUSE_MAIN_MENU_FILE, Texture.class);
+		assets.add(PAUSE_MAIN_MENU_FILE);
+		manager.load(PAUSE_EXIT_FILE, Texture.class);
+		assets.add(PAUSE_EXIT_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -195,23 +208,26 @@ public class GameMode implements Screen {
 			background = manager.get(BKGD_FILE, Texture.class);
 			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		}
-		if (manager.isLoaded(SKY_FILE)) {
-			sky = manager.get(SKY_FILE, Texture.class);
-		}
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
 		}
 		if (manager.isLoaded(PAUSE_MENU_FILE)) {
 			pauseMenuTexture = manager.get(PAUSE_MENU_FILE, Texture.class);
 		}
-		if (manager.isLoaded(PAUSE_EXIT_FILE)) {
-			pauseExitButtonTexture = manager.get(PAUSE_EXIT_FILE, Texture.class);
-		}
-		if (manager.isLoaded(PAUSE_OPTIONS_FILE)) {
-			pauseOptionsButtonTexture = manager.get(PAUSE_OPTIONS_FILE, Texture.class);
+		if (manager.isLoaded(PAUSE_RESUME_FILE)) {
+			pauseResumeButtonTexture = manager.get(PAUSE_RESUME_FILE, Texture.class);
 		}
 		if (manager.isLoaded(PAUSE_RESTART_FILE)) {
 			pauseRestartButtonTexture = manager.get(PAUSE_RESTART_FILE, Texture.class);
+		}
+		if (manager.isLoaded(PAUSE_OPTIONS_FILE)) {
+			pauseSettingsButtonTexture = manager.get(PAUSE_OPTIONS_FILE, Texture.class);
+		}
+		if (manager.isLoaded(PAUSE_MAIN_MENU_FILE)) {
+			pauseMainMenuButtonTexture = manager.get(PAUSE_MAIN_MENU_FILE, Texture.class);
+		}
+		if (manager.isLoaded(PAUSE_EXIT_FILE)) {
+			pauseExitButtonTexture = manager.get(PAUSE_EXIT_FILE, Texture.class);
 		}
 		// Load gameplay content
 		gameplayController.loadContent(manager);
@@ -258,14 +274,14 @@ public class GameMode implements Screen {
 
             // Create the controllers.
             inputController = new InputController();
+			soundController = new SoundController();
             if (levelName != "tutorial") {
-				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName));
+				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
 				System.out.println("create" + gameplayController);
 			} else {
-            	gameplayController = new TutorialController(canvas);
+            	gameplayController = new TutorialController(canvas, soundController);
 			}
-            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight());
-            soundController = new SoundController();
+            collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight(), soundController);
         } catch (IOException e) {
 	        System.out.println(e.getMessage());
         } catch (InvalidFormatException e) {
@@ -299,30 +315,40 @@ public class GameMode implements Screen {
 		// Process the game input
 		inputController.readInput();
 		// Test whether to reset the game.
-		try {
+//		try {
 			switch (gameState) {
 				case INTRO:
 					gameState = GameState.PLAY;
 					gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					break;
 				case OVER:
-					if (inputController.didReset()) {
+					if (inputController.didReset() || restartedFromPause ) {
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
 						gameState = GameState.PLAY;
 						gameplayController.start(canvas.getWidth() / 2.0f, 0);
+						numTimesPaused = 0;
+					}
+					if(exitFromPause){
+						gameplayController.reset();
+						soundController.reset();
+						canvas.resetCam();
+						gameState = GameState.INTRO;
+						numTimesPaused = 0;
 					}
 					else {
 //						play(delta);
 					}
 					break;
 				case PLAY:
+					//TODO take this out in final game so user can't just reset w/ 'r'
 					if (inputController.didReset()) {
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
 						gameState = GameState.PLAY;
+						numTimesPaused = 0;
 						gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					}
 					else {
@@ -330,16 +356,15 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PAUSED:
-					isPaused = true;
 					pause_game();
 					break;
 				default:
 					break;
 			}
-		} catch (Exception e) {
-			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
-			System.out.println(e);
-		}
+//		} catch (Exception e) {
+//			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
+//			System.out.println(e);
+//		}
 
 	}
 
@@ -358,6 +383,7 @@ public class GameMode implements Screen {
 		// Check if game has been paused
 		if(inputController.pressedPause()){
 			gameState = GameState.PAUSED;
+			numTimesPaused += 1;
 		}
 		// Update Based on input
 		gameplayController.handleEvents(delta, gameplayController.getCar().getNed(), gameplayController.getCar().getNosh());
@@ -373,7 +399,7 @@ public class GameMode implements Screen {
 		collisionController.processCollisions(gameplayController.getEnemiez(),gameplayController.getCar(), gameplayController);
 
 		// Play resulting sound
-		soundController.play(gameplayController.getRadio());
+		soundController.play(gameplayController.getTouchscreen());
 
 		// Clean up destroyed objects
 		gameplayController.garbageCollect();
@@ -388,22 +414,81 @@ public class GameMode implements Screen {
 		counter += 1;
 	}
 
-	protected void pause_game(){
+	/**
+	 * This method is called on every loop that the game is paused
+	 */
+	protected void pause_game() {
 		// Check if game has been unpaused
-		if(inputController.pressedPause()){
+		if (inputController.pressedPause()) {
 			gameState = GameState.PLAY;
-			isPaused = false;
+		}
+		// RESUME BUTTON
+		if (pauseResumeButton != null && pauseResumeButton.inAreaWOriginScale(inputController.getHoverPos())) {
+			pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE*1.08f;
+			if(inputController.isMousePressed()){
+				pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE;
+				gameState = GameState.PLAY;
+			}
+		} else {
+			pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE;
+		}
+		// RESTART BUTTON
+		if (pauseRestartButton != null && pauseRestartButton.inAreaWOriginScale(inputController.getHoverPos())) {
+			pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE*1.08f;
+			if(inputController.isMousePressed()){
+				pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE;
+				restartedFromPause = true;
+				gameState = GameState.OVER;
+			}
+		} else {
+			pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE;
+		}
+		// SETTINGS BUTTON
+		if (pauseSettingsButton != null && pauseSettingsButton.inAreaWOriginScale(inputController.getHoverPos())) {
+			pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE*1.1f;
+			if(inputController.isMousePressed()){
+				pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE;
+				gameState = GameState.PLAY;
+			}
+		} else {
+			pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE;
+		}
+		// MAIN MENU BUTTON
+		if (pauseMainMenuButton != null && pauseMainMenuButton.inAreaWOriginScale(inputController.getHoverPos())) {
+			pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE*1.1f;
+			if(inputController.isMousePressed()){
+				pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE;
+				gameState = GameState.OVER;
+				exitFromPause = true;
+			}
+		} else {
+			pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE;
+		}
+		// EXIT GAME BUTTON
+		if (pauseExitButton != null && pauseExitButton.inAreaWOriginScale(inputController.getHoverPos())) {
+			pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE*1.1f;
+			if(inputController.isMousePressed()){
+				pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE;
+				gameState = GameState.PLAY;
+			}
+		} else {
+			pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE;
 		}
 	}
-	/**
-	 * Draw the status of this player mode.
-	 *
-	 * We prefer to separate update and draw from one another as separate methods, instead
-	 * of using the single render() method that LibGDX does.  We will talk about why we
-	 * prefer this in lecture.
-	 */
+
+
+/**
+ * Draw the status of this player mode.
+ *
+ * We prefer to separate update and draw from one another as separate methods, instead
+ * of using the single render() method that LibGDX does.  We will talk about why we
+ * prefer this in lecture.
+ */
 	private void draw(float delta) {
 		canvas.clearScreen();
+		canvas.beginHUDDrawing();
+		canvas.drawBackground(background);
+		canvas.endHUDDrawing();
 		gameplayController.getRoad().draw(canvas);
 
 		//Gnomez
@@ -439,6 +524,9 @@ public class GameMode implements Screen {
 			case INTRO:
 				break;
 			case OVER:
+				if(exitFromPause){
+					break;
+				}
 				if (!gameplayController.getCar().isDestroyed()) {
 					canvas.drawTextCentered("YOU WON", displayFont, GAME_OVER_OFFSET);
 					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
@@ -451,10 +539,21 @@ public class GameMode implements Screen {
 			case PLAY:
 				break;
 			case PAUSED:
-				canvas.draw(pauseMenuTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,1,false);
-				canvas.draw(pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.2f,exitScale,false);
-				canvas.draw(pauseOptionsButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.5f,optionsScale,false);
-				canvas.draw(pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE,0.5f,0.8f,restartScale,false);
+				// Weird place to do this, maybe find a way to make better
+				if(pauseMenu == null){
+					pauseMenu = new Image(0.5f,0.5f, 0.79f, pauseMenuTexture, GameCanvas.TextureOrigin.MIDDLE);
+					pauseResumeButton = new Image(0.5f,0.77f,0.09f, pauseResumeButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+					pauseRestartButton = new Image(0.5f,0.63f,0.09f, pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+					pauseSettingsButton = new Image(0.5f,0.49f,0.11f, pauseSettingsButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+					pauseMainMenuButton = new Image(0.5f,0.37f,0.08f, pauseMainMenuButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+					pauseExitButton = new Image(0.5f,0.24f,0.09f, pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+				}
+				pauseMenu.drawNoShake(canvas);
+				pauseResumeButton.drawNoShake(canvas);
+				pauseRestartButton.drawNoShake(canvas);
+				pauseSettingsButton.drawNoShake(canvas);
+				pauseMainMenuButton.drawNoShake(canvas);
+				pauseExitButton.drawNoShake(canvas);
 				break;
 			default:
 				break;
@@ -490,7 +589,10 @@ public class GameMode implements Screen {
 			update(delta);
 			draw(delta);
 			// Check if end of level and ready to exit - if so transition to rest stop mode
-			if (exitToRestStop && listener != null) {
+			if ((exitToRestStop||exitFromPause) && listener != null ) {
+				if(exitFromPause){
+					update(delta);
+				}
 				soundController.reset();
 				listener.exitScreen(this, 0);
 				active = false;

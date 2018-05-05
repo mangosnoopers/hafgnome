@@ -37,6 +37,7 @@ import java.util.HashMap;
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
+	private SoundController soundController;
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -55,6 +56,8 @@ public class GameplayController {
 	private Vector2 prevClick = null;
 	/** An array of enemies for this level */
 	private Array<Enemy> enemiez;
+    /** An array of enemies for this level -- is not altered, used for reset */
+    private Array<Enemy> enemiezSave;
 	/** The next event to happen */
 	private int nextEvent;
 	/** Rearview enemy instance. The way it's handled right now, there is only
@@ -98,7 +101,15 @@ public class GameplayController {
 	protected static final int FLAMINGO_FLY_START = 4;
 	protected static final int FLAMINGO_FLY_END = 5;
 
+	/** Child FilmStrip information */
+	protected static final int NOSH_FILMSTRIP_ROWS = 1;
+	protected static final int NOSH_FILMSTRIP_COLS = 13;
+	protected static final int NED_FILMSTRIP_ROWS = 1;
+	protected static final int NED_FILMSTRIP_COLS = 14;
+
 	// Graphics assets for the entities
+	/** The texture file for the visor **/
+	private static final String VISOR_FILE = "images/visor.png";
     /** The texture file for the wheel **/
     private static final String WHEEL_FILE = "images/DashHUD/Wheel.png";
     /** The texture file for the vroom stick*/
@@ -119,17 +130,9 @@ public class GameplayController {
 	private static final String RADIO_NOSHLIKE_FILE = "images/RadioScreenAssets/noshLike.png";
 	private static final String RADIO_NOSHDISLIKE_FILE = "images/RadioScreenAssets/noshDislike.png";
 	/** The texture files for Nosh's moods */
-	private static final String NOSH_HAPPY_FILE = "images/NoshTextures/nosh_happy.png";
-	private static final String NOSH_NEUTRAL_FILE = "images/NoshTextures/nosh_neutral.png";
-	private static final String NOSH_SAD_FILE = "images/NoshTextures/nosh_sad.png";
-	private static final String NOSH_CRITICAL_FILE = "images/NoshTextures/nosh_critical.png";
-	private static final String NOSH_SLEEP_FILE = "images/NoshTextures/nosh_sleep.png";
-	/** The texture files for Ned's moods */
-	private static final String NED_HAPPY_FILE = "images/NedTextures/ned_happy.png";
-	private static final String NED_NEUTRAL_FILE = "images/NedTextures/ned_neutral.png";
-	private static final String NED_SAD_FILE = "images/NedTextures/ned_sad.png";
-	private static final String NED_CRITICAL_FILE = "images/NedTextures/ned_critical.png";
-	private static final String NED_SLEEP_FILE = "images/NedTextures/ned_sleep.png";
+	private static final String NOSH_FILE = "images/nosh.png";
+	/** Ned texture file */
+	private static final String NED_FILE = "images/ned.png";
 	/** The texture files for the visor states */
     private static final String VISOR_OPEN_FILE = "images/visor_open.png";
     private static final String VISOR_CLOSED_FILE = "images/visor_closed.png";
@@ -170,9 +173,6 @@ public class GameplayController {
 	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
 	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
-	private static final String BUTTON_GPS_FILE = "images/DashHUD/buttonGps.png";
-	private static final String BUTTON_RADIO_FILE = "images/DashHUD/buttonRadio.png";
-	private static final String BUTTON_DVD_FILE = "images/DashHUD/buttonDvd.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 	/** The Horn! */
@@ -204,24 +204,16 @@ public class GameplayController {
 	private Texture radioNedDislike;
 	private Texture radioNoshLike;
 	private Texture radioNoshDislike;
-	/** Textures for nosh */
-	private FilmStrip nosh_happy;
-	private FilmStrip nosh_neutral;
-	private FilmStrip nosh_sad;
-	private FilmStrip nosh_critical;
-	private FilmStrip nosh_sleep;
-	/** Textures for ned */
-	private FilmStrip ned_happy;
-	private FilmStrip ned_neutral;
-	private FilmStrip ned_sad;
-	private FilmStrip ned_critical;
-	private FilmStrip ned_sleep;
+	/** Texture for nosh (this is a film strip  */
+	private Texture noshTexture;
+	/** Texture for ned (this is a film strip) */
+	private Texture nedTexture;
 	/** Textures for items **/
 	private Array<Texture> dvdTextures;
 	private Array<Texture> snackTextures;
-	/** Textures for visor states */
-	private Texture visorOpen;
-	private Texture visorClosed;
+
+	/** Texture for visor */
+	private Texture visorTexture;
 
 	/** Texture of the dash **/
 	private Texture dashTexture;
@@ -250,9 +242,6 @@ public class GameplayController {
 	private Texture onTouchscreen;
 	private Texture offTouchscreen;
 	private Texture dvdSlot;
-	private Texture buttonGps;
-	private Texture buttonRadio;
-	private Texture buttonDvd;
 	/** Horn texture */
 	private Texture hornTexture;
 
@@ -290,6 +279,10 @@ public class GameplayController {
 	 * @param assets  Asset list to track which assets where loaded
 	 */
 	public void preLoadContent(AssetManager manager, Array<String> assets) {
+		manager.load(NED_FILE,Texture.class);
+		assets.add(NED_FILE);
+		manager.load(NOSH_FILE,Texture.class);
+		assets.add(NOSH_FILE);
 		manager.load(WHEEL_FILE,Texture.class);
 		assets.add(WHEEL_FILE);
 		manager.load(VROOM_STICK_FILE, Texture.class);
@@ -316,26 +309,6 @@ public class GameplayController {
 		assets.add(RADIO_NOSHLIKE_FILE);
 		manager.load(RADIO_NOSHDISLIKE_FILE, Texture.class);
 		assets.add(RADIO_NEDDISLIKE_FILE);
-		manager.load(NOSH_HAPPY_FILE, Texture.class);
-		assets.add(NOSH_HAPPY_FILE);
-		manager.load(NOSH_NEUTRAL_FILE, Texture.class);
-		assets.add(NOSH_NEUTRAL_FILE);
-		manager.load(NOSH_SAD_FILE, Texture.class);
-		assets.add(NOSH_SAD_FILE);
-		manager.load(NOSH_CRITICAL_FILE, Texture.class);
-		assets.add(NOSH_CRITICAL_FILE);
-		manager.load(NOSH_SLEEP_FILE, Texture.class);
-		assets.add(NOSH_SLEEP_FILE);
-		manager.load(NED_HAPPY_FILE, Texture.class);
-		assets.add(NED_HAPPY_FILE);
-		manager.load(NED_NEUTRAL_FILE, Texture.class);
-		assets.add(NED_NEUTRAL_FILE);
-		manager.load(NED_SAD_FILE, Texture.class);
-		assets.add(NED_SAD_FILE);
-		manager.load(NED_CRITICAL_FILE, Texture.class);
-		assets.add(NED_CRITICAL_FILE);
-		manager.load(NED_SLEEP_FILE, Texture.class);
-		assets.add(NED_SLEEP_FILE);
 		manager.load(DVD0_FILE,Texture.class);
 		assets.add(DVD0_FILE);
 		manager.load(DVD1_FILE,Texture.class);
@@ -362,10 +335,11 @@ public class GameplayController {
 		assets.add(REARVIEW_COVER);
 		manager.load(REARVIEW_SEATS, Texture.class);
 		assets.add(REARVIEW_SEATS);
+		manager.load(VISOR_FILE, Texture.class);
+		assets.add(VISOR_FILE);
         manager.load(VISOR_OPEN_FILE, Texture.class);
         assets.add(VISOR_OPEN_FILE);
         manager.load(VISOR_CLOSED_FILE, Texture.class);
-        assets.add(VISOR_OPEN_FILE);
 		manager.load(SUN_FILE, Texture.class);
 		assets.add(SUN_FILE);
 		manager.load(SUN2_FILE, Texture.class);
@@ -392,12 +366,6 @@ public class GameplayController {
 		assets.add(OFF_TOUCHSCREEN_FILE);
 		manager.load(DVD_SLOT_FILE, Texture.class);
 		assets.add(DVD_SLOT_FILE);
-		manager.load(BUTTON_GPS_FILE, Texture.class);
-		assets.add(BUTTON_GPS_FILE);
-		manager.load(BUTTON_RADIO_FILE, Texture.class);
-		assets.add(BUTTON_RADIO_FILE);
-		manager.load(BUTTON_DVD_FILE, Texture.class);
-		assets.add(BUTTON_DVD_FILE);
 		manager.load(HORN_FILE, Texture.class);
 		assets.add(HORN_FILE);
 	}
@@ -419,6 +387,7 @@ public class GameplayController {
 		flamingoTexture = createTexture(manager, FLAMINGO_FILE);
 		rearviewGnomeTexture = createTexture(manager, REARVIEW_GNOME_FILE);
 		radioknobTexture = createTexture(manager,RADIO_KNOB_FILE);
+		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
 		radioSlider = createTexture(manager, RADIO_SLIDER_FILE);
 		radioPointer = createTexture(manager, RADIO_POINTER_FILE);
 		radioSoundOn = createTexture(manager, RADIO_SOUNDON_FILE);
@@ -427,16 +396,8 @@ public class GameplayController {
 		radioNedDislike = createTexture(manager, RADIO_NEDDISLIKE_FILE);
 		radioNoshLike = createTexture(manager, RADIO_NOSHLIKE_FILE);
 		radioNoshDislike = createTexture(manager, RADIO_NOSHDISLIKE_FILE);
-		nosh_happy = new FilmStrip(createTexture(manager,NOSH_HAPPY_FILE), 1, 2);
-		nosh_neutral = new FilmStrip(createTexture(manager,NOSH_NEUTRAL_FILE), 1, 2);
-		nosh_sad = new FilmStrip(createTexture(manager, NOSH_SAD_FILE), 1, 1);
-		nosh_critical = new FilmStrip(createTexture(manager, NOSH_CRITICAL_FILE), 1, 1);
-		nosh_sleep= new FilmStrip(createTexture(manager, NOSH_SLEEP_FILE), 1, 1);
-		ned_happy = new FilmStrip(createTexture(manager,NED_HAPPY_FILE), 1, 2);
-		ned_neutral = new FilmStrip(createTexture(manager,NED_NEUTRAL_FILE), 1, 2);
-		ned_sad = new FilmStrip(createTexture(manager, NED_SAD_FILE), 1, 1);
-		ned_critical = new FilmStrip(createTexture(manager, NED_CRITICAL_FILE), 1, 1);
-		ned_sleep = new FilmStrip(createTexture(manager, NED_SLEEP_FILE), 1, 1);
+		nedTexture = createTexture(manager, NED_FILE);
+		noshTexture = createTexture(manager, NOSH_FILE);
 		roadTexture = createTexture(manager, ROAD_FILE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
@@ -446,8 +407,7 @@ public class GameplayController {
 		rearviewBackgroundTexture = createTexture(manager, REARVIEW_BACKGROUND);
 		rearviewSeatsTexture = createTexture(manager, REARVIEW_SEATS);
 		rearviewCoverTexture = createTexture(manager, REARVIEW_COVER);
-        visorOpen = createTexture(manager, VISOR_OPEN_FILE);
-        visorClosed = createTexture(manager, VISOR_CLOSED_FILE);
+        visorTexture = createTexture(manager, VISOR_FILE);
         sun = createTexture(manager, SUN_FILE);
 		sun2 = createTexture(manager, SUN2_FILE);
 		sun3 = createTexture(manager, SUN3_FILE);
@@ -469,10 +429,6 @@ public class GameplayController {
 		satQuestions = new SATQuestions(satTextures, satBubble);
 		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
-		dvdSlot = createTexture(manager, DVD_SLOT_FILE);
-		buttonGps = createTexture(manager, BUTTON_GPS_FILE);
-		buttonRadio = createTexture(manager, BUTTON_RADIO_FILE);
-		buttonDvd = createTexture(manager, BUTTON_DVD_FILE);
 		hornTexture = createTexture(manager, HORN_FILE);
 	}
 
@@ -492,14 +448,15 @@ public class GameplayController {
 	public GameplayController(GameCanvas canvas, float endY,
 							  Array<Enemy> enemies,
 							  Array<Event> e,
-							  ObjectMap<String,Radio.Genre> s) {
+							  ObjectMap<String,Radio.Genre> s,
+							  SoundController sc) {
+		soundController = sc;
 		songs = s;
 		enemiez = enemies;
         radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
-		enemiez = enemies;
-        visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
+		enemiezSave = enemies;
 		yonda = new Car();
 		yonda.setVisor(visor);
 		backing = new Array<Enemy>();
@@ -586,6 +543,8 @@ public class GameplayController {
 	 */
     public Radio getRadio(){ return radio; }
 
+    public TouchScreen getTouchscreen() { return touchscreen; }
+
 	/**
 	 * Returns a reference to the inventory
 	 */
@@ -619,20 +578,21 @@ public class GameplayController {
 	 * @param y Starting y-position for the player
 	 */
 	public void start(float x, float y) {
+		soundController.startAmbience();
 		radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
-		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot, buttonGps, buttonRadio, buttonDvd);
+		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot);
 		masterShaker = new Image();
         sunShine = false;
-		yonda.getNosh().setChildFilmStrips(nosh_happy,nosh_neutral,nosh_sad,nosh_critical,nosh_sleep);
-		yonda.getNed().setChildFilmStrips(ned_happy,ned_neutral,ned_sad,ned_critical,ned_sleep);
+		yonda.getNosh().setChildFilmStrip(noshTexture, NOSH_FILMSTRIP_ROWS, NOSH_FILMSTRIP_COLS);
+		yonda.getNed().setChildFilmStrip(nedTexture, NED_FILMSTRIP_ROWS, NED_FILMSTRIP_COLS);
 		yonda.setDashTexture(dashTexture);
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		horn = new Horn(0.17f, 0.1845f, 0.17f, 0, hornTexture);
+		horn = new Horn(0.17f, 0.1845f, 0.17f, 20, hornTexture);
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
@@ -658,7 +618,7 @@ public class GameplayController {
 
 		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
 		vroomStick = new VroomStick(0.19f, 0.19f,0.26f, 50, vroomStickTexture);
-		visor = new Visor(visorOpen, visorClosed, sun, sun2, sun3, white);
+		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
 		road.setRoadTexture(roadTexture);
@@ -674,7 +634,7 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(enemiez.size);
+		enemiez = new Array<Enemy>(enemiezSave);
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
@@ -805,6 +765,7 @@ public class GameplayController {
             	if (e.getType() == RoadObject.ObjectType.FLAMINGO) {
             		Flamingo f = (Flamingo) e;
             		if (e.getY() < f.getFlyAwayDistance()) {
+						if(!f.isFlyingAway()) soundController.flamingoFlapSound();
             		    f.setAnimationBounds(FLAMINGO_FLY_START, FLAMINGO_FLY_END);
 						f.setFlyingAway();
 					}
@@ -818,14 +779,14 @@ public class GameplayController {
   		boolean mousePressed = input.isMousePressed();
   		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
   		horn.updateHonk(delta);
+  		visor.update(delta);
         if(in != null) {
+            visor.resolveInput(new Vector2(in), input.isPrevMousePressed());
 			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
 			vroomStick.update(new Vector2(in), dr.y);
 			touchscreen.update(new Vector2(in), dr.x);
-			horn.update(new Vector2(in), delta);
+			if(horn.update(new Vector2(in), delta)) { soundController.beepSound(); }
 			inventory.update(new Vector2(in), mousePressed);
-			visor.update(new Vector2(in), input.isPrevMousePressed());
-
 		}
 		else{
 			wheel.update(null, dr.x, input.isTurnPressed());
@@ -879,48 +840,40 @@ public class GameplayController {
 		}
 		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
 
+		    if(r.getCurrentStationGenre() != Radio.Genre.CLASSICAL) {
+		        if(!ned.isAwake()) ned.setMood(Child.Mood.SAD);
+                if(!nosh.isAwake()) nosh.setMood(Child.Mood.SAD);
+            }
+
 			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
+                case CLASSICAL: // ned dislikes, nosh likes
+                    if(ned.getCurrentMood() == Child.Mood.HAPPY){
+                        ned.setAsleep();
+                    }
+                    if(nosh.getCurrentMood() == Child.Mood.HAPPY){
+                        nosh.setAsleep();
+                    }
+                    break;
 				case DANCE: // ned likes, nosh dislikes
 					if(ned.isAwake()){
                         ned.setMoodShifting(true, true);
-					}
-					if(nosh.isAwake()){
-//                        nosh.setMoodShifting(true, false);
 					}
 					break;
 				case CREEPY: // ned likes, nosh dislikes
 					if(ned.isAwake()){
                         ned.setMoodShifting(true, true);
 					}
-					if(nosh.isAwake()){
-//						nosh.setMoodShifting(true, false);
-					}
 					break;
 				case JAZZ: // ned likes, nosh dislikes
 					if(ned.isAwake()){
 						ned.setMoodShifting(true, true);
 					}
-					if(nosh.isAwake()){
-//                        nosh.setMoodShifting(true, false);
-					}
-					break;
-				case CLASSICAL: // ned dislikes, nosh likes
-					if(ned.getCurrentMood() == Child.Mood.HAPPY){
-						ned.setAsleep();
-					}
-					if(nosh.getCurrentMood() == Child.Mood.HAPPY){
-						nosh.setAsleep();
-					}
 					break;
 				default:
 					break;
 			}
-		} else if (r.getCurrentStation() == null && counter != 0 && counter % 240 == 0 && ned.isAwake()) {
-//            ned.setMoodShifting(true, false);
-        } else if (r.getCurrentStation() == null && counter != 0 && counter % 115 == 0 && nosh.isAwake()){
-//            nosh.setMoodShifting(true, false);
-        }
+		}
 
 	}
 
@@ -932,12 +885,10 @@ public class GameplayController {
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
-					if(yonda.getNosh().inChildArea(droppedPos)) {
+					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake()) {
 						yonda.getNosh().setMood(Child.Mood.HAPPY);
-					} else if(yonda.getNed().inChildArea(droppedPos)) {
+					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake()) {
 						yonda.getNed().setMood(Child.Mood.HAPPY);
-					} else if (inventory.inArea(droppedPos)) {
-						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
 					} else {
 						inventory.cancelTake();
 						return;
@@ -948,8 +899,6 @@ public class GameplayController {
 						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
 							inventory.cancelTake();
 						}
-					} else if (inventory.inArea(droppedPos)){
-						inventory.store(inventory.slotInArea(droppedPos), inventory.getItemInHand());
 					} else {
 						inventory.cancelTake();
 						return;
