@@ -456,9 +456,11 @@ public class GameplayController {
         radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
-		enemiezSave = enemies;
+        enemiezSave = new Array<Enemy>();
+		for(Enemy enemy : enemies) {
+            enemiezSave.add(new Enemy(enemy));
+        }
 		yonda = new Car();
-		yonda.setVisor(visor);
 		backing = new Array<Enemy>();
 		road = new Road(endY);
 		ypos = 0.0f;
@@ -634,7 +636,10 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(enemiezSave);
+		enemiez = new Array<Enemy>();
+        for(Enemy enemy : enemiezSave) {
+            enemiez.add(new Enemy(enemy));
+        }
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
