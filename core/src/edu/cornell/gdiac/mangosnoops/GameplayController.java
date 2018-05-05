@@ -41,7 +41,7 @@ public class GameplayController {
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
-	private Car yonda;
+	protected Car yonda;
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
@@ -456,9 +456,11 @@ public class GameplayController {
         radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
-		enemiezSave = enemies;
+        enemiezSave = new Array<Enemy>();
+		for(Enemy enemy : enemies) {
+            enemiezSave.add(new Enemy(enemy));
+        }
 		yonda = new Car();
-		yonda.setVisor(visor);
 		backing = new Array<Enemy>();
 		road = new Road(endY);
 		ypos = 0.0f;
@@ -634,7 +636,19 @@ public class GameplayController {
 		yonda.reset();
 		wheel = null;
 		radio = null;
-		enemiez = new Array<Enemy>(enemiezSave);
+		enemiez = new Array<Enemy>();
+        for(Enemy enemy : enemiezSave) {
+        	switch(enemy.getType()) {
+				case GNOME:
+					enemiez.add(new Gnome(enemy));
+					break;
+				case FLAMINGO:
+					enemiez.add(new Flamingo(enemy));
+					break;
+				default:
+					break;
+			}
+        }
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;

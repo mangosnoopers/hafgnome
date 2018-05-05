@@ -17,7 +17,7 @@ public class Gnome extends Enemy {
      *
      * @param g the gnome to copy
      */
-    public Gnome(Gnome g) {
+    public Gnome(Enemy g) {
         super(g.getX(), g.getY(), ObjectType.GNOME);
     }
 }
