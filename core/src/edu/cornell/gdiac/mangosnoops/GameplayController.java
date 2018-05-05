@@ -107,7 +107,13 @@ public class GameplayController {
 	protected static final int NED_FILMSTRIP_ROWS = 1;
 	protected static final int NED_FILMSTRIP_COLS = 14;
 
+	/** Grill FilmStrip information */
+	protected static final int GRILL_FILMSTRIP_ROWS = 1;
+	protected static final int GRILL_FILMSTRIP_COLS = 4;
+
 	// Graphics assets for the entities
+	/** The texture file for the flame **/
+	private static final String FLAME_FILE = "images/fire.png";
 	/** The texture file for the visor **/
 	private static final String VISOR_FILE = "images/visor.png";
     /** The texture file for the wheel **/
@@ -119,6 +125,8 @@ public class GameplayController {
 	private static final String REARVIEW_GNOME_FILE = "images/Enemies/gnome_rear.png";
 	/** The texture file for the flamingo */
 	private static final String FLAMINGO_FILE = "images/Enemies/flamingo.png";
+	/** The texture file for the grill **/
+	private static final String GRILL_FILE = "images/Enemies/grill.png";
 	/** The texture file for the radio knob */
 	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
 	private static final String RADIO_SLIDER_FILE = "images/RadioScreenAssets/frequencyslider.png";
@@ -194,6 +202,8 @@ public class GameplayController {
 	protected  Texture rearviewGnomeTexture;
 	/** Texture for the flamingo */
 	protected Texture flamingoTexture;
+	/** Texture for the flamingo */
+	protected Texture grillTexture;
 	/** Texture for the radio knob */
 	private Texture radioknobTexture;
 	private Texture radioSlider;
@@ -244,6 +254,8 @@ public class GameplayController {
 	private Texture dvdSlot;
 	/** Horn texture */
 	private Texture hornTexture;
+	/** Flame texture */
+	private Texture flameTexture;
 
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
@@ -368,6 +380,10 @@ public class GameplayController {
 		assets.add(DVD_SLOT_FILE);
 		manager.load(HORN_FILE, Texture.class);
 		assets.add(HORN_FILE);
+		manager.load(GRILL_FILE, Texture.class);
+		assets.add(GRILL_FILE);
+		manager.load(FLAME_FILE, Texture.class);
+		assets.add(FLAME_FILE);
 	}
 
 	/**
@@ -430,6 +446,8 @@ public class GameplayController {
 		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
 		hornTexture = createTexture(manager, HORN_FILE);
+		grillTexture = createTexture(manager, GRILL_FILE);
+		flameTexture = createTexture(manager, FLAME_FILE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -615,6 +633,12 @@ public class GameplayController {
 				f.setAnimationBounds(FLAMINGO_STAND_START, FLAMINGO_STAND_END);
 				f.setEnemyWidth(0.2f);
 				f.setEnemyHeight(0.1f);
+			}
+			if (e.getType() == RoadObject.ObjectType.GRILL) {
+            	e.setFilmStrip(grillTexture, GRILL_FILMSTRIP_ROWS, GRILL_FILMSTRIP_COLS);
+				((Grill) e).setFireTexture(flameTexture);
+				System.out.println(((Grill) e).getFlames().size);
+				enemiez.addAll(((Grill) e).getFlames());
 			}
 		}
 
@@ -964,12 +988,13 @@ public class GameplayController {
 		rearviewBackground.draw(canvas);
 		rearviewEnemy.draw(canvas);
 		rearviewSeats.draw(canvas);
+
 		// Draw Ned and Nosh
 		yonda.getNosh().draw(canvas);
 		yonda.getNed().draw(canvas);
 		rearviewCover.draw(canvas);
 
-		//Draw inventory
+		// Draw inventory
 		inventory.draw(canvas);
 		inventory.drawItemInHand(canvas);
 

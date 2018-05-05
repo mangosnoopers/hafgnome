@@ -22,16 +22,16 @@ public class Enemy extends RoadObject{
     private float animeframe;
 
     /** How high the enemy hovers in the world */
-    private float hoverDistance = 4.309f;
+    protected float hoverDistance = 4.309f;
 
     /** speed of road */
     private float currSpeed;
 
     /** enemy width */
-    private float enemyWidth = 0.15f;
+    protected float enemyWidth = 0.15f;
 
     /** enemy height */
-    private float enemyHeight = 0.08f;
+    protected float enemyHeight = 0.08f;
 
     /** speed of enemy relative to road, FIXME: change this prob */
     private float enemySpeed = 2f;
