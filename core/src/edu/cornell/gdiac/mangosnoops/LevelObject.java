@@ -406,7 +406,7 @@ public class LevelObject {
                 } else if (enemyStr.equals("grill start")) {
                     newGrill.set(i, new Grill(x, y));
                 } else if (enemyStr.equals("grill end")) {
-                    newGrill.get(i).setEndOfFlame(y);
+                    newGrill.get(i).setStartOfGrill(y);
                     enemiez.add(newGrill.get(i));
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");

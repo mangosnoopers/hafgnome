@@ -243,6 +243,9 @@ public abstract class RoadObject {
      * @param delta Number of seconds since last animation frame
      */
     public void update(float delta) {
+        if (getType() == ObjectType.FLAME) {
+            System.out.println(position);
+        }
         position.add(velocity);
     }
 
