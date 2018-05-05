@@ -346,6 +346,9 @@ public class LevelObject {
         DataFormatter df = new DataFormatter();
 
         Array<Grill> newGrill = new Array<Grill>(numLanes);
+        for (int i = 0; i < numLanes; i++) {
+            newGrill.add(null);
+        }
 
         // Iterate through cells until "END" is reached in first column
         int roadCurrRow = ROAD_START_ROW;
