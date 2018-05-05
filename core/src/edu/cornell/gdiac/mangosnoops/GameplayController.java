@@ -597,10 +597,10 @@ public class GameplayController {
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
 
-		rearviewBackground = new Image(0.612f, 0.7f, 0.257f, rearviewBackgroundTexture);
-		rearviewSeats = new Image(0.61f, 0.7f, 0.3f, rearviewSeatsTexture);
-		rearviewCover = new Image(0.61f, 0.7f, 0.3f, rearviewCoverTexture);
-        rearviewEnemy = new RearviewEnemy(0.83f, 0.82f, 0.18f,0, rearviewGnomeTexture);
+		rearviewBackground = new Image(0.78f, 0.86f, 0.257f, rearviewBackgroundTexture, GameCanvas.TextureOrigin.MIDDLE);
+		rearviewSeats = new Image(0.78f, 0.86f, 0.3f, rearviewSeatsTexture,GameCanvas.TextureOrigin.MIDDLE);
+		rearviewCover = new Image(0.78f, 0.86f, 0.3f, rearviewCoverTexture,GameCanvas.TextureOrigin.MIDDLE);
+        rearviewEnemy = new RearviewEnemy(0.78f, 0.82f, 0.18f,0, rearviewGnomeTexture);
 
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {

@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 
+import edu.cornell.gdiac.mangosnoops.Menus.SettingsMenu;
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.roadentity.Enemy;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
@@ -69,7 +70,7 @@ public class GameMode implements Screen {
 	private static final String PAUSE_OPTIONS_FILE = "images/PauseMenuAssets/pauseSettings.png";
 	private static final String PAUSE_MAIN_MENU_FILE = "images/PauseMenuAssets/pauseMainMenu.png";
 	private static final String PAUSE_EXIT_FILE = "images/PauseMenuAssets/pauseExit.png";
-
+	private static final String PAUSE_EGG = "images/PauseMenuAssets/easterEgg.png";
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -90,7 +91,7 @@ public class GameMode implements Screen {
 	private Texture pauseSettingsButtonTexture;
 	private Texture pauseMainMenuButtonTexture;
 	private Texture pauseExitButtonTexture;
-
+	private Texture pauseEggTexture;
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
@@ -109,7 +110,6 @@ public class GameMode implements Screen {
 
 	/** Reference to drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
-
 	/** Reads input from keyboard or game pad (CONTROLLER CLASS) */
 	private InputController inputController;
 	/** Handle collision and physics (CONTROLLER CLASS) */
@@ -118,6 +118,8 @@ public class GameMode implements Screen {
 	private GameplayController gameplayController;
 	/** Handles all sound Output **/
 	private SoundController soundController;
+	/** Settings Menu **/
+	private SettingsMenu settings;
 	/** Variable to track the game state (SIMPLE FIELDS) */
 	private GameState gameState;
 	/** Variable to track total time played in milliseconds (SIMPLE FIELDS) */
@@ -136,6 +138,7 @@ public class GameMode implements Screen {
 	private Image pauseSettingsButton;
 	private Image pauseMainMenuButton;
 	private Image pauseExitButton;
+	private Image pauseEgg;
 
 	/**
 	 * @return the current state of the game
@@ -173,7 +176,11 @@ public class GameMode implements Screen {
 		assets.add(PAUSE_MAIN_MENU_FILE);
 		manager.load(PAUSE_EXIT_FILE, Texture.class);
 		assets.add(PAUSE_EXIT_FILE);
-
+		manager.load(PAUSE_EXIT_FILE, Texture.class);
+		assets.add(PAUSE_EXIT_FILE);
+		manager.load(PAUSE_EGG, Texture.class);
+		assets.add(PAUSE_EGG);
+		//
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
@@ -229,6 +236,9 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(PAUSE_EXIT_FILE)) {
 			pauseExitButtonTexture = manager.get(PAUSE_EXIT_FILE, Texture.class);
 		}
+		if (manager.isLoaded(PAUSE_EGG)) {
+			pauseEggTexture = manager.get(PAUSE_EGG, Texture.class);
+		}
 		// Load gameplay content
 		gameplayController.loadContent(manager);
 	}
@@ -261,7 +271,7 @@ public class GameMode implements Screen {
 	 * This constructor initializes the models and controllers for the game.  The
 	 * view has already been initialized by the root class.
 	 */
-	public GameMode(GameCanvas canvas, String levelName) {
+	public GameMode(GameCanvas canvas,SettingsMenu settings,SoundController soundController, String levelName) {
 	    // TODO DO SOMETHING ELSE W THE EXCEPTIONS
 	    try {
             this.canvas = canvas;
@@ -273,8 +283,9 @@ public class GameMode implements Screen {
             assets = new Array<String>();
 
             // Create the controllers.
+			this.settings = settings;
+			this.soundController = soundController;
             inputController = new InputController();
-			soundController = new SoundController();
             if (levelName != "tutorial") {
 				gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
 				System.out.println("create" + gameplayController);
@@ -547,8 +558,12 @@ public class GameMode implements Screen {
 					pauseSettingsButton = new Image(0.5f,0.49f,0.11f, pauseSettingsButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
 					pauseMainMenuButton = new Image(0.5f,0.37f,0.08f, pauseMainMenuButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
 					pauseExitButton = new Image(0.5f,0.24f,0.09f, pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+					pauseEgg = new Image(0.7f,0.5f,0.5f, pauseEggTexture, GameCanvas.TextureOrigin.MIDDLE);
 				}
 				pauseMenu.drawNoShake(canvas);
+				if(numTimesPaused == 8 || numTimesPaused == 14 || numTimesPaused == 95 ){
+					pauseEgg.draw(canvas);
+				}
 				pauseResumeButton.drawNoShake(canvas);
 				pauseRestartButton.drawNoShake(canvas);
 				pauseSettingsButton.drawNoShake(canvas);
