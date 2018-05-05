@@ -45,12 +45,14 @@ public class TutorialController extends GameplayController {
     /** Images that will be flashed on the screen */
     private FlashingImage tutKeys;
     private FlashingImage tutGauge;
-    private FlashingImage tutMirror;
+    private FlashingImage tutMirrorNedSnack;
+    private FlashingImage tutMirrorNoshSnack;
     private FlashingImage tutVroom;
     private FlashingImage tutHorn;
     private FlashingImage tutVisor;
     private FlashingImage tutInventory;
-    private FlashingImage arrow;
+    private FlashingImage arrowNedSnack;
+    private FlashingImage arrowNoshSnack;
 
     private enum TutorialState {
         LEARN_STEERING,
@@ -63,10 +65,11 @@ public class TutorialController extends GameplayController {
     private TutorialState state;
 
     /** Flags to indicate that one-time events have occurred */
-    private boolean createdRearviewGnome = false;
-    private boolean createdFlamingos = false;
-    private boolean madeNedMad = false;
-    private boolean finishedTutorial = false;
+    private boolean createdRearviewGnome;
+    private boolean createdFlamingos;
+    private int madeNoshMad;
+    private int madeNedMad;
+    private boolean finishedTutorial;
 
     /** Gnome that appears until you dodge it */
     private Gnome gnome;
@@ -82,20 +85,27 @@ public class TutorialController extends GameplayController {
     public TutorialController(GameCanvas canvas, LevelObject level, int tutNum, SoundController sc) {
         super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc);
         tutIndex = tutNum;
+        createdRearviewGnome = false;
+        createdFlamingos = false;
+        madeNoshMad = 0;
+        madeNedMad = 0;
+        finishedTutorial = false;
     }
 
     public void start(float x, float y) {
         super.start(x, y);
         tutKeys = new FlashingImage(0.06f, 0.45f, 0.12f, tutKeysTexture);
         tutGauge = new FlashingImage(0.34f, 0.05f, 0.175f, tutGaugeTexture);
-        tutMirror = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
+        tutMirrorNedSnack = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
+        tutMirrorNoshSnack = new FlashingImage(0.75f, 0.7f, 0.3f, tutMirrorTexture);
         tutVroom = new FlashingImage(0.193f, 0.2f,0.3f, tutVroomTexture);
         tutHorn = new FlashingImage(0.12f, 0.12f, 0.17f, tutHornTexture);
 
         tutVisor = new FlashingImage(0.1f, 0.85f, 0.16f, tutVisorTexture);
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
 
-        arrow = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
+        arrowNedSnack = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
+        arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
 
         gnome = new Gnome(0, 10);
         gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
@@ -197,13 +207,45 @@ public class TutorialController extends GameplayController {
 //        if (!finishedTutorial) getRoad().setRoadExitY(500);
 //
 //        //System.out.println(getRoad().getRoadExitY());
-//
+
+        if(tutIndex == 0) {
+            // Show to put snacks
+            if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
+                tutMirrorNoshSnack.setVisible(true);
+                tutInventory.setVisible(true);
+                arrowNoshSnack.setVisible(true);
+                madeNoshMad ++;
+            } else if(madeNoshMad == 1 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                madeNoshMad ++;
+            }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                tutMirrorNoshSnack.setVisible(false);
+                arrowNoshSnack.setVisible(false);
+            }
+            if (madeNedMad == 0 && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
+                tutMirrorNedSnack.setVisible(true);
+                tutInventory.setVisible(true);
+                arrowNedSnack.setVisible(true);
+                madeNedMad ++;
+            } else if(madeNedMad == 1 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
+                madeNedMad ++;
+            } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY){
+                tutMirrorNedSnack.setVisible(false);
+                arrowNedSnack.setVisible(false);
+                if(madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                    tutInventory.setVisible(false);
+                }
+            }
+        }
+
+
         tutKeys.update(delta);
         tutVroom.update(delta);
         tutInventory.update(delta);
-        tutMirror.update(delta);
+        tutMirrorNoshSnack.update(delta);
+        tutMirrorNedSnack.update(delta);
         tutHorn.update(delta);
-        arrow.update(delta);
+        arrowNoshSnack.update(delta);
+        arrowNedSnack.update(delta);
 //
 //        switch (state) {
 //            case LEARN_STEERING:
@@ -277,18 +319,21 @@ public class TutorialController extends GameplayController {
         super.draw(canvas);
         tutKeys.draw(canvas);
         tutGauge.draw(canvas);
-        tutMirror.draw(canvas);
+        tutMirrorNoshSnack.draw(canvas);
+        tutMirrorNedSnack.draw(canvas);
         tutVroom.draw(canvas);
         tutHorn.draw(canvas);
         tutVisor.draw(canvas);
         tutInventory.draw(canvas);
-        arrow.draw(canvas, -35f);
+        arrowNoshSnack.draw(canvas, -35f);
+        arrowNedSnack.draw(canvas, -35f);
     }
 
     public void reset() {
         super.reset();
         createdRearviewGnome = false;
-        madeNedMad = false;
+        madeNedMad = 0;
+        madeNoshMad = 0;
         createdFlamingos = false;
     }
 

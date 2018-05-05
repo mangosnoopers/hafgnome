@@ -41,7 +41,7 @@ public class GameplayController {
 	/** Road instance, contains road "conveyor belt" logic */
 	private Road road;
 	/** Car instance, containing information about the wheel and children */
-	private Car yonda;
+	protected Car yonda;
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
@@ -638,7 +638,16 @@ public class GameplayController {
 		radio = null;
 		enemiez = new Array<Enemy>();
         for(Enemy enemy : enemiezSave) {
-            enemiez.add(new Enemy(enemy));
+        	switch(enemy.getType()) {
+				case GNOME:
+					enemiez.add(new Gnome(enemy));
+					break;
+				case FLAMINGO:
+					enemiez.add(new Flamingo(enemy));
+					break;
+				default:
+					break;
+			}
         }
 		backing.clear();
 		ypos = 0.0f;
