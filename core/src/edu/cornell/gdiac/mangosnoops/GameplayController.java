@@ -129,7 +129,7 @@ public class GameplayController {
 	private static final String GRILL_FILE = "images/Enemies/grill.png";
 	/** The texture file for the radio knob */
 	private static final String RADIO_KNOB_FILE = "images/DashHUD/radioDial.png";
-	private static final String RADIO_SLIDER_FILE = "images/RadioScreenAssets/frequencyslider.png";
+	private static final String RADIO_SLIDER_FILE = "images/RadioScreenAssets/frequencySlider.png";
 	private static final String RADIO_POINTER_FILE = "images/RadioScreenAssets/frequencyMarker.png";
 	private static final String RADIO_SOUNDON_FILE = "images/RadioScreenAssets/soundIcon.png";
 	private static final String RADIO_SOUNDOFF_FILE = "images/RadioScreenAssets/muteSoundIcon.png";
