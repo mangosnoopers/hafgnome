@@ -8,10 +8,13 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Scanner;
 
 import edu.cornell.gdiac.mangosnoops.GameplayController.*;
+import org.json.JSONObject;
 
 
 public class LevelObject {
@@ -39,6 +42,11 @@ public class LevelObject {
     private Array<Event> events;
     /** An array of the roadside objects for this level. */
     private Array<RoadImage> roadsideObjs;
+
+    /** Quantities of items in inventory as determined by the input level file */
+    private int numSnacks;
+    private int numBooks;
+    private int numMovies;
 
     /** An internal tracker for number of miles traversed so far in the level */
     private float localMiles;
@@ -158,6 +166,24 @@ public class LevelObject {
     public float getLevelEndY() { return levelEndY; }
 
     /**
+     * Return the number of snacks that will be in the player's inventory, or
+     * -1 if none (ie an Excel file was given)
+     */
+    public int getNumSnacks() { return numSnacks; }
+
+    /**
+     * Return the number of books that will be in the player's inventory, or
+     * -1 if none (ie an Excel file was given)
+     */
+    public int getNumBooks() { return numBooks; }
+
+    /**
+     * Return the number of movies that will be in the player's inventory, or
+     * -1 if none (ie an Excel file was given)
+     */
+    public int getNumMovies() { return numMovies; }
+
+    /**
      * Loads in a file to create a Level Object.
      *
      * @param file filename of JSON or Excel file. does not need to include "levels/"
@@ -174,6 +200,11 @@ public class LevelObject {
         events = new Array<Event>();
         useBlocks = new Array<Integer>();
         roadsideObjs = new Array<RoadImage>();
+
+        // Inventory amounts - overwritten if a JSON is loaded
+        numSnacks = -1;
+        numBooks = -1;
+        numMovies = -1;
 
         // if Excel file
         String ext = file.substring(file.lastIndexOf('.') + 1);
@@ -198,7 +229,32 @@ public class LevelObject {
      * @param file name of a JSON file
      */
     public void parseJSON(String file) {
-        // TODO
+        try {
+            Scanner scanner = new Scanner(new File(file));
+            JSONObject json = new JSONObject(scanner.useDelimiter("\\A").next());
+            scanner.close();
+
+            // saved inventory amounts based on the quantities
+            // FIXME depending on inventory frankenstein
+            numSnacks = json.getInt("numSnacks");
+            numBooks = json.getInt("numBooks");
+            numMovies = json.getInt("numMovies");
+
+            // parse the excel level associated with this save file
+            int currentLevelNum = json.getInt("currentLevelNum");
+            parseExcel("levels/level" + currentLevelNum + ".xlsx");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Saved level JSON not found");
+        } catch (IOException e) {
+            System.out.println("IOException while parsing JSON level");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid padding setting while parsing JSON level");
+        } catch (InvalidFormatException e) {
+            System.out.println("Input file format invalid, not JSON");
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     /**
