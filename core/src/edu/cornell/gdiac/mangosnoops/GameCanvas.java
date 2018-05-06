@@ -1017,4 +1017,14 @@ public class GameCanvas {
 		shapeRenderer.rect(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		shapeRenderer.end();
 	}
+
+	/**
+	 * Draw a line from the start to end coordinates.
+	 */
+	public void drawLine(Vector2 start, Vector2 end) {
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		shapeRenderer.setColor(0, 0, 1, 1); // Red line
+		shapeRenderer.rectLine(start.x, start.y, end.x, end.y, 2f);
+		shapeRenderer.end();
+	}
 }

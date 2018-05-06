@@ -65,6 +65,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	private static final int NUM_TUTORIALS = 1;
 
 	/** Rest stop files - REST_STOPS[currLevel] is the rest stop after LEVELS[currLevel] */
+	// TODO - tutorials need their own rest stops
 	private static final String[] REST_STOPS = new String[]{"rest_stop0.json", "rest_stop1.json"};
 
 	/** Saved level files */
@@ -88,6 +89,16 @@ public class GDXRoot extends Game implements ScreenListener {
 	}
 
 
+	/**
+	 * Load the file names that are contained in the saved levels directory
+	 * and places them in the SAVED_LEVELS array.
+	 *
+	 * Do this before creating the first LevelMenuMode to ensure that the
+	 * correct number of nodes are displayed.
+	 */
+	private void loadSavedFilenames() {
+	}
+
 	/** 
 	 * Called when the Application is first created.
 	 * 
@@ -96,14 +107,16 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void create() {
 		currLevel = 0;
+		loadSavedFilenames();
 		Gdx.graphics.setTitle("Home Away From Gnome");
 		setCursor("images/mouse.png");
+
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		playing = new GameMode(canvas,LEVELS[currLevel]);
 		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
 		start = new StartMenuMode(canvas, manager);
-		levelSelect = new LevelMenuMode(canvas, manager, LEVELS);
+		levelSelect = new LevelMenuMode(canvas, manager, NUM_TUTORIALS, SAVED_LEVELS.size);
 
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
@@ -154,6 +167,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param inv the player's inventory at time of saving
 	 */
 	private void saveGame(Inventory inv) {
+		// the level number (which doesn't include tutorials), not the index in
+		// the level array (which includes tutorials)
 		int idxWithoutTutorials = currLevel - NUM_TUTORIALS;
 
 		// create the JSON object
@@ -161,7 +176,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		json.put("numSnacks", inv.getNumSnacks());
 		json.put("numBooks", 0); // TODO - Fix
 		json.put("numMovies", inv.getNumMovies());
-		json.put("currentLevel", idxWithoutTutorials);
+		json.put("currentLevelNum", idxWithoutTutorials);
 		// UNIX timestamp - seconds since 1/1/1970
 		json.put("timestamp", System.currentTimeMillis() / 1000L);
 
@@ -198,7 +213,12 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading = null;
 		} else if (screen == start) {
 			if(start.levelSelectButtonClicked()) {
+				// create a new level select mode if current one is null
+				if (levelSelect == null) {
+					levelSelect = new LevelMenuMode(canvas, manager, NUM_TUTORIALS, SAVED_LEVELS.size);
+				}
 				levelSelect.setScreenListener(this);
+				Gdx.input.setInputProcessor(levelSelect);
 				setScreen(levelSelect);
 				start.dispose();
 				start = null;
@@ -214,13 +234,19 @@ public class GDXRoot extends Game implements ScreenListener {
 				start = null;
 			}
 		} else if (screen == levelSelect) {
-			if (levelSelect.getLoadPlaying()) {
-//				playing = new GameMode(canvas, levelSelect.getNextLevel());
+			if (levelSelect.loadPlaying()) {
+				// load next level index either from the levels array or saved_levels array
+				int nextIdx = levelSelect.getNextLevelIndex();
+				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS[nextIdx];
+				playing = new GameMode(canvas, next);
+				playing.preLoadContent(manager);
+				playing.loadContent(manager);
 				playing.setScreenListener(this);
 				setScreen(playing);
 			}
 			else {
 				start = new StartMenuMode(canvas, manager);
+				Gdx.input.setInputProcessor(start);
 				start.setScreenListener(this);
 				setScreen(start);
 			}
@@ -246,7 +272,10 @@ public class GDXRoot extends Game implements ScreenListener {
 				currLevel = (currLevel + 1) % LEVELS.length;
 
 				// save the game when entering - to ensure game is saved even if user quits at rest stop
-				saveGame(playing.getInventory());
+				// only save if next level is not a tutorial
+				if (!(LEVELS[currLevel].contains("tut")))
+					saveGame(playing.getInventory());
+
 				reststop.setScreenListener(this);
 				Gdx.input.setInputProcessor(reststop);
 				setScreen(reststop);
