@@ -18,7 +18,7 @@ import edu.cornell.gdiac.util.ScreenListener;
 public class LevelMenuMode implements Screen, InputProcessor {
     // ASSETS
     private Array<Image> staticImages;
-    private static final String BACK_BUTTON_FILE = "images/levelSelectAssets/goButton.png"; //TODO change
+    private static final String BACK_BUTTON_FILE = "images/SettingsMenuAssets/buttonBack.png";
     private static final String GO_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
     private static final String FINAL_LEVEL_MARKER_FILE = "images/levelSelectAssets/finalLevelMarker.png";
     private static final String LEVEL_MARKER_FILE = "images/levelSelectAssets/levelMarker.png";
@@ -168,7 +168,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
         staticImages.add(path);
 
         // back button
-        backButton = new Image(0.001f,0.0f,BUTTON_SCALE, backButtonTex, GameCanvas.TextureOrigin.BOTTOM_LEFT);
+        backButton = new Image(0.02f,0.02f,BUTTON_SCALE, backButtonTex, GameCanvas.TextureOrigin.BOTTOM_LEFT);
         staticImages.add(backButton);
     }
 
