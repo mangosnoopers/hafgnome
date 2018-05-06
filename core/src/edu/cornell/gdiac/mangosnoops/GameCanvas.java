@@ -728,7 +728,7 @@ public class GameCanvas {
 			default:
 				break;
 		}
-		return p.x > xb-cb && p.x < xt+cb && (getHeight()-p.y) > yb-cb && (getHeight()-p.y) < yt+cb;
+		return p.x > xb-(cb*width) && p.x < xt+(cb*width) && (getHeight()-p.y) > yb-(cb*height) && (getHeight()-p.y) < yt+(cb*height);
 	}
 	
 	/**

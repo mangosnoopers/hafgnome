@@ -131,7 +131,6 @@ public class CollisionController {
 				soundController.gnomeDeathSound();
 				break;
 			case FLAMINGO:
-				soundController.flamingoFlapSound();
 				break;
 			case GRILL:
 				break;

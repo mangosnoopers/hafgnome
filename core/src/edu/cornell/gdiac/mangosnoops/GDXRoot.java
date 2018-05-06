@@ -20,6 +20,7 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.mangosnoops.Menus.LevelMenuMode;
+import edu.cornell.gdiac.mangosnoops.Menus.SettingsMenu;
 import edu.cornell.gdiac.mangosnoops.Menus.StartMenuMode;
 import edu.cornell.gdiac.util.*;
 
@@ -58,9 +59,11 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameMode    playing;
 	private RestStopMode reststop;
 	private StartMenuMode start;
+	private SettingsMenu settings;
+	private SoundController soundController;
 
 	/** Level files - currLevel is the level that will be played */
-	private static final String[] LEVELS = new String[]{"tutorial", "level0.xlsx", "level1.xlsx"};
+	private static final String[] LEVELS = new String[]{"tut0.xlsx", "level0.xlsx", "level1.xlsx"};
 	private static int currLevel;
 	private static final int NUM_TUTORIALS = 1;
 
@@ -119,13 +122,16 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
-		playing = new GameMode(canvas,LEVELS[currLevel]);
 		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
-		start = new StartMenuMode(canvas, manager);
 		levelSelect = new LevelMenuMode(canvas, manager, NUM_TUTORIALS, SAVED_LEVELS.size);
+		settings = new SettingsMenu();
+		soundController = new SoundController(settings);
+		playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
+		start = new StartMenuMode(canvas, manager,settings,soundController);
 
 		loading.setScreenListener(this);
 		playing.preLoadContent(manager); // Load game assets statically.
+		settings.preLoadContent(manager);
 		setScreen(loading);
 	}
 
@@ -211,10 +217,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.app.exit();
 		} else if (screen == loading) {
 			playing.loadContent(manager);
+			settings.loadContent(manager);
 			start.setScreenListener(this);
 			Gdx.input.setInputProcessor(start);
 			setScreen(start);
-
 			loading.dispose();
 			loading = null;
 		} else if (screen == start) {
@@ -231,7 +237,6 @@ public class GDXRoot extends Game implements ScreenListener {
 			} else if(start.exitButtonClicked()) {
 				Gdx.app.exit();
 			} else if(start.settingsButtonClicked()) {
-
 			} else {
 				playing.setScreenListener(this);
 				//Gdx.input.setInputProcessor(playing);
@@ -245,14 +250,14 @@ public class GDXRoot extends Game implements ScreenListener {
 				int nextIdx = levelSelect.getNextLevelIndex();
 				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS[nextIdx];
 				System.out.println("NOW PLAYING LEVEL: " + next);
-				playing = new GameMode(canvas, next);
+				playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
 				playing.setScreenListener(this);
 				setScreen(playing);
 			}
 			else {
-				start = new StartMenuMode(canvas, manager);
+				start = new StartMenuMode(canvas, manager,settings,soundController);
 				Gdx.input.setInputProcessor(start);
 				start.setScreenListener(this);
 				setScreen(start);
@@ -264,7 +269,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == playing) {
 			if(playing.exitFromPause){
 				playing.exitFromPause = false;
-				start = new StartMenuMode(canvas,manager);
+				start = new StartMenuMode(canvas,manager,settings,soundController);
 				start.setScreenListener(this);
 				Gdx.input.setInputProcessor(start);
 				setScreen(start);
@@ -294,7 +299,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			// save the game when exiting the rest stop - loading will bring you to the next level
 			saveGame(reststop.getPlayerInv());
 
-			playing = new GameMode(canvas,LEVELS[currLevel]);
+			playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode

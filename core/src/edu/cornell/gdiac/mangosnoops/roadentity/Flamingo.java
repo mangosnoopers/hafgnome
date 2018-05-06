@@ -26,6 +26,11 @@ public class Flamingo extends Enemy {
         isFlyingAway = false;
     }
 
+    public Flamingo(Enemy f) {
+        super(f.getX(), f.getY(), ObjectType.FLAMINGO);
+        isFlyingAway = false;
+    }
+
     /**
      * Makes the Flamingo fly away. This should mean that:
      *  - Colliding with the Flamingo won't affect the car

@@ -408,6 +408,11 @@ public class LevelObject {
     private void processExcelBlock(Sheet sh, int roadStartCol) {
         DataFormatter df = new DataFormatter();
 
+        Array<Grill> newGrill = new Array<Grill>(numLanes);
+        for (int i = 0; i < numLanes; i++) {
+            newGrill.add(null);
+        }
+
         // Iterate through cells until "END" is reached in first column
         int roadCurrRow = ROAD_START_ROW;
         while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
@@ -453,9 +458,10 @@ public class LevelObject {
                     Flamingo flamingo = new Flamingo(x, y);
                     enemiez.add(flamingo);
                 } else if (enemyStr.equals("grill start")) {
-                    // TODO
+                    newGrill.set(i, new Grill(x, y));
                 } else if (enemyStr.equals("grill end")) {
-                    // TODO
+                    newGrill.get(i).setStartOfGrill(y);
+                    enemiez.add(newGrill.get(i));
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified");
                 }
