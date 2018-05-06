@@ -409,17 +409,6 @@ public class RestStopMode implements Screen, InputProcessor {
         shelfTex = null;
         readyButtonTex.dispose();
         readyButtonTex = null;
-//        for (Texture t : dvdTexs) {
-//            t.dispose();
-//            t = null;
-//        }
-//        for (Texture t : snackTexs) {
-//            t.dispose();
-//            t = null;
-//        }
-//        dvdTexs = null;
-//        snackTexs = null;
-
     }
 
     /**
