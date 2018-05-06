@@ -373,7 +373,7 @@ public class LevelObject {
                 int blocksProcessed = 0;
                 while (blocksProcessed < useBlocks.size) {
                     // Process current block
-                    roadStartCol = ROAD_START_COL + ((useBlocks.get(blocksProcessed) - 1) * (numLanes + 1));
+                    roadStartCol = ROAD_START_COL + ((useBlocks.get(blocksProcessed) - 1) * (numLanes + 3));
                     processExcelBlock(sh, roadStartCol);
 
                     // Move to the next block
@@ -421,6 +421,7 @@ public class LevelObject {
 
             // Read the events column - first column of the block
             String eventStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toLowerCase();
+
             if (eventStr.equals("rear enemy")) {
                 events.add(new Event(y, Event.EventType.REAR_ENEMY));
             } else if (eventStr.equals("sun start")) {
@@ -441,6 +442,7 @@ public class LevelObject {
             float x = LANE_X * (numLanes - LANE_X_OFFSET);
             // Check for enemies in each lane
             for (int i = 1; i <= numLanes; i++) {
+
                 // Calculate the x-coordinate for this enemy - decrease by 0.2 for each lane left
                 x -= LANE_X;
                 // add some offset so they are not always in the middle of the lane
@@ -451,6 +453,7 @@ public class LevelObject {
 
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                     (roadStartCol + i + 1)).toLowerCase();
+
                 if (enemyStr.equals("gnome")) {
                     Gnome gnome = new Gnome(x, y);
                     enemiez.add(gnome);
@@ -470,11 +473,13 @@ public class LevelObject {
             // Check for left roadside objects
             String leftRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                         (roadStartCol + numLanes + 2)).toLowerCase();
+
             if (leftRoadsideStr.equals("exit sign")) {
 
             }
 
             // Check for right roadside objects
+
             String rightRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                         (roadStartCol + 1)).toLowerCase();
 
