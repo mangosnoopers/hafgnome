@@ -26,8 +26,8 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String SILENCE_DVD_FILE = "images/Items/Silence of the Gnomes.png";
     private static final String CHIPS_FILE = "images/Items/chips.png";
     private static final String MANGO_FILE = "images/Items/mango.png";
-    private static final String READY_BUTTON_FILE = "images/restStopAssets/readybutton.png";
-    private static String FONT_FILE = "fonts/Roboto-Regular.ttf";
+    private static final String READY_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
+    private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
     private Texture backgroundTex;
     private Texture shelfTex;
     private Array<Texture> dvdTexs;
@@ -104,7 +104,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final float ITEM_SIZE_SCALE = 0.12f;
     /** Relative coordinates and scaling of the ready button */
     private static final Vector2 READY_BUTTON_SCALING = new Vector2(0.08f,0.08f);
-    private static final Vector2 READY_BUTTON_REL = new Vector2(0.93f,0.02f);
+    private static final Vector2 READY_BUTTON_REL = new Vector2(0.87f,0.02f);
     /** Scaling for textures used to indicate # of items in inventory */
     private static final float IND_SCALING = 0.09f;
     /** Drawing for items in the indicator */

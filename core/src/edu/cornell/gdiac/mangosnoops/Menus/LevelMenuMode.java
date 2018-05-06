@@ -100,6 +100,8 @@ public class LevelMenuMode implements Screen, InputProcessor {
     /** Offset of go button relative from its parent level node */
     private static final float GO_BUTTON_OFFX = 0.065f;
     private static final float GO_BUTTON_OFFY = 0.25f;
+    /** Offset of selected level marker from its parent node */
+    private static final float ACTIVE_IND_OFFY = 0.04f;
 
     /**
      * Returns true if should load playing mode next, false if start menu
@@ -130,7 +132,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
         this.numSaved = numSaved;
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
         active = true;
-        
+
         // Create textures
         initTextures();
 
@@ -292,7 +294,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
             levelNodes.get(i).draw(canvas);
         }
 
-        // Draw the active node's hover if the active node is not null
+        // Draw the active node's hover and current level selector if the active node is not null
         if (activeNode != null) {
             activeNode.drawHover();
         }
@@ -522,6 +524,8 @@ public class LevelMenuMode implements Screen, InputProcessor {
         /** Go button is clicked when the player wants to load a level */
         private int goStatus;
         private Image goButton;
+        /** Display marker when this node is clicked on */
+        private Image activeMarker;
 
         private LevelNode(float x, float y, float relSca, Texture t, GameCanvas.TextureOrigin o, boolean savedLevel, int levelIndex) {
             super(x,y,relSca,t,o);
@@ -548,10 +552,12 @@ public class LevelMenuMode implements Screen, InputProcessor {
             hover = new Image(position.x, position.y, 0.3f, hovTex, GameCanvas.TextureOrigin.TOP_RIGHT);
             goButton = new Image(position.x - GO_BUTTON_OFFX ,position.y - GO_BUTTON_OFFY, BUTTON_SCALE,
                     goButtonTex, GameCanvas.TextureOrigin.MIDDLE);
+            activeMarker = new Image(position.x, position.y + ACTIVE_IND_OFFY, LEVEL_MARKER_SIZE * 2.0f,
+                    selectedLevelMarkerTex, GameCanvas.TextureOrigin.MIDDLE);
         }
 
         /**
-         * Draws the window that describes this level.
+         * Draws the window that describes thi4s level.
          * Which hover asset is chosen is dependent on the level number.
          * 0 = tutorial
          */
@@ -559,6 +565,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
             if (clickStatus == BUTTON_UP) {
                 hover.draw(canvas);
                 goButton.draw(canvas);
+                activeMarker.draw(canvas);
             }
         }
 

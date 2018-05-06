@@ -97,6 +97,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * correct number of nodes are displayed.
 	 */
 	private void loadSavedFilenames() {
+		File[] files = new File("levels/savedlevels/").listFiles();
+		for (File f : files) {
+			String fn = f.getName();
+			if (fn.contains("saved_level"))
+				SAVED_LEVELS.add(fn);
+		}
 	}
 
 	/** 
@@ -238,6 +244,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				// load next level index either from the levels array or saved_levels array
 				int nextIdx = levelSelect.getNextLevelIndex();
 				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS[nextIdx];
+				System.out.println("NOW PLAYING LEVEL: " + next);
 				playing = new GameMode(canvas, next);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
