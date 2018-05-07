@@ -854,7 +854,7 @@ public class GameplayController {
 		}
 
 		if (rearviewEnemy.isAttackingCar()) {
-			getCar().damage();
+			getCar().damageWithReargnome();
 			if (getCar().getHealth() == 0)
 				getCar().setDestroyed(true);
 		}
