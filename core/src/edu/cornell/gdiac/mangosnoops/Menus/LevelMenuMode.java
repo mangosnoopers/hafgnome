@@ -5,14 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.mangosnoops.GameCanvas;
-import edu.cornell.gdiac.mangosnoops.Image;
-import edu.cornell.gdiac.mangosnoops.LevelObject;
-import edu.cornell.gdiac.mangosnoops.RestStopMode;
+import edu.cornell.gdiac.mangosnoops.*;
 import edu.cornell.gdiac.util.ScreenListener;
 
 public class LevelMenuMode implements Screen, InputProcessor {
@@ -81,6 +79,8 @@ public class LevelMenuMode implements Screen, InputProcessor {
     private AssetManager manager;
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
+    /** SoundController for playing sounds and music **/
+    private SoundController soundController;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
     /** Whether or not this player mode is still active */
@@ -89,6 +89,9 @@ public class LevelMenuMode implements Screen, InputProcessor {
     private int numTutorials;
     /** The number of levels the player has gotten through so far (ie number of saved level files) */
     private int numSaved;
+    /** True if a level was chosen and we are leaving to it **/
+    private boolean exitingToLevel;
+
 
     // DRAWING
     /** Dimensions of the screen **/
@@ -125,9 +128,10 @@ public class LevelMenuMode implements Screen, InputProcessor {
         return -1;
     }
 
-    public LevelMenuMode(GameCanvas canvas, AssetManager manager, int numTutorials, int numSaved) {
+    public LevelMenuMode(GameCanvas canvas, AssetManager manager, SoundController soundController, int numTutorials, int numSaved) {
         this.canvas = canvas;
         this.manager = manager;
+        this.soundController = soundController;
         this.numTutorials = numTutorials;
         this.numSaved = numSaved;
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
@@ -254,6 +258,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
      */
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
+        soundController.playLevelSelectSong(true);
     }
 
     /**
@@ -275,11 +280,17 @@ public class LevelMenuMode implements Screen, InputProcessor {
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
      */
+    private float fadeOut=0;
     private void draw() {
         // Draw images in the images array
         canvas.beginHUDDrawing();
         for (Image i : staticImages) {
             i.draw(canvas);
+        }
+        if(exitingToLevel){
+            fadeOut+=0.01;
+            if(fadeOut >= 1) fadeOut = 1;
+            canvas.drawFade(fadeOut);
         }
         canvas.endHUDDrawing();
 
@@ -311,6 +322,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
     /** Called when the screen should render itself.
      * @param delta The time in seconds since the last render. */
+    float delay=0;
     public void render (float delta) {
         if (active) {
             update(delta);
@@ -318,16 +330,27 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
             // pressed go on the active level hover - start the game
             if (activeNode != null && activeNode.goStatus == BUTTON_UP && listener != null) {
-                loadPlaying = true;
-                loadSavedLevel = activeNode.savedLevel;
-                nextLevelIndex = activeNode.levelIndex;
-                listener.exitScreen(this,0);
+                if (!exitingToLevel) {
+                    soundController.playLevelSelectSong(false);
+                    soundController.playCarIgnition();
+                    exitingToLevel = true;
+                }
+                if (delay < 2.4) {
+                    delay += delta;
+                } else {
+                    exitingToLevel = false;
+                    loadPlaying = true;
+                    loadSavedLevel = activeNode.savedLevel;
+                    nextLevelIndex = activeNode.levelIndex;
+                    listener.exitScreen(this, 0);
+                }
             }
 
             // pressed back - return to start menu
             else if (backStatus == BUTTON_UP && listener != null) {
                 System.out.println("going back now");
                 loadPlaying = false;
+                soundController.playLevelSelectSong(false);
                 listener.exitScreen(this,0);
             }
         }
@@ -335,6 +358,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
     /** Called when this screen should release all resources. */
     public void dispose () {
+
     }
 
     /**
@@ -421,11 +445,13 @@ public class LevelMenuMode implements Screen, InputProcessor {
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
         // check buttons
         if (activeNode != null && activeNode.goStatus == BUTTON_DOWN) {
+            soundController.playClick();
             activeNode.goStatus = BUTTON_UP;
             return false;
         }
 
         if (backStatus == BUTTON_DOWN) {
+            soundController.playClick();
             backStatus = BUTTON_UP;
             return false;
         }
@@ -433,6 +459,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
         // check level nodes
         for (LevelNode l : levelNodes) {
             if (l.clickStatus == BUTTON_DOWN) {
+                soundController.playClick();
                 l.clickStatus = BUTTON_UP;
 
                 // if clicking on same level node, set active node to null
@@ -468,11 +495,6 @@ public class LevelMenuMode implements Screen, InputProcessor {
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
     public boolean keyDown (int keycode) {
-        if(keycode == Input.Keys.F) {
-            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-        } else if(keycode == Input.Keys.ESCAPE) {
-            Gdx.graphics.setWindowedMode(1600,900);
-        }
         return true;
     }
 

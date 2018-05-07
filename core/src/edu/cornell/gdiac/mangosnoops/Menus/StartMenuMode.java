@@ -92,6 +92,8 @@ public class StartMenuMode implements Screen, InputProcessor {
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
+    /** True if a level was chosen and we are leaving to it **/
+    private boolean exitingToLevel;
 
     /**
      * Preloads the assets for this game.
@@ -220,12 +222,18 @@ public class StartMenuMode implements Screen, InputProcessor {
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
      */
+    private float fadeOut = 0;
     private void draw() {
         canvas.clearScreen();
         canvas.beginHUDDrawing();
         canvas.draw(background, 0, 0);
         offsetX = (int)(BUTTON_SCALE*scale*startbuttonTexture.getHeight()/1.75f);
         offsetY = offsetX;
+        if(exitingToLevel){
+            fadeOut+=0.01;
+            if(fadeOut >= 1) fadeOut = 1;
+            canvas.drawFade(fadeOut);
+        }
         canvas.draw(logo, Color.WHITE, logo.getWidth()/2, logo.getHeight()/2,
                 centerX, centerY*3, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
         canvas.draw(startbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,
@@ -270,13 +278,27 @@ public class StartMenuMode implements Screen, InputProcessor {
      *
      * @param delta Number of seconds since last animation frame
      */
+    private float delay = 0;
     public void render(float delta) {
         if(active) {
             update(delta);
             draw();
+
             // We are are ready, notify our listener
             if ((exitButton == 2 || levelsButton == 2 || settingButton == 2 || startButton == 2) && listener != null) {
-                listener.exitScreen(this, 0);
+                if(startButton == 2) {
+                    if (!exitingToLevel) {
+                        soundController.playCarIgnition();
+                        exitingToLevel = true;
+                    }
+                    if (delay < 2.4) {
+                        delay += delta;
+                    } else {
+                        listener.exitScreen(this, 0);
+                    }
+                } else if(levelsButton == 2 || exitButton==2){
+                    listener.exitScreen(this, 0);
+                }
             }
         }
     }
@@ -374,25 +396,28 @@ public class StartMenuMode implements Screen, InputProcessor {
             float distY = Math.abs(screenY - (centerY + offsetY));
             if (distX < radius && distY < radius) {
                 startButton = 1;
+                soundController.playClick();
                 return false;
             }
             distX = Math.abs(screenX - (centerX + offsetX));
             if (distX < radius && distY < radius) {
                 levelsButton = 1;
+                soundController.playClick();
                 return false;
             }
             distY = Math.abs(screenY - (centerY - offsetY));
             if (distX < radius && distY < radius) {
                 exitButton = 1;
+                soundController.playClick();
                 return false;
             }
             distX = Math.abs(screenX - (centerX - offsetX));
             if (distX < radius && distY < radius) {
                 settingButton = 1;
+                soundController.playClick();
                 return false;
             }
         }
-
         return false;
     }
 

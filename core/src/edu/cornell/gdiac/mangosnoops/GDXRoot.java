@@ -125,9 +125,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
 		settings = new SettingsMenu(this);
-		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
-		levelSelect = new LevelMenuMode(canvas, manager, NUM_TUTORIALS, SAVED_LEVELS.size);
 		soundController = new SoundController(settings);
+		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
+		levelSelect = new LevelMenuMode(canvas, manager,soundController, NUM_TUTORIALS, SAVED_LEVELS.size);
 		playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 		start = new StartMenuMode(canvas, manager,settings,soundController);
 
@@ -229,7 +229,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			if(start.levelSelectButtonClicked()) {
 				// create a new level select mode if current one is null
 				if (levelSelect == null) {
-					levelSelect = new LevelMenuMode(canvas, manager, NUM_TUTORIALS, SAVED_LEVELS.size);
+					levelSelect = new LevelMenuMode(canvas, manager, soundController, NUM_TUTORIALS, SAVED_LEVELS.size);
 				}
 				levelSelect.setScreenListener(this);
 				Gdx.input.setInputProcessor(levelSelect);
