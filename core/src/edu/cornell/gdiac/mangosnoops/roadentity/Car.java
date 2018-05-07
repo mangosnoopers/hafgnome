@@ -203,12 +203,18 @@ public class Car extends RoadObject {
     public void damage() {
         if (!isDamaged) {
             isDamaged = true;
+            setHealth(getHealth() - damageDelta);
+        }
+    }
+
+    public void damageWithReargnome() {
+        if (!isDamaged) {
+            isDamaged = true;
             timeToDisplayDamageIndicator = 10;
             displayAlpha = 1.0f;
             setHealth(getHealth() - damageDelta);
         }
     }
-
     public boolean getIsDamaged() { return isDamaged; }
 
     public float getDamageDisplayAlpha() { return displayAlpha; }
