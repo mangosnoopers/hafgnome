@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
+import edu.cornell.gdiac.mangosnoops.Image;
 import edu.cornell.gdiac.mangosnoops.SoundController;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -34,14 +35,14 @@ public class StartMenuMode implements Screen, InputProcessor {
     private static final String STARTBUTTON_FILE = "images/startMenuAssets/juststartButton.png";
     private static final String LOGO_FILE = "images/startMenuAssets/logo.png";
 
-    private Texture background;
+    private Texture backgroundTexture;
     private Texture exitbuttonTexture;
     private Texture levelsbuttonTexture;
     private Texture settingbuttonTexture;
     private Texture startbuttonTexture;
     private Texture logo;
+    private Image background;
 
-    Music menuSong;
     private SoundController soundController;
 
     /** 0: Unclicked, 1: Button Down, 2: Button Up */
@@ -187,12 +188,14 @@ public class StartMenuMode implements Screen, InputProcessor {
         this.settings = settings;
         this.soundController = soundController;
 
-        background = new Texture(BACKGROUND_FILE);
+        backgroundTexture = new Texture(BACKGROUND_FILE);
         exitbuttonTexture = new Texture(EXITBUTTON_FILE);
         levelsbuttonTexture = new Texture(LEVELSBUTTON_FILE);
         settingbuttonTexture = new Texture(SETTINGSBUTTON_FILE);
         startbuttonTexture = new Texture(STARTBUTTON_FILE);
         logo = new Texture(LOGO_FILE);
+
+        background= new Image(0.5f,0.5f,1f,backgroundTexture, GameCanvas.TextureOrigin.MIDDLE);
 
         soundController.playMenuSong(true);
 
@@ -211,7 +214,9 @@ public class StartMenuMode implements Screen, InputProcessor {
     private void update(float delta) {
         if(settings.isShowing()) {
             settings.update(new Vector2(Gdx.input.getX(), Gdx.input.getY()), soundController);
-        }
+            if(!settings.isFullScreen()) resize((int)settings.currentResolution.x,(int)settings.currentResolution.y);
+            else scale = 1.5f;
+            }
         soundController.play(null);
     }
 
@@ -226,7 +231,7 @@ public class StartMenuMode implements Screen, InputProcessor {
     private void draw() {
         canvas.clearScreen();
         canvas.beginHUDDrawing();
-        canvas.draw(background, 0, 0);
+        background.draw(canvas);
         offsetX = (int)(BUTTON_SCALE*scale*startbuttonTexture.getHeight()/1.75f);
         offsetY = offsetX;
         if(exitingToLevel){
@@ -254,7 +259,7 @@ public class StartMenuMode implements Screen, InputProcessor {
      * Called when this screen should release all resources.
      */
     public void dispose() {
-        background.dispose();
+        backgroundTexture.dispose();
         exitbuttonTexture.dispose();
         levelsbuttonTexture.dispose();
         settingbuttonTexture.dispose();
@@ -493,9 +498,13 @@ public class StartMenuMode implements Screen, InputProcessor {
      */
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.F) {
-            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            if(!settings.isFullScreen()) {
+                settings.setFullScreen(true);
+            }
         } else if(keycode == Input.Keys.ESCAPE) {
-            Gdx.graphics.setWindowedMode(1600,900);
+            if(settings.isFullScreen()) {
+                settings.setFullScreen(false);
+            }
         }
         return true;
     }

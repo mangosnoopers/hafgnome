@@ -164,7 +164,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
     /** Initialize all static images */
     private void initStaticImages() {
         // background
-        Image bg = new Image(0.0f,0.0f,1.0f, mapTex, GameCanvas.TextureOrigin.BOTTOM_LEFT);
+        Image bg = new Image(0.5f,0.5f,1.0f, mapTex, GameCanvas.TextureOrigin.MIDDLE);
         staticImages.add(bg);
 
         // path
@@ -348,7 +348,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
             // pressed back - return to start menu
             else if (backStatus == BUTTON_UP && listener != null) {
-                System.out.println("going back now");
+//                System.out.println("going back now");
                 loadPlaying = false;
                 soundController.playLevelSelectSong(false);
                 listener.exitScreen(this,0);
