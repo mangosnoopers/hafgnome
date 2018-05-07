@@ -364,7 +364,7 @@ public class LevelObject {
                 else if (genreStr.equals("classical"))
                     songs.put(songFile, Genre.CLASSICAL);
                 else
-                    throw new RuntimeException("Invalid song genre specified");
+                    throw new RuntimeException("Invalid song genre specified: " + genreStr);
             }
 
             // Iterate through desired number of blocks in order if randomSelect is false
