@@ -19,6 +19,7 @@ public class SoundController {
     private final Music carAmbience = Gdx.audio.newMusic(Gdx.files.internal("sounds/carAmbience.mp3"));
     private final Music radioStatic = Gdx.audio.newMusic(Gdx.files.internal("sounds/radioStatic.mp3"));
     private final Music menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
+    private final Music levelSelectSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-retrosoul.mp3"));
 
     private final Sound carBeep = Gdx.audio.newSound(Gdx.files.internal("sounds/beepbeep.mp3"));
     private final Sound gnomeDeath1 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
@@ -27,6 +28,9 @@ public class SoundController {
     private final Sound gnomeDeath4 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_4.mp3"));
     private final Sound flamingoFlap = Gdx.audio.newSound(Gdx.files.internal("sounds/flamingosFlap.mp3"));
     private final Sound grillRoar = Gdx.audio.newSound(Gdx.files.internal("sounds/grillRoar.mp3"));
+    private final Sound carIgnition = Gdx.audio.newSound(Gdx.files.internal("sounds/carStartUp.mp3"));
+    private final Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/click.mp3"));
+    private final Sound hoverMouse = Gdx.audio.newSound(Gdx.files.internal("sounds/mousePassOver.mp3"));
 
     /**
      * Object Constructor
@@ -34,9 +38,9 @@ public class SoundController {
     public SoundController(SettingsMenu settings){
         this.settings = settings;
         music = new Array<Music>();
-        music.addAll(carAmbience,radioStatic,menuSong);
+        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong);
         effects = new Array<Sound>();
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillRoar);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillRoar,carIgnition,click,hoverMouse);
         carAmbience.setLooping(true);
         radioStatic.setLooping(true);
     }
@@ -69,7 +73,10 @@ public class SoundController {
             }
             if ((wasStatic || lastStation != currentStation) && currentStation != null) {
                 if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(settings.getMusicVolume());
-                else currentStation.getAudio().play();
+                else {
+                    currentStation.getAudio().play();
+                    currentStation.getAudio().setVolume(settings.getMusicVolume());
+                }
                 music.add(currentStation.getAudio());
             }
         }
@@ -129,7 +136,31 @@ public class SoundController {
             stopAudio(menuSong);
         }
     }
+    /** Called in LevelMenuMode **/
+    public void playLevelSelectSong(boolean playing){
+        if(playing) {
+            levelSelectSong.setVolume(settings.getMusicVolume());
+            levelSelectSong.play();
+            levelSelectSong.setLooping(true);
+        } else{
+            stopAudio(levelSelectSong);
+        }
+    }
 
+    /**Called in LevelMenuMode and StartMenuMode**/
+    public void playCarIgnition() {
+        carIgnition.stop();
+        carIgnition.play(settings.getEffectsVolume());
+    }
+
+    public void playClick(){
+        click.stop();
+        click.play(settings.getEffectsVolume());
+    }
+    public void playHoverMouse(){
+        hoverMouse.stop();
+        hoverMouse.play(settings.getEffectsVolume());
+    }
     /** Stops audio and disposes the file **/
     private void stopAudio(Music m){
         if(m == null){

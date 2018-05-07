@@ -22,6 +22,7 @@ public class SettingsMenu {
     protected boolean showing = false;
     protected float effectsVolume = 1;
     protected float musicVolume = 1;
+    protected Vector2 lastResolution;
     protected Vector2 currentResolution;
     private boolean fullScreen = false;
     // INTERNAL VARIABLES (FOR SETTINGS DISPLAY)
@@ -57,6 +58,8 @@ public class SettingsMenu {
     private final float resImageScale = 0.07f;
     private String currentResText;
     private boolean backHover;
+    private boolean wasHoveringOnButton = false;
+    private boolean isHoveringOnButton = false;
     private Array<String> assets = new Array<String>();
     private final Color buttonTint = new Color(0.5f,0.3f,0.2f,0.5f);
     private final Vector2 sliderBounds = new Vector2(0.44f,0.763f);
@@ -209,10 +212,12 @@ public class SettingsMenu {
         screenResolutions.put(resolutionImages.get(3), new Vector2(1152,648));
         screenResolutions.put(resolutionImages.get(4), new Vector2(1600,900));
 
+        lastResolution = screenResolutions.get(resolutionImages.get(4));
         currentResolution = screenResolutions.get(resolutionImages.get(4));
         currentResImage = new Image(resolutionImages.get(4));
         currentResImage.updateY(currentResImagePos.y);
         currentResText = resolutionText.get(resolutionImages.get(4));
+        hoverOverImage = resolutionImages.get(4);
         resizeScreen();
     }
 
@@ -290,21 +295,24 @@ public class SettingsMenu {
             }
             // 'BACK' BUTTON
             else if (buttonBack.inArea(in)) {
+                soundController.playClick();
                 showing = false;
             }
             // FULLSCREEN BUTTON
             else if(selectButton.inArea(in)){
+                soundController.playClick();
                 fullScreen = !fullScreen;
                 resizeScreen();;
             }
             // SELECT BOX
-            else if (currentResImage.inArea(in) && !showSelectBox) {
-                showSelectBox = true;
-            } else if (currentResImage.inArea(in) && showSelectBox) {
-                showSelectBox = false;
+            else if (currentResImage.inArea(in)) {
+                soundController.playClick();
+                showSelectBox = !showSelectBox;
             }
         }
         // Hover based input
+        isHoveringOnButton = false;
+        // SELECT BOX
         if (showSelectBox) {
             boolean inSB = false;
             for (Image i : resolutionImages) {
@@ -312,6 +320,8 @@ public class SettingsMenu {
                 if (i.inArea(in)) {
                     hoverOverImage = i;
                     if (Gdx.input.justTouched()) {
+                        soundController.playClick();
+                        lastResolution = currentResolution;
                         currentResolution = screenResolutions.get(i);
                         currentResImage = new Image(i);
                         currentResImage.updateY(currentResImagePos.y);
@@ -322,11 +332,19 @@ public class SettingsMenu {
                 }
             }
         }
+        // 'BACK' BUTTON
         if(buttonBack.inArea(in)){
+            isHoveringOnButton = true;
             backHover = true;
         } else{
             backHover = false;
         }
+
+        // HOVER SOUND
+        if(wasHoveringOnButton!=isHoveringOnButton && isHoveringOnButton){
+            soundController.playHoverMouse();
+        }
+        wasHoveringOnButton = isHoveringOnButton;
     }
 
     public void draw(GameCanvas canvas){
@@ -377,12 +395,24 @@ public class SettingsMenu {
     }
 
     /** Resize the screen**/
+    boolean exitingFullScreen = false;
+    Vector2 lastScale = new Vector2(0,0);
     private void resizeScreen(){
         if(fullScreen){
             gdxRoot.setFullScreen(fullScreen);
+            displayFont.getData().setScale(1.5f,1.5f );
+            exitingFullScreen = true;
         }else {
             gdxRoot.resize((int) currentResolution.x, (int) currentResolution.y);
             Gdx.graphics.setWindowedMode((int) currentResolution.x, (int) currentResolution.y);
+            if(exitingFullScreen){
+                displayFont.getData().setScale(lastScale.x,lastScale.y );
+            } else {
+                lastScale.set(displayFont.getScaleX(), displayFont.getScaleY());
+            }
+            displayFont.getData().setScale((currentResolution.x/lastResolution.x)*displayFont.getScaleX(),
+                    (currentResolution.y/lastResolution.y)*displayFont.getScaleY());
+            exitingFullScreen = false;
         }
     }
 
