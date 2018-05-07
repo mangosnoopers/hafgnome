@@ -54,26 +54,27 @@ public class SoundController {
      * @param r
      */
     public void playRadio(Radio r) {
-        Radio.Station currentStation = r.getCurrentStation();
-        if(r.shouldPlayStatic()) {
-            if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(0);
-            radioStatic.setVolume(settings.getEffectsVolume());
-            radioStatic.play();
-//            System.out.println("STATIC " + currentStation.getAudio().getVolume());
-        } else {
-            radioStatic.stop();
-            Radio.Station lastStation = r.getLastStation();
+        if(r.getNumStations() > 0) {
+            Radio.Station currentStation = r.getCurrentStation();
+            if(r.shouldPlayStatic()) {
+                if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(0);
+                radioStatic.play();
+                System.out.println("STATIC " + currentStation.getAudio().getVolume());
+            } else {
+                radioStatic.stop();
+                Radio.Station lastStation = r.getLastStation();
 
-            if (lastStation != currentStation && lastStation != null) {
-                lastStation.getAudio().setVolume(0);
+                if (lastStation != currentStation && lastStation != null) {
+                    lastStation.getAudio().setVolume(0);
+                }
+                if ((wasStatic || lastStation != currentStation) && currentStation != null) {
+                    if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(1f);
+                    else currentStation.getAudio().play();
+                    music.add(currentStation.getAudio());
+                }
             }
-            if ((wasStatic || lastStation != currentStation) && currentStation != null) {
-                if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(settings.getMusicVolume());
-                else currentStation.getAudio().play();
-                music.add(currentStation.getAudio());
-            }
+            wasStatic = r.shouldPlayStatic();
         }
-        wasStatic = r.shouldPlayStatic();
     }
 
     public void muteRadio(Radio r) {

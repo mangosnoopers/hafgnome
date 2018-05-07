@@ -54,42 +54,20 @@ public class TutorialController extends GameplayController {
     private FlashingImage arrowNedSnack;
     private FlashingImage arrowNoshSnack;
 
-    private enum TutorialState {
-        LEARN_STEERING,
-        LEARN_VROOMING,
-        LEARN_NED_SNACK,
-        LEARN_HONK,
-        DONE
-    }
-
-    private TutorialState state;
-
     /** Flags to indicate that one-time events have occurred */
-    private boolean createdRearviewGnome;
-    private boolean createdFlamingos;
     private int madeNoshMad;
     private int madeNedMad;
-    private boolean finishedTutorial;
-
-    /** Gnome that appears until you dodge it */
-    private Gnome gnome;
-    private Array<Flamingo> flamingos;
 
     /** Which tutorial it is to identify what to display */
     private int tutIndex;
 
-    /** If an enemy makes it past this Y value without getting
-     *  destroyed, then it must have not hit the player. */
-    private float ENEMY_Y_THRESHOLD = -13f;
-
     public TutorialController(GameCanvas canvas, LevelObject level, int tutNum, SoundController sc) {
         super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc);
         tutIndex = tutNum;
-        createdRearviewGnome = false;
-        createdFlamingos = false;
-        madeNoshMad = 0;
-        madeNedMad = 0;
-        finishedTutorial = false;
+        if(tutIndex == 0) {
+            madeNoshMad = 0;
+            madeNedMad = 0;
+        }
     }
 
     public void start(float x, float y) {
@@ -100,23 +78,15 @@ public class TutorialController extends GameplayController {
         tutMirrorNoshSnack = new FlashingImage(0.75f, 0.7f, 0.3f, tutMirrorTexture);
         tutVroom = new FlashingImage(0.193f, 0.2f,0.3f, tutVroomTexture);
         tutHorn = new FlashingImage(0.12f, 0.12f, 0.17f, tutHornTexture);
-
         tutVisor = new FlashingImage(0.1f, 0.85f, 0.16f, tutVisorTexture);
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
-
         arrowNedSnack = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
         arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
 
-        gnome = new Gnome(0, 10);
-        gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
-        getEnemiez().add(gnome);
-
-        flamingos = new Array<Flamingo>();
-
-        state = TutorialState.LEARN_STEERING;
-
         if(tutIndex == 0) {
             tutKeys.setVisible(true);
+        } else if(tutIndex == 1) {
+            tutVroom.setVisible(true);
         }
     }
 
@@ -152,63 +122,15 @@ public class TutorialController extends GameplayController {
         arrowTexture = createTexture(manager, TUT_ARROW);
     }
 
-    /**
-     * Create and initialize the flamingos. This should only happen once.
-     */
-    private void createFlamingos() {
-        flamingos.add(new Flamingo(-0.2f, 10));
-        flamingos.add(new Flamingo(0f, 10));
-        flamingos.add(new Flamingo(0.2f, 10));
-        for (Flamingo f : flamingos) {
-            f.setFilmStrip(flamingoTexture, FLAMINGO_FILMSTRIP_ROWS, FLAMINGO_FILMSTRIP_COLS);
-            getEnemiez().add(f);
-        }
-    }
-
-    /**
-     * Reset the Flamingos if and only if one of them
-     * got destroyed, which implies that one of them
-     * collided with the player.
-     */
-    private void resetFlamingos() {
-
-        boolean atLeastOneDestroyed = false;
-        for (Flamingo f : flamingos) {
-            atLeastOneDestroyed |= f.isDestroyed();
-        }
-
-        if (atLeastOneDestroyed) {
-            getEnemiez().clear();
-            for (Flamingo f : flamingos) {
-                f.setDestroyed(false);
-                getEnemiez().add(f);
-                f.setY(10);
-            }
-        }
-    }
-
-    /**
-     * @return whether or not the user made it past the flamingos
-     */
-    private boolean madeItPastFlamingos() {
-        boolean madeIt = true;
-        for (Flamingo f : flamingos) {
-            madeIt &= (f.getY() < ENEMY_Y_THRESHOLD && !f.isDestroyed());
-        }
-        return madeIt;
-    }
+    private float stamp = 0;
 
     public void resolveActions(InputController input, float delta) {
-
         super.resolveActions(input, delta);
-
-//        /** Make sure road is some arbitrarily far distance away
-//         *  so the tutorial doesn't end */
-//        if (!finishedTutorial) getRoad().setRoadExitY(500);
-//
-//        //System.out.println(getRoad().getRoadExitY());
-
+        stamp += delta;
         if(tutIndex == 0) {
+            if(stamp > 9) {
+                tutKeys.setVisible(false);
+            }
             // Show to put snacks
             if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
                 tutMirrorNoshSnack.setVisible(true);
@@ -235,6 +157,18 @@ public class TutorialController extends GameplayController {
                     tutInventory.setVisible(false);
                 }
             }
+        } else if(tutIndex == 1) {
+            if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
+                if(!rearviewEnemy.exists()) {
+                    tutVroom.setVisible(false);
+                    arrowNedSnack.setVisible(false);
+                }
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.3f) {
+                tutVroom.setVisible(true);
+                arrowNedSnack.setVisible(true);
+            } else if(getVroomStick().isEngaged()) {
+                tutVroom.setVisible(false);
+            }
         }
 
 
@@ -246,69 +180,6 @@ public class TutorialController extends GameplayController {
         tutHorn.update(delta);
         arrowNoshSnack.update(delta);
         arrowNedSnack.update(delta);
-//
-//        switch (state) {
-//            case LEARN_STEERING:
-//                tutKeys.setVisible(true);
-//                if (gnome.isDestroyed()) {
-//                    gnome.setDestroyed(false);
-//                    getEnemiez().add(gnome);
-//                    gnome.setY(10);
-//                }
-//
-//                if (gnome.getY() < ENEMY_Y_THRESHOLD && !gnome.isDestroyed()) {
-//                    gnome.setDestroyed(true);
-//                    tutKeys.setVisible(false);
-//                    state = TutorialState.LEARN_VROOMING;
-//                }
-//                break;
-//            case LEARN_VROOMING:
-//                tutVroom.setVisible(true);
-//                if (!createdRearviewGnome) {
-//                    createdRearviewGnome = true;
-//                    rearviewEnemy.create();
-//                }
-//
-//                if (!rearviewEnemy.exists()) {
-//                    tutVroom.setVisible(false);
-//                    state = TutorialState.LEARN_HONK;
-//                }
-//                break;
-//            case LEARN_HONK:
-//                tutHorn.setVisible(true);
-//                if (!createdFlamingos) {
-//                    createFlamingos();
-//                    createdFlamingos = true;
-//                }
-//                if (madeItPastFlamingos()) {
-//                    tutHorn.setVisible(false);
-//                    state = TutorialState.LEARN_NED_SNACK;
-//                } else {
-//                    resetFlamingos();
-//                }
-//
-//                break;
-//            case LEARN_NED_SNACK:
-//                tutMirror.setVisible(true);
-//                tutInventory.setVisible(true);
-//                arrow.setVisible(true);
-//                if (!madeNedMad) {
-//                    madeNedMad = true;
-//                }
-//                if (getCar().getNed().getCurrentMood() == Child.Mood.HAPPY) {
-//                    tutMirror.setVisible(false);
-//                    tutInventory.setVisible(false);
-//                    arrow.setVisible(false);
-//                    state = TutorialState.DONE;
-//                }
-//                break;
-//            case DONE:
-//                if (!finishedTutorial) {
-//                    finishedTutorial = true;
-//                    getRoad().setRoadExitY(1);
-//                }
-//        }
-
     }
 
     public void speechBubble(Child.ChildType childType, GameCanvas canvas) {
@@ -331,10 +202,8 @@ public class TutorialController extends GameplayController {
 
     public void reset() {
         super.reset();
-        createdRearviewGnome = false;
         madeNedMad = 0;
         madeNoshMad = 0;
-        createdFlamingos = false;
     }
 
 }
