@@ -46,7 +46,7 @@ public class Car extends RoadObject {
     private int damageDelta;
 
     /** Start position of car. */
-    private static final Vector2 CAR_START_POS = new Vector2(0, -10f);
+    private static final Vector2 CAR_START_POS = new Vector2(0, 0f);
 
     /** Bounds for the car. */
     private float LEFT_X_BOUND = -0.25f;
