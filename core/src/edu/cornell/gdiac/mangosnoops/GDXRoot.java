@@ -86,7 +86,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		setCursor("images/mouse.png");
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,manager,1);
-		settings = new SettingsMenu();
+		settings = new SettingsMenu(this);
 		soundController = new SoundController(settings);
 		playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 		reststop = new RestStopMode(canvas, manager);
@@ -209,6 +209,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		Pixmap pm = new Pixmap(Gdx.files.internal(path));
 		Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm,0 ,0 ));
 		pm.dispose();
+	}
+	public void setFullScreen(boolean b){
+		canvas.setFullscreen(b);
 	}
 
 }

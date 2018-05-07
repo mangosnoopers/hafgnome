@@ -20,6 +20,7 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.*;
+import edu.cornell.gdiac.mangosnoops.Menus.SettingsMenu;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 import edu.cornell.gdiac.mangosnoops.hudentity.Wheel;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
@@ -29,6 +30,8 @@ import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
  */
 public class InputController {
 	// Fields to manage game state
+	/**Settings menu for full screen fields**/
+	private SettingsMenu settings;
 	/** Whether the reset button was pressed. */
 	protected boolean resetPressed;
 	/** Whether the exit button was pressed. */
@@ -52,7 +55,8 @@ public class InputController {
 	/**
 	 * Creates a new input controller.
 	 */
-	public InputController() {
+	public InputController(SettingsMenu settings) {
+		this.settings = settings;
 	}
 
 	/**
@@ -123,11 +127,11 @@ public class InputController {
 	 */
 	public void readInput() {
 		//Full screen/Escape Full Screen
-		if(Gdx.input.isKeyPressed(Input.Keys.F)) {
-			Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+		if(Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+			settings.setFullScreen(!settings.isFullScreen());
 		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-			Gdx.graphics.setWindowedMode(1600,900);
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			Gdx.graphics.setWindowedMode((int)Image.getScreenWidth(),(int)Image.getScreenHeight());
 		}
 
 		//Exit Screen
