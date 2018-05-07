@@ -64,7 +64,7 @@ public class GameplayController {
 	 *  one at a time. FIXME: could change that if necessary */
 	protected RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
-	private float ypos;
+	protected float ypos;
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
 	private Radio radio;
@@ -72,7 +72,7 @@ public class GameplayController {
 
 
 	/** An array of events for this level */
-	private Array<Event> events;
+	protected Array<Event> events;
 	/** The Horn! */
 	private Horn horn;
 
