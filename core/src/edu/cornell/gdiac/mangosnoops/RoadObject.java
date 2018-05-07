@@ -51,6 +51,7 @@ public abstract class RoadObject {
         IMAGE, // Billboards, corn, etc
         /** The player car, which lives until it collides with a gnome */
         CAR,
+        FLAME
     }
 
     // Attributes for all game objects
@@ -242,7 +243,7 @@ public abstract class RoadObject {
      * @param delta Number of seconds since last animation frame
      */
     public void update(float delta) {
-        position.add(velocity);
+        //position.add(velocity);
     }
 
     /**

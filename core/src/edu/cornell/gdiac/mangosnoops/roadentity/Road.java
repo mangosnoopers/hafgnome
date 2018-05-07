@@ -26,7 +26,7 @@ public class Road extends RoadObject {
     float DISTANCE_TO_DRAW = 5;
     /** The threshold after which a road should be moved to the front of the
      * "conveyor belt". */
-    float END_OF_CONVEYOR_BELT = -13;
+    float END_OF_CONVEYOR_BELT = -3;
     /** The road texture. */
     Texture roadTexture;
     /** The grass texture. */
