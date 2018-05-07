@@ -27,6 +27,8 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.
@@ -66,6 +68,8 @@ public class GameCanvas {
 	DecalBatch batch;
 	Array<Decal> roadDecals;
 
+	Viewport viewport;
+
 	private float CAM_HEIGHT = 4.32f;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 	private float NORMAL_CAM_FOV = 67;
@@ -95,6 +99,8 @@ public class GameCanvas {
 
 		// Initialize game world drawing stuff
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		viewport = new FitViewport(1600, 900, camera);
+		viewport.apply();
 		camera.position.z = CAM_HEIGHT;
 		camera.near = 0.0001f;
 		camera.lookAt(0, 0, 0);
@@ -248,7 +254,7 @@ public class GameCanvas {
 			Gdx.graphics.setWindowedMode(width, height);
 		}
 	}
-	
+
 	/**
 	 * Resets the SpriteBatch camera when this canvas is resized.
 	 *
@@ -257,6 +263,7 @@ public class GameCanvas {
 	 */
 	 public void resize() {
 		// Resizing screws up the spriteBatch projection matrix
+		 viewport.update(getWidth(), getHeight());
 		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
 	}
 	

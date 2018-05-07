@@ -64,20 +64,22 @@ public class GameplayController {
 	 *  one at a time. FIXME: could change that if necessary */
 	protected RearviewEnemy rearviewEnemy;
 	/** The y-position player is driving over, used for checking for events */
-	private float ypos;
+	protected float ypos;
 	private SATQuestions satQuestions;
 	private TouchScreen touchscreen;
 	private Radio radio;
 	private DvdPlayer dvdPlayer;
 
+
 	/** An array of events for this level */
-	private Array<Event> events;
+	protected Array<Event> events;
 	/** The Horn! */
 	private Horn horn;
 
 	private ObjectMap<String,Radio.Genre> songs;
 
 	private Image healthGauge;
+	private Image rearviewDamageIndicator;
 	private Image rearviewBackground;
 	private Image rearviewSeats;
 	private Image rearviewCover;
@@ -159,6 +161,7 @@ public class GameplayController {
 	/** Rearview mirror stuff */
 	private static final String REARVIEW_BACKGROUND = "images/rearview_background.png";
 	private static final String REARVIEW_COVER = "images/rearview_cover.png";
+	private static final String REARVIEW_DAMAGE = "images/rearview_damage.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 	/** The texture files for all Items **/
 	private static final String DVD0_FILE = "images/Items/dvd0.png";
@@ -257,6 +260,12 @@ public class GameplayController {
 	/** Flame texture */
 	private Texture flameTexture;
 
+	/** Rearview damage texture */
+	private Texture rearviewDamageTexture;
+
+	/** Cached color object for indicating rearview damage */
+	private Color rearviewDamageColor = new Color(Color.RED);
+
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
 
@@ -291,6 +300,8 @@ public class GameplayController {
 	 * @param assets  Asset list to track which assets where loaded
 	 */
 	public void preLoadContent(AssetManager manager, Array<String> assets) {
+		manager.load(REARVIEW_DAMAGE,Texture.class);
+		assets.add(REARVIEW_DAMAGE);
 		manager.load(NED_FILE,Texture.class);
 		assets.add(NED_FILE);
 		manager.load(NOSH_FILE,Texture.class);
@@ -448,6 +459,7 @@ public class GameplayController {
 		hornTexture = createTexture(manager, HORN_FILE);
 		grillTexture = createTexture(manager, GRILL_FILE);
 		flameTexture = createTexture(manager, FLAME_FILE);
+		rearviewDamageTexture = createTexture(manager, REARVIEW_DAMAGE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -620,7 +632,8 @@ public class GameplayController {
 		rearviewBackground = new Image(0.78f, 0.86f, 0.257f, rearviewBackgroundTexture, GameCanvas.TextureOrigin.MIDDLE);
 		rearviewSeats = new Image(0.78f, 0.86f, 0.3f, rearviewSeatsTexture,GameCanvas.TextureOrigin.MIDDLE);
 		rearviewCover = new Image(0.78f, 0.86f, 0.3f, rearviewCoverTexture,GameCanvas.TextureOrigin.MIDDLE);
-        rearviewEnemy = new RearviewEnemy(0.78f, 0.82f, 0.18f,0, rearviewGnomeTexture);
+        rearviewEnemy = new RearviewEnemy(0.78f, 0.8f, 0.18f,0, rearviewGnomeTexture);
+		rearviewDamageIndicator = new Image(0.78f, 0.86f, 0.3f, rearviewDamageTexture,GameCanvas.TextureOrigin.MIDDLE);
 
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
@@ -841,10 +854,11 @@ public class GameplayController {
 		}
 
 		if (rearviewEnemy.isAttackingCar()) {
-			getCar().damage();
+			getCar().damageWithReargnome();
 			if (getCar().getHealth() == 0)
 				getCar().setDestroyed(true);
 		}
+
 
 		if(prevClick != null && input.getClickPos() == null) {
 			yonda.update(prevClick, wheel, delta);
@@ -984,10 +998,15 @@ public class GameplayController {
 		// Horn
 		horn.draw(canvas, wheel.getAng());
 
-		// FIXME: this is a mess
 		rearviewBackground.draw(canvas);
 		rearviewEnemy.draw(canvas);
 		rearviewSeats.draw(canvas);
+
+		// Decide on damage indicator information
+		float damageAlpha = getCar().getDamageDisplayAlpha();
+		rearviewDamageColor.set(Color.RED.r, Color.RED.g, Color.RED.b, damageAlpha);
+		rearviewDamageIndicator.draw(canvas, rearviewDamageColor);
+
 
 		// Draw Ned and Nosh
 		yonda.getNosh().draw(canvas);
@@ -1009,6 +1028,7 @@ public class GameplayController {
 
 		//Draw visor
 		visor.draw(canvas);
+
 
 		satQuestions.draw(canvas, displayFont);
 	}
