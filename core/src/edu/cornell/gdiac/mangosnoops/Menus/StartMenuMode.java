@@ -207,9 +207,10 @@ public class StartMenuMode implements Screen, InputProcessor {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
-        if(settings.isShowing() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if(settings.isShowing()) {
             settings.update(new Vector2(Gdx.input.getX(), Gdx.input.getY()), soundController);
         }
+        soundController.play(null);
     }
 
     /**

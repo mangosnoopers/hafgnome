@@ -1,27 +1,31 @@
 package edu.cornell.gdiac.mangosnoops.Menus;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import edu.cornell.gdiac.mangosnoops.GDXRoot;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.Image;
 import edu.cornell.gdiac.mangosnoops.SoundController;
 
 public class SettingsMenu {
 
-    // EXTERNAL VARIABLES (FOR USER-SET SETTINGS)
-    protected char gnomeSoundSelected;
-    protected boolean showing;
+    // EXTERNAL VARIABLES (FOR USER-SET SETTINGS) w/ default values
+    protected char gnomeSoundSelected = 'A';
+    protected boolean showing = false;
     protected float effectsVolume = 1;
     protected float musicVolume = 1;
-
+    protected Vector2 currentResolution;
+    private boolean fullScreen = false;
     // INTERNAL VARIABLES (FOR SETTINGS DISPLAY)
+    private GDXRoot gdxRoot;
     private Texture backgroundTexture;
     private Texture sliderTabTexture;
     private Texture sliderBarTexture;
@@ -30,6 +34,11 @@ public class SettingsMenu {
     private Texture buttonCTexture;
     private Texture buttonDTexture;
     private Texture buttonBackTexture;
+    private Texture selectButtonTexture;
+    private Texture selectedButtonTexture;
+    private Texture dropDownTexture;
+    private BitmapFont displayFont;
+    private static int FONT_SIZE = 35;
     private Image background;
     private Image effectsSliderTab;
     private Image musicSliderTab;
@@ -40,13 +49,22 @@ public class SettingsMenu {
     private Image buttonC;
     private Image buttonD;
     private Image buttonBack;
-    private boolean backPressed;
+    private Image currentResImage;
+    private Image hoverOverImage;
+    private Image selectButton;
+    private Image selectedButton;
+    private final Vector2 currentResImagePos = new Vector2(0.505f,0.61f);
+    private final float resImageScale = 0.07f;
+    private String currentResText;
+    private boolean backHover;
     private Array<String> assets = new Array<String>();
     private final Color buttonTint = new Color(0.5f,0.3f,0.2f,0.5f);
     private final Vector2 sliderBounds = new Vector2(0.44f,0.763f);
-
-
-
+    private boolean showSelectBox;
+    private Array<Image> resolutionImages;
+    private ObjectMap<Image,String> resolutionText;
+    private ObjectMap<Image,Vector2> screenResolutions;
+    private AssetManager manager;
 
     // IMAGE RESOURCES
     private static String BACKGROUND_FILE = "images/SettingsMenuAssets/background.png";
@@ -57,6 +75,10 @@ public class SettingsMenu {
     private static String BUTTON_C_FILE = "images/SettingsMenuAssets/buttonC.png";
     private static String BUTTON_D_FILE = "images/SettingsMenuAssets/buttonD.png";
     private static String BUTTON_BACK_FILE = "images/SettingsMenuAssets/buttonBack.png";
+    private static String SELECT_BUTTON_FILE = "images/SettingsMenuAssets/selectButton.png";
+    private static String SELECTED_BUTTON_FILE = "images/SettingsMenuAssets/selectedButton.png";
+    private static String DROP_DOWN_FILE = "images/SettingsMenuAssets/dropDownTexture.png";
+    private static String FONT_FILE = "fonts/ComicSansBold.ttf";
 
     /**
      * Preloads the assets for this game.
@@ -83,6 +105,21 @@ public class SettingsMenu {
         assets.add(BUTTON_D_FILE);
         manager.load(BUTTON_BACK_FILE,Texture.class);
         assets.add(BUTTON_BACK_FILE);
+        manager.load(SELECT_BUTTON_FILE,Texture.class);
+        assets.add(SELECT_BUTTON_FILE);
+        manager.load(SELECTED_BUTTON_FILE,Texture.class);
+        assets.add(SELECTED_BUTTON_FILE);
+        manager.load(DROP_DOWN_FILE,Texture.class);
+        assets.add(DROP_DOWN_FILE);
+        // Load the font
+        FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        size2Params.fontFileName = FONT_FILE;
+        size2Params.fontParameters.size = FONT_SIZE;
+        size2Params.fontParameters.color = Color.BLACK;
+        size2Params.fontParameters.borderColor = Color.BLACK;
+        manager.load(FONT_FILE, BitmapFont.class, size2Params);
+        assets.add(FONT_FILE);
+        this.manager = manager;
 
     }
 
@@ -121,8 +158,21 @@ public class SettingsMenu {
         if (manager.isLoaded(BUTTON_BACK_FILE)) {
             buttonBackTexture = manager.get(BUTTON_BACK_FILE, Texture.class);
         }
+        if (manager.isLoaded(FONT_FILE)) {
+            displayFont = manager.get(FONT_FILE,BitmapFont.class);
+        }
+        if (manager.isLoaded(SELECT_BUTTON_FILE)) {
+            selectButtonTexture = manager.get(SELECT_BUTTON_FILE,Texture.class);
+        }
+        if (manager.isLoaded(SELECTED_BUTTON_FILE)) {
+            selectedButtonTexture = manager.get(SELECTED_BUTTON_FILE,Texture.class);
+        }
+        if (manager.isLoaded(DROP_DOWN_FILE)) {
+            dropDownTexture = manager.get(DROP_DOWN_FILE,Texture.class);
+        }
 
 
+        //Buttons and Background
         background = new Image(0.5f, 0.5f, 1, backgroundTexture, GameCanvas.TextureOrigin.MIDDLE);
         effectsSliderTab = new Image(sliderBounds.y, 0.825f, 0.1f, sliderTabTexture, GameCanvas.TextureOrigin.MIDDLE);
         musicSliderTab = new Image(sliderBounds.y, 0.9277f, 0.1f, sliderTabTexture, GameCanvas.TextureOrigin.MIDDLE);
@@ -132,8 +182,38 @@ public class SettingsMenu {
         buttonB = new Image(0.562f, 0.713f, 0.1f, buttonBTexture, GameCanvas.TextureOrigin.MIDDLE);
         buttonC = new Image(0.662f, 0.713f, 0.1f, buttonCTexture, GameCanvas.TextureOrigin.MIDDLE);
         buttonD = new Image(0.762f, 0.713f, 0.1f, buttonDTexture, GameCanvas.TextureOrigin.MIDDLE);
-        buttonBack = new Image(0.16f,0.91f,0.1f,buttonBackTexture, GameCanvas.TextureOrigin.MIDDLE);
+        buttonBack = new Image(0.13f,0.91f,0.1f,buttonBackTexture, GameCanvas.TextureOrigin.MIDDLE);
+        selectButton = new Image(0.762f,0.615f,0.05f,selectButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+        selectedButton = new Image(0.762f,0.615f,0.05f,selectedButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
 
+        //DropDown
+        resolutionImages = new Array<Image>();
+        float resImageOffset = resImageScale;
+        resolutionImages.addAll(new Image(currentResImagePos.x,currentResImagePos.y-resImageOffset, resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                                    new Image(currentResImagePos.x,currentResImagePos.y-2*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                                    new Image(currentResImagePos.x,currentResImagePos.y-3*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                                    new Image(currentResImagePos.x,currentResImagePos.y-4*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                                    new Image(currentResImagePos.x,currentResImagePos.y-5*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE));
+
+        resolutionText = new ObjectMap<Image, String>();
+        resolutionText.put(resolutionImages.get(0), "1920 x 1080");
+        resolutionText.put(resolutionImages.get(1),"960 x 540");
+        resolutionText.put(resolutionImages.get(2),"2880 x 1620");
+        resolutionText.put(resolutionImages.get(3),"1152 x 648");
+        resolutionText.put(resolutionImages.get(4),"1600 x 900");
+
+        screenResolutions = new ObjectMap<Image, Vector2>();
+        screenResolutions.put(resolutionImages.get(0), new Vector2(1920,1080));
+        screenResolutions.put(resolutionImages.get(1), new Vector2(960,540));
+        screenResolutions.put(resolutionImages.get(2), new Vector2(2880,1620));
+        screenResolutions.put(resolutionImages.get(3), new Vector2(1152,648));
+        screenResolutions.put(resolutionImages.get(4), new Vector2(1600,900));
+
+        currentResolution = screenResolutions.get(resolutionImages.get(4));
+        currentResImage = new Image(resolutionImages.get(4));
+        currentResImage.updateY(currentResImagePos.y);
+        currentResText = resolutionText.get(resolutionImages.get(4));
+        resizeScreen();
     }
 
     /**
@@ -153,58 +233,103 @@ public class SettingsMenu {
     }
 
 
-    public SettingsMenu(){
+    public SettingsMenu(GDXRoot r){
+        this.gdxRoot = r;
     }
 
 
-    public void update(Vector2 in, SoundController soundController){
-        if(in==null) return;
-        // EFFECTS SLIDER
-        if(effectsSliderBar.inArea(in) || effectsSliderTab.inArea(in)){
-            effectsSliderTab.updateX(in.x/((float)Gdx.graphics.getWidth()));
-            if(effectsSliderTab.getPosition().x < sliderBounds.x){
-                effectsSliderTab.updateX(sliderBounds.x);
-            } else if(effectsSliderTab.getPosition().x > sliderBounds.y){
-                effectsSliderTab.updateX(sliderBounds.y);
+    public void update(Vector2 in, SoundController soundController) {
+
+        //Click based input
+
+        //Use isButtonPressed() for sliders
+        if (Gdx.input.isButtonPressed(Input.Keys.LEFT)) {
+            // EFFECTS SLIDER
+            if (effectsSliderBar.inArea(in) || effectsSliderTab.inArea(in)) {
+                effectsSliderTab.updateX(in.x / ((float) Gdx.graphics.getWidth()));
+                if (effectsSliderTab.getPosition().x < sliderBounds.x) {
+                    effectsSliderTab.updateX(sliderBounds.x);
+                } else if (effectsSliderTab.getPosition().x > sliderBounds.y) {
+                    effectsSliderTab.updateX(sliderBounds.y);
+                }
+                effectsVolume = (effectsSliderTab.getPosition().x - sliderBounds.x) / (sliderBounds.y - sliderBounds.x);
+            }
+            //VOLUME SLIDER
+            else if (musicSliderBar.inArea(in) || musicSliderTab.inArea(in)) {
+                musicSliderTab.updateX(in.x / ((float) Gdx.graphics.getWidth()));
+                if (musicSliderTab.getPosition().x < sliderBounds.x) {
+                    musicSliderTab.updateX(sliderBounds.x);
+                } else if (musicSliderTab.getPosition().x > sliderBounds.y) {
+                    musicSliderTab.updateX(sliderBounds.y);
+                }
+                musicVolume = (musicSliderTab.getPosition().x - sliderBounds.x) / (sliderBounds.y - sliderBounds.x);
             }
         }
-        //VOLUME SLIDER
-        else if(musicSliderBar.inArea(in) || musicSliderTab.inArea(in)){
-            musicSliderTab.updateX(in.x/((float)Gdx.graphics.getWidth()));
-            if(musicSliderTab.getPosition().x < sliderBounds.x){
-                musicSliderTab.updateX(sliderBounds.x);
-            } else if(musicSliderTab.getPosition().x > sliderBounds.y){
-                musicSliderTab.updateX(sliderBounds.y);
+
+        // Use justTouched() for buttons
+        if(Gdx.input.justTouched()){
+            //'A' BUTTON
+            if (buttonA.inArea(in)) {
+                gnomeSoundSelected = 'A';
+                soundController.gnomeDeathSound();
+            }
+            //'B' BUTTON
+            else if (buttonB.inArea(in)) {
+                gnomeSoundSelected = 'B';
+                soundController.gnomeDeathSound();
+            }
+            //'C' BUTTON
+            else if (buttonC.inArea(in)) {
+                gnomeSoundSelected = 'C';
+                soundController.gnomeDeathSound();
+            }
+            //'D' BUTTON
+            else if (buttonD.inArea(in)) {
+                gnomeSoundSelected = 'D';
+                soundController.gnomeDeathSound();
+            }
+            // 'BACK' BUTTON
+            else if (buttonBack.inArea(in)) {
+                showing = false;
+            }
+            // FULLSCREEN BUTTON
+            else if(selectButton.inArea(in)){
+                fullScreen = !fullScreen;
+                resizeScreen();;
+            }
+            // SELECT BOX
+            else if (currentResImage.inArea(in) && !showSelectBox) {
+                showSelectBox = true;
+            } else if (currentResImage.inArea(in) && showSelectBox) {
+                showSelectBox = false;
             }
         }
-        //'A' BUTTON
-        else if(buttonA.inArea(in)){
-            gnomeSoundSelected = 'A';
-            soundController.gnomeDeathSound();
+        // Hover based input
+        if (showSelectBox) {
+            boolean inSB = false;
+            for (Image i : resolutionImages) {
+                inSB = inSB || i.inArea(in);
+                if (i.inArea(in)) {
+                    hoverOverImage = i;
+                    if (Gdx.input.justTouched()) {
+                        currentResolution = screenResolutions.get(i);
+                        currentResImage = new Image(i);
+                        currentResImage.updateY(currentResImagePos.y);
+                        currentResText = resolutionText.get(i);
+                        resizeScreen();
+                        showSelectBox = false;
+                    }
+                }
+            }
         }
-        //'B' BUTTON
-        else if(buttonB.inArea(in)){
-            gnomeSoundSelected = 'B';
-            soundController.gnomeDeathSound();
-        }
-        //'C' BUTTON
-        else if(buttonC.inArea(in)){
-            gnomeSoundSelected = 'C';
-            soundController.gnomeDeathSound();
-        }
-        //'D' BUTTON
-        else if(buttonD.inArea(in)){
-            gnomeSoundSelected = 'D';
-            soundController.gnomeDeathSound();
-        }
-        // 'BACK' BUTTON
-        else if(buttonBack.inArea(in)){
-            showing = false;
+        if(buttonBack.inArea(in)){
+            backHover = true;
+        } else{
+            backHover = false;
         }
     }
 
     public void draw(GameCanvas canvas){
-
         background.draw(canvas);
         effectsSliderBar.draw(canvas);
         musicSliderBar.draw(canvas);
@@ -214,7 +339,32 @@ public class SettingsMenu {
         buttonB.draw(canvas);
         buttonC.draw(canvas);
         buttonD.draw(canvas);
+        selectButton.draw(canvas);
+        if(fullScreen){
+            selectedButton.draw(canvas);
+        }
         buttonBack.draw(canvas);
+        if(backHover){
+            buttonBack.draw(canvas,buttonTint);
+        }
+        if(showSelectBox) {
+            for (Image i : resolutionImages) {
+                i.draw(canvas);
+                canvas.drawTextCenterOrigin(resolutionText.get(i),
+                        displayFont,
+                        i.getPosition().x,
+                        i.getPosition().y);
+                if(hoverOverImage == i){
+                    i.draw(canvas,buttonTint);
+                }
+            }
+
+        }
+        currentResImage.draw(canvas);;
+       canvas.drawTextCenterOrigin(currentResText,
+                                    displayFont,
+                                    currentResImage.getPosition().x,
+                                    currentResImage.getPosition().y );
         if(gnomeSoundSelected == 'A') {
             buttonA.draw(canvas, buttonTint);
         } else if(gnomeSoundSelected == 'B') {
@@ -223,6 +373,16 @@ public class SettingsMenu {
             buttonC.draw(canvas, buttonTint);
         } else if(gnomeSoundSelected == 'D') {
             buttonD.draw(canvas, buttonTint);
+        }
+    }
+
+    /** Resize the screen**/
+    private void resizeScreen(){
+        if(fullScreen){
+            gdxRoot.setFullScreen(fullScreen);
+        }else {
+            gdxRoot.resize((int) currentResolution.x, (int) currentResolution.y);
+            Gdx.graphics.setWindowedMode((int) currentResolution.x, (int) currentResolution.y);
         }
     }
 
@@ -239,6 +399,22 @@ public class SettingsMenu {
      * @param showing
      */
     public void setShowing(boolean showing){ this.showing = showing; }
+
+    /**
+     * Set the fullscreen parameter and act upon it if the user chooses to do so
+     * via the keyboard (used in InputController
+     * @param fullScreen
+     */
+    public void setFullScreen(boolean fullScreen){
+        this.fullScreen = fullScreen;
+        resizeScreen();
+    }
+
+    /**
+     * @return whether the screen is fullscreened or not
+     */
+    public boolean isFullScreen() { return fullScreen; }
+
     /**
      * @return Volume of sound effects
      */
@@ -247,4 +423,5 @@ public class SettingsMenu {
      * @return Volume of music
      */
     public float getMusicVolume() { return musicVolume; }
+
 }

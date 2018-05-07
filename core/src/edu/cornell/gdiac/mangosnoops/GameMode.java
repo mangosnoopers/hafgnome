@@ -285,8 +285,7 @@ public class GameMode implements Screen {
             // Create the controllers.
 			this.settings = settings;
 			this.soundController = soundController;
-            inputController = new InputController();
-			soundController = new SoundController(settings);
+            inputController = new InputController(settings);
             if (levelName.substring(0,3).equals("tut")) {
 				gameplayController = new TutorialController(canvas, new LevelObject(levelName), Integer.parseInt(levelName.substring(3,4)), soundController);
 			} else {
@@ -433,58 +432,63 @@ public class GameMode implements Screen {
 		if (inputController.pressedPause()) {
 			gameState = GameState.PLAY;
 		}
-		// RESUME BUTTON
-		if (pauseResumeButton != null && pauseResumeButton.inAreaWOriginScale(inputController.getHoverPos())) {
-			pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE*1.08f;
-			if(inputController.isMousePressed()){
+		if(!settings.isShowing()) {
+			// RESUME BUTTON
+			if (pauseResumeButton != null && pauseResumeButton.inAreaWOriginScale(inputController.getHoverPos())) {
+				pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE * 1.08f;
+				if (inputController.isMousePressed()) {
+					pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE;
+					gameState = GameState.PLAY;
+				}
+			} else {
 				pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE;
-				gameState = GameState.PLAY;
 			}
-		} else {
-			pauseResumeButton.relativeScale = pauseResumeButton.ORIGINAL_SCALE;
-		}
-		// RESTART BUTTON
-		if (pauseRestartButton != null && pauseRestartButton.inAreaWOriginScale(inputController.getHoverPos())) {
-			pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE*1.08f;
-			if(inputController.isMousePressed()){
+			// RESTART BUTTON
+			if (pauseRestartButton != null && pauseRestartButton.inAreaWOriginScale(inputController.getHoverPos())) {
+				pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE * 1.08f;
+				if (inputController.isMousePressed()) {
+					pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE;
+					restartedFromPause = true;
+					gameState = GameState.OVER;
+				}
+			} else {
 				pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE;
-				restartedFromPause = true;
-				gameState = GameState.OVER;
 			}
-		} else {
-			pauseRestartButton.relativeScale = pauseRestartButton.ORIGINAL_SCALE;
-		}
-		// SETTINGS BUTTON
-		if (pauseSettingsButton != null && pauseSettingsButton.inAreaWOriginScale(inputController.getHoverPos())) {
-			pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE*1.1f;
-			if(inputController.isMousePressed()){
+			// SETTINGS BUTTON
+			if (pauseSettingsButton != null && pauseSettingsButton.inAreaWOriginScale(inputController.getHoverPos())) {
+				pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE * 1.1f;
+				if (inputController.isMousePressed()) {
+					pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE;
+					settings.setShowing(true);
+				}
+			} else {
 				pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE;
-				gameState = GameState.PLAY;
 			}
-		} else {
-			pauseSettingsButton.relativeScale = pauseSettingsButton.ORIGINAL_SCALE;
-		}
-		// MAIN MENU BUTTON
-		if (pauseMainMenuButton != null && pauseMainMenuButton.inAreaWOriginScale(inputController.getHoverPos())) {
-			pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE*1.1f;
-			if(inputController.isMousePressed()){
+			// MAIN MENU BUTTON
+			if (pauseMainMenuButton != null && pauseMainMenuButton.inAreaWOriginScale(inputController.getHoverPos())) {
+				pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE * 1.1f;
+				if (inputController.isMousePressed()) {
+					pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE;
+					gameState = GameState.OVER;
+					exitFromPause = true;
+				}
+			} else {
 				pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE;
-				gameState = GameState.OVER;
-				exitFromPause = true;
 			}
-		} else {
-			pauseMainMenuButton.relativeScale = pauseMainMenuButton.ORIGINAL_SCALE;
-		}
-		// EXIT GAME BUTTON
-		if (pauseExitButton != null && pauseExitButton.inAreaWOriginScale(inputController.getHoverPos())) {
-			pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE*1.1f;
-			if(inputController.isMousePressed()){
+			// EXIT GAME BUTTON
+			if (pauseExitButton != null && pauseExitButton.inAreaWOriginScale(inputController.getHoverPos())) {
+				pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE * 1.1f;
+				if (inputController.isMousePressed()) {
+					pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE;
+					Gdx.app.exit();
+				}
+			} else {
 				pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE;
-				gameState = GameState.PLAY;
 			}
-		} else {
-			pauseExitButton.relativeScale = pauseExitButton.ORIGINAL_SCALE;
+		} else{
+			settings.update(inputController.getHoverPos(),soundController );
 		}
+		soundController.play(null);
 	}
 
 
@@ -569,6 +573,9 @@ public class GameMode implements Screen {
 				pauseSettingsButton.drawNoShake(canvas);
 				pauseMainMenuButton.drawNoShake(canvas);
 				pauseExitButton.drawNoShake(canvas);
+				if(settings.isShowing()){
+					settings.draw(canvas);
+				}
 				break;
 			default:
 				break;

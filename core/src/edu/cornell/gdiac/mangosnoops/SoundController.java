@@ -15,10 +15,11 @@ public class SoundController {
     private SettingsMenu settings;
     /** All played music */
     private Array<Music> music;
+    private Array<Sound> effects;
     private final Music carAmbience = Gdx.audio.newMusic(Gdx.files.internal("sounds/carAmbience.mp3"));
+    private final Music radioStatic = Gdx.audio.newMusic(Gdx.files.internal("sounds/radioStatic.mp3"));
     private final Music menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
 
-    private final Sound radioStatic = Gdx.audio.newSound(Gdx.files.internal("sounds/radioStatic.mp3"));
     private final Sound carBeep = Gdx.audio.newSound(Gdx.files.internal("sounds/beepbeep.mp3"));
     private final Sound gnomeDeath1 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
     private final Sound gnomeDeath2 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_2.mp3"));
@@ -33,10 +34,15 @@ public class SoundController {
     public SoundController(SettingsMenu settings){
         this.settings = settings;
         music = new Array<Music>();
+        music.addAll(carAmbience,radioStatic,menuSong);
+        effects = new Array<Sound>();
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillRoar);
         carAmbience.setLooping(true);
+        radioStatic.setLooping(true);
     }
 
     public void startAmbience() {
+        carAmbience.setVolume(settings.getMusicVolume());
         carAmbience.play();
     }
 
@@ -51,7 +57,8 @@ public class SoundController {
         Radio.Station currentStation = r.getCurrentStation();
         if(r.shouldPlayStatic()) {
             if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(0);
-            radioStatic.loop();
+            radioStatic.setVolume(settings.getEffectsVolume());
+            radioStatic.play();
 //            System.out.println("STATIC " + currentStation.getAudio().getVolume());
         } else {
             radioStatic.stop();
@@ -61,7 +68,7 @@ public class SoundController {
                 lastStation.getAudio().setVolume(0);
             }
             if ((wasStatic || lastStation != currentStation) && currentStation != null) {
-                if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(1f);
+                if(currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(settings.getMusicVolume());
                 else currentStation.getAudio().play();
                 music.add(currentStation.getAudio());
             }
@@ -74,18 +81,19 @@ public class SoundController {
     }
 
     public void playDvd(DvdPlayer m) {
+        // make sure to set volume to settings.getMusicVolume()
         // TODO : add audio functionality
     }
 
     /** Called in resolveActions when horn is honked */
     public void beepSound() {
         carBeep.stop();
-        carBeep.play();
+        carBeep.play(settings.getEffectsVolume());
     }
 
     /** Called in resolveActions when horn is honked */
     public void flamingoFlapSound() {
-        flamingoFlap.play();
+        flamingoFlap.play(settings.getEffectsVolume());
     }
 
     /** Called in CollisionController and Settings */
@@ -93,19 +101,19 @@ public class SoundController {
         switch (settings.getGnomeSoundSelected()) {
             case 'A':
                 gnomeDeath1.stop();
-                gnomeDeath1.play();
+                gnomeDeath1.play(settings.getEffectsVolume());
                 break;
             case 'B':
                 gnomeDeath2.stop();
-                gnomeDeath2.play();
+                gnomeDeath2.play(settings.getEffectsVolume());
                 break;
             case 'C':
                 gnomeDeath3.stop();
-                gnomeDeath3.play();
+                gnomeDeath3.play(settings.getEffectsVolume());
                 break;
             case 'D':
                 gnomeDeath4.stop();
-                gnomeDeath4.play();
+                gnomeDeath4.play(settings.getEffectsVolume());
                 break;
             default: break;
         }
@@ -114,11 +122,11 @@ public class SoundController {
     /** Called in StartMenuMode Constructor and Dispose**/
     public void playMenuSong(boolean playing){
         if(playing) {
+            menuSong.setVolume(settings.getMusicVolume());
             menuSong.play();
             menuSong.setLooping(true);
         } else{
-            menuSong.stop();
-            menuSong.dispose();
+            stopAudio(menuSong);
         }
     }
 
@@ -128,25 +136,47 @@ public class SoundController {
             return;
         }
         m.stop();
-        m.dispose();
+        music.removeValue(m,false);
+    }
+    private void stopAudio(Sound s){
+        if(s == null) return;
+        s.stop();
+        effects.removeValue(s,false);
     }
 
     /** Universal play method, plays all audio based on game updates **/
+    float lastVolume;
     public void play(TouchScreen t){
-        if(t.getDvdPlayer().isPlayingDvd()) {
-            muteRadio(t.getRadio());
-            playDvd(t.getDvdPlayer());
-        } else {
-            playRadio(t.getRadio());
+        if( lastVolume != settings.getMusicVolume()) {
+            setAllMusicVolume();
+        }
+        lastVolume = settings.getMusicVolume();
+        if(t != null) {
+            if (t.getDvdPlayer().isPlayingDvd()) {
+                muteRadio(t.getRadio());
+                playDvd(t.getDvdPlayer());
+            } else {
+                playRadio(t.getRadio());
+            }
         }
     }
+
+    private void setAllMusicVolume(){
+        for(Music m: music){
+            m.setVolume(settings.getMusicVolume());
+        }
+    }
+
 
     /** Reset method **/
     public void reset() {
-        carAmbience.stop();
         for(Music m : music) {
             stopAudio(m);
         }
+        music.addAll(carAmbience,radioStatic,menuSong);
+        for(Sound s : effects) {
+            stopAudio(s);
+        }
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillRoar);
     }
-
 }

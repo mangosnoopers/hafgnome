@@ -117,6 +117,15 @@ public class Image {
         origin = o;
     }
 
+    public Image(Image i){
+        this.position = new Vector2(i.position);
+        this.relativeScale = i.relativeScale;
+        this.controlBuffer = i.controlBuffer;
+        this.texture = i.texture;
+        this.ORIGINAL_SCALE = i.ORIGINAL_SCALE;
+        this.origin = i.origin;
+    }
+
     public Texture getTexture() {return texture; }
 
     public static float getScreenWidth() {
