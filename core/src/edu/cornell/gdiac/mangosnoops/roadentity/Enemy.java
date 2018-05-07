@@ -28,10 +28,10 @@ public class Enemy extends RoadObject{
     private float currSpeed;
 
     /** enemy width */
-    protected float enemyWidth = 0.15f;
+    protected float enemyWidth = 0.2f;
 
     /** enemy height */
-    protected float enemyHeight = 0.08f;
+    protected float enemyHeight = 0.09f;
 
     /** the type of this enemy */
     private ObjectType enemyType;

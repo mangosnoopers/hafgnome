@@ -448,7 +448,7 @@ public class LevelObject {
                 // add some offset so they are not always in the middle of the lane
                 Random rand = new Random();
                 int direction = rand.nextInt(1) == 0 ? -1 : 1;
-                float offset = rand.nextFloat() * 0.25f * HALF_LANE_WIDTH;
+                float offset = rand.nextFloat() * 0.4f * HALF_LANE_WIDTH;
                 x = x + (offset*direction);
 
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
