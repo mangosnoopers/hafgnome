@@ -69,10 +69,10 @@ public class SoundController {
                 radioStatic.stop();
                 Radio.Station lastStation = r.getLastStation();
 
-                if (lastStation != currentStation && lastStation != null) {
+                if (lastStation != null) {
                     lastStation.getAudio().setVolume(0);
                 }
-                if ((wasStatic || lastStation != currentStation) && currentStation != null) {
+                if (currentStation != null) {
                     if (currentStation.getAudio().isPlaying())
                         currentStation.getAudio().setVolume(settings.getMusicVolume());
                     else {
@@ -80,7 +80,6 @@ public class SoundController {
                         currentStation.getAudio().setVolume(settings.getMusicVolume());
                     }
                     music.add(currentStation.getAudio());
-
                     wasStatic = r.shouldPlayStatic();
                 }
             }
