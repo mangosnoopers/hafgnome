@@ -1,6 +1,7 @@
 ## Excel stuff
 core/assets/levels/level*
 core/assets/levels/~$*
+core/assets/levels/savedlevels
 
 ## Preventing doomsday
 classes/
