@@ -255,7 +255,7 @@ public class Road extends RoadObject {
      * @return whether or not the Car has reached the end of the level.
      */
     public boolean reachedEndOfLevel() {
-        return exitY < -7;
+        return exitY < 1;
     }
 
     /** Reset the road. */
