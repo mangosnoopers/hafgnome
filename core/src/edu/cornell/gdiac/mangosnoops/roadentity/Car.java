@@ -204,6 +204,7 @@ public class Car extends RoadObject {
         if (!isDamaged) {
             isDamaged = true;
             timeToDisplayDamageIndicator = 10;
+            displayAlpha = 1.0f;
             setHealth(getHealth() - damageDelta);
         }
     }
@@ -299,7 +300,7 @@ public class Car extends RoadObject {
         } else {
             isDamaged = false;
             timeToDisplayDamageIndicator = 10;
-            displayAlpha = 1.0f;
+            displayAlpha = 0;
         }
 
         // Update "shake" offset

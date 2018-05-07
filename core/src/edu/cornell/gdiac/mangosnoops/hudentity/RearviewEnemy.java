@@ -50,8 +50,8 @@ public class RearviewEnemy extends Image {
     /** Speed constants */
     private final float NORMAL_SPEED = 30f;
 
-    /** The speed at which the enemy starts to damage the car */
-    private final float DAMAGE_HEIGHT = 0.05f;
+    /** The height at which the enemy starts to damage the car */
+    private final float DAMAGE_HEIGHT = 0.04f;
 
     /**
      * Creates a new RearviewEnemy.
