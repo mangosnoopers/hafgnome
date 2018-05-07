@@ -33,9 +33,6 @@ public class Enemy extends RoadObject{
     /** enemy height */
     protected float enemyHeight = 0.08f;
 
-    /** speed of enemy relative to road, FIXME: change this prob */
-    private float enemySpeed = 2f;
-
     /** the type of this enemy */
     private ObjectType enemyType;
 
@@ -136,12 +133,10 @@ public class Enemy extends RoadObject{
      */
     public void update(float delta, float newSpeed) {
         super.update(delta);
-
-        animeframe += animationSpeed;
-
-        setY(getY()-currSpeed * enemySpeed * delta);
-
         setSpeed(newSpeed);
+        animeframe += animationSpeed;
+        setY(getY()-currSpeed * delta);
+
     }
 
     public void draw(GameCanvas canvas) {

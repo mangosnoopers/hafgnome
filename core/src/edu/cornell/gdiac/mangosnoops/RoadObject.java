@@ -243,7 +243,7 @@ public abstract class RoadObject {
      * @param delta Number of seconds since last animation frame
      */
     public void update(float delta) {
-        position.add(velocity);
+        //position.add(velocity);
     }
 
     /**
