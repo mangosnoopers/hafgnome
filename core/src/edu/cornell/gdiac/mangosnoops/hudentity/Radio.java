@@ -190,11 +190,12 @@ public class Radio {
             soundOn = true;
             currentStation.getAudio().setVolume(1);
         }
-
-        if(soundOn) {
-            currentStation.getAudio().setVolume(0);
-        } else {
-            currentStation.getAudio().setVolume(1);
+        if(currentStation != null) {
+            if(soundOn) {
+                currentStation.getAudio().setVolume(0);
+            } else {
+                currentStation.getAudio().setVolume(1);
+            }
         }
         prevClicked = in != null && sound_on.inArea(in);
     }

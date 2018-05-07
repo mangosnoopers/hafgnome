@@ -3,7 +3,9 @@ package edu.cornell.gdiac.mangosnoops;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
@@ -31,6 +33,7 @@ public class TutorialController extends GameplayController {
     private static final String TUT_VISOR_FILE = "images/Tutorial/tut_visor.png";
     private static final String TUT_INVENTORY_FILE = "images/Tutorial/tut_inventory.png";
     private static final String TUT_ARROW = "images/Tutorial/arrow.png";
+    private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
 
     /** Texture types */
     private Texture tutKeysTexture;
@@ -41,6 +44,12 @@ public class TutorialController extends GameplayController {
     private Texture tutVisorTexture;
     private Texture tutInventoryTexture;
     private Texture arrowTexture;
+    private Texture speechTexture;
+
+    private Image speechNosh;
+    private Image speechNed;
+    private String noshDialogue = null; //null if saying nothing, otherwise draw bubble with this text
+    private String nedDialogue = null; //null if saying nothing, otherwise draw bubble with this text
 
     /** Images that will be flashed on the screen */
     private FlashingImage tutKeys;
@@ -70,6 +79,11 @@ public class TutorialController extends GameplayController {
         }
     }
 
+    private static final float NED_BUBBLE_X = 0.45f;
+    private static final float NED_BUBBLE_Y = 0.85f;
+    private static final float NOSH_BUBBLE_X = 0.62f;
+    private static final float NOSH_BUBBLE_Y = 0.9f;
+
     public void start(float x, float y) {
         super.start(x, y);
         tutKeys = new FlashingImage(0.06f, 0.45f, 0.12f, tutKeysTexture);
@@ -82,6 +96,8 @@ public class TutorialController extends GameplayController {
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
         arrowNedSnack = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
         arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
+        speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
+        speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
 
         if(tutIndex == 0) {
             tutKeys.setVisible(true);
@@ -108,6 +124,8 @@ public class TutorialController extends GameplayController {
         assets.add(TUT_INVENTORY_FILE);
         manager.load(TUT_ARROW, Texture.class);
         assets.add(TUT_ARROW);
+        manager.load(TUT_SPEECH, Texture.class);
+        assets.add(TUT_SPEECH);
     }
 
     public void loadContent(AssetManager manager) {
@@ -120,6 +138,7 @@ public class TutorialController extends GameplayController {
         tutVisorTexture = createTexture(manager, TUT_VISOR_FILE);
         tutInventoryTexture = createTexture(manager, TUT_INVENTORY_FILE);
         arrowTexture = createTexture(manager, TUT_ARROW);
+        speechTexture = createTexture(manager, TUT_SPEECH);
     }
 
     private float stamp = 0;
@@ -130,6 +149,11 @@ public class TutorialController extends GameplayController {
         if(tutIndex == 0) {
             if(stamp > 9) {
                 tutKeys.setVisible(false);
+                noshDialogue = null;
+                nedDialogue = null;
+            } else {
+                noshDialogue = "Moooooom why are we leaving home?";
+                nedDialogue = "Will we be able to make\nit to soccer practice?";
             }
             // Show to put snacks
             if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
@@ -182,8 +206,24 @@ public class TutorialController extends GameplayController {
         arrowNedSnack.update(delta);
     }
 
-    public void speechBubble(Child.ChildType childType, GameCanvas canvas) {
+    private static final float IND_TEXT_X = 0.07f;
+    private static final float IND_TEXT_Y = 0.85f;
 
+    public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
+        if(nedDialogue != null) {
+            speechNed.draw(canvas);
+            displayFont.setColor(Color.BLACK);
+            canvas.drawText(nedDialogue, displayFont,
+                    canvas.getWidth()*NED_BUBBLE_X,canvas.getHeight()*NED_BUBBLE_Y,
+                    Color.BLACK);
+        }
+        if(noshDialogue != null){
+            speechNosh.draw(canvas);
+            displayFont.setColor(Color.BLACK);
+            canvas.drawText(noshDialogue, displayFont,
+                    canvas.getWidth()*NOSH_BUBBLE_X,canvas.getHeight()*NOSH_BUBBLE_Y,
+                    Color.BLACK);
+        }
     }
 
     public void draw(GameCanvas canvas) {
@@ -198,6 +238,7 @@ public class TutorialController extends GameplayController {
         tutInventory.draw(canvas);
         arrowNoshSnack.draw(canvas, -35f);
         arrowNedSnack.draw(canvas, -35f);
+        speechBubble(canvas, displayFont);
     }
 
     public void reset() {

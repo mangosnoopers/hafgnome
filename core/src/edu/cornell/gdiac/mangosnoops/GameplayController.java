@@ -267,7 +267,7 @@ public class GameplayController {
 	private Color rearviewDamageColor = new Color(Color.RED);
 
 	/** The font for giving messages to the player */
-	private BitmapFont displayFont;
+	protected BitmapFont displayFont;
 
 	// List of objects with the garbage collection set.
 	/** The backing set for garbage collection */
