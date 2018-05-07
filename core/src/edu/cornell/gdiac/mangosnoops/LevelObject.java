@@ -364,7 +364,7 @@ public class LevelObject {
                 else if (genreStr.equals("classical"))
                     songs.put(songFile, Genre.CLASSICAL);
                 else
-                    throw new RuntimeException("Invalid song genre specified");
+                    throw new RuntimeException("Invalid song genre specified: " + genreStr);
             }
 
             // Iterate through desired number of blocks in order if randomSelect is false
@@ -448,7 +448,7 @@ public class LevelObject {
                 // add some offset so they are not always in the middle of the lane
                 Random rand = new Random();
                 int direction = rand.nextInt(1) == 0 ? -1 : 1;
-                float offset = rand.nextFloat() * HALF_LANE_WIDTH;
+                float offset = rand.nextFloat() * 0.25f * HALF_LANE_WIDTH;
                 x = x + (offset*direction);
 
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
@@ -466,7 +466,7 @@ public class LevelObject {
                     newGrill.get(i).setStartOfGrill(y);
                     enemiez.add(newGrill.get(i));
                 } else if (!enemyStr.equals("")) {
-                    throw new RuntimeException("Invalid enemy type specified");
+                    throw new RuntimeException("Invalid enemy type specified: " + enemyStr);
                 }
             }
 
