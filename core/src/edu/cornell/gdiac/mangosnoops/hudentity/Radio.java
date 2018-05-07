@@ -59,7 +59,7 @@ public class Radio {
                  Texture nod,
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
-        slider = new Image(0.85f, 0.15f, 0.02f, 20, s, GameCanvas.TextureOrigin.MIDDLE);
+        slider = new Image(0.85f, 0.15f, 0.02f, 50, s, GameCanvas.TextureOrigin.MIDDLE);
         pointer = new Image(0.85f, 0.17f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
         sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
         sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
@@ -149,7 +149,13 @@ public class Radio {
             float oneUnit = (SLIDER_RIGHTMOSTPOS - SLIDER_LEFTMOSTPOS)/numStations;
             stationNumber = (int)((pointer.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
             if(stationNumber >= numStations) stationNumber = numStations-1;
+            if(stations.get(stationNumber) != lastStation) {
+                System.out.println("REACHED==============================================");
+            }
             currentStation = stations.get(stationNumber);
+            if(currentStation != lastStation) {
+                System.out.println("REACHED2");
+            }
         }
 
     }
@@ -182,6 +188,12 @@ public class Radio {
             currentStation.getAudio().setVolume(0);
         } else if(prevClicked == true && in == null && !soundOn) {
             soundOn = true;
+            currentStation.getAudio().setVolume(1);
+        }
+
+        if(soundOn) {
+            currentStation.getAudio().setVolume(0);
+        } else {
             currentStation.getAudio().setVolume(1);
         }
         prevClicked = in != null && sound_on.inArea(in);
