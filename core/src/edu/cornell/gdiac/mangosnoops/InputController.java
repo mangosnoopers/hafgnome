@@ -128,10 +128,10 @@ public class InputController {
 	public void readInput() {
 		//Full screen/Escape Full Screen
 		if(Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-			settings.setFullScreen(!settings.isFullScreen());
+			settings.setFullScreen(true);
 		}
 		else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			Gdx.graphics.setWindowedMode((int)Image.getScreenWidth(),(int)Image.getScreenHeight());
+			settings.setFullScreen(false);
 		}
 
 		//Exit Screen
