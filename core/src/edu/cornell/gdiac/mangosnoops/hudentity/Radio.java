@@ -149,13 +149,7 @@ public class Radio {
             float oneUnit = (SLIDER_RIGHTMOSTPOS - SLIDER_LEFTMOSTPOS)/numStations;
             stationNumber = (int)((pointer.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
             if(stationNumber >= numStations) stationNumber = numStations-1;
-            if(stations.get(stationNumber) != lastStation) {
-                System.out.println("REACHED==============================================");
-            }
             currentStation = stations.get(stationNumber);
-            if(currentStation != lastStation) {
-                System.out.println("REACHED2");
-            }
         }
 
     }
