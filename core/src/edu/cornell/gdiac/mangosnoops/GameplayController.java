@@ -37,7 +37,7 @@ import java.util.HashMap;
  * This controller also acts as the root class for all the models.
  */
 public class GameplayController {
-	private SoundController soundController;
+	protected SoundController soundController;
 	/** Road instance, contains road "conveyor belt" logic */
 	protected Road road;
 	/** Car instance, containing information about the wheel and children */
@@ -878,6 +878,7 @@ public class GameplayController {
 				switch (first.getType()) {
 					case REAR_ENEMY:
 						rearviewEnemy.create();
+						soundController.playRearViewGnomeCrawl(true);
 						break;
 					case SUN_START:
 						sunShine = true;
@@ -960,10 +961,12 @@ public class GameplayController {
 			inventory.update(null, mousePressed);
 		}
 		resolveItemDrop(input);
-		rearviewEnemy.update(delta*0.0004f);
+		rearviewEnemy.update(delta*0.000175f);
 
 		if (vroomStick.isEngaged()) {
-			rearviewEnemy.destroyIfAlive();
+			if(rearviewEnemy.destroyIfAlive()){
+				soundController.playRearViewGnomeCrawl(false);
+			}
 			road.setVrooming();
 		}
 

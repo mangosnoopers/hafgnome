@@ -111,10 +111,12 @@ public class RearviewEnemy extends Image {
         }
     }
 
-    public void destroyIfAlive() {
+    public boolean destroyIfAlive() {
         if(isAlive) {
             isDying = true;
+            return true;
         }
+        return false;
     }
 
 }

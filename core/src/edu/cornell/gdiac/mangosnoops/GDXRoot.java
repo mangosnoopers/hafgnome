@@ -64,7 +64,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/** Level files - currLevel is the level that will be played */
 	private static final String[] LEVELS = new String[]{
-			"level0.xlsx", "level1.xlsx"};
+			"tut0.xlsx", "tut1.xlsx","tut2.xlsx","tut3.xlsx"};
 	private static int currLevel;
 	private static final int NUM_TUTORIALS = 1;
 
@@ -126,7 +126,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadingMode(canvas,manager,1);
 		settings = new SettingsMenu(this);
 		soundController = new SoundController(settings);
-		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel]);
+		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel],soundController);
 		levelSelect = new LevelMenuMode(canvas, manager,soundController, NUM_TUTORIALS, SAVED_LEVELS.size);
 		playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 		start = new StartMenuMode(canvas, manager,settings,soundController);
@@ -278,7 +278,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				//playing.dispose();
 				//playing = null;
 			} else {
-				reststop = new RestStopMode(canvas,manager,REST_STOPS[currLevel]);
+				reststop = new RestStopMode(canvas,manager,REST_STOPS[currLevel],soundController);
 				reststop.setPlayerInv(playing.getInventory());
 
 				// increment current level index for saving purposes
