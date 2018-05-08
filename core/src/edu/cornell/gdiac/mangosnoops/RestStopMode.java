@@ -76,6 +76,8 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String SILENCE_GNOMES = "Silence of the Gnomes";
 
     // OTHER DOODADS
+    /**Plays music and sounds **/
+    private SoundController soundController;
     /** AssetManager to be loading in the background */
     private AssetManager manager;
     /** Reference to GameCanvas created by the root */
@@ -148,7 +150,8 @@ public class RestStopMode implements Screen, InputProcessor {
         itemTextures.put(MANGO, new Texture(MANGO_FILE));
     }
 
-    public RestStopMode(GameCanvas canvas, AssetManager manager, String filename) {
+    public RestStopMode(GameCanvas canvas, AssetManager manager, String filename, SoundController sc) {
+        this.soundController = sc;
         this.canvas = canvas;
         this.manager = manager;
         SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
@@ -286,6 +289,7 @@ public class RestStopMode implements Screen, InputProcessor {
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
      */
+    private boolean readyHover;
     private void draw() {
         canvas.beginHUDDrawing();
         // TODO FIX FADE-IN, add fade-out
@@ -310,7 +314,7 @@ public class RestStopMode implements Screen, InputProcessor {
 
             // Draw the ready button - colored if pressed down
             Color readyColor = Color.WHITE;
-            if (readyStatus == BUTTON_DOWN) {
+            if (readyStatus == BUTTON_DOWN || readyHover) {
                 readyColor = Color.CHARTREUSE;
             }
             readyButton.draw(canvas, readyColor);
@@ -483,6 +487,7 @@ public class RestStopMode implements Screen, InputProcessor {
      * @return whether the input was processed */
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
         if (readyStatus == BUTTON_DOWN) {
+            soundController.playClick();
             readyStatus = BUTTON_UP;
             return false;
         }
@@ -585,6 +590,12 @@ public class RestStopMode implements Screen, InputProcessor {
      * Will not be called on iOS.
      * @return whether the input was processed */
     public boolean mouseMoved (int screenX, int screenY) {
+        if(readyButton.inArea(new Vector2(screenX,screenY))){
+            readyHover = true;
+            soundController.playHoverMouse();
+        } else {
+            readyHover = false;
+        }
         return true;
     }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.Menus.SettingsMenu;
+import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.hudentity.DvdPlayer;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
 import edu.cornell.gdiac.mangosnoops.hudentity.TouchScreen;
@@ -16,10 +17,12 @@ public class SoundController {
     /** All played music */
     private Array<Music> music;
     private Array<Sound> effects;
+
     private final Music carAmbience = Gdx.audio.newMusic(Gdx.files.internal("sounds/carAmbience.mp3"));
     private final Music radioStatic = Gdx.audio.newMusic(Gdx.files.internal("sounds/radioStatic.mp3"));
     private final Music menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
     private final Music levelSelectSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-retrosoul.mp3"));
+    private final Music rearGnomeCrawl = Gdx.audio.newMusic(Gdx.files.internal("sounds/eerieRearGnome.mp3"));
 
     private final Sound carBeep = Gdx.audio.newSound(Gdx.files.internal("sounds/beepbeep.mp3"));
     private final Sound gnomeDeath1 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
@@ -27,10 +30,14 @@ public class SoundController {
     private final Sound gnomeDeath3 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_3.mp3"));
     private final Sound gnomeDeath4 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_4.mp3"));
     private final Sound flamingoFlap = Gdx.audio.newSound(Gdx.files.internal("sounds/flamingosFlap.mp3"));
-    private final Sound grillRoar = Gdx.audio.newSound(Gdx.files.internal("sounds/grillRoar.mp3"));
+    private final Sound flamingoCollision = Gdx.audio.newSound(Gdx.files.internal("sounds/flamingoCollision.mp3"));
+    private final Sound grillCollision = Gdx.audio.newSound(Gdx.files.internal("sounds/grillCollision.mp3"));
     private final Sound carIgnition = Gdx.audio.newSound(Gdx.files.internal("sounds/carStartUp.mp3"));
     private final Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/click.mp3"));
     private final Sound hoverMouse = Gdx.audio.newSound(Gdx.files.internal("sounds/mousePassOver.mp3"));
+    private final Sound rearGnomeDefeated = Gdx.audio.newSound(Gdx.files.internal("sounds/rearGnomeDisappears.mp3"));
+    private final Array<Sound> noshDialogue = new Array<Sound>();
+    private final Array<Sound> nedDialogue = new Array<Sound>();
 
     /**
      * Object Constructor
@@ -38,11 +45,29 @@ public class SoundController {
     public SoundController(SettingsMenu settings){
         this.settings = settings;
         music = new Array<Music>();
-        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong);
+        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl);
         effects = new Array<Sound>();
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillRoar,carIgnition,click,hoverMouse);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated);
         carAmbience.setLooping(true);
         radioStatic.setLooping(true);
+
+        noshDialogue.addAll(Gdx.audio.newSound(Gdx.files.internal("sounds/tut0A.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut0C.mp3")));
+        nedDialogue.addAll(Gdx.audio.newSound(Gdx.files.internal("sounds/tut0B.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut0D.mp3")));
+
+        noshDialogue.addAll(Gdx.audio.newSound(Gdx.files.internal("sounds/tut1A.mp3")));
+
+        noshDialogue.addAll(Gdx.audio.newSound(Gdx.files.internal("sounds/tut2A.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut2D.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut2E.mp3")));
+        nedDialogue.addAll(Gdx.audio.newSound(Gdx.files.internal("sounds/tut2B.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut2C.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut2F.mp3")),
+                            Gdx.audio.newSound(Gdx.files.internal("sounds/tut2G.mp3")));
+
+        effects.addAll(noshDialogue);
+        effects.addAll(nedDialogue);
     }
 
     public void startAmbience() {
@@ -106,6 +131,16 @@ public class SoundController {
         flamingoFlap.play(settings.getEffectsVolume());
     }
 
+    /** Called in CollisionController **/
+    public void playGrillCollision() {
+        grillCollision.play(settings.getEffectsVolume());
+    }
+
+    /** Called in CollisionController **/
+    public void playFlamingoCollision() {
+        flamingoCollision.play(settings.getEffectsVolume());
+    }
+
     /** Called in CollisionController and Settings */
     public void gnomeDeathSound() {
         switch (settings.getGnomeSoundSelected()) {
@@ -126,6 +161,36 @@ public class SoundController {
                 gnomeDeath4.play(settings.getEffectsVolume());
                 break;
             default: break;
+        }
+    }
+
+    public void playRearViewGnomeCrawl(boolean playing){
+        if(playing) {
+            rearGnomeCrawl.stop();
+            rearGnomeCrawl.setVolume(settings.getMusicVolume());
+            rearGnomeCrawl.play();
+        } else{
+            rearGnomeCrawl.stop();
+            rearGnomeDefeated.stop();
+            rearGnomeDefeated.play(settings.getEffectsVolume());
+        }
+    }
+
+    /** Called in TutorialController **/
+    public void playTutorialDialogue(Child.ChildType c, int i){
+        if(i == -1){
+            return;
+        }
+        if(c == Child.ChildType.NOSH){
+            if(i > 0){
+                noshDialogue.get(i-1).stop();
+            }
+            noshDialogue.get(i).play(settings.getEffectsVolume());
+        }else if(c == Child.ChildType.NED){
+            if(i>0){
+                nedDialogue.get(i-1).stop();
+            }
+            nedDialogue.get(i).play(settings.getEffectsVolume());
         }
     }
 
@@ -207,10 +272,12 @@ public class SoundController {
         for(Music m : music) {
             stopAudio(m);
         }
-        music.addAll(carAmbience,radioStatic,menuSong);
+        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl);
         for(Sound s : effects) {
             stopAudio(s);
         }
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillRoar);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated);
+        effects.addAll(noshDialogue);
+        effects.addAll(nedDialogue);
     }
 }

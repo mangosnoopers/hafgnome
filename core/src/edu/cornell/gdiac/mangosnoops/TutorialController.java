@@ -148,24 +148,37 @@ public class TutorialController extends GameplayController {
     }
 
     private float stamp = 0;
-
+    private boolean isNoshSpeaking = false;
+    private boolean wasNoshSpeaking = false;
+    private boolean isNedSpeaking = false;
+    private boolean wasNedSpeaking = false;
     public void resolveActions(InputController input, float delta) {
         super.resolveActions(input, delta);
+        int noshDialogueSelect = -1;
+        int nedDialogueSelect = -1;
         stamp += road.getSpeed() * delta;
         if(tutIndex == 0) {
             if(stamp < 3) {
                 noshDialogue = "Moooooom why are\nwe leaving home?";
+                noshDialogueSelect = 0;
+                isNoshSpeaking = true;
             } else if(stamp < 7) {
                 noshDialogue = null;
                 nedDialogue = "Will we be able to make\nit to soccer practice?";
+                nedDialogueSelect = 0;
+                isNedSpeaking = true;
             } else if (stamp < 9) {
                 nedDialogue = null;
             } else if(stamp < 15) {
                 nedDialogue = null;
                 noshDialogue = "What are those in the\nhorizon?";
+                noshDialogueSelect =1;
+                isNoshSpeaking = true;
             } else if(stamp < 18) {
                 noshDialogue = null;
                 nedDialogue = "Are those sentient\ngarden gnomes?";
+                nedDialogueSelect =1;
+                isNedSpeaking = true;
                 tutKeys.setVisible(true);
             } else if(stamp < 20) {
                 noshDialogue = null;
@@ -218,6 +231,8 @@ public class TutorialController extends GameplayController {
                 }
             } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
                 nedDialogue = "Mom I think something\nis on our tail!";
+                noshDialogueSelect =2;
+                isNoshSpeaking = true;
                 tutVroom.setVisible(true);
             } else if(getVroomStick().isEngaged()) {
                 nedDialogue = null;
@@ -225,7 +240,16 @@ public class TutorialController extends GameplayController {
             }
         }
 
-
+        if(isNoshSpeaking!= wasNoshSpeaking && isNoshSpeaking){
+            soundController.playTutorialDialogue(Child.ChildType.NOSH, noshDialogueSelect);
+        }
+        if(isNedSpeaking!= wasNedSpeaking && isNedSpeaking){
+            soundController.playTutorialDialogue(Child.ChildType.NED, nedDialogueSelect);
+        }
+        wasNoshSpeaking = isNoshSpeaking;
+        isNoshSpeaking = false;
+        wasNedSpeaking = isNedSpeaking;
+        isNedSpeaking = false;
         tutKeys.update(delta);
         tutVroom.update(delta);
         tutInventory.update(delta);
