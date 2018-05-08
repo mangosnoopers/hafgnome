@@ -70,6 +70,13 @@ public class TutorialController extends GameplayController {
     /** Flags to indicate that one-time events have occurred */
     private int madeNoshMad;
     private int madeNedMad;
+    private int state;
+    private boolean finishedTutorial;
+
+    /** Forever appearing gnome row if you don't do the instruction */
+    private Gnome gnome;
+    private Gnome gnomeL;
+    private Gnome gnomeR;
 
     /** Which tutorial it is to identify what to display */
     private int tutIndex;
@@ -77,11 +84,10 @@ public class TutorialController extends GameplayController {
     public TutorialController(GameCanvas canvas, LevelObject level, int tutNum, SoundController sc) {
         super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc, level.getRoadsideObjs());
         tutIndex = tutNum;
-        if(tutIndex == 0) {
-            madeNoshMad = 0;
-            madeNedMad = 0;
-        }
-
+        madeNoshMad = 0;
+        madeNedMad = 0;
+        state = 0;
+        finishedTutorial = false;
     }
 
     private static final float NED_BUBBLE_X = 0.45f;
@@ -111,6 +117,19 @@ public class TutorialController extends GameplayController {
         if(tutIndex == 0) {
         } else if(tutIndex == 1) {
             vroomStick.setFlashing(true);
+        } else if(tutIndex == 2) {
+            gnome = new Gnome(0, 10);
+            gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
+            getEnemiez().add(gnome);
+            gnome.setDestroyed(true);
+            gnomeL = new Gnome(-0.2f, 10);
+            gnomeL.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
+            getEnemiez().add(gnomeL);
+            gnomeL.setDestroyed(true);
+            gnomeR = new Gnome(0.2f, 10);
+            gnomeR.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
+            getEnemiez().add(gnomeR);
+            gnomeR.setDestroyed(true);
         }
     }
 
@@ -160,6 +179,7 @@ public class TutorialController extends GameplayController {
     private boolean wasNoshSpeaking = false;
     private boolean isNedSpeaking = false;
     private boolean wasNedSpeaking = false;
+    private float stamp2 = 0;
     public void resolveActions(InputController input, float delta) {
         super.resolveActions(input, delta);
         int noshDialogueSelect = -1;
@@ -256,6 +276,121 @@ public class TutorialController extends GameplayController {
                 rearviewSeats.setFlashing(false);
                 vroomStick.setFlashing(false);
             }
+        } else if(tutIndex == 2) {
+            if(!finishedTutorial) getRoad().setRoadExitY(500);
+
+            if(stamp < 3) {
+                noshDialogue = "I'm so sleepy Mom...";
+            } else if(stamp < 4) {
+                noshDialogue = null;
+                nedDialogue = "Can you switch to\nClassical?";
+                stamp2 = stamp;
+            } else {
+                switch(state) {
+                    case 0: // can you switch to classical
+                        if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                            nedDialogue = "Can you switch to\nClassical?";
+                        }
+                        else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
+                            nedDialogue = null;
+                            stamp2 = stamp;
+                        }
+                        if(getRadio().getCurrentStation().getGenre() == Radio.Genre.CLASSICAL) {
+                            state++;
+                            stamp2 = stamp;
+                        }
+                        break;
+                    case 1:
+                        if(!yonda.getNed().isAwake()) nedDialogue = "Zzzzzzzzzzzzzz...";
+                        else nedDialogue = null;
+                        if(!yonda.getNosh().isAwake()) noshDialogue = "ZZzzzZZZzzZZ...";
+                        else noshDialogue = null;
+                        if (gnome.isDestroyed() || gnomeL.isDestroyed() || gnomeR.isDestroyed()) {
+                            //create gnomes until hit
+                            gnome.setDestroyed(true);
+                            gnomeL.setDestroyed(true);
+                            gnomeR.setDestroyed(true);
+
+                            gnome.setDestroyed(false);
+                            getEnemiez().add(gnome);
+                            gnome.setY(14);
+                            gnomeL.setDestroyed(false);
+                            getEnemiez().add(gnomeL);
+                            gnomeL.setY(14);
+                            gnomeR.setDestroyed(false);
+                            getEnemiez().add(gnomeR);
+                            gnomeR.setY(14);
+                        }
+                        if(yonda.getNed().getCurrentMood() == Child.Mood.SAD) { //hit a gnome
+                            if(madeNedMad == 0) {
+                                madeNedMad ++;
+                                stamp2 = stamp;
+                            }
+                            gnome.setDestroyed(true);
+                            gnomeL.setDestroyed(true);
+                            gnomeR.setDestroyed(true);
+                            nedDialogue = "I can't sleep like this!";
+                            if(stamp-stamp2 > 2 && stamp-stamp2 < 3) {
+                                madeNedMad = 0;
+                                nedDialogue = null;
+                                state++;
+                                stamp2 = stamp;
+                            }
+                        }
+                        break;
+                    case 2: //can you switch to comedy
+                        if(getRadio().getCurrentStation().getGenre() == Radio.Genre.COMEDY) {
+                            if(madeNoshMad == 0) {
+                                madeNoshMad++;
+                                stamp2 = stamp;
+                            }
+                            noshDialogue = "Yay! I like Comedy!";
+                            if(stamp-stamp2 > 2 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                                madeNoshMad = 0;
+                                state++;
+                                noshDialogue = null;
+                                stamp2 = stamp;
+                            }
+                        } else {
+                            if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                                noshDialogue = "Can you switch to\nComedy?";
+                            }
+                            else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
+                                noshDialogue = null;
+                                stamp2 = stamp;
+                            }
+                        }
+                        break;
+                    case 3: //can you switch to pop
+                        if(getRadio().getCurrentStation().getGenre() == Radio.Genre.POP) {
+                            if(madeNedMad == 0) {
+                                madeNedMad++;
+                                stamp2 = stamp;
+                            }
+                            nedDialogue = "Yeah! I like Pop!";
+                            if(stamp-stamp2 > 2 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
+                                state++;
+                            }
+                        } else {
+                            if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                                nedDialogue = "Can you switch to\nPop?";
+                            }
+                            else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
+                                nedDialogue = null;
+                                stamp2 = stamp;
+                            }
+                        }
+                        break;
+                    case 4: //end level
+                        if(!finishedTutorial) {
+                            getRoad().setRoadExitY(10);
+                            finishedTutorial = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         if(isNoshSpeaking!= wasNoshSpeaking && isNoshSpeaking){
@@ -278,9 +413,6 @@ public class TutorialController extends GameplayController {
         arrowNoshSnack.update(delta);
         arrowNedSnack.update(delta);
     }
-
-    private static final float IND_TEXT_X = 0.07f;
-    private static final float IND_TEXT_Y = 0.85f;
 
     public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
         if(nedDialogue != null) {
@@ -318,6 +450,8 @@ public class TutorialController extends GameplayController {
         madeNedMad = 0;
         madeNoshMad = 0;
         stamp = 0;
+        stamp2 = 0;
+        state = 0;
         noshDialogue = null;
         nedDialogue = null;
     }

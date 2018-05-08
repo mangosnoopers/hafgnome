@@ -258,6 +258,8 @@ public class Child extends Image {
      */
     public void setAsleep() {
         happiness = -HAPPY_UBOUND;
+        gettingSad = false;
+        gettingHappy = false;
     }
 
     /**
@@ -317,6 +319,9 @@ public class Child extends Image {
                     gettingSad = false;
                 }
             }
+        } else {
+            gettingHappy = false;
+            gettingSad = false;
         }
 
         if (getCurrentMood() == Mood.CRITICAL) {
