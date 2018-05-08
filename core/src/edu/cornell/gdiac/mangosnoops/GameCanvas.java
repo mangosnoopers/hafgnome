@@ -959,6 +959,7 @@ public class GameCanvas {
 
 	/**
 	 * Draw a RoadObject
+	 *  z - near 4.32 (hoverDistance)
 	 *
 	 * @param t the texture to draw
 	 * @param x x coord

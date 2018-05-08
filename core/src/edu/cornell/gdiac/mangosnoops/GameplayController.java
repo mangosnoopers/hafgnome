@@ -610,11 +610,11 @@ public class GameplayController {
 	 * corresponding textures.
 	 */
 	private void loadRoadsideTexs() {
-		roadsideTexs.put(BILLBOARD_END_IS_NEAR, billboardEndIsNearTex);
-		roadsideTexs.put(BILLBOARD_GRILL, billboardGrillTex);
-		roadsideTexs.put(BILLBOARD_FLAMINGO, billboardFlamingoTex);
-		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, billboardWhereWillYouBeTex);
-		roadsideTexs.put(EXIT_SIGN, exitSignTex);
+		roadsideTexs.put(BILLBOARD_END_IS_NEAR, new Texture(BILLBOARD_END_IS_NEAR_FILE));
+		roadsideTexs.put(BILLBOARD_GRILL, new Texture(BILLBOARD_GRILL_FILE));
+		roadsideTexs.put(BILLBOARD_FLAMINGO, new Texture(BILLBOARD_FLAMINGO_FILE));
+		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, new Texture(BILLBOARD_WHERE_WILL_YOU_BE_FILE));
+		roadsideTexs.put(EXIT_SIGN, new Texture(EXIT_SIGN_FILE));
 	}
 
 	/**

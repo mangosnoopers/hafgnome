@@ -97,21 +97,21 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Font sizes */
     private static final int TITLE_FONT_SIZE = 48;
     /** Shelf text location */
-    private static final Vector2 SHELF_TEXT_LOC = new Vector2(0.39175f,0.87f);
+    private static final Vector2 SHELF_TEXT_LOC = new Vector2(0.37175f,0.87f);
     /** Dimensions of the screen **/
     private static Vector2 SCREEN_DIMENSIONS;
     /** Scaling of inventory items */
     private static final float ITEM_SIZE_SCALE = 0.12f;
     /** Relative coordinates and scaling of the ready button */
     private static final Vector2 READY_BUTTON_SCALING = new Vector2(0.08f,0.08f);
-    private static final Vector2 READY_BUTTON_REL = new Vector2(0.87f,0.02f);
+    private static final Vector2 READY_BUTTON_REL = new Vector2(0.93f,0.04f);
     /** Scaling for textures used to indicate # of items in inventory */
     private static final float IND_SCALING = 0.09f;
     /** Drawing for items in the indicator */
-    private static final float IND_X = 0.03f;
-    private static final float IND_TEXT_X = 0.07f;
-    private static final float IND_SNACK_Y = 0.95f;
-    private static final float IND_DVD_Y = 0.85f;
+    private static final float IND_X = 0.90f;
+    private static final float IND_TEXT_X = 0.94f;
+    private static final float IND_SNACK_Y = 0.94f;
+    private static final float IND_DVD_Y = 0.84f;
     private Image snackInd;
     private Image dvdInd;
 
@@ -163,11 +163,7 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // Create images
         shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
-        readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex);
-
-        // Create images
-        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
-        readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex);
+        readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Parse JSON to get item quantities/max number of items player can take
         parseJSON("levels/" + filename);
@@ -297,13 +293,13 @@ public class RestStopMode implements Screen, InputProcessor {
             drawFadeIn();
         } else {
             // Draw background
-            canvas.draw(backgroundTex, 0, 0);
+            canvas.draw(backgroundTex, Color.WHITE, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.9f, 0.9f);
 
             // Draw the shelf and text on top
             // TODO - minimum of numCanTake and remaining inventory space
             shelf.draw(canvas);
-            String grammar = numCanTake == 1 ? " item" : " items";
-            canvas.drawText("Take up to " + numCanTake + grammar, displayFont,
+            String grammar = numCanTake == 1 ? " ITEM" : " ITEMS";
+            canvas.drawText("TAKE UP TO " + numCanTake + grammar, displayFont,
                     SCREEN_DIMENSIONS.x * SHELF_TEXT_LOC.x,
                     SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y, Color.BLACK);
 
