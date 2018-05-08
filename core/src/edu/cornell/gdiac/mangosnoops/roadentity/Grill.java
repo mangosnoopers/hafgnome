@@ -21,15 +21,6 @@ public class Grill extends Enemy {
     /** The instances of the Flame enemies belonging to this grill. */
     private Array<Flame> flames;
 
-    private class Flame extends Enemy {
-        public Flame(float x, float y) {
-            super(x, y, ObjectType.FLAME);
-            hoverDistance = 4.3f;
-            enemyWidth = 0.07f;
-            enemyHeight = 0.04f;
-        }
-    }
-
     public Grill(float x, float y) {
         super(x, y, ObjectType.GRILL);
         startY = y;
