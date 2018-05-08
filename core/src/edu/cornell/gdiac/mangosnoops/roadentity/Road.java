@@ -212,15 +212,7 @@ public class Road extends RoadObject {
             canvas.drawRoadObject(grassTexture, LEFT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, ROAD_X_ROTATION, 0);
 
             // Draw grass on the right
-            if (y > exitY) {
-                /* FIXME: The grass and the exit overlap a bit and look weird */
-                canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X+EXIT_GRASS_OFFSET, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, ROAD_X_ROTATION, 0);
-            } else {
-                canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, ROAD_X_ROTATION, 0);
-            }
-
-            // Draw exit on the right
-            canvas.drawRoadObject(exitTexture, EXIT_X, exitY,  ROAD_HOVER_DISTANCE, EXIT_WIDTH, EXIT_HEIGHT, ROAD_X_ROTATION, 0);
+            canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, ROAD_X_ROTATION, 0);
 
             // Draw exit road
             if (y > exitY) {
