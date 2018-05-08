@@ -150,7 +150,6 @@ public class SATQuestions extends Image {
         }
         if(active || answered != -1) { //question is present but hasn't been answered yet
             font.setColor(new Color(0, 0, 0, 1));
-            canvas.drawText(currQuestion, font, (X+TEXT_XOFFSET)*canvas.getWidth(), (Y-TEXT_YOFFSET)*canvas.getHeight());
             float bubbleWidth = 0.3f*SCREEN_DIMENSIONS.x;
             float bubbleHeight = 0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth();
             if(currImageB == null) { //numerical question
@@ -166,6 +165,7 @@ public class SATQuestions extends Image {
                 font.setColor(new Color(0, 0, 0, 1));
                 canvas.drawText("Click to answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             }
+            canvas.drawText(currQuestion, font, (X+TEXT_XOFFSET)*canvas.getWidth(), (Y-TEXT_YOFFSET)*canvas.getHeight());
         }
     }
 
