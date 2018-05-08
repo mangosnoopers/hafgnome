@@ -478,10 +478,10 @@ public class LevelObject {
                     Flamingo flamingo = new Flamingo(x, y);
                     enemiez.add(flamingo);
                 } else if (enemyStr.equals("grill start")) {
-                    newGrill.set(i, new Grill(x, y));
+                    newGrill.set(i-1, new Grill(x, y));
                 } else if (enemyStr.equals("grill end")) {
-                    newGrill.get(i).setStartOfGrill(y);
-                    enemiez.add(newGrill.get(i));
+                    newGrill.get(i-1).setStartOfGrill(y);
+                    enemiez.add(newGrill.get(i-1));
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified: " + enemyStr);
                 }

@@ -318,6 +318,8 @@ public class GameplayController {
 	private ObjectMap<String, Texture> roadsideTexs;
 	/** Array of roadside objects that will appear in the game */
 	private Array<RoadImage> roadsideObjs;
+	/** Used for reset */
+	private Array<RoadImage> roadsideObjsSave;
 
 	// INVENTORY CONSTANTS
 	private static final float INV_X_LEFT = 0.4756f;
@@ -609,8 +611,12 @@ public class GameplayController {
 		roadsideTexs = new ObjectMap<String, Texture>();
 		loadRoadsideTexs();
 
-		// load roadside objects
+		// load roadside objects and create a save
 		this.roadsideObjs = roadsideObjs;
+		roadsideObjsSave = new Array<RoadImage>();
+		for(RoadImage img : roadsideObjs) {
+			roadsideObjsSave.add(new RoadImage(img));
+		}
 	}
 
 	/**
@@ -786,6 +792,10 @@ public class GameplayController {
 					break;
 			}
         }
+        roadsideObjs = new Array<RoadImage>();
+		for(RoadImage image : roadsideObjsSave) {
+			roadsideObjs.add(new RoadImage(image));
+		}
 		backing.clear();
 		ypos = 0.0f;
 		nextEvent = 0;
