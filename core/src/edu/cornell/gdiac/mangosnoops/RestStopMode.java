@@ -23,15 +23,13 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String BACKGROUND_FILE = "images/restStopAssets/background.png";
     private static final String SHELF_FILE = "images/restStopAssets/shelf.png";
     private static final String GNOMECOUNTRY_DVD_FILE = "images/Items/Gnome Country for Old Men.png";
-    private static final String SILENCE_DVD_FILE = "images/Items/Silence of the Gnomes.png";
-    private static final String CHIPS_FILE = "images/Items/chips.png";
     private static final String MANGO_FILE = "images/Items/mango.png";
     private static final String READY_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
     private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
     private Texture backgroundTex;
     private Texture shelfTex;
-    private Array<Texture> dvdTexs;
-    private Array<Texture> snackTexs;
+    private Texture dvdTex;
+    private Texture snackTex;
     private Texture readyButtonTex;
     private BitmapFont displayFont;
     private ObjectMap<String,Texture> itemTextures;
@@ -53,9 +51,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private Image shelf;
     /** Number of each item that will appear at this rest stop */
     private int numMango;
-    private int numChips;
     private int numGnomeCountry;
-    private int numSilenceOfGnomes;
     /** The player's inventory */
     private Inventory playerInv;
     /** Constants for whether an item is selected or unselected */
@@ -71,9 +67,8 @@ public class RestStopMode implements Screen, InputProcessor {
     private int numMoviesSelected;
     /** Constants for item names */
     private static final String MANGO = "mango";
-    private static final String CHIPS = "chips";
     private static final String GNOME_COUNTRY = "Gnome Country for Old Men";
-    private static final String SILENCE_GNOMES = "Silence of the Gnomes";
+    private static final int SLOT_MAX_QUANTITY = 5;
 
     // OTHER DOODADS
     /** AssetManager to be loading in the background */
@@ -141,11 +136,12 @@ public class RestStopMode implements Screen, InputProcessor {
         backgroundTex = new Texture(BACKGROUND_FILE);
         shelfTex = new Texture(SHELF_FILE);
         readyButtonTex = new Texture(READY_BUTTON_FILE);
+        dvdTex = new Texture(GNOMECOUNTRY_DVD_FILE);
+        snackTex = new Texture(MANGO_FILE);
+
         itemTextures = new ObjectMap<String,Texture>();
-        itemTextures.put(SILENCE_GNOMES, new Texture(SILENCE_DVD_FILE));
-        itemTextures.put(GNOME_COUNTRY, new Texture(GNOMECOUNTRY_DVD_FILE));
-        itemTextures.put(CHIPS, new Texture(CHIPS_FILE));
-        itemTextures.put(MANGO, new Texture(MANGO_FILE));
+        itemTextures.put(GNOME_COUNTRY, dvdTex);
+        itemTextures.put(MANGO, snackTex);
     }
 
     public RestStopMode(GameCanvas canvas, AssetManager manager, String filename) {
@@ -189,11 +185,8 @@ public class RestStopMode implements Screen, InputProcessor {
             JSONObject json = new JSONObject(scanner.useDelimiter("\\A").next());
             scanner.close();
             numCanTake = json.getInt("numCanTake");
-            numMango = json.getInt("numMango");
-            numChips = json.getInt("numChips");
-            // TODO: books
-            numGnomeCountry = json.getInt("numGnomeCountry");
-            numSilenceOfGnomes = json.getInt("numSilenceOfGnomes");
+            numMango = json.getInt("numSnacks");
+            numGnomeCountry = json.getInt("numMovies");
         } catch (FileNotFoundException e) {
             // TODO better error handling
             System.out.println("Rest stop file not found");
@@ -219,12 +212,6 @@ public class RestStopMode implements Screen, InputProcessor {
                     slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(MANGO))); // MANGO));
             slotX += 0.09f;
         }
-        // chips
-        for (int i = 0; i < numChips; i++) {
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
-                    slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(CHIPS))); //, CHIPS));
-            slotX += 0.09f;
-        }
 
 
         // MIDDLE SHELF - BOOKS
@@ -246,12 +233,6 @@ public class RestStopMode implements Screen, InputProcessor {
         for (int i = 0; i < numGnomeCountry; i++) {
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
                     slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(GNOME_COUNTRY))); //, GNOME_COUNTRY));
-            slotX += 0.09f;
-        }
-        // silence of the gnomes
-        for (int i = 0; i < numSilenceOfGnomes; i++) {
-            items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
-                    slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(SILENCE_GNOMES))); //, SILENCE_GNOMES));
             slotX += 0.09f;
         }
     }
@@ -340,21 +321,30 @@ public class RestStopMode implements Screen, InputProcessor {
 
     /** Draw the current inventory quantities */
     private void drawPlayerInv() {
+
         // Snack s
+        Color snackcolor = Color.BLACK;
         snackInd.draw(canvas);
-        int totalNumSnacks = playerInv.getNumSnacks() + numSnacksSelected;
+        int totalNumSnacks = Math.min(playerInv.getNumSnacks() + numSnacksSelected, SLOT_MAX_QUANTITY);
+//        if (totalNumSnacks == SLOT_MAX_QUANTITY) {
+//            snackcolor = Color.RED;
+//        }
         canvas.drawText("x " + totalNumSnacks, displayFont,
                 SCREEN_DIMENSIONS.x*IND_TEXT_X,SCREEN_DIMENSIONS.y*IND_SNACK_Y,
-                Color.BLACK);
+                snackcolor);
 
         // Books: TODO
 
         // Movies
+        Color dvdcolor = Color.BLACK;
         dvdInd.draw(canvas);
-        int totalNumMovies = playerInv.getNumMovies() + numMoviesSelected;
+        int totalNumMovies = Math.min(playerInv.getNumMovies() + numMoviesSelected, SLOT_MAX_QUANTITY);
+//        if (totalNumMovies == SLOT_MAX_QUANTITY) {
+//            dvdcolor = Color.RED;
+//        }
         canvas.drawText("x " + totalNumMovies, displayFont,
                 SCREEN_DIMENSIONS.x*IND_TEXT_X,SCREEN_DIMENSIONS.y*IND_DVD_Y,
-                Color.BLACK);
+                dvdcolor);
     }
 
     // SCREEN METHODS
@@ -469,7 +459,10 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // If clicking on an item, change click status to button down
         for (RestStopItem i : items) {
-            if (i.inArea(mousePos)) {
+            int quantity = (i.type == Inventory.Item.ItemType.SNACK)
+                    ? numSnacksSelected + playerInv.getNumSnacks()
+                    : numMoviesSelected + playerInv.getNumMovies();
+            if (quantity < SLOT_MAX_QUANTITY && i.inArea(mousePos)) {
                 i.clickStatus = BUTTON_DOWN;
             }
 
@@ -488,7 +481,10 @@ public class RestStopMode implements Screen, InputProcessor {
         }
 
         for (RestStopItem i : items) {
-            if (i.clickStatus == BUTTON_DOWN) {
+            int quantity = (i.type == Inventory.Item.ItemType.SNACK)
+                    ? numSnacksSelected + playerInv.getNumSnacks()
+                    : numMoviesSelected + playerInv.getNumMovies();
+            if (quantity < SLOT_MAX_QUANTITY && i.clickStatus == BUTTON_DOWN) {
                 i.clickStatus = BUTTON_UP;
                 int oldToggleState = i.toggleState;
 

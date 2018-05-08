@@ -164,10 +164,8 @@ public class GameplayController {
 	private static final String REARVIEW_DAMAGE = "images/rearview_damage.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 	/** The texture files for all Items **/
-	private static final String DVD0_FILE = "images/Items/dvd0.png";
-	private static final String DVD1_FILE = "images/Items/dvd1.png";
-	private static final String SNACK0_FILE = "images/Items/snack0.png";
-	private static final String SNACK1_FILE = "images/Items/snack1.png";
+	private static final String DVD0_FILE = "images/Items/Gnome Country for Old Men.png";
+	private static final String SNACK0_FILE = "images/Items/mango.png";
 	/** Sun effect that will be overlayed */
 	private static final String SUN_FILE = "images/sun_1.jpg";
 	private static final String SUN2_FILE = "images/sun_2.jpg";
@@ -237,8 +235,8 @@ public class GameplayController {
 	/** Texture for ned (this is a film strip) */
 	private Texture nedTexture;
 	/** Textures for items **/
-	private Array<Texture> dvdTextures;
-	private Array<Texture> snackTextures;
+	private Texture dvdTexture;
+	private Texture snackTexture;
 
 	/** Texture for visor */
 	private Texture visorTexture;
@@ -386,12 +384,8 @@ public class GameplayController {
 		assets.add(RADIO_NEDDISLIKE_FILE);
 		manager.load(DVD0_FILE,Texture.class);
 		assets.add(DVD0_FILE);
-		manager.load(DVD1_FILE,Texture.class);
-		assets.add(DVD1_FILE);
 		manager.load(SNACK0_FILE,Texture.class);
 		assets.add(SNACK0_FILE);
-		manager.load(SNACK1_FILE,Texture.class);
-		assets.add(SNACK1_FILE);
 		manager.load(GRASS_FILE, Texture.class);
 		assets.add(GRASS_FILE);
 		manager.load(ROAD_FILE, Texture.class);
@@ -581,16 +575,12 @@ public class GameplayController {
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
 		// Item textures
-		dvdTextures = new Array<Texture>();
-		dvdTextures.add(new Texture(DVD0_FILE));
-		dvdTextures.add(new Texture(DVD1_FILE));
-		snackTextures = new Array<Texture>();
-		snackTextures.add(new Texture(SNACK0_FILE));
-		snackTextures.add(new Texture(SNACK1_FILE));
+		dvdTexture = new Texture(DVD0_FILE);
+		snackTexture = new Texture(SNACK0_FILE);
 
 		Image.updateScreenDimensions(canvas);
 		// create the default inventory
-		Inventory.Item.setTexturesAndScales(dvdTextures,0.12f,snackTextures,0.135f);
+		Inventory.Item.setTexturesAndScales(dvdTexture,0.12f,snackTexture,0.135f);
 		inventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
 					 INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
