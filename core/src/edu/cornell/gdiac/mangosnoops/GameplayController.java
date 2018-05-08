@@ -782,6 +782,8 @@ public class GameplayController {
 		enemiez = new Array<Enemy>();
         for(Enemy enemy : enemiezSave) {
         	switch(enemy.getType()) {
+				case GRILL:
+					enemiez.add(new Grill(enemy));
 				case GNOME:
 					enemiez.add(new Gnome(enemy));
 					break;
