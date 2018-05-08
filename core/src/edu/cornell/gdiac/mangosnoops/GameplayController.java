@@ -39,7 +39,7 @@ import java.util.HashMap;
 public class GameplayController {
 	private SoundController soundController;
 	/** Road instance, contains road "conveyor belt" logic */
-	private Road road;
+	protected Road road;
 	/** Car instance, containing information about the wheel and children */
 	protected Car yonda;
 	/** Location and animation information for the wheel **/

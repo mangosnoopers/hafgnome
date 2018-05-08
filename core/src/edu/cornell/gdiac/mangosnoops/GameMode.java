@@ -52,6 +52,8 @@ public class GameMode implements Screen {
 		PAUSED
 	}
 
+	/** Dimensions of the screen **/
+	private static Vector2 SCREEN_DIMENSIONS;
 	// GRAPHICS AND SOUND RESOURCES
 	/** The file for the background image to scroll */
 	private static String BKGD_FILE = "images/background.png";
@@ -274,6 +276,7 @@ public class GameMode implements Screen {
 	public GameMode(GameCanvas canvas,SettingsMenu settings,SoundController soundController, String levelName) {
 	    // TODO DO SOMETHING ELSE W THE EXCEPTIONS
 	    try {
+			SCREEN_DIMENSIONS = new Vector2(canvas.getWidth(),canvas.getHeight());
             this.canvas = canvas;
             active = false;
             fadeOutOpacity = 0.0f;
@@ -617,7 +620,10 @@ public class GameMode implements Screen {
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
-		// IGNORE FOR NOW
+		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
+				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
+		SCREEN_DIMENSIONS = new Vector2(width,height);
+
 	}
 
 	/**
