@@ -34,6 +34,7 @@ public class TutorialController extends GameplayController {
     private static final String TUT_INVENTORY_FILE = "images/Tutorial/tut_inventory.png";
     private static final String TUT_ARROW = "images/Tutorial/arrow.png";
     private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
+    private static final String MODULE_BG = "images/PauseMenuAssets/pauseMenuBackground.png";
 
     /** Texture types */
     private Texture tutKeysTexture;
@@ -45,7 +46,9 @@ public class TutorialController extends GameplayController {
     private Texture tutInventoryTexture;
     private Texture arrowTexture;
     private Texture speechTexture;
+    private Texture moduleTexture;
 
+    private Image module;
     private Image speechNosh;
     private Image speechNed;
     private String noshDialogue = null; //null if saying nothing, otherwise draw bubble with this text
@@ -98,6 +101,7 @@ public class TutorialController extends GameplayController {
         arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
         speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
+        module = new Image(0.5f,0.5f, 0.79f, moduleTexture, GameCanvas.TextureOrigin.MIDDLE);
 
         if(tutIndex == 0) {
         } else if(tutIndex == 1) {
@@ -125,6 +129,8 @@ public class TutorialController extends GameplayController {
         assets.add(TUT_ARROW);
         manager.load(TUT_SPEECH, Texture.class);
         assets.add(TUT_SPEECH);
+        manager.load(MODULE_BG, Texture.class);
+        assets.add(MODULE_BG);
     }
 
     public void loadContent(AssetManager manager) {
@@ -138,6 +144,7 @@ public class TutorialController extends GameplayController {
         tutInventoryTexture = createTexture(manager, TUT_INVENTORY_FILE);
         arrowTexture = createTexture(manager, TUT_ARROW);
         speechTexture = createTexture(manager, TUT_SPEECH);
+        moduleTexture = createTexture(manager, MODULE_BG);
     }
 
     private float stamp = 0;
@@ -160,10 +167,11 @@ public class TutorialController extends GameplayController {
                 noshDialogue = null;
                 nedDialogue = "Are those sentient\ngarden gnomes?";
                 tutKeys.setVisible(true);
-            } else if(stamp < 19) {
+            } else if(stamp < 20) {
                 noshDialogue = null;
                 nedDialogue = null;
             } else {
+                if(stamp < 25) tutKeys.setVisible(false);
                 // Show to put snacks
                 if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
                     tutMirrorNoshSnack.setVisible(true);
@@ -205,13 +213,14 @@ public class TutorialController extends GameplayController {
         } else if(tutIndex == 1) {
             if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
                 if(!rearviewEnemy.exists()) {
+                    nedDialogue = null;
                     tutVroom.setVisible(false);
-                    arrowNedSnack.setVisible(false);
                 }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.3f) {
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
+                nedDialogue = "Mom I think something\nis on our tail!";
                 tutVroom.setVisible(true);
-                arrowNedSnack.setVisible(true);
             } else if(getVroomStick().isEngaged()) {
+                nedDialogue = null;
                 tutVroom.setVisible(false);
             }
         }
@@ -258,7 +267,7 @@ public class TutorialController extends GameplayController {
         tutVisor.draw(canvas);
         tutInventory.draw(canvas);
         arrowNoshSnack.draw(canvas, -35f);
-        arrowNedSnack.draw(canvas, -35f);
+        arrowNedSnack.draw(canvas, -35f);8
         speechBubble(canvas, displayFont);
     }
 
