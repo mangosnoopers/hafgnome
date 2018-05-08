@@ -18,7 +18,7 @@ public class RoadImage extends RoadObject {
     protected float hoverDistance = 4.5f;
     /** Data about this image - name, miles (for exit signs), texture */
     private String name;
-    private int miles;
+    private int miles = -1;
     private Texture texture;
     /** speed of road */
     private float currSpeed;
@@ -40,6 +40,11 @@ public class RoadImage extends RoadObject {
     public String getName() { return name; }
 
     /**
+     * Return the miles, or -1 if this item does not have an associated mileage
+     */
+    public int getMiles() { return miles; }
+
+    /**
      * Construct a roadside image at the given position.
      * @param x the x-position of the image
      * @param y the y-position of the image
@@ -53,6 +58,19 @@ public class RoadImage extends RoadObject {
         maxAnimFrame = 0;
         animeframe = 0;
         // TODO velocity, moving stuff
+    }
+
+    /**
+     * Create a copy of a road image.
+     */
+    public RoadImage(RoadImage i) {
+        super();
+        position = new Vector2(i.getX(),i.getY());
+        name = i.getName();
+        miles = i.getMiles();
+        minAnimFrame = 0;
+        maxAnimFrame = 0;
+        animeframe = 0;
     }
 
     /**
