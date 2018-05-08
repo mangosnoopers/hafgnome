@@ -207,6 +207,8 @@ public class GameplayController {
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 	/** The Horn! */
 	private static final String HORN_FILE = "images/DashHUD/Horn.png";
+    /** Cracks */
+    private static final String CRACKS_FILE = "images/cracks.png";
 
 	/** Texture for road */
 	private Texture roadTexture;
@@ -282,6 +284,8 @@ public class GameplayController {
 	private Texture dvdSlot;
 	/** Horn texture */
 	private Texture hornTexture;
+    /** Cracks texture */
+    private Texture cracksTexture;
 	/** Flame texture */
 	private Texture flameTexture;
 
@@ -479,6 +483,8 @@ public class GameplayController {
 		assets.add(SPEEDLIMIT_55_FILE);
 		manager.load(SPEEDLIMIT_80_FILE, Texture.class);
 		assets.add(SPEEDLIMIT_80_FILE);
+        manager.load(CRACKS_FILE, Texture.class);
+        assets.add(CRACKS_FILE);
 	}
 
 	/**
@@ -570,6 +576,7 @@ public class GameplayController {
 		} else {
 			billboardFont = null;
 		}
+		cracksTexture = createTexture(manager, CRACKS_FILE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -788,8 +795,8 @@ public class GameplayController {
 			}
 		}
 
-		wheel = new Wheel(0.17f,0.19f, 0.5f, 60, wheelTexture);
-		vroomStick = new VroomStick(0.19f, 0.19f,0.26f, 50, vroomStickTexture);
+		wheel = new Wheel(0.17f,0.19f, 0.55f, 0, wheelTexture);
+		vroomStick = new VroomStick(0.19f, 0.19f,0.33f, 40, vroomStickTexture);
 		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
@@ -1134,6 +1141,10 @@ public class GameplayController {
 
 		//Draw sun effect part 1
 		visor.drawSunA(canvas, sunShine);
+
+        //draw cracks on screen if low health
+        if(yonda.getHealth() < 50)
+            canvas.draw(cracksTexture, GameCanvas.TextureOrigin.MIDDLE, 0.5f, 0.6f, 1f, true);
 
 		///**  Draw Dash and Interactive HUD Elements **///
 		yonda.drawDash(canvas);

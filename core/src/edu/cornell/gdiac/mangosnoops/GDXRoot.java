@@ -64,8 +64,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/** Level files - currLevel is the level that will be played */
 	private static final String[] LEVELS = new String[]{
-			"tut0.xlsx", "tut1.xlsx","tut2.xlsx","tut3.xlsx"};
-
+			"tut0.xlsx", "tut1.xlsx", "tut2.xlsx", "level0.xlsx"};
 	private static int currLevel;
 	private static final int NUM_TUTORIALS = 1;
 
