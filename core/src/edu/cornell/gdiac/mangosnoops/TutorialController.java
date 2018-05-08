@@ -59,7 +59,6 @@ public class TutorialController extends GameplayController {
     private FlashingImage tutGauge;
     private FlashingImage tutMirrorNedSnack;
     private FlashingImage tutMirrorNoshSnack;
-    private FlashingImage tutVroom;
     private FlashingImage tutHorn;
     private FlashingImage tutVisor;
     private FlashingImage tutInventory;
@@ -80,6 +79,9 @@ public class TutorialController extends GameplayController {
             madeNoshMad = 0;
             madeNedMad = 0;
         }
+
+        // For the tutorial, override some HUD elements that we want to flash
+        vroomStick.setSpecialTexture(tutVroomTexture);
     }
 
     private static final float NED_BUBBLE_X = 0.45f;
@@ -93,7 +95,6 @@ public class TutorialController extends GameplayController {
         tutGauge = new FlashingImage(0.34f, 0.05f, 0.175f, tutGaugeTexture);
         tutMirrorNedSnack = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
         tutMirrorNoshSnack = new FlashingImage(0.75f, 0.7f, 0.3f, tutMirrorTexture);
-        tutVroom = new FlashingImage(0.193f, 0.2f,0.3f, tutVroomTexture);
         tutHorn = new FlashingImage(0.12f, 0.12f, 0.17f, tutHornTexture);
         tutVisor = new FlashingImage(0.1f, 0.85f, 0.16f, tutVisorTexture);
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
@@ -105,7 +106,7 @@ public class TutorialController extends GameplayController {
 
         if(tutIndex == 0) {
         } else if(tutIndex == 1) {
-            tutVroom.setVisible(true);
+            vroomStick.setFlashing(true);
         }
     }
 
@@ -214,20 +215,21 @@ public class TutorialController extends GameplayController {
             if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
                 if(!rearviewEnemy.exists()) {
                     nedDialogue = null;
-                    tutVroom.setVisible(false);
+                    vroomStick.setFlashing(false);
                 }
             } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
                 nedDialogue = "Mom I think something\nis on our tail!";
-                tutVroom.setVisible(true);
+                vroomStick.setFlashing(true);
             } else if(getVroomStick().isEngaged()) {
                 nedDialogue = null;
-                tutVroom.setVisible(false);
+                vroomStick.setFlashing(false);
             }
         }
 
 
+        vroomStick.updateFlash(delta);
+
         tutKeys.update(delta);
-        tutVroom.update(delta);
         tutInventory.update(delta);
         tutMirrorNoshSnack.update(delta);
         tutMirrorNedSnack.update(delta);
@@ -262,7 +264,6 @@ public class TutorialController extends GameplayController {
         tutGauge.draw(canvas);
         tutMirrorNoshSnack.draw(canvas);
         tutMirrorNedSnack.draw(canvas);
-        tutVroom.draw(canvas);
         tutHorn.draw(canvas);
         tutVisor.draw(canvas);
         tutInventory.draw(canvas);

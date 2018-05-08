@@ -45,7 +45,7 @@ public class GameplayController {
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
-	private VroomStick vroomStick;
+	protected VroomStick vroomStick;
 	/** Inventory */
 	private Inventory inventory;
 	/** Inventory at the beginning of the level */
