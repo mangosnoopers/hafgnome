@@ -17,6 +17,24 @@
          "imageA":"lemonMan.png",
          "imageB":"N/A",
          "correct":0
+      },
+      {
+      	"text":"Which of these planets is larger?",
+	     "imageA":"neptune.png",
+	     "imageB":"jupiter.png",
+	     "correct":2
+      },
+      {
+      	"text":"Which of these countries is larger?",
+	     "imageA":"japan.png",
+	     "imageB":"australia.png",
+	     "correct":2
+      },
+      {
+      	"text":"Which one is hot dogs?",
+	     "imageA":"hotdogs.jpg",
+	     "imageB":"hotlegs.jpg",
+	     "correct":1
       }
    ]
 }

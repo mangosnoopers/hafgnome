@@ -172,7 +172,7 @@ public class TutorialController extends GameplayController {
                 noshDialogue = null;
                 nedDialogue = null;
             } else {
-                if(stamp < 25) tutKeys.setVisible(false);
+                if(stamp < 30) tutKeys.setVisible(false);
                 // Show to put snacks
                 if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
                     tutMirrorNoshSnack.setVisible(true);
