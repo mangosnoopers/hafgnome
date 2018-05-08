@@ -282,7 +282,7 @@ public class TutorialController extends GameplayController {
                         }
                         break;
                     case 1:
-                        if(!yonda.getNed().isAwake()) nedDialogue = "Zzzzz...";
+                        if(!yonda.getNed().isAwake()) nedDialogue = "Zzzzzzzzzzzzzz...";
                         else nedDialogue = null;
                         if(!yonda.getNosh().isAwake()) noshDialogue = "ZZzzzZZZzzZZ...";
                         else noshDialogue = null;
@@ -348,7 +348,7 @@ public class TutorialController extends GameplayController {
                                 madeNedMad++;
                                 stamp2 = stamp;
                             }
-                            nedDialogue = "Yay! I like Pop!";
+                            nedDialogue = "Yeah! I like Pop!";
                             if(stamp-stamp2 > 2 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
                                 state++;
                             }
