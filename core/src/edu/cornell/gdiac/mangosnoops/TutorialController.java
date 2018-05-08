@@ -199,7 +199,7 @@ public class TutorialController extends GameplayController {
                     nedDialogueSelect = 0;
                     isNedSpeaking = true;
                 }
-            } else if (stamp < 9) {
+            } else if (stamp < 11) {
                 nedDialogue = null;
             } else if(stamp < 15) {
                 nedDialogue = null;
@@ -266,7 +266,7 @@ public class TutorialController extends GameplayController {
                     vroomStick.setFlashing(false);
                 }
             } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
-                nedDialogue = "Mom I think there's something\n behind us!";
+                nedDialogue = "Mom I think there's\n something behind us!";
                 noshDialogueSelect =2;
                 isNoshSpeaking = true;
                 rearviewSeats.setFlashing(true);
@@ -281,15 +281,21 @@ public class TutorialController extends GameplayController {
 
             if(stamp < 3) {
                 noshDialogue = "I'm so sleepy Mom...";
+                noshDialogueSelect = 3;
+                isNoshSpeaking = true;
             } else if(stamp < 4) {
                 noshDialogue = null;
                 nedDialogue = "Can you switch to\nClassical?";
+                nedDialogueSelect = 2;
+                isNedSpeaking = true;
                 stamp2 = stamp;
             } else {
                 switch(state) {
                     case 0: // can you switch to classical
                         if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
                             nedDialogue = "Can you switch to\nClassical?";
+                            nedDialogueSelect = 2;
+                            isNedSpeaking = true;
                         }
                         else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                             nedDialogue = null;
@@ -330,6 +336,8 @@ public class TutorialController extends GameplayController {
                             gnomeL.setDestroyed(true);
                             gnomeR.setDestroyed(true);
                             nedDialogue = "I can't sleep like this!";
+                            nedDialogueSelect = 3;
+                            isNedSpeaking = true;
                             if(stamp-stamp2 > 2 && stamp-stamp2 < 3) {
                                 madeNedMad = 0;
                                 nedDialogue = null;
@@ -345,6 +353,8 @@ public class TutorialController extends GameplayController {
                                 stamp2 = stamp;
                             }
                             noshDialogue = "Yay! I like Comedy!";
+                            noshDialogueSelect = 5;
+                            isNoshSpeaking = true;
                             if(stamp-stamp2 > 2 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                                 madeNoshMad = 0;
                                 state++;
@@ -354,6 +364,8 @@ public class TutorialController extends GameplayController {
                         } else {
                             if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
                                 noshDialogue = "Can you switch to\nComedy?";
+                                noshDialogueSelect = 4;
+                                isNoshSpeaking = true;
                             }
                             else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                                 noshDialogue = null;
@@ -367,13 +379,17 @@ public class TutorialController extends GameplayController {
                                 madeNedMad++;
                                 stamp2 = stamp;
                             }
-                            nedDialogue = "Yeah! I like Pop!";
+                            nedDialogue = "Yes! I love Pop!";
+                            nedDialogueSelect = 5;
+                            isNedSpeaking = true;
                             if(stamp-stamp2 > 2 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
                                 state++;
                             }
                         } else {
                             if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
                                 nedDialogue = "Can you switch to\nPop?";
+                                nedDialogueSelect = 4;
+                                isNedSpeaking = true;
                             }
                             else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                                 nedDialogue = null;
