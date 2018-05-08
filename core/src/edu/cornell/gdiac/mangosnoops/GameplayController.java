@@ -178,6 +178,12 @@ public class GameplayController {
 	private static final String SAT_ARMADILLO_FILE = "SatQuestions/armadillo.png";
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
+	private static final String SAT_AUSTRALIA_FILE = "SatQuestions/australia.png";
+    private static final String SAT_HOTDOGS_FILE = "SatQuestions/hotdogs.jpg";
+    private static final String SAT_HOTLEGS_FILE = "SatQuestions/hotlegs.jpg";
+    private static final String SAT_JAPAN_FILE = "SatQuestions/japan.png";
+    private static final String SAT_JUPITER_FILE = "SatQuestions/jupiter.png";
+    private static final String SAT_NEPTUNE_FILE = "SatQuestions/neptune.png";
 	/** Touchscreen */
 	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
@@ -263,6 +269,12 @@ public class GameplayController {
 	private Texture satArmadillo;
 	private Texture satWhale;
 	private Texture satLemonMan;
+    private Texture satAustralia;
+    private Texture satHotDogs;
+    private Texture satHotLegs;
+    private Texture satJapan;
+    private Texture satJupiter;
+    private Texture satNeptune;
 	private HashMap<String, Texture> satTextures;
 	/** Touchscreen */
 	private Texture onTouchscreen;
@@ -427,6 +439,18 @@ public class GameplayController {
 		assets.add(SAT_WHALE_FILE);
 		manager.load(SAT_LEMONMAN_FILE, Texture.class);
 		assets.add(SAT_LEMONMAN_FILE);
+        manager.load(SAT_AUSTRALIA_FILE, Texture.class);
+        assets.add(SAT_AUSTRALIA_FILE);
+        manager.load(SAT_HOTDOGS_FILE, Texture.class);
+        assets.add(SAT_HOTDOGS_FILE);
+        manager.load(SAT_HOTLEGS_FILE, Texture.class);
+        assets.add(SAT_HOTLEGS_FILE);
+        manager.load(SAT_JAPAN_FILE, Texture.class);
+        assets.add(SAT_JAPAN_FILE);
+        manager.load(SAT_JUPITER_FILE, Texture.class);
+        assets.add(SAT_JUPITER_FILE);
+        manager.load(SAT_NEPTUNE_FILE, Texture.class);
+        assets.add(SAT_NEPTUNE_FILE);
 		manager.load(FLAMINGO_FILE, Texture.class);
 		assets.add(FLAMINGO_FILE);
 		manager.load(ON_TOUCHSCREEN_FILE, Texture.class);
@@ -513,6 +537,18 @@ public class GameplayController {
 		satTextures.put(SAT_WHALE_FILE, satWhale);
 		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
 		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
+        satAustralia = createTexture(manager, SAT_AUSTRALIA_FILE);
+        satTextures.put(SAT_AUSTRALIA_FILE, satAustralia);
+        satHotDogs = createTexture(manager, SAT_HOTDOGS_FILE);
+        satTextures.put(SAT_HOTDOGS_FILE, satHotDogs);
+        satHotLegs = createTexture(manager, SAT_HOTLEGS_FILE);
+        satTextures.put(SAT_HOTLEGS_FILE, satHotLegs);
+        satJapan = createTexture(manager, SAT_JAPAN_FILE);
+        satTextures.put(SAT_JAPAN_FILE, satJapan);
+        satJupiter = createTexture(manager, SAT_JUPITER_FILE);
+        satTextures.put(SAT_JUPITER_FILE, satJupiter);
+        satNeptune = createTexture(manager, SAT_NEPTUNE_FILE);
+        satTextures.put(SAT_NEPTUNE_FILE, satNeptune);
 		satQuestions = new SATQuestions(satTextures, satBubble);
 		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
@@ -1020,22 +1056,27 @@ public class GameplayController {
                         nosh.setAsleep();
                     }
                     break;
-				case DANCE: // ned likes, nosh dislikes
-					if(ned.isAwake()){
-                        ned.setMoodShifting(true, true);
+				case DANCE: // nosh likes
+					if(nosh.isAwake()){
+                        nosh.setMoodShifting(true, true);
 					}
 					break;
-				case CREEPY: // ned likes, nosh dislikes
-					if(ned.isAwake()){
-                        ned.setMoodShifting(true, true);
+				case ACTION: //nosh likes
+					if(nosh.isAwake()){
+                        nosh.setMoodShifting(true, true);
 					}
 					break;
-				case JAZZ: // ned likes, nosh dislikes
+				case JAZZ: // ned likes
 					if(ned.isAwake()){
 						ned.setMoodShifting(true, true);
 					}
 					break;
-				default:
+                case THUG: //ned likes
+                    if(ned.isAwake()) {
+                        ned.setMoodShifting(true, true);
+                    }
+                    break;
+				default: //pop and creepy are neutral
 					break;
 			}
 		}
@@ -1050,9 +1091,9 @@ public class GameplayController {
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
-					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake()) {
+					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake() && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
 						yonda.getNosh().setMood(Child.Mood.HAPPY);
-					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake()) {
+					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake() && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
 						yonda.getNed().setMood(Child.Mood.HAPPY);
 					} else {
 						inventory.cancelTake();
@@ -1073,7 +1114,6 @@ public class GameplayController {
 			inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
-
 	}
 
 	public void draw(GameCanvas canvas) {

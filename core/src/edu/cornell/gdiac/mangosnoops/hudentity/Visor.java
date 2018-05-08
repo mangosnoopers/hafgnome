@@ -103,9 +103,9 @@ public class Visor extends Image {
 
     public void draw(GameCanvas canvas) {
         if(open) {
-            canvas.draw(visorFilmStrip, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
+            canvas.draw(visorFilmStrip, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.32f, true);
         } else {
-            canvas.draw(visorFilmStrip, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.5f, true);
+            canvas.draw(visorFilmStrip, GameCanvas.TextureOrigin.TOP_LEFT, 0, 1, 0.32f, true);
         }
     }
 
