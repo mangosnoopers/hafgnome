@@ -44,7 +44,7 @@ public class Radio {
 
     /** Enum for song genres **/
     public enum Genre{
-        CREEPY, DANCE, ACTION, JAZZ,
+        CREEPY, COMEDY, ACTION, JAZZ,
         POP, THUG, CLASSICAL, NONE
     }
 
@@ -60,20 +60,25 @@ public class Radio {
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
         slider = new Image(0.85f, 0.15f, 0.02f, 50, s, GameCanvas.TextureOrigin.MIDDLE);
-        pointer = new Image(0.85f, 0.17f, 0.03f, 0, p, GameCanvas.TextureOrigin.MIDDLE);
+        pointer = new Image(0.85f, 0.17f, 0.03f, 50, p, GameCanvas.TextureOrigin.MIDDLE);
         sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
         sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
-        ned_like = new Image(0.5f, 0.5f, 0.07f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
-        ned_dislike = new Image(0.5f, 0.5f, 0.07f, 0, ned, GameCanvas.TextureOrigin.MIDDLE);
-        nosh_like = new Image(0.5f, 0.5f, 0.07f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
-        nosh_dislike = new Image(0.5f, 0.5f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
+        ned_like = new Image(0.79f, 0.3f, 0.05f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
+        ned_dislike = new Image(0.79f, 0.3f, 0.07f, 0, ned, GameCanvas.TextureOrigin.MIDDLE);
+        nosh_like = new Image(0.79f, 0.3f, 0.05f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
+        nosh_dislike = new Image(0.79f, 0.3f, 0.07f, 0, nod, GameCanvas.TextureOrigin.MIDDLE);
 
         soundOn = true;
         playStatic = false;
         // Create Station list
         stations = new Array<Station>();
         for (String songname : songs.keys()) {
-            stations.add(new Station(songs.get(songname), songname));
+            if(songs.get(songname) == Genre.CLASSICAL) {
+                stations.add(stations.get(0));
+                stations.set(0, new Station(songs.get(songname), songname));
+            } else {
+                stations.add(new Station(songs.get(songname), songname));
+            }
         }
     }
 
@@ -151,7 +156,6 @@ public class Radio {
             if(stationNumber >= numStations) stationNumber = numStations-1;
             currentStation = stations.get(stationNumber);
         }
-
     }
 
     public boolean shouldPlayStatic() { return playStatic; }
@@ -167,7 +171,7 @@ public class Radio {
         setStation();
         slider_left = 0.85f - 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
         slider_right = 0.85f + 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
-        if(in != null && slider.inArea(in)) {
+        if(in != null && (slider.inArea(in) || pointer.inArea(in))) {
             soundOn = true;
             playStatic = true;
             float newPos = in.x/pointer.getScreenWidth();
@@ -204,10 +208,26 @@ public class Radio {
         pointer.draw(canvas);
         if(soundOn) sound_on.draw(canvas);
         else sound_off.draw(canvas);
-//        ned_like.draw(canvas);
-//        nosh_like.draw(canvas);
+        if(currentStation != null) {
+            switch(currentStation.getGenre()) {
+                case COMEDY:
+                    nosh_like.draw(canvas);
+                    break;
+                case ACTION:
+                    nosh_like.draw(canvas);
+                    break;
+                case POP:
+                    ned_like.draw(canvas);
+                    break;
+                case THUG:
+                    ned_like.draw(canvas);
+                    break;
+                default:
+                    break;
+            }
+        }
         displayFont.setColor(Color.FIREBRICK);
-        canvas.drawTextCenterOrigin(getCurrentStationName(), displayFont, 0.83f, 0.3f);
+        canvas.drawTextCenterOrigin(getCurrentStationName(), displayFont, 0.85f, 0.3f);
         canvas.drawTextCenterOrigin("\n" + getCurrentStationSong(), displayFont, 0.85f, 0.28f);
     }
 
@@ -235,8 +255,8 @@ public class Radio {
                 case CREEPY:
                     name = "Creepy";
                     break;
-                case DANCE:
-                    name = "Dance";
+                case COMEDY:
+                    name = "Comedy";
                     break;
                 case ACTION:
                     name = "Action";

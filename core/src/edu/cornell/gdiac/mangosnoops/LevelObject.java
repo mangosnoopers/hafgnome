@@ -366,20 +366,20 @@ public class LevelObject {
                     break;
                 }
 
-                if (genreStr.equals("pop"))
+                if (genreStr.equals("classical"))
+                    songs.put(songFile, Genre.CLASSICAL);
+                else if (genreStr.equals("pop"))
                     songs.put(songFile, Genre.POP);
                 else if (genreStr.equals("creepy"))
                     songs.put(songFile, Genre.CREEPY);
-                else if (genreStr.equals("dance"))
-                    songs.put(songFile, Genre.DANCE);
+                else if (genreStr.equals("comedy"))
+                    songs.put(songFile, Genre.COMEDY);
                 else if (genreStr.equals("action"))
                     songs.put(songFile, Genre.ACTION);
                 else if (genreStr.equals("jazz"))
                     songs.put(songFile, Genre.JAZZ);
                 else if (genreStr.equals("thug"))
                     songs.put(songFile, Genre.THUG);
-                else if (genreStr.equals("classical"))
-                    songs.put(songFile, Genre.CLASSICAL);
                 else
                     throw new RuntimeException("Invalid song genre specified: " + genreStr);
             }

@@ -65,6 +65,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Level files - currLevel is the level that will be played */
 	private static final String[] LEVELS = new String[]{
 			"tut0.xlsx", "tut1.xlsx","tut2.xlsx","tut3.xlsx"};
+
 	private static int currLevel;
 	private static final int NUM_TUTORIALS = 1;
 
@@ -251,7 +252,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				// load next level index either from the levels array or saved_levels array
 				int nextIdx = levelSelect.getNextLevelIndex();
 				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS[nextIdx];
-				System.out.println("NOW PLAYING LEVEL: " + next);
+//				System.out.println("NOW PLAYING LEVEL: " + next);
 				playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);

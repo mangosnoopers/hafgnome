@@ -25,6 +25,8 @@ public class Inventory extends Image {
 
     private float itemOffset = 0.01f;
 
+    private static final int SLOT_MAX_QUANTITY = 5;
+
 
     public void setItemOffset(float f) { itemOffset = f; }
 
@@ -251,7 +253,14 @@ public class Inventory extends Image {
         }
 
         /** Increment the amount by i */
-        public void incAmount(int i) { amount += i; }
+        public void incAmount(int i) {
+            int new_amount = amount + i;
+            if (new_amount > SLOT_MAX_QUANTITY) {
+                amount = SLOT_MAX_QUANTITY;
+            } else {
+                amount = new_amount;
+            }
+        }
     }
 
     public static class Item{
@@ -264,7 +273,7 @@ public class Inventory extends Image {
 
         private Vector2 position;
 
-        private static ObjectMap<ItemType, Array<Texture>> itemTextures;
+        private static ObjectMap<ItemType, Texture> itemTextures;
         private static ObjectMap<ItemType, Float> relativeScales;
 
         public enum ItemType {
@@ -280,8 +289,7 @@ public class Inventory extends Image {
                 relativeScale = 0;
             }
             else{
-                Array<Texture> texs = itemTextures.get(itemType);
-                texture = texs.get(0);
+                texture = itemTextures.get(itemType);
                 relativeScale = relativeScales.get(itemType);
             }
 
@@ -295,21 +303,20 @@ public class Inventory extends Image {
                 relativeScale = 0;
             }
             else{
-                Array<Texture> texs = itemTextures.get(itemType);
-                texture = texs.get(0);
+                texture = itemTextures.get(itemType);
                 relativeScale = relativeScales.get(itemType);
             }
         }
 
-        public static void setTexturesAndScales(Array<Texture> dvds, float dvdScale,
-                                                Array<Texture> snacks, float snackScale){
-            itemTextures = new ObjectMap<ItemType, Array<Texture>>();
+        public static void setTexturesAndScales(Texture dvd, float dvdScale,
+                                                Texture snack, float snackScale){
+            itemTextures = new ObjectMap<ItemType, Texture>();
             relativeScales = new ObjectMap<ItemType, Float>();
-            itemTextures.put(ItemType.DVD, dvds);
-            itemTextures.put(ItemType.SNACK, snacks);
+            itemTextures.put(ItemType.DVD, dvd);
+            itemTextures.put(ItemType.SNACK, snack);
             // FIXME - assuming all items are the same size
-            relativeScales.put(ItemType.DVD, dvdScale/(itemTextures.get(ItemType.DVD).get(0).getHeight()));
-            relativeScales.put(ItemType.SNACK, snackScale/(itemTextures.get(ItemType.SNACK).get(0).getHeight()));
+            relativeScales.put(ItemType.DVD, dvdScale/(itemTextures.get(ItemType.DVD).getHeight()));
+            relativeScales.put(ItemType.SNACK, snackScale/(itemTextures.get(ItemType.SNACK).getHeight()));
         }
 
         public ItemType getItemType() {

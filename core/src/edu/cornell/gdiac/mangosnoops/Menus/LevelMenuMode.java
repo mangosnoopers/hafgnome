@@ -174,6 +174,11 @@ public class LevelMenuMode implements Screen, InputProcessor {
         // back button
         backButton = new Image(0.02f,0.02f,BUTTON_SCALE, backButtonTex, GameCanvas.TextureOrigin.BOTTOM_LEFT);
         staticImages.add(backButton);
+
+        // draw a star
+        Image star = new Image(0.25f, 0.75f, LEVEL_MARKER_SIZE*1.5f, finalLevelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE);
+        staticImages.add(star);
     }
 
     /** Generate the level nodes and their corresponding hoverable windows */
@@ -232,7 +237,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
         levelNodes.add(w2);
 
         // last level
-        LevelNode w3 = new LevelNode(0.25f, 0.75f, LEVEL_MARKER_SIZE, finalLevelMarkerTex,
+        LevelNode w3 = new LevelNode(0.25f, 0.75f, LEVEL_MARKER_SIZE * 1.5f, finalLevelMarkerTex,
                 GameCanvas.TextureOrigin.MIDDLE, true, 11);
         levelNodes.add(w3);
 
@@ -302,7 +307,11 @@ public class LevelMenuMode implements Screen, InputProcessor {
         // Draw the level nodes - only drawn the ones that have been encountered in-game
         // Draws number saved + 1 more to account for the tutorial node
         for (int i = 0; i <= numSaved; i++) {
-            levelNodes.get(i).draw(canvas);
+            LevelNode curr = levelNodes.get(i);
+            curr.draw(canvas);
+            curr.drawn = true;
+        } for (int j = numSaved + 1; j < levelNodes.size; j++) {
+            levelNodes.get(j).drawn = false;
         }
 
         // Draw the active node's hover and current level selector if the active node is not null
@@ -425,7 +434,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
         // If clicking on a node, change click status to button down
         for (LevelNode l : levelNodes) {
-            if (l.inArea(mousePos)) {
+            if (l.drawn && l.inArea(mousePos)) {
                 l.clickStatus = BUTTON_DOWN;
             }
         }
@@ -458,7 +467,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
         // check level nodes
         for (LevelNode l : levelNodes) {
-            if (l.clickStatus == BUTTON_DOWN) {
+            if (l.drawn && l.clickStatus == BUTTON_DOWN) {
                 soundController.playClick();
                 l.clickStatus = BUTTON_UP;
 
@@ -548,6 +557,8 @@ public class LevelMenuMode implements Screen, InputProcessor {
         private Image goButton;
         /** Display marker when this node is clicked on */
         private Image activeMarker;
+        /** Whether or not this node is drawn to the screen */
+        private boolean drawn;
 
         private LevelNode(float x, float y, float relSca, Texture t, GameCanvas.TextureOrigin o, boolean savedLevel, int levelIndex) {
             super(x,y,relSca,t,o);
@@ -555,6 +566,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
             this.savedLevel = savedLevel;
             clickStatus = UNCLICKED;
             goStatus = UNCLICKED;
+            drawn = false;
 
             // create the hover
             createHover();
