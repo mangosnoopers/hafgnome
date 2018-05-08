@@ -45,7 +45,7 @@ public class CollisionController {
 	/** A factor to determine the gnome and car have collided. */
 	private static final float HIT_RANGE = 0.09f;
 
-	private static final float CAR_YRANGE_END = 0f;
+	private static final float CAR_YRANGE_END = -0.25f;
 	private static final float CAR_YRANGE_START  = -0.5f;
 
 	// These cannot be modified after the controller is constructed.
