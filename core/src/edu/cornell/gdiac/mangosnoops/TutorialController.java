@@ -74,7 +74,7 @@ public class TutorialController extends GameplayController {
     private int tutIndex;
 
     public TutorialController(GameCanvas canvas, LevelObject level, int tutNum, SoundController sc) {
-        super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc);
+        super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc, level.getRoadsideObjs());
         tutIndex = tutNum;
         if(tutIndex == 0) {
             madeNoshMad = 0;

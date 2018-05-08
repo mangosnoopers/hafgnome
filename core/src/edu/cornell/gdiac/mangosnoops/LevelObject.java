@@ -55,6 +55,13 @@ public class LevelObject {
     /** Constant for extra time before end of level */
     private static final float LEVEL_END_EXTRA = 10.0f;
 
+    /** Billboard naming constants */
+    private static final String BILLBOARD_END_IS_NEAR = "the end is near";
+    private static final String BILLBOARD_GRILL = "a grill you can trust";
+    private static final String BILLBOARD_FLAMINGO = "flamingo sale";
+    private static final String BILLBOARD_WHERE_WILL_YOU_BE = "where will you be";
+    private static final String EXIT_SIGN = "exit sign";
+
     /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.25f;
     private static final float SLOW_SPEED = 0.5f;
@@ -71,7 +78,7 @@ public class LevelObject {
     private static final float MORE_PADDING_MILES = 8.0f;
     private static final float MOST_PADDING_MILES = 11.0f;
     /** Constants to help calculate x-coordinates of enemies */
-    private static final float LANE_X = 0.2f;
+    private static final float LANE_X = 0.2f; // width of a lane
     private static final float HALF_LANE_WIDTH = 0.1f;
     private static final int LANE_X_OFFSET = 1;
     /** x-coordinates of roadside areas */
@@ -182,6 +189,13 @@ public class LevelObject {
      * -1 if none (ie an Excel file was given)
      */
     public int getNumMovies() { return numMovies; }
+
+    /**
+     * Get the roadside objects that will appear in this level.
+     */
+    public Array<RoadImage> getRoadsideObjs() {
+        return roadsideObjs;
+    }
 
     /**
      * Loads in a file to create a Level Object.
@@ -471,22 +485,53 @@ public class LevelObject {
             }
 
             // Check for left roadside objects
+            float leftRoadsideX = x - LANE_X;
             String leftRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                         (roadStartCol + numLanes + 2)).toLowerCase();
 
-            if (leftRoadsideStr.equals("exit sign")) {
-
+            if (leftRoadsideStr.equals(BILLBOARD_END_IS_NEAR)
+                    || leftRoadsideStr.equals(BILLBOARD_GRILL)
+                    || leftRoadsideStr.equals(BILLBOARD_FLAMINGO)
+                    || leftRoadsideStr.equals(BILLBOARD_WHERE_WILL_YOU_BE)) {
+                RoadImage i = new RoadImage(leftRoadsideX, y, leftRoadsideStr);
+                roadsideObjs.add(i);
+            } else if (leftRoadsideStr.equals(EXIT_SIGN)) {
+                RoadImage exit = new RoadImage(leftRoadsideX, y, leftRoadsideStr, milesToInt(localMiles));
+                roadsideObjs.add(exit);
+            } else if (!leftRoadsideStr.equals("")) {
+                throw new RuntimeException("Invalid left roadside object specified: " + leftRoadsideStr);
             }
 
             // Check for right roadside objects
 
+            float rightRoadsideX = LANE_X * (numLanes - LANE_X_OFFSET);
             String rightRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                         (roadStartCol + 1)).toLowerCase();
+            if (rightRoadsideStr.equals(BILLBOARD_END_IS_NEAR)
+                    || rightRoadsideStr.equals(BILLBOARD_GRILL)
+                    || rightRoadsideStr.equals(BILLBOARD_FLAMINGO)
+                    || rightRoadsideStr.equals(BILLBOARD_WHERE_WILL_YOU_BE)) {
+                RoadImage i = new RoadImage(rightRoadsideX, y, rightRoadsideStr);
+                roadsideObjs.add(i);
+            } else if (rightRoadsideStr.equals(EXIT_SIGN)) {
+                RoadImage exit = new RoadImage(rightRoadsideX, y, rightRoadsideStr, milesToInt(localMiles));
+                roadsideObjs.add(exit);
+            } else if (!rightRoadsideStr.equals("")) {
+                throw new RuntimeException("Invalid right roadside object specified: " + rightRoadsideStr);
+            }
 
             localMiles += padding;
             roadCurrRow += 1;
             levelEndY = y + LEVEL_END_EXTRA;
         }
 
+    }
+
+    /**
+     * Converts the miles from a float to some understandable int.
+     */
+    private int milesToInt(float miles) {
+        //TODO
+        return 10;
     }
 }

@@ -535,6 +535,11 @@ public class GameMode implements Screen {
 		for (Enemy e : gameplayController.getEnemiez()) {
 			e.draw(canvas);
 		}
+//		for (RoadImage i : gameplayController.getRoadsideObjs()) {
+//			i.draw(canvas);
+//		}
+//		System.out.println(gameplayController.getRoadsideObjs() == null);
+
 		canvas.drawWorld();
 
 		// ** Draw HUD stuff **

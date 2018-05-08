@@ -184,6 +184,18 @@ public class GameplayController {
 	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
 	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
+	/** Billboards */
+	private static final String BILLBOARD_END_IS_NEAR_FILE = "images/billboards/the_end_is_near.png";
+	private static final String BILLBOARD_GRILL_FILE = "images/billboards/aGrillYouCanTrust.png";
+	private static final String BILLBOARD_FLAMINGO_FILE = "images/billboards/flamingoSale.png";
+	private static final String BILLBOARD_WHERE_WILL_YOU_BE_FILE = "images/billboards/whereWillYouBe.png";
+	private static final String EXIT_SIGN_FILE = "images/billboards/restStopSign.png";
+	/** Speed signs */
+	private static final String SPEEDLIMIT_25_FILE = "images/billboards/speedLimit25.png";
+	private static final String SPEEDLIMIT_55_FILE = "images/billboards/speedLimit55.png";
+	private static final String SPEEDLIMIT_80_FILE = "images/billboards/speedLimit80.png";
+	/** Billboard font */
+	private static String BILLBOARD_FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 	/** The Horn! */
@@ -273,6 +285,29 @@ public class GameplayController {
 	/** The backing set for garbage collection */
 	private Array<Enemy> backing;
 
+	/** Billboard textures */
+	private Texture billboardEndIsNearTex;
+	private Texture billboardGrillTex;
+	private Texture billboardFlamingoTex;
+	private Texture billboardWhereWillYouBeTex;
+	private Texture exitSignTex;
+	private BitmapFont billboardFont;
+	/** Speed sign textures */
+	private Texture speedLimit25Tex;
+	private Texture speedLimit55Tex;
+	private Texture speedLimit80Tex;
+
+	// BILLBOARD NAMING CONSTANTS
+	private static final String BILLBOARD_END_IS_NEAR = "the end is near";
+	private static final String BILLBOARD_GRILL = "a grill you can trust";
+	private static final String BILLBOARD_FLAMINGO = "flamingo sale";
+	private static final String BILLBOARD_WHERE_WILL_YOU_BE = "where will you be";
+	private static final String EXIT_SIGN = "exit sign";
+	/** An object map between roadside image names and their textures */
+	private ObjectMap<String, Texture> roadsideTexs;
+	/** Array of roadside objects that will appear in the game */
+	private Array<RoadImage> roadsideObjs;
+
 	// INVENTORY CONSTANTS
 	private static final float INV_X_LEFT = 0.4756f;
 	private static final float INV_Y_BOTTOM = 0.0366f;
@@ -288,6 +323,10 @@ public class GameplayController {
 	}
 
 	public Image getMasterShaker() { return masterShaker; }
+
+	public Array<RoadImage> getRoadsideObjs() { return roadsideObjs; }
+
+	public ObjectMap<String, Texture> getRoadsideTexs() { return roadsideTexs; }
 
 	/**
 	 * Preloads the assets for this game.
@@ -395,6 +434,20 @@ public class GameplayController {
 		assets.add(GRILL_FILE);
 		manager.load(FLAME_FILE, Texture.class);
 		assets.add(FLAME_FILE);
+		manager.load(BILLBOARD_END_IS_NEAR_FILE, Texture.class);
+		assets.add(BILLBOARD_END_IS_NEAR_FILE);
+		manager.load(BILLBOARD_GRILL_FILE, Texture.class);
+		assets.add(BILLBOARD_GRILL_FILE);
+		manager.load(BILLBOARD_FLAMINGO_FILE, Texture.class);
+		assets.add(BILLBOARD_FLAMINGO_FILE);
+		manager.load(BILLBOARD_WHERE_WILL_YOU_BE_FILE, Texture.class);
+		assets.add(BILLBOARD_WHERE_WILL_YOU_BE_FILE);
+		manager.load(SPEEDLIMIT_25_FILE, Texture.class);
+		assets.add(SPEEDLIMIT_25_FILE);
+		manager.load(SPEEDLIMIT_55_FILE, Texture.class);
+		assets.add(SPEEDLIMIT_55_FILE);
+		manager.load(SPEEDLIMIT_80_FILE, Texture.class);
+		assets.add(SPEEDLIMIT_80_FILE);
 	}
 
 	/**
@@ -460,6 +513,20 @@ public class GameplayController {
 		grillTexture = createTexture(manager, GRILL_FILE);
 		flameTexture = createTexture(manager, FLAME_FILE);
 		rearviewDamageTexture = createTexture(manager, REARVIEW_DAMAGE);
+
+		billboardEndIsNearTex = createTexture(manager, BILLBOARD_END_IS_NEAR_FILE);
+		billboardGrillTex = createTexture(manager, BILLBOARD_GRILL_FILE);
+		billboardFlamingoTex = createTexture(manager, BILLBOARD_FLAMINGO_FILE);
+		billboardWhereWillYouBeTex = createTexture(manager, BILLBOARD_WHERE_WILL_YOU_BE_FILE);
+		exitSignTex = createTexture(manager, EXIT_SIGN_FILE);
+		speedLimit25Tex = createTexture(manager, SPEEDLIMIT_25_FILE);
+		speedLimit55Tex = createTexture(manager, SPEEDLIMIT_55_FILE);
+		speedLimit80Tex = createTexture(manager, SPEEDLIMIT_80_FILE);
+		if (manager.isLoaded(BILLBOARD_FONT_FILE)) {
+			billboardFont = manager.get(BILLBOARD_FONT_FILE,BitmapFont.class);
+		} else {
+			billboardFont = null;
+		}
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -479,7 +546,8 @@ public class GameplayController {
 							  Array<Enemy> enemies,
 							  Array<Event> e,
 							  ObjectMap<String,Radio.Genre> s,
-							  SoundController sc) {
+							  SoundController sc,
+							  Array<RoadImage> roadsideObjs) {
 		soundController = sc;
 		songs = s;
 		enemiez = enemies;
@@ -526,6 +594,27 @@ public class GameplayController {
 		initialInventory.load(iCopy);
 
 		satTextures = new HashMap<String, Texture>();
+
+		roadsideTexs = new ObjectMap<String, Texture>();
+		loadRoadsideTexs();
+
+		// load roadside objects and set their textures sorry this is janky
+		this.roadsideObjs = roadsideObjs;
+//		for (RoadImage img : roadsideObjs) {
+//			img.setTexture(roadsideTexs.get(img.getName()));
+//		}
+	}
+
+	/**
+	 * Creates the object mapping between roadside image names and their
+	 * corresponding textures.
+	 */
+	private void loadRoadsideTexs() {
+		roadsideTexs.put(BILLBOARD_END_IS_NEAR, billboardEndIsNearTex);
+		roadsideTexs.put(BILLBOARD_GRILL, billboardGrillTex);
+		roadsideTexs.put(BILLBOARD_FLAMINGO, billboardFlamingoTex);
+		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, billboardWhereWillYouBeTex);
+		roadsideTexs.put(EXIT_SIGN, exitSignTex);
 	}
 
 	/**
@@ -971,6 +1060,11 @@ public class GameplayController {
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
 		}
+//
+//		for (RoadImage i : roadsideObjs) {
+//			System.out.println(roadsideTexs.containsKey(i.getName()));
+//			i.draw(canvas, satBubble);
+//		}
 
 		//Draw sun effect part 1
 		visor.drawSunA(canvas, sunShine);
