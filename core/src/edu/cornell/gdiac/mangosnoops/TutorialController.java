@@ -26,6 +26,7 @@ public class TutorialController extends GameplayController {
 
     /** Texture files */
     private static final String TUT_KEYS_FILE = "images/Tutorial/tut_keys.png";
+    private static final String TUT_WHEEL = "images/Tutorial/tut_wheel.png";
     private static final String TUT_GAUGE_FILE = "images/Tutorial/tut_gauge.png";
     private static final String TUT_MIRROR_FILE = "images/Tutorial/tut_mirror.png";
     private static final String TUT_VROOM_FILE = "images/Tutorial/tut_vroom.png";
@@ -47,6 +48,7 @@ public class TutorialController extends GameplayController {
     private Texture arrowTexture;
     private Texture speechTexture;
     private Texture moduleTexture;
+    private Texture tutWheel;
 
     private Image module;
     private Image speechNosh;
@@ -80,8 +82,6 @@ public class TutorialController extends GameplayController {
             madeNedMad = 0;
         }
 
-        // For the tutorial, override some HUD elements that we want to flash
-        vroomStick.setSpecialTexture(tutVroomTexture);
     }
 
     private static final float NED_BUBBLE_X = 0.45f;
@@ -103,6 +103,10 @@ public class TutorialController extends GameplayController {
         speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
         module = new Image(0.5f,0.5f, 0.79f, moduleTexture, GameCanvas.TextureOrigin.MIDDLE);
+
+        // For the tutorial, override some HUD elements that we want to flash
+        vroomStick.setSpecialTexture(tutVroomTexture);
+        getWheel().setSpecialTexture(tutWheel);
 
         if(tutIndex == 0) {
         } else if(tutIndex == 1) {
@@ -132,6 +136,8 @@ public class TutorialController extends GameplayController {
         assets.add(TUT_SPEECH);
         manager.load(MODULE_BG, Texture.class);
         assets.add(MODULE_BG);
+        manager.load(TUT_WHEEL, Texture.class);
+        assets.add(TUT_WHEEL);
     }
 
     public void loadContent(AssetManager manager) {
@@ -146,6 +152,7 @@ public class TutorialController extends GameplayController {
         arrowTexture = createTexture(manager, TUT_ARROW);
         speechTexture = createTexture(manager, TUT_SPEECH);
         moduleTexture = createTexture(manager, MODULE_BG);
+        tutWheel = createTexture(manager, TUT_WHEEL);
     }
 
     private float stamp = 0;
@@ -168,11 +175,15 @@ public class TutorialController extends GameplayController {
                 noshDialogue = null;
                 nedDialogue = "Are those sentient\ngarden gnomes?";
                 tutKeys.setVisible(true);
+                getWheel().setFlashing(true);
             } else if(stamp < 20) {
                 noshDialogue = null;
                 nedDialogue = null;
             } else {
-                if(stamp < 30) tutKeys.setVisible(false);
+                if(stamp < 30) {
+                    tutKeys.setVisible(false);
+                    getWheel().setFlashing(false);
+                }
                 // Show to put snacks
                 if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
                     tutMirrorNoshSnack.setVisible(true);
@@ -219,15 +230,18 @@ public class TutorialController extends GameplayController {
                 }
             } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
                 nedDialogue = "Mom I think something\nis on our tail!";
+                rearviewSeats.setFlashing(true);
                 vroomStick.setFlashing(true);
             } else if(getVroomStick().isEngaged()) {
                 nedDialogue = null;
+                rearviewSeats.setFlashing(false);
                 vroomStick.setFlashing(false);
             }
         }
 
 
         vroomStick.updateFlash(delta);
+        getWheel().updateFlash(delta);
 
         tutKeys.update(delta);
         tutInventory.update(delta);

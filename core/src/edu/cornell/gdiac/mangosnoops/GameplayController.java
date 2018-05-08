@@ -81,7 +81,7 @@ public class GameplayController {
 	private Image healthGauge;
 	private Image rearviewDamageIndicator;
 	private Image rearviewBackground;
-	private Image rearviewSeats;
+	protected Image rearviewSeats;
 	private Image rearviewCover;
 	private Image healthGaugePointer;
 

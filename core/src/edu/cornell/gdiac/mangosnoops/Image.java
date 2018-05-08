@@ -54,14 +54,19 @@ public class Image {
     protected static float shakeDeltaSum = 0;
 
     public void updateFlash(float delta) {
-        flashDeltaSum += delta;
+        if (isFlashing) {
+            flashDeltaSum += delta;
 
-        if (flashDeltaSum > FLASHING_RATE) {
-            isFlashed = !isFlashed;
-        }
+            if (flashDeltaSum > FLASHING_RATE) {
+                isFlashed = !isFlashed;
+                flashDeltaSum = 0;
+            }
 
-        if (isFlashed) {
-            texture = specialTexture;
+            if (isFlashed) {
+                texture = specialTexture;
+            } else {
+                texture = normalTexture;
+            }
         } else {
             texture = normalTexture;
         }
@@ -120,6 +125,7 @@ public class Image {
         }
         controlBuffer = 0;
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
+        normalTexture = tex;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex) {
@@ -135,16 +141,19 @@ public class Image {
         }
         controlBuffer = cb;
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
+        normalTexture = tex;
     }
 
     public Image(float x, float y, float relSca, Texture tex, GameCanvas.TextureOrigin o) {
         this(x, y, relSca, tex);
         origin = o;
+        normalTexture = tex;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex, GameCanvas.TextureOrigin o) {
         this(x, y, relSca, cb, tex);
         origin = o;
+        normalTexture = tex;
     }
 
     public Image(Image i){
