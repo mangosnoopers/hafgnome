@@ -758,6 +758,7 @@ public class GameplayController {
 				((Grill) e).setFireTexture(flameTexture);
 				System.out.println(((Grill) e).getFlames().size);
 				enemiez.addAll(((Grill) e).getFlames());
+				enemiezSave.addAll(((Grill) e).getFlames());
 			}
 		}
 
@@ -781,17 +782,21 @@ public class GameplayController {
 		radio = null;
 		enemiez = new Array<Enemy>();
         for(Enemy enemy : enemiezSave) {
+
         	switch(enemy.getType()) {
 				case GRILL:
-					Grill newGrill = new Grill(enemy);
-					newGrill.setStartOfGrill(((Grill) enemy).getGrillEndY());
 					enemiez.add(new Grill(enemy));
+					break;
 				case GNOME:
 					enemiez.add(new Gnome(enemy));
 					break;
 				case FLAMINGO:
 					enemiez.add(new Flamingo(enemy));
 					break;
+				case FLAME:
+					Flame newFlame = new Flame(enemy);
+					newFlame.setFilmStrip(flameTexture, 1, 1);
+					enemiez.add(newFlame);
 				default:
 					break;
 			}
