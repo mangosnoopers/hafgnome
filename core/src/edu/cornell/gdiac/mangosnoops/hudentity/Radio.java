@@ -151,7 +151,6 @@ public class Radio {
             if(stationNumber >= numStations) stationNumber = numStations-1;
             currentStation = stations.get(stationNumber);
         }
-
     }
 
     public boolean shouldPlayStatic() { return playStatic; }
@@ -204,6 +203,18 @@ public class Radio {
         pointer.draw(canvas);
         if(soundOn) sound_on.draw(canvas);
         else sound_off.draw(canvas);
+        switch(currentStation.getGenre()) {
+            case DANCE:
+                break;
+            case ACTION:
+                break;
+            case JAZZ:
+                break;
+            case THUG:
+                break;
+            default:
+                break;
+        }
 //        ned_like.draw(canvas);
 //        nosh_like.draw(canvas);
         displayFont.setColor(Color.FIREBRICK);
