@@ -81,7 +81,7 @@ public class TutorialController extends GameplayController {
 
     private static final float NED_BUBBLE_X = 0.45f;
     private static final float NED_BUBBLE_Y = 0.85f;
-    private static final float NOSH_BUBBLE_X = 0.62f;
+    private static final float NOSH_BUBBLE_X = 0.64f;
     private static final float NOSH_BUBBLE_Y = 0.9f;
 
     public void start(float x, float y) {
@@ -100,7 +100,6 @@ public class TutorialController extends GameplayController {
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
 
         if(tutIndex == 0) {
-            tutKeys.setVisible(true);
         } else if(tutIndex == 1) {
             tutVroom.setVisible(true);
         }
@@ -145,40 +144,62 @@ public class TutorialController extends GameplayController {
 
     public void resolveActions(InputController input, float delta) {
         super.resolveActions(input, delta);
-        stamp += delta;
+        stamp += road.getSpeed() * delta;
         if(tutIndex == 0) {
-            if(stamp > 9) {
-                tutKeys.setVisible(false);
+            if(stamp < 3) {
+                noshDialogue = "Moooooom why are\nwe leaving home?";
+            } else if(stamp < 7) {
+                noshDialogue = null;
+                nedDialogue = "Will we be able to make\nit to soccer practice?";
+            } else if (stamp < 9) {
+                nedDialogue = null;
+            } else if(stamp < 15) {
+                nedDialogue = null;
+                noshDialogue = "What are those in the\nhorizon?";
+            } else if(stamp < 18) {
+                noshDialogue = null;
+                nedDialogue = "Are those sentient\ngarden gnomes?";
+                tutKeys.setVisible(true);
+            } else if(stamp < 19) {
                 noshDialogue = null;
                 nedDialogue = null;
             } else {
-                noshDialogue = "Moooooom why are we leaving home?";
-                nedDialogue = "Will we be able to make\nit to soccer practice?";
-            }
-            // Show to put snacks
-            if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
-                tutMirrorNoshSnack.setVisible(true);
-                tutInventory.setVisible(true);
-                arrowNoshSnack.setVisible(true);
-                madeNoshMad ++;
-            } else if(madeNoshMad == 1 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
-                madeNoshMad ++;
-            }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
-                tutMirrorNoshSnack.setVisible(false);
-                arrowNoshSnack.setVisible(false);
-            }
-            if (madeNedMad == 0 && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
-                tutMirrorNedSnack.setVisible(true);
-                tutInventory.setVisible(true);
-                arrowNedSnack.setVisible(true);
-                madeNedMad ++;
-            } else if(madeNedMad == 1 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
-                madeNedMad ++;
-            } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY){
-                tutMirrorNedSnack.setVisible(false);
-                arrowNedSnack.setVisible(false);
-                if(madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
-                    tutInventory.setVisible(false);
+                // Show to put snacks
+                if (madeNoshMad == 0 && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
+                    tutMirrorNoshSnack.setVisible(true);
+                    tutInventory.setVisible(true);
+                    arrowNoshSnack.setVisible(true);
+                    madeNoshMad ++;
+                } else if(madeNoshMad == 1 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                    madeNoshMad ++;
+                }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                    noshDialogue = null;
+                    tutMirrorNoshSnack.setVisible(false);
+                    arrowNoshSnack.setVisible(false);
+                }
+                if (madeNedMad == 0 && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
+                    tutMirrorNedSnack.setVisible(true);
+                    tutInventory.setVisible(true);
+                    arrowNedSnack.setVisible(true);
+                    madeNedMad ++;
+                } else if(madeNedMad == 1 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
+                    madeNedMad ++;
+                } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY){
+                    tutMirrorNedSnack.setVisible(false);
+                    arrowNedSnack.setVisible(false);
+                    if(madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                        tutInventory.setVisible(false);
+                    }
+                }
+                if(madeNoshMad != 2 && yonda.getNosh().getCurrentMood() == Child.Mood.CRITICAL) {
+                    noshDialogue = "GIVE ME SNACK!";
+                } else {
+                    noshDialogue = null;
+                }
+                if(madeNedMad != 2 && yonda.getNed().getCurrentMood() == Child.Mood.CRITICAL) {
+                    nedDialogue = "GIVE ME SNACK!";
+                } else {
+                    nedDialogue = null;
                 }
             }
         } else if(tutIndex == 1) {
@@ -211,17 +232,17 @@ public class TutorialController extends GameplayController {
 
     public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
         if(nedDialogue != null) {
-            speechNed.draw(canvas);
+            speechNed.drawNoShake(canvas);
             displayFont.setColor(Color.BLACK);
             canvas.drawText(nedDialogue, displayFont,
-                    canvas.getWidth()*NED_BUBBLE_X,canvas.getHeight()*NED_BUBBLE_Y,
+                    canvas.getWidth()*(NED_BUBBLE_X+0.01f),canvas.getHeight()*(NED_BUBBLE_Y+0.08f),
                     Color.BLACK);
         }
         if(noshDialogue != null){
-            speechNosh.draw(canvas);
+            speechNosh.drawNoShake(canvas);
             displayFont.setColor(Color.BLACK);
             canvas.drawText(noshDialogue, displayFont,
-                    canvas.getWidth()*NOSH_BUBBLE_X,canvas.getHeight()*NOSH_BUBBLE_Y,
+                    canvas.getWidth()*(NOSH_BUBBLE_X+0.01f),canvas.getHeight()*(NOSH_BUBBLE_Y+0.08f),
                     Color.BLACK);
         }
     }
@@ -245,6 +266,9 @@ public class TutorialController extends GameplayController {
         super.reset();
         madeNedMad = 0;
         madeNoshMad = 0;
+        stamp = 0;
+        noshDialogue = null;
+        nedDialogue = null;
     }
 
 }
