@@ -25,6 +25,8 @@ public class Image {
     protected float relativeScale;
     /* Scale set at beginning of Image instantiation. Used so things may scale dynamically.*/
     protected float ORIGINAL_SCALE;
+    protected float ORIGINAL_X;
+    protected float ORIGINAL_Y;
     /** An optional buffer given to the object in order to 'pad' its area of effectiveness**/
     protected float controlBuffer;
     /** Dimensions of the screen **/
@@ -64,11 +66,26 @@ public class Image {
 
             if (isFlashed) {
                 texture = specialTexture;
+                relativeScale = ORIGINAL_SCALE * 1.06f;
+                if(origin == GameCanvas.TextureOrigin.BOTTOM_LEFT) {
+                    position.x = ORIGINAL_X - 0.01f;
+                    position.y = ORIGINAL_Y - 0.01f;
+                }
             } else {
                 texture = normalTexture;
+                relativeScale = ORIGINAL_SCALE;
+                if(origin == GameCanvas.TextureOrigin.BOTTOM_LEFT) {
+                    position.x = ORIGINAL_X;
+                    position.y = ORIGINAL_Y;
+                }
             }
         } else {
             texture = normalTexture;
+            relativeScale = ORIGINAL_SCALE;
+            if(origin == GameCanvas.TextureOrigin.BOTTOM_LEFT) {
+                position.x = ORIGINAL_X;
+                position.y = ORIGINAL_Y;
+            }
         }
     }
 
@@ -123,6 +140,8 @@ public class Image {
             relativeScale = relSca;
             texture = tex;
         }
+        ORIGINAL_X = x;
+        ORIGINAL_Y = y;
         controlBuffer = 0;
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
         normalTexture = tex;
@@ -139,6 +158,8 @@ public class Image {
             relativeScale = relSca;
             texture = tex;
         }
+        ORIGINAL_X = x;
+        ORIGINAL_Y = y;
         controlBuffer = cb;
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
         normalTexture = tex;

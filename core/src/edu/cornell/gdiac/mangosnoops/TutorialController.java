@@ -217,7 +217,7 @@ public class TutorialController extends GameplayController {
                 noshDialogue = null;
                 nedDialogue = null;
             } else {
-                if(stamp < 30) {
+                if(stamp > 30) {
                     tutKeys.setVisible(false);
                     getWheel().setFlashing(false);
                 }
