@@ -140,6 +140,8 @@ public class CollisionController {
 		c.damage();
 		c.shakeCar();
 		s.applyShake();
+		if(!c.getNed().isAwake()) c.getNed().setMood(Child.Mood.NEUTRAL);
+		if(!c.getNosh().isAwake()) c.getNosh().setMood(Child.Mood.NEUTRAL);
 		c.getNed().decreaseMood();
 		c.getNosh().decreaseMood();
 		c.getVisor().close();
