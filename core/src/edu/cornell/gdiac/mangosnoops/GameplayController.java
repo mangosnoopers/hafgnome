@@ -1056,7 +1056,7 @@ public class GameplayController {
                         nosh.setAsleep();
                     }
                     break;
-				case DANCE: // nosh likes
+				case COMEDY: // nosh likes
 					if(nosh.isAwake()){
                         nosh.setMoodShifting(true, true);
 					}
@@ -1066,7 +1066,7 @@ public class GameplayController {
                         nosh.setMoodShifting(true, true);
 					}
 					break;
-				case JAZZ: // ned likes
+				case POP: // ned likes
 					if(ned.isAwake()){
 						ned.setMoodShifting(true, true);
 					}
@@ -1076,7 +1076,7 @@ public class GameplayController {
                         ned.setMoodShifting(true, true);
                     }
                     break;
-				default: //pop and creepy are neutral
+				default: //jazz and creepy are neutral
 					break;
 			}
 		}
