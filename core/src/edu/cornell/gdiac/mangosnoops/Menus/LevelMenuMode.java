@@ -174,6 +174,11 @@ public class LevelMenuMode implements Screen, InputProcessor {
         // back button
         backButton = new Image(0.02f,0.02f,BUTTON_SCALE, backButtonTex, GameCanvas.TextureOrigin.BOTTOM_LEFT);
         staticImages.add(backButton);
+
+        // draw a star
+        Image star = new Image(0.25f, 0.75f, LEVEL_MARKER_SIZE*1.5f, finalLevelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE);
+        staticImages.add(star);
     }
 
     /** Generate the level nodes and their corresponding hoverable windows */
@@ -232,7 +237,7 @@ public class LevelMenuMode implements Screen, InputProcessor {
         levelNodes.add(w2);
 
         // last level
-        LevelNode w3 = new LevelNode(0.25f, 0.75f, LEVEL_MARKER_SIZE, finalLevelMarkerTex,
+        LevelNode w3 = new LevelNode(0.25f, 0.75f, LEVEL_MARKER_SIZE * 1.5f, finalLevelMarkerTex,
                 GameCanvas.TextureOrigin.MIDDLE, true, 11);
         levelNodes.add(w3);
 
