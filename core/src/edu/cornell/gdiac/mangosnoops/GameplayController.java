@@ -190,6 +190,9 @@ public class GameplayController {
 	private static final String BILLBOARD_FLAMINGO_FILE = "images/billboards/flamingoSale.png";
 	private static final String BILLBOARD_WHERE_WILL_YOU_BE_FILE = "images/billboards/whereWillYouBe.png";
 	private static final String EXIT_SIGN_FILE = "images/billboards/restStopSign.png";
+	private static final String SUNFLOWER_FILE = "images/billboards/midwest_sunflower.png";
+	private static final String TREE_FILE = "images/billboards/mountains_tree.png";
+	private static final String TOPIARY_FILE = "images/billboards/suburb_topiary.png";
 	/** Speed signs */
 	private static final String SPEEDLIMIT_25_FILE = "images/billboards/speedLimit25.png";
 	private static final String SPEEDLIMIT_55_FILE = "images/billboards/speedLimit55.png";
@@ -296,6 +299,10 @@ public class GameplayController {
 	private Texture speedLimit25Tex;
 	private Texture speedLimit55Tex;
 	private Texture speedLimit80Tex;
+	/** Other roadside assets */
+	private Texture sunflowerTex;
+	private Texture topiaryTex;
+	private Texture treeTex;
 
 	// BILLBOARD NAMING CONSTANTS
 	private static final String BILLBOARD_END_IS_NEAR = "the end is near";
@@ -303,6 +310,10 @@ public class GameplayController {
 	private static final String BILLBOARD_FLAMINGO = "flamingo sale";
 	private static final String BILLBOARD_WHERE_WILL_YOU_BE = "where will you be";
 	private static final String EXIT_SIGN = "exit sign";
+	private static final String SUNFLOWER = "sunflower";
+	private static final String TREE = "tree";
+	private static final String TOPIARY = "topiary";
+
 	/** An object map between roadside image names and their textures */
 	private ObjectMap<String, Texture> roadsideTexs;
 	/** Array of roadside objects that will appear in the game */
@@ -598,11 +609,8 @@ public class GameplayController {
 		roadsideTexs = new ObjectMap<String, Texture>();
 		loadRoadsideTexs();
 
-		// load roadside objects and set their textures sorry this is janky
+		// load roadside objects
 		this.roadsideObjs = roadsideObjs;
-//		for (RoadImage img : roadsideObjs) {
-//			img.setTexture(roadsideTexs.get(img.getName()));
-//		}
 	}
 
 	/**
@@ -615,6 +623,9 @@ public class GameplayController {
 		roadsideTexs.put(BILLBOARD_FLAMINGO, new Texture(BILLBOARD_FLAMINGO_FILE));
 		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, new Texture(BILLBOARD_WHERE_WILL_YOU_BE_FILE));
 		roadsideTexs.put(EXIT_SIGN, new Texture(EXIT_SIGN_FILE));
+		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
+		roadsideTexs.put(TREE, new Texture(TREE_FILE));
+		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
 	}
 
 	/**
@@ -913,6 +924,10 @@ public class GameplayController {
 			}
         }
 
+        for (RoadImage img : roadsideObjs) {
+        	img.update(delta, road.getSpeed());
+		}
+
         // Update the HUD
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
@@ -1060,11 +1075,10 @@ public class GameplayController {
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
 		}
-//
-//		for (RoadImage i : roadsideObjs) {
-//			System.out.println(roadsideTexs.containsKey(i.getName()));
-//			i.draw(canvas, satBubble);
-//		}
+
+		for (RoadImage i : roadsideObjs) {
+			i.draw(canvas, roadsideTexs.get(i.getName()));
+		}
 
 		//Draw sun effect part 1
 		visor.drawSunA(canvas, sunShine);

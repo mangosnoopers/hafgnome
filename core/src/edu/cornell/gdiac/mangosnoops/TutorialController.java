@@ -267,7 +267,7 @@ public class TutorialController extends GameplayController {
         tutVisor.draw(canvas);
         tutInventory.draw(canvas);
         arrowNoshSnack.draw(canvas, -35f);
-        arrowNedSnack.draw(canvas, -35f);8
+        arrowNedSnack.draw(canvas, -35f);
         speechBubble(canvas, displayFont);
     }
 

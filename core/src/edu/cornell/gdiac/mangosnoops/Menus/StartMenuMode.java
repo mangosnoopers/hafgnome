@@ -234,11 +234,11 @@ public class StartMenuMode implements Screen, InputProcessor {
         background.draw(canvas);
         offsetX = (int)(BUTTON_SCALE*scale*startbuttonTexture.getHeight()/1.75f);
         offsetY = offsetX;
-        if(exitingToLevel){
-            fadeOut+=0.01;
-            if(fadeOut >= 1) fadeOut = 1;
-            canvas.drawFade(fadeOut);
-        }
+//        if(exitingToLevel){
+//            fadeOut+=0.01;
+//            if(fadeOut >= 1) fadeOut = 1;
+//            canvas.drawFade(fadeOut);
+//        }
         canvas.draw(logo, Color.WHITE, logo.getWidth()/2, logo.getHeight()/2,
                 centerX, centerY*3, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
         canvas.draw(startbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,

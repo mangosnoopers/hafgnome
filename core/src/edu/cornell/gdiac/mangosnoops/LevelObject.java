@@ -55,12 +55,15 @@ public class LevelObject {
     /** Constant for extra time before end of level */
     private static final float LEVEL_END_EXTRA = 10.0f;
 
-    /** Billboard naming constants */
+    /** Roadside naming constants */
     private static final String BILLBOARD_END_IS_NEAR = "the end is near";
     private static final String BILLBOARD_GRILL = "a grill you can trust";
     private static final String BILLBOARD_FLAMINGO = "flamingo sale";
     private static final String BILLBOARD_WHERE_WILL_YOU_BE = "where will you be";
     private static final String EXIT_SIGN = "exit sign";
+    private static final String SUNFLOWER = "sunflower";
+    private static final String TREE = "tree";
+    private static final String TOPIARY = "topiary";
 
     /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.25f;
@@ -485,14 +488,17 @@ public class LevelObject {
             }
 
             // Check for left roadside objects
-            float leftRoadsideX = x - LANE_X;
+            float leftRoadsideX = x - 3*LANE_X;
             String leftRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                         (roadStartCol + numLanes + 2)).toLowerCase();
 
             if (leftRoadsideStr.equals(BILLBOARD_END_IS_NEAR)
                     || leftRoadsideStr.equals(BILLBOARD_GRILL)
                     || leftRoadsideStr.equals(BILLBOARD_FLAMINGO)
-                    || leftRoadsideStr.equals(BILLBOARD_WHERE_WILL_YOU_BE)) {
+                    || leftRoadsideStr.equals(BILLBOARD_WHERE_WILL_YOU_BE)
+                    || leftRoadsideStr.equals(SUNFLOWER)
+                    || leftRoadsideStr.equals(TREE)
+                    || leftRoadsideStr.equals(TOPIARY)) {
                 RoadImage i = new RoadImage(leftRoadsideX, y, leftRoadsideStr);
                 roadsideObjs.add(i);
             } else if (leftRoadsideStr.equals(EXIT_SIGN)) {
@@ -504,13 +510,16 @@ public class LevelObject {
 
             // Check for right roadside objects
 
-            float rightRoadsideX = LANE_X * (numLanes - LANE_X_OFFSET);
+            float rightRoadsideX = LANE_X * (numLanes+1);
             String rightRoadsideStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                         (roadStartCol + 1)).toLowerCase();
             if (rightRoadsideStr.equals(BILLBOARD_END_IS_NEAR)
                     || rightRoadsideStr.equals(BILLBOARD_GRILL)
                     || rightRoadsideStr.equals(BILLBOARD_FLAMINGO)
-                    || rightRoadsideStr.equals(BILLBOARD_WHERE_WILL_YOU_BE)) {
+                    || rightRoadsideStr.equals(BILLBOARD_WHERE_WILL_YOU_BE)
+                    || rightRoadsideStr.equals(SUNFLOWER)
+                    || rightRoadsideStr.equals(TREE)
+                    || rightRoadsideStr.equals(TOPIARY)) {
                 RoadImage i = new RoadImage(rightRoadsideX, y, rightRoadsideStr);
                 roadsideObjs.add(i);
             } else if (rightRoadsideStr.equals(EXIT_SIGN)) {
