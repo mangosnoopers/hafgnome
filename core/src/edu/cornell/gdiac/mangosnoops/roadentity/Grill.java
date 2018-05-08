@@ -14,6 +14,7 @@ public class Grill extends Enemy {
      *  Grill - - - - flame - flame - flame - - - - - - Car
      */
     private float startY;
+    private float grillEndY; // Confusingass name but oh well
 
     private static final float FLAME_PADDING = 0.5f;
 
@@ -45,11 +46,16 @@ public class Grill extends Enemy {
         enemyHeight = 0.1f;
     }
 
+    public float getGrillEndY() {
+        return grillEndY;
+    }
+
     /**
      * Set the y value of the end of this grill's frame.
      * @param y said y value
      */
     public void setStartOfGrill(float y) {
+        grillEndY = y;
         setY(y);
         float currentY = getY() - FLAME_PADDING;
         while (currentY - FLAME_PADDING >= startY) {

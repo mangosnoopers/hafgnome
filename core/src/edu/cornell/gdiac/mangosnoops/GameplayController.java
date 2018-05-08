@@ -783,6 +783,8 @@ public class GameplayController {
         for(Enemy enemy : enemiezSave) {
         	switch(enemy.getType()) {
 				case GRILL:
+					Grill newGrill = new Grill(enemy);
+					newGrill.setStartOfGrill(((Grill) enemy).getGrillEndY());
 					enemiez.add(new Grill(enemy));
 				case GNOME:
 					enemiez.add(new Gnome(enemy));
