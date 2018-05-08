@@ -37,6 +37,14 @@ public class Grill extends Enemy {
         enemyHeight = 0.1f;
     }
 
+    public Grill(Enemy g) {
+        super(g.getX(), g.getY(), ObjectType.GRILL);
+        startY = g.getY();
+        flames = new Array<Flame>();
+        enemyWidth = 0.16f;
+        enemyHeight = 0.1f;
+    }
+
     /**
      * Set the y value of the end of this grill's frame.
      * @param y said y value
