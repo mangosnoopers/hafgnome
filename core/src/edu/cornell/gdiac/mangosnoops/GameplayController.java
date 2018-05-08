@@ -45,7 +45,7 @@ public class GameplayController {
 	/** Location and animation information for the wheel **/
 	private Wheel wheel;
 	/** Location, animation information for vroomstick */
-	private VroomStick vroomStick;
+	protected VroomStick vroomStick;
 	/** Inventory */
 	private Inventory inventory;
 	/** Inventory at the beginning of the level */
@@ -81,7 +81,7 @@ public class GameplayController {
 	private Image healthGauge;
 	private Image rearviewDamageIndicator;
 	private Image rearviewBackground;
-	private Image rearviewSeats;
+	protected Image rearviewSeats;
 	private Image rearviewCover;
 	private Image healthGaugePointer;
 
@@ -164,10 +164,8 @@ public class GameplayController {
 	private static final String REARVIEW_DAMAGE = "images/rearview_damage.png";
 	private static final String REARVIEW_SEATS = "images/rearview_seats.png";
 	/** The texture files for all Items **/
-	private static final String DVD0_FILE = "images/Items/dvd0.png";
-	private static final String DVD1_FILE = "images/Items/dvd1.png";
-	private static final String SNACK0_FILE = "images/Items/snack0.png";
-	private static final String SNACK1_FILE = "images/Items/snack1.png";
+	private static final String DVD0_FILE = "images/Items/Gnome Country for Old Men.png";
+	private static final String SNACK0_FILE = "images/Items/mango.png";
 	/** Sun effect that will be overlayed */
 	private static final String SUN_FILE = "images/sun_1.jpg";
 	private static final String SUN2_FILE = "images/sun_2.jpg";
@@ -180,6 +178,12 @@ public class GameplayController {
 	private static final String SAT_ARMADILLO_FILE = "SatQuestions/armadillo.png";
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
+	private static final String SAT_AUSTRALIA_FILE = "SatQuestions/australia.png";
+    private static final String SAT_HOTDOGS_FILE = "SatQuestions/hotdogs.jpg";
+    private static final String SAT_HOTLEGS_FILE = "SatQuestions/hotlegs.jpg";
+    private static final String SAT_JAPAN_FILE = "SatQuestions/japan.png";
+    private static final String SAT_JUPITER_FILE = "SatQuestions/jupiter.png";
+    private static final String SAT_NEPTUNE_FILE = "SatQuestions/neptune.png";
 	/** Touchscreen */
 	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
@@ -237,8 +241,8 @@ public class GameplayController {
 	/** Texture for ned (this is a film strip) */
 	private Texture nedTexture;
 	/** Textures for items **/
-	private Array<Texture> dvdTextures;
-	private Array<Texture> snackTextures;
+	private Texture dvdTexture;
+	private Texture snackTexture;
 
 	/** Texture for visor */
 	private Texture visorTexture;
@@ -265,6 +269,12 @@ public class GameplayController {
 	private Texture satArmadillo;
 	private Texture satWhale;
 	private Texture satLemonMan;
+    private Texture satAustralia;
+    private Texture satHotDogs;
+    private Texture satHotLegs;
+    private Texture satJapan;
+    private Texture satJupiter;
+    private Texture satNeptune;
 	private HashMap<String, Texture> satTextures;
 	/** Touchscreen */
 	private Texture onTouchscreen;
@@ -386,12 +396,8 @@ public class GameplayController {
 		assets.add(RADIO_NEDDISLIKE_FILE);
 		manager.load(DVD0_FILE,Texture.class);
 		assets.add(DVD0_FILE);
-		manager.load(DVD1_FILE,Texture.class);
-		assets.add(DVD1_FILE);
 		manager.load(SNACK0_FILE,Texture.class);
 		assets.add(SNACK0_FILE);
-		manager.load(SNACK1_FILE,Texture.class);
-		assets.add(SNACK1_FILE);
 		manager.load(GRASS_FILE, Texture.class);
 		assets.add(GRASS_FILE);
 		manager.load(ROAD_FILE, Texture.class);
@@ -433,6 +439,18 @@ public class GameplayController {
 		assets.add(SAT_WHALE_FILE);
 		manager.load(SAT_LEMONMAN_FILE, Texture.class);
 		assets.add(SAT_LEMONMAN_FILE);
+        manager.load(SAT_AUSTRALIA_FILE, Texture.class);
+        assets.add(SAT_AUSTRALIA_FILE);
+        manager.load(SAT_HOTDOGS_FILE, Texture.class);
+        assets.add(SAT_HOTDOGS_FILE);
+        manager.load(SAT_HOTLEGS_FILE, Texture.class);
+        assets.add(SAT_HOTLEGS_FILE);
+        manager.load(SAT_JAPAN_FILE, Texture.class);
+        assets.add(SAT_JAPAN_FILE);
+        manager.load(SAT_JUPITER_FILE, Texture.class);
+        assets.add(SAT_JUPITER_FILE);
+        manager.load(SAT_NEPTUNE_FILE, Texture.class);
+        assets.add(SAT_NEPTUNE_FILE);
 		manager.load(FLAMINGO_FILE, Texture.class);
 		assets.add(FLAMINGO_FILE);
 		manager.load(ON_TOUCHSCREEN_FILE, Texture.class);
@@ -519,6 +537,18 @@ public class GameplayController {
 		satTextures.put(SAT_WHALE_FILE, satWhale);
 		satLemonMan = createTexture(manager, SAT_LEMONMAN_FILE);
 		satTextures.put(SAT_LEMONMAN_FILE, satLemonMan);
+        satAustralia = createTexture(manager, SAT_AUSTRALIA_FILE);
+        satTextures.put(SAT_AUSTRALIA_FILE, satAustralia);
+        satHotDogs = createTexture(manager, SAT_HOTDOGS_FILE);
+        satTextures.put(SAT_HOTDOGS_FILE, satHotDogs);
+        satHotLegs = createTexture(manager, SAT_HOTLEGS_FILE);
+        satTextures.put(SAT_HOTLEGS_FILE, satHotLegs);
+        satJapan = createTexture(manager, SAT_JAPAN_FILE);
+        satTextures.put(SAT_JAPAN_FILE, satJapan);
+        satJupiter = createTexture(manager, SAT_JUPITER_FILE);
+        satTextures.put(SAT_JUPITER_FILE, satJupiter);
+        satNeptune = createTexture(manager, SAT_NEPTUNE_FILE);
+        satTextures.put(SAT_NEPTUNE_FILE, satNeptune);
 		satQuestions = new SATQuestions(satTextures, satBubble);
 		onTouchscreen = createTexture(manager, ON_TOUCHSCREEN_FILE);
 		offTouchscreen = createTexture(manager, OFF_TOUCHSCREEN_FILE);
@@ -581,16 +611,12 @@ public class GameplayController {
 
 		// Initialize the inventory TODO REMOVE STARTING INV STUFF
 		// Item textures
-		dvdTextures = new Array<Texture>();
-		dvdTextures.add(new Texture(DVD0_FILE));
-		dvdTextures.add(new Texture(DVD1_FILE));
-		snackTextures = new Array<Texture>();
-		snackTextures.add(new Texture(SNACK0_FILE));
-		snackTextures.add(new Texture(SNACK1_FILE));
+		dvdTexture = new Texture(DVD0_FILE);
+		snackTexture = new Texture(SNACK0_FILE);
 
 		Image.updateScreenDimensions(canvas);
 		// create the default inventory
-		Inventory.Item.setTexturesAndScales(dvdTextures,0.12f,snackTextures,0.135f);
+		Inventory.Item.setTexturesAndScales(dvdTexture,0.12f,snackTexture,0.135f);
 		inventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
 					 INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
@@ -756,8 +782,9 @@ public class GameplayController {
 			if (e.getType() == RoadObject.ObjectType.GRILL) {
             	e.setFilmStrip(grillTexture, GRILL_FILMSTRIP_ROWS, GRILL_FILMSTRIP_COLS);
 				((Grill) e).setFireTexture(flameTexture);
-				System.out.println(((Grill) e).getFlames().size);
+//				System.out.println(((Grill) e).getFlames().size);
 				enemiez.addAll(((Grill) e).getFlames());
+				enemiezSave.addAll(((Grill) e).getFlames());
 			}
 		}
 
@@ -781,13 +808,21 @@ public class GameplayController {
 		radio = null;
 		enemiez = new Array<Enemy>();
         for(Enemy enemy : enemiezSave) {
+
         	switch(enemy.getType()) {
+				case GRILL:
+					enemiez.add(new Grill(enemy));
+					break;
 				case GNOME:
 					enemiez.add(new Gnome(enemy));
 					break;
 				case FLAMINGO:
 					enemiez.add(new Flamingo(enemy));
 					break;
+				case FLAME:
+					Flame newFlame = new Flame(enemy);
+					newFlame.setFilmStrip(flameTexture, 1, 1);
+					enemiez.add(newFlame);
 				default:
 					break;
 			}
@@ -1024,22 +1059,27 @@ public class GameplayController {
                         nosh.setAsleep();
                     }
                     break;
-				case DANCE: // ned likes, nosh dislikes
-					if(ned.isAwake()){
-                        ned.setMoodShifting(true, true);
+				case COMEDY: // nosh likes
+					if(nosh.isAwake()){
+                        nosh.setMoodShifting(true, true);
 					}
 					break;
-				case CREEPY: // ned likes, nosh dislikes
-					if(ned.isAwake()){
-                        ned.setMoodShifting(true, true);
+				case ACTION: //nosh likes
+					if(nosh.isAwake()){
+                        nosh.setMoodShifting(true, true);
 					}
 					break;
-				case JAZZ: // ned likes, nosh dislikes
+				case POP: // ned likes
 					if(ned.isAwake()){
 						ned.setMoodShifting(true, true);
 					}
 					break;
-				default:
+                case THUG: //ned likes
+                    if(ned.isAwake()) {
+                        ned.setMoodShifting(true, true);
+                    }
+                    break;
+				default: //jazz and creepy are neutral
 					break;
 			}
 		}
@@ -1054,9 +1094,9 @@ public class GameplayController {
 		if (inventory.getItemInHand() != null && inputController.isPrevMousePressed() && !inputController.isMousePressed()) {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
-					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake()) {
+					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake() && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
 						yonda.getNosh().setMood(Child.Mood.HAPPY);
-					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake()) {
+					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake() && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
 						yonda.getNed().setMood(Child.Mood.HAPPY);
 					} else {
 						inventory.cancelTake();
@@ -1077,7 +1117,6 @@ public class GameplayController {
 			inventory.setItemInHand(null);
 		}
 		droppedPos = inputController.getClickPos();
-
 	}
 
 	public void draw(GameCanvas canvas) {

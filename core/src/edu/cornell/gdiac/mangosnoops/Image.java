@@ -6,6 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Image {
 
+    // Flashing stuff
+    private float FLASHING_RATE = 0.5f;
+    private float flashDeltaSum = 0;
+    private Texture specialTexture;
+    private Texture normalTexture;
+    private boolean isFlashed = false;
+    private boolean isFlashing = false;
+
+
     /** Texture center point relative to screen size
      *  i.e. (0.5f, 0.5f) would place asset in the middle of the screen */
     protected Vector2 position;
@@ -44,6 +53,29 @@ public class Image {
      *  shake begins */
     protected static float shakeDeltaSum = 0;
 
+    public void updateFlash(float delta) {
+        if (isFlashing) {
+            flashDeltaSum += delta;
+
+            if (flashDeltaSum > FLASHING_RATE) {
+                isFlashed = !isFlashed;
+                flashDeltaSum = 0;
+            }
+
+            if (isFlashed) {
+                texture = specialTexture;
+            } else {
+                texture = normalTexture;
+            }
+        } else {
+            texture = normalTexture;
+        }
+    }
+
+    public void setFlashing(boolean f) {
+        isFlashing = f;
+    }
+
     GameCanvas.TextureOrigin origin;
     /** Update the shake amount. */
     protected void updateShake(float delta) {
@@ -76,6 +108,9 @@ public class Image {
         //used for master shaker lol
     }
 
+    public void setSpecialTexture(Texture t) {
+        specialTexture = t;
+    }
 
     public Image(float x, float y, float relSca, Texture tex) {
         position = new Vector2(x,y);
@@ -90,6 +125,7 @@ public class Image {
         }
         controlBuffer = 0;
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
+        normalTexture = tex;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex) {
@@ -105,16 +141,19 @@ public class Image {
         }
         controlBuffer = cb;
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
+        normalTexture = tex;
     }
 
     public Image(float x, float y, float relSca, Texture tex, GameCanvas.TextureOrigin o) {
         this(x, y, relSca, tex);
         origin = o;
+        normalTexture = tex;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex, GameCanvas.TextureOrigin o) {
         this(x, y, relSca, cb, tex);
         origin = o;
+        normalTexture = tex;
     }
 
     public Image(Image i){
