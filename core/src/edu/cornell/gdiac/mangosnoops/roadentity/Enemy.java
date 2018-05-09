@@ -42,6 +42,20 @@ public class Enemy extends RoadObject{
     /** The maximum animation frame */
     protected int maxAnimFrame;
 
+    /** Reference to Enemy that is directly left-adjacent */
+    private Enemy rightEnemy;
+
+    public void setRightEnemy(Enemy e) {
+        rightEnemy = e;
+    }
+
+    public Enemy getRightEnemy() {
+        return rightEnemy;
+    }
+
+    public float getEnemyWidth() {
+        return enemyWidth;
+    }
 
     /**
      * Returns the type of this object.

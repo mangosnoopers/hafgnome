@@ -121,14 +121,18 @@ public class TutorialController extends GameplayController {
             gnome = new Gnome(0, 10);
             gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
             getEnemiez().add(gnome);
-            gnome.setDestroyed(true);
             gnomeL = new Gnome(-0.2f, 10);
             gnomeL.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
             getEnemiez().add(gnomeL);
-            gnomeL.setDestroyed(true);
             gnomeR = new Gnome(0.2f, 10);
             gnomeR.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
             getEnemiez().add(gnomeR);
+
+            gnomeL.setRightEnemy(gnome);
+            gnome.setRightEnemy(gnomeR);
+
+            gnome.setDestroyed(true);
+            gnomeL.setDestroyed(true);
             gnomeR.setDestroyed(true);
         }
     }

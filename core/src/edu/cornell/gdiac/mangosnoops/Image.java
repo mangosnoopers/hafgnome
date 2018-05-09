@@ -14,7 +14,6 @@ public class Image {
     private boolean isFlashed = false;
     private boolean isFlashing = false;
 
-
     /** Texture center point relative to screen size
      *  i.e. (0.5f, 0.5f) would place asset in the middle of the screen */
     protected Vector2 position;
