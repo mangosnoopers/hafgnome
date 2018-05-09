@@ -430,6 +430,8 @@ public class LevelObject {
             newGrill.add(null);
         }
 
+        Enemy prevEnemy = null;
+
         // Iterate through cells until "END" is reached in first column
         int roadCurrRow = ROAD_START_ROW;
         while (!df.formatCellValue(sh.getRow(roadCurrRow).getCell(roadStartCol)).toUpperCase().equals("END")) {
@@ -458,6 +460,8 @@ public class LevelObject {
             // Starting x-coordinate for rightmost lane
             float x = LANE_X * (numLanes - LANE_X_OFFSET);
             // Check for enemies in each lane
+            // Set to null before checking the lanes
+            prevEnemy = null;
             for (int i = 1; i <= numLanes; i++) {
 
                 // Calculate the x-coordinate for this enemy - decrease by 0.2 for each lane left
@@ -471,17 +475,35 @@ public class LevelObject {
                 String enemyStr = df.formatCellValue(sh.getRow(roadCurrRow).getCell
                                     (roadStartCol + i + 1)).toLowerCase();
 
+                /* Get the cell to the right. Only matters if we're not in the rightmost
+                   lane. */
+                String enemyStrRight = "";
+
                 if (enemyStr.equals("gnome")) {
                     Gnome gnome = new Gnome(x, y);
                     enemiez.add(gnome);
+                    if (prevEnemy != null) {
+                        gnome.setRightEnemy(prevEnemy);
+                    }
+                    prevEnemy = gnome;
                 } else if (enemyStr.equals("flamingo")) {
                     Flamingo flamingo = new Flamingo(x, y);
                     enemiez.add(flamingo);
+                    if (prevEnemy != null) {
+                        flamingo.setRightEnemy(prevEnemy);
+                    }
+                    prevEnemy = flamingo;
                 } else if (enemyStr.equals("grill start")) {
                     newGrill.set(i-1, new Grill(x, y));
                 } else if (enemyStr.equals("grill end")) {
                     newGrill.get(i-1).setStartOfGrill(y);
                     enemiez.add(newGrill.get(i-1));
+                    if (prevEnemy != null) {
+                        newGrill.get(i-1).setRightEnemy(prevEnemy);
+                    }
+                    prevEnemy = newGrill.get(i-1);
+                } else if (enemyStr.equals("")) {
+                    prevEnemy = null;
                 } else if (!enemyStr.equals("")) {
                     throw new RuntimeException("Invalid enemy type specified: " + enemyStr);
                 }

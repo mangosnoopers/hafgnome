@@ -156,7 +156,12 @@ public class CollisionController {
         boolean eInYRange = e.getY() > CAR_YRANGE_START && e.getY() < CAR_YRANGE_END;
         boolean eInXRange = Math.abs(e.getX() - c.position.x) < HIT_RANGE;
 
-        if (eInXRange && eInYRange) {
+        boolean inBwnEAndLeftE = false;
+        if (e.getRightEnemy() != null) {
+            inBwnEAndLeftE = (c.position.x > e.getX()) && (c.position.x < e.getRightEnemy().getX());
+        }
+
+        if ((eInXRange || inBwnEAndLeftE) && eInYRange) {
             if (!isFlyingFlamingo) processCarHitActions(c, e, controller.getMasterShaker());
         }
     }
