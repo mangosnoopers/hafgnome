@@ -1,22 +1,14 @@
 package edu.cornell.gdiac.mangosnoops;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
 import edu.cornell.gdiac.mangosnoops.hudentity.Child;
 import edu.cornell.gdiac.mangosnoops.hudentity.FlashingImage;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio;
-import edu.cornell.gdiac.mangosnoops.hudentity.RearviewEnemy;
-import edu.cornell.gdiac.mangosnoops.roadentity.Enemy;
-import edu.cornell.gdiac.mangosnoops.roadentity.Flamingo;
 import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
-import edu.cornell.gdiac.mangosnoops.roadentity.Road;
-import org.apache.poi.ss.formula.functions.T;
 
 /**
  * This class controls the tutorial sequence. It makes the assumption
@@ -66,6 +58,7 @@ public class TutorialController extends GameplayController {
     private FlashingImage tutInventory;
     private FlashingImage arrowNedSnack;
     private FlashingImage arrowNoshSnack;
+    private FlashingImage tutRadio;
 
     /** Flags to indicate that one-time events have occurred */
     private int madeNoshMad;
@@ -109,6 +102,7 @@ public class TutorialController extends GameplayController {
         speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
         module = new Image(0.5f,0.5f, 0.79f, moduleTexture, GameCanvas.TextureOrigin.MIDDLE);
+        tutRadio = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
 
         // For the tutorial, override some HUD elements that we want to flash
         vroomStick.setSpecialTexture(tutVroomTexture);
@@ -288,6 +282,7 @@ public class TutorialController extends GameplayController {
                 noshDialogueSelect = 3;
                 isNoshSpeaking = true;
             } else if(stamp < 4) {
+                tutRadio.setFlashing(true);
                 noshDialogue = null;
                 nedDialogue = "Can you switch to\nClassical?";
                 nedDialogueSelect = 2;
@@ -402,6 +397,7 @@ public class TutorialController extends GameplayController {
                         }
                         break;
                     case 4: //end level
+                        tutRadio.setFlashing(false);
                         if(!finishedTutorial) {
                             getRoad().setRoadExitY(10);
                             finishedTutorial = true;
@@ -432,6 +428,7 @@ public class TutorialController extends GameplayController {
         tutHorn.update(delta);
         arrowNoshSnack.update(delta);
         arrowNedSnack.update(delta);
+        tutRadio.update(delta);
     }
 
     public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
@@ -463,6 +460,7 @@ public class TutorialController extends GameplayController {
         arrowNoshSnack.draw(canvas, -35f);
         arrowNedSnack.draw(canvas, -35f);
         speechBubble(canvas, displayFont);
+        tutRadio.draw(canvas);
     }
 
     public void reset() {

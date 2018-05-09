@@ -71,7 +71,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Rest stop files - REST_STOPS[currLevel] is the rest stop after LEVELS[currLevel] */
 	// TODO - tutorials need their own rest stops
 	private static final String[] REST_STOPS = new String[]{
-			"rest_stop0.json", "rest_stop1.json"};
+			"rest_stop0.json", "rest_stop1.json", "rest_stop1.json", "rest_stop1.json"};
 
 	/** Saved level files */
 	private Array<String> SAVED_LEVELS = new Array<String>();
