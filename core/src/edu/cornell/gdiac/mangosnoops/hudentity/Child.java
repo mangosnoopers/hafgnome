@@ -303,9 +303,12 @@ public class Child extends Image {
      */
     private Mood prevMood;
 
-    public void update(float delta, Vector2 in) {
+    private float del;
 
-        if (isAwake()) { //TODO: may not need to check isAwake, this is a security blanket lol
+    public void update(float delta, Vector2 in) {
+        del += delta;
+        if (isAwake() && del > 0.01) { //TODO: may not need to check isAwake, this is a security blanket lol
+            del = 0;
             if (gettingHappy) {
                 happiness += MOOD_DELTA;
                 if (happiness > HAPPY_UBOUND) {
