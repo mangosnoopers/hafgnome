@@ -70,6 +70,9 @@ public class GameplayController {
 	private Radio radio;
 	private DvdPlayer dvdPlayer;
 
+	public Region getRegion() {
+	    return region;
+    }
 
 	/** An array of events for this level */
 	protected Array<Event> events;
@@ -349,6 +352,8 @@ public class GameplayController {
 		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
 	}
 
+	private Region region;
+
 	public Image getMasterShaker() { return masterShaker; }
 
 	public Array<RoadImage> getRoadsideObjs() { return roadsideObjs; }
@@ -592,12 +597,13 @@ public class GameplayController {
 	 * Creates a new GameplayController with no active elements.
 	 *
 	 */
-	public GameplayController(GameCanvas canvas, float endY,
+	public GameplayController(Region reg, GameCanvas canvas, float endY,
 							  Array<Enemy> enemies,
 							  Array<Event> e,
 							  ObjectMap<String,Radio.Genre> s,
 							  SoundController sc,
 							  Array<RoadImage> roadsideObjs) {
+		region = reg;
 		soundController = sc;
 		songs = s;
 		enemiez = enemies;
@@ -1167,6 +1173,7 @@ public class GameplayController {
 	public void draw(GameCanvas canvas) {
 
 	    canvas.setCameraFOV(road.getSpeedRatio());
+
 
 		//Gnomez
 		for (Enemy e : enemiez) {
