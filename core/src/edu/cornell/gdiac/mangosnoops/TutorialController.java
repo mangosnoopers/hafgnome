@@ -320,23 +320,7 @@ public class TutorialController extends GameplayController {
                         else nedDialogue = null;
                         if(!yonda.getNosh().isAwake()) noshDialogue = "ZZzzzZZZzzZZ...";
                         else noshDialogue = null;
-                        if (gnome.isDestroyed() || gnomeL.isDestroyed() || gnomeR.isDestroyed()) {
-                            //create gnomes until hit
-                            gnome.setDestroyed(true);
-                            gnomeL.setDestroyed(true);
-                            gnomeR.setDestroyed(true);
-
-                            gnome.setDestroyed(false);
-                            getEnemiez().add(gnome);
-                            gnome.setY(14);
-                            gnomeL.setDestroyed(false);
-                            getEnemiez().add(gnomeL);
-                            gnomeL.setY(14);
-                            gnomeR.setDestroyed(false);
-                            getEnemiez().add(gnomeR);
-                            gnomeR.setY(14);
-                        }
-                        if(yonda.getNed().getCurrentMood() == Child.Mood.SAD) { //hit a gnome
+                        if(yonda.getNed().getCurrentMood() != Child.Mood.HAPPY && yonda.getNed().isAwake()) { //hit a gnome
                             if(madeNedMad == 0) {
                                 madeNedMad ++;
                                 stamp2 = stamp;
@@ -353,6 +337,21 @@ public class TutorialController extends GameplayController {
                                 state++;
                                 stamp2 = stamp;
                             }
+                        } else if (gnome.isDestroyed() || gnomeL.isDestroyed() || gnomeR.isDestroyed()) {
+                            //create gnomes until hit
+                            gnome.setDestroyed(true);
+                            gnomeL.setDestroyed(true);
+                            gnomeR.setDestroyed(true);
+
+                            gnome.setDestroyed(false);
+                            getEnemiez().add(gnome);
+                            gnome.setY(14);
+                            gnomeL.setDestroyed(false);
+                            getEnemiez().add(gnomeL);
+                            gnomeL.setY(14);
+                            gnomeR.setDestroyed(false);
+                            getEnemiez().add(gnomeR);
+                            gnomeR.setY(14);
                         }
                         break;
                     case 2: //can you switch to comedy

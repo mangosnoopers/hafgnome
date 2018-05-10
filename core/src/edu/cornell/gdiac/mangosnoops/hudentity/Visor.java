@@ -55,6 +55,7 @@ public class Visor extends Image {
     }
 
     public void update(float delta) {
+        del += delta;
         switch (animationState) {
             case OPENING:
                 animFrame += ANIMATION_SPEED;
@@ -130,13 +131,12 @@ public class Visor extends Image {
 
     private int rotate = 0;
     private boolean up = true;
-    private int del = 0;
+    private float del = 0;
 
     /** Draw this part after the HUD elements (does the sun flare effect)*/
     public void drawSunB(GameCanvas canvas, boolean sunShine) {
-        del++;
         if(sunShine) {
-            if(del > 10) {
+            if(del > 0.2) {
                 del = 0;
                 if(up) {
                     rotate ++;
