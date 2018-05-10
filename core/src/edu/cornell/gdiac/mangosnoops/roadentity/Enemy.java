@@ -78,6 +78,7 @@ public class Enemy extends RoadObject{
         enemyType = type;
     }
 
+
     public Enemy(Enemy e) {
         setX(e.getX());
         setY(e.getY());
@@ -86,6 +87,7 @@ public class Enemy extends RoadObject{
         maxAnimFrame = 0;
         animeframe = 0;
         enemyType = e.getType();
+        rightEnemy = e.getRightEnemy();
     }
 
     /**

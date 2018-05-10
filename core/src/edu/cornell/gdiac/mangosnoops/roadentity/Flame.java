@@ -11,7 +11,7 @@ public class Flame extends Enemy {
     }
 
     public Flame(Enemy e) {
-        super(e.getX(), e.getY(), ObjectType.FLAME);
+        super(e);
         hoverDistance = 4.3f;
         enemyWidth = 0.07f;
         enemyHeight = 0.04f;

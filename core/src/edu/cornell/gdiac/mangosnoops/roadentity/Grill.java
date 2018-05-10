@@ -30,7 +30,8 @@ public class Grill extends Enemy {
     }
 
     public Grill(Enemy g) {
-        super(g.getX(), g.getY(), ObjectType.GRILL);
+        //super(g.getX(), g.getY(), ObjectType.GRILL);
+        super(g);
         startY = g.getY();
         flames = new Array<Flame>();
         enemyWidth = 0.16f;

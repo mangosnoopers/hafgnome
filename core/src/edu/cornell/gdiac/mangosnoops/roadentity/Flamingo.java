@@ -27,7 +27,7 @@ public class Flamingo extends Enemy {
     }
 
     public Flamingo(Enemy f) {
-        super(f.getX(), f.getY(), ObjectType.FLAMINGO);
+        super(f);
         isFlyingAway = false;
     }
 
