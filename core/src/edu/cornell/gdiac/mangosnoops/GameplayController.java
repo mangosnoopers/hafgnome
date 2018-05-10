@@ -605,9 +605,31 @@ public class GameplayController {
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
         enemiezSave = new Array<Enemy>();
-		for(Enemy enemy : enemies) {
-            enemiezSave.add(new Enemy(enemy));
-        }
+
+        /* 1.) Walk through the enemiez array, and construct a mapping
+               that goes from enemy -> copy of enemy.
+           2.) For each enemy: enemy copy pairing, set the enemy copy's
+               right-enemy to its a copy of its right enemy, using the map.
+           3.) Add each of these to the enemiezSave array. */
+
+        ObjectMap<Enemy, Enemy> enemyToCopy = new ObjectMap<Enemy, Enemy>();
+
+		for (int i = 0; i < enemies.size; i++) {
+		    if (enemies.get(i) != null) {
+				enemyToCopy.put(enemies.get(i), new Enemy(enemies.get(i)));
+			}
+		}
+
+		for (ObjectMap.Entry<Enemy, Enemy> entry : enemyToCopy.entries()) {
+		    if (entry != null) {
+		    	Enemy copiedEnemy = entry.value;
+		    	if (copiedEnemy.getRightEnemy() != null) {
+					copiedEnemy.setRightEnemy(enemyToCopy.get(copiedEnemy.getRightEnemy()));
+				}
+				enemiezSave.add(copiedEnemy);
+			}
+		}
+
 		yonda = new Car();
 		backing = new Array<Enemy>();
 		road = new Road(endY);
@@ -814,26 +836,42 @@ public class GameplayController {
 		wheel = null;
 		radio = null;
 		enemiez = new Array<Enemy>();
-        for(Enemy enemy : enemiezSave) {
 
-        	switch(enemy.getType()) {
-				case GRILL:
-					enemiez.add(new Grill(enemy));
-					break;
-				case GNOME:
-					enemiez.add(new Gnome(enemy));
-					break;
-				case FLAMINGO:
-					enemiez.add(new Flamingo(enemy));
-					break;
-				case FLAME:
-					Flame newFlame = new Flame(enemy);
-					newFlame.setFilmStrip(flameTexture, 1, 1);
-					enemiez.add(newFlame);
-				default:
-					break;
+		ObjectMap<Enemy, Enemy> enemyToCopy = new ObjectMap<Enemy, Enemy>();
+
+		for (int i = 0; i < enemiezSave.size; i++) {
+			if (enemiezSave.get(i) != null) {
+				Enemy enemy = enemiezSave.get(i);
+				switch (enemiezSave.get(i).getType()) {
+					case GRILL:
+					    enemyToCopy.put(enemy, new Grill(enemy));
+						break;
+					case GNOME:
+					    enemyToCopy.put(enemy, new Gnome(enemy));
+						break;
+					case FLAMINGO:
+					    enemyToCopy.put(enemy, new Flamingo(enemy));
+						break;
+					case FLAME:
+						Flame newFlame = new Flame(enemy);
+						newFlame.setFilmStrip(flameTexture, 1, 1);
+						enemyToCopy.put(enemy, newFlame);
+					default:
+						break;
+				}
 			}
-        }
+		}
+
+		for (ObjectMap.Entry<Enemy, Enemy> entry : enemyToCopy.entries()) {
+			if (entry != null) {
+				Enemy copiedEnemy = entry.value;
+				if (copiedEnemy.getRightEnemy() != null) {
+					copiedEnemy.setRightEnemy(enemyToCopy.get(copiedEnemy.getRightEnemy()));
+				}
+				enemiez.add(copiedEnemy);
+			}
+		}
+
         roadsideObjs = new Array<RoadImage>();
 		for(RoadImage image : roadsideObjsSave) {
 			roadsideObjs.add(new RoadImage(image));
