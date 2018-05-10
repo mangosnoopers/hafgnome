@@ -52,11 +52,17 @@ public class GameMode implements Screen {
 		PAUSED
 	}
 
+	/** Background files */
+	protected static final String SUBURB_BG = "images/suburb_background.png";
+	/*
+	protected static final String MOUNTAIN= "images/suburb_background.png";
+	protected static final String SUBURB_BG = "images/suburb_background.png";
+	protected static final String SUBURB_BG = "images/suburb_background.png";
+	*/
+
 	/** Dimensions of the screen **/
 	private static Vector2 SCREEN_DIMENSIONS;
 	// GRAPHICS AND SOUND RESOURCES
-	/** The file for the background image to scroll */
-	private static String BKGD_FILE = "images/background.png";
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
 	/** The file for the cloud image */
@@ -142,6 +148,10 @@ public class GameMode implements Screen {
 	private Image pauseExitButton;
 	private Image pauseEgg;
 
+
+	/** Background textures */
+	private Texture suburbBackgroundTexture;
+
 	/**
 	 * @return the current state of the game
 	 */
@@ -158,12 +168,14 @@ public class GameMode implements Screen {
 	 */
 	public void preLoadContent(AssetManager manager) {
 		// Load the background.
-		manager.load(BKGD_FILE,Texture.class);
-		assets.add(BKGD_FILE);
 
 		// Load death module
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
+
+		// Backgrounds
+		manager.load(SUBURB_BG,Texture.class);
+		assets.add(SUBURB_BG);
 
 		// Load pause menu assets
 		manager.load(PAUSE_MENU_FILE, Texture.class);
@@ -213,9 +225,8 @@ public class GameMode implements Screen {
 		}
 
 		// Allocate assets
-		if (manager.isLoaded(BKGD_FILE)) {
-			background = manager.get(BKGD_FILE, Texture.class);
-			background.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        if (manager.isLoaded(SUBURB_BG)) {
+			suburbBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
 		}
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
@@ -526,8 +537,19 @@ public class GameMode implements Screen {
  */
 	private void draw(float delta) {
 		canvas.clearScreen();
+
 		canvas.beginHUDDrawing();
-		canvas.drawBackground(background);
+		switch (gameplayController.getRegion()) {
+			case SUBURBS:
+				canvas.drawBackground(suburbBackgroundTexture);
+				break;
+			case HIGHWAY:
+			case MIDWEST:
+			case COLORADO:
+				break;
+
+		}
+
 		canvas.endHUDDrawing();
 		gameplayController.getRoad().draw(canvas);
 

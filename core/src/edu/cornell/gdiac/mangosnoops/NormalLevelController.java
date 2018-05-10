@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 public class NormalLevelController extends GameplayController {
 
     public NormalLevelController(GameCanvas canvas, LevelObject level, SoundController sc) {
-        super(canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(),
+        super(level.getRegion(), canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(),
                 level.getSongs(), sc, level.getRoadsideObjs());
     }
 
