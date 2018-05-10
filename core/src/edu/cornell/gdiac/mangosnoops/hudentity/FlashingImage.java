@@ -29,11 +29,12 @@ public class FlashingImage extends Image {
      * Whether or not the image is hidden - this toggles on
      * and off repeatedly
      */
-    private boolean hidden = true;
+    private boolean hidden;
 
     public FlashingImage(float x, float y, float relSca, Texture tex) {
         super(x, y, relSca, tex);
         isVisibleToUser = false;
+        hidden = true;
     }
 
     /**
@@ -54,7 +55,9 @@ public class FlashingImage extends Image {
 
     @Override
     public void draw(GameCanvas canvas) {
-        if (isVisibleToUser && !hidden) super.draw(canvas);
+        if (isVisibleToUser && !hidden) {
+            super.draw(canvas);
+        }
     }
 
     @Override

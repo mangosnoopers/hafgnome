@@ -28,6 +28,7 @@ public class TutorialController extends GameplayController {
     private static final String TUT_ARROW = "images/Tutorial/arrow.png";
     private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
     private static final String MODULE_BG = "images/PauseMenuAssets/pauseMenuBackground.png";
+    private static final String TUT_VROOM_ARROW_FILE = "images/Tutorial/downArrow.png";
 
     /** Texture types */
     private Texture tutKeysTexture;
@@ -41,6 +42,7 @@ public class TutorialController extends GameplayController {
     private Texture speechTexture;
     private Texture moduleTexture;
     private Texture tutWheel;
+    private Texture tutVroomArrowTexture;
 
     private Image module;
     private Image speechNosh;
@@ -59,6 +61,7 @@ public class TutorialController extends GameplayController {
     private FlashingImage arrowNedSnack;
     private FlashingImage arrowNoshSnack;
     private FlashingImage tutRadio;
+    private FlashingImage tutVroomArrow;
 
     /** Flags to indicate that one-time events have occurred */
     private int madeNoshMad;
@@ -90,6 +93,7 @@ public class TutorialController extends GameplayController {
 
     public void start(float x, float y) {
         super.start(x, y);
+        tutVroomArrow = new FlashingImage(0.34f, 0.1f,0.25f, tutVroomArrowTexture);
         tutKeys = new FlashingImage(0.06f, 0.45f, 0.12f, tutKeysTexture);
         tutGauge = new FlashingImage(0.34f, 0.05f, 0.175f, tutGaugeTexture);
         tutMirrorNedSnack = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
@@ -99,18 +103,18 @@ public class TutorialController extends GameplayController {
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
         arrowNedSnack = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
         arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
+        tutRadio = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
         speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
         module = new Image(0.5f,0.5f, 0.79f, moduleTexture, GameCanvas.TextureOrigin.MIDDLE);
-        tutRadio = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
 
         // For the tutorial, override some HUD elements that we want to flash
         vroomStick.setSpecialTexture(tutVroomTexture);
         getWheel().setSpecialTexture(tutWheel);
-
         if(tutIndex == 0) {
         } else if(tutIndex == 1) {
             vroomStick.setFlashing(true);
+            tutVroomArrow.setVisible(true);
         } else if(tutIndex == 2) {
             gnome = new Gnome(0, 10);
             gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
@@ -155,6 +159,8 @@ public class TutorialController extends GameplayController {
         assets.add(MODULE_BG);
         manager.load(TUT_WHEEL, Texture.class);
         assets.add(TUT_WHEEL);
+        manager.load(TUT_VROOM_ARROW_FILE, Texture.class);
+        assets.add(TUT_VROOM_ARROW_FILE);
     }
 
     public void loadContent(AssetManager manager) {
@@ -170,6 +176,7 @@ public class TutorialController extends GameplayController {
         speechTexture = createTexture(manager, TUT_SPEECH);
         moduleTexture = createTexture(manager, MODULE_BG);
         tutWheel = createTexture(manager, TUT_WHEEL);
+        tutVroomArrowTexture = createTexture(manager, TUT_VROOM_ARROW_FILE);
     }
 
     private float stamp = 0;
@@ -262,6 +269,7 @@ public class TutorialController extends GameplayController {
                 if(!rearviewEnemy.exists()) {
                     nedDialogue = null;
                     vroomStick.setFlashing(false);
+                    tutVroomArrow.setVisible(false);
                 }
             } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
                 nedDialogue = "Mom I think there's\n something behind us!";
@@ -269,10 +277,12 @@ public class TutorialController extends GameplayController {
                 isNoshSpeaking = true;
                 rearviewSeats.setFlashing(true);
                 vroomStick.setFlashing(true);
+                tutVroomArrow.setVisible(true);
             } else if(getVroomStick().isEngaged()) {
                 nedDialogue = null;
                 rearviewSeats.setFlashing(false);
                 vroomStick.setFlashing(false);
+                tutVroomArrow.setVisible(false);
             }
         } else if(tutIndex == 2) {
             if(!finishedTutorial) getRoad().setRoadExitY(500);
@@ -429,6 +439,7 @@ public class TutorialController extends GameplayController {
         arrowNoshSnack.update(delta);
         arrowNedSnack.update(delta);
         tutRadio.update(delta);
+        tutVroomArrow.update(delta);
     }
 
     public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
@@ -461,6 +472,7 @@ public class TutorialController extends GameplayController {
         arrowNedSnack.draw(canvas, -35f);
         speechBubble(canvas, displayFont);
         tutRadio.draw(canvas);
+        tutVroomArrow.draw(canvas);
     }
 
     public void reset() {
