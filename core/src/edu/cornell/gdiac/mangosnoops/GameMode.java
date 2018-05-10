@@ -54,11 +54,9 @@ public class GameMode implements Screen {
 
 	/** Background files */
 	protected static final String SUBURB_BG = "images/suburb_background.png";
-	/*
-	protected static final String MOUNTAIN= "images/suburb_background.png";
-	protected static final String SUBURB_BG = "images/suburb_background.png";
-	protected static final String SUBURB_BG = "images/suburb_background.png";
-	*/
+	protected static final String MOUNTAIN_BG = "images/mountains_background.png";
+	protected static final String MIDWEST_BG = "images/midwest_background.png";
+	protected static final String HIGHWAY_BG = "images/highway_background.png";
 
 	/** Dimensions of the screen **/
 	private static Vector2 SCREEN_DIMENSIONS;
@@ -151,6 +149,9 @@ public class GameMode implements Screen {
 
 	/** Background textures */
 	private Texture suburbBackgroundTexture;
+	private Texture mountainBackgroundTexture;
+	private Texture midwestBackgroundTexture;
+	private Texture highwayBackgroundTexture;
 
 	/**
 	 * @return the current state of the game
@@ -176,6 +177,12 @@ public class GameMode implements Screen {
 		// Backgrounds
 		manager.load(SUBURB_BG,Texture.class);
 		assets.add(SUBURB_BG);
+		manager.load(MOUNTAIN_BG,Texture.class);
+		assets.add(MOUNTAIN_BG);
+		manager.load(HIGHWAY_BG,Texture.class);
+		assets.add(HIGHWAY_BG);
+		manager.load(MIDWEST_BG,Texture.class);
+		assets.add(MIDWEST_BG);
 
 		// Load pause menu assets
 		manager.load(PAUSE_MENU_FILE, Texture.class);
@@ -227,6 +234,15 @@ public class GameMode implements Screen {
 		// Allocate assets
         if (manager.isLoaded(SUBURB_BG)) {
 			suburbBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
+		}
+		if (manager.isLoaded(MIDWEST_BG)) {
+			midwestBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
+		}
+		if (manager.isLoaded(MOUNTAIN_BG)) {
+			mountainBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
+		}
+		if (manager.isLoaded(HIGHWAY_BG)) {
+			highwayBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
 		}
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
@@ -544,8 +560,15 @@ public class GameMode implements Screen {
 				canvas.drawBackground(suburbBackgroundTexture);
 				break;
 			case HIGHWAY:
+				canvas.drawBackground(highwayBackgroundTexture);
+				break;
 			case MIDWEST:
+				canvas.drawBackground(midwestBackgroundTexture);
+				break;
 			case COLORADO:
+				break;
+            default:
+				canvas.drawBackground(mountainBackgroundTexture);
 				break;
 
 		}
