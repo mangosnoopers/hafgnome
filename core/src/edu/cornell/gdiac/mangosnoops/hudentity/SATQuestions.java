@@ -97,6 +97,7 @@ public class SATQuestions extends Image {
      */
     private void handleWrongAnswer(Child ned) {
         active = false;
+        ned.decreaseMood();
         ned.setMoodShifting(true, false);
         timer = -1;
         answered = 0;
@@ -165,6 +166,7 @@ public class SATQuestions extends Image {
                 font.setColor(new Color(0, 0, 0, 1));
                 canvas.drawText("Click to answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             }
+            font.setColor(new Color(0, 0, 0, 1));
             canvas.drawText(currQuestion, font, (X+TEXT_XOFFSET)*canvas.getWidth(), (Y-TEXT_YOFFSET)*canvas.getHeight());
         }
     }
