@@ -791,7 +791,7 @@ public class GameplayController {
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
 
-		horn = new Horn(0.17f, 0.1845f, 0.17f, 20, hornTexture);
+		horn = new Horn(0.17f, 0.1845f, 0.17f, 0.01f, hornTexture);
 
 		healthGauge = new Image(0.34f, 0.05f, 0.175f, healthGaugeTexture);
 		healthGaugePointer = new Image(0.39f, 0.08f, 0.09f, healthPointerTexture);
@@ -824,7 +824,7 @@ public class GameplayController {
 		}
 
 		wheel = new Wheel(0.17f,0.19f, 0.55f, 0, wheelTexture);
-		vroomStick = new VroomStick(0.19f, 0.19f,0.33f, 40, vroomStickTexture);
+		vroomStick = new VroomStick(0.19f, 0.19f,0.33f, 0.3f, vroomStickTexture);
 		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 

@@ -51,7 +51,7 @@ public class VroomStick extends Image {
         if(in != null) {
             in.y = SCREEN_DIMENSIONS.y-in.y;
         }
-        if (in != null && hitbox.contains(in)) {
+        if (in != null && inArea(in)) {
             ang -= dy;
             hitbox.setPosition(hitbox.getX(),(hitbox.getY()- dy));
 
