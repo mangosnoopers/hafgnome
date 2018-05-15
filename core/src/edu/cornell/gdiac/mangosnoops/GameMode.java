@@ -236,13 +236,13 @@ public class GameMode implements Screen {
 			suburbBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
 		}
 		if (manager.isLoaded(MIDWEST_BG)) {
-			midwestBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
+			midwestBackgroundTexture = manager.get(MIDWEST_BG, Texture.class);
 		}
 		if (manager.isLoaded(MOUNTAIN_BG)) {
-			mountainBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
+			mountainBackgroundTexture = manager.get(MOUNTAIN_BG, Texture.class);
 		}
 		if (manager.isLoaded(HIGHWAY_BG)) {
-			highwayBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
+			highwayBackgroundTexture = manager.get(HIGHWAY_BG, Texture.class);
 		}
 		if (manager.isLoaded(DEATH_MODULE_FILE)) {
 			deathModule = manager.get(DEATH_MODULE_FILE, Texture.class);
