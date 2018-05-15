@@ -26,6 +26,7 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String MANGO_FILE = "images/Items/mango.png";
     private static final String READY_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
     private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
+    private Image background;
     private Texture backgroundTex;
     private Texture shelfTex;
     private Texture dvdTex;
@@ -161,8 +162,10 @@ public class RestStopMode implements Screen, InputProcessor {
         loadFont();
 
         // Create images
-        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
+//        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
+        shelf = new Image(0.5f, 0.6f, 0.9f, shelfTex, GameCanvas.TextureOrigin.MIDDLE);
         readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex, GameCanvas.TextureOrigin.MIDDLE);
+        background = new Image(0.5f,0.5f,1.0f, backgroundTex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Parse JSON to get item quantities/max number of items player can take
         parseJSON("levels/" + filename);
@@ -208,26 +211,13 @@ public class RestStopMode implements Screen, InputProcessor {
         float slotX = 0.35f;
         float slotY = 0.66f;
 
-        // TOP SHELF: SNACKS - TODO ADD NAME, SEE STERLOCK BRANCH FOR NEW IMAGE CONSTRUCTOR
+        // TOP SHELF: SNACKS
         // mangos
         for (int i = 0; i < numMango; i++) {
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.SNACK,
                     slotX, slotY, ITEM_SIZE_SCALE, itemTextures.get(MANGO))); // MANGO));
             slotX += 0.09f;
         }
-
-
-        // MIDDLE SHELF - BOOKS
-        //        slotX = 0.35f;
-        //        slotY = 0.36f;
-        //        for (int i = 0; i < numBooks; i++) {
-        //            // TODO change to books
-        //            Texture t = snackTexs.get(rand.nextInt(snackTexs.size));
-        //            items.add(new RestStopItem(UNCLICKED, Item.ItemType.SNACK,
-        //                    slotX, slotY, ITEM_SIZE_SCALE, t));
-        //            slotX += 0.09f;
-        //        }
-
 
         // BOTTOM SHELF - MOVIES
         slotX = 0.35f;
@@ -278,15 +268,15 @@ public class RestStopMode implements Screen, InputProcessor {
             drawFadeIn();
         } else {
             // Draw background
-            canvas.draw(backgroundTex, Color.WHITE, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.9f, 0.9f);
-
+            background.draw(canvas);
             // Draw the shelf and text on top
             // TODO - minimum of numCanTake and remaining inventory space
             shelf.draw(canvas);
             String grammar = numCanTake == 1 ? " ITEM" : " ITEMS";
+            displayFont.setColor(Color.BLACK);
             canvas.drawText("TAKE UP TO " + numCanTake + grammar, displayFont,
                     SCREEN_DIMENSIONS.x * SHELF_TEXT_LOC.x,
-                    SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y, Color.BLACK);
+                    SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y);
 
             // Draw the items with a specific overlay
             for (RestStopItem i : items) {
@@ -327,28 +317,29 @@ public class RestStopMode implements Screen, InputProcessor {
     private void drawPlayerInv() {
 
         // Snack s
-        Color snackcolor = Color.BLACK;
         snackInd.draw(canvas);
         int totalNumSnacks = Math.min(playerInv.getNumSnacks() + numSnacksSelected, SLOT_MAX_QUANTITY);
-//        if (totalNumSnacks == SLOT_MAX_QUANTITY) {
-//            snackcolor = Color.RED;
-//        }
+        if (totalNumSnacks == SLOT_MAX_QUANTITY) {
+            displayFont.setColor(Color.RED);
+        } else {
+            displayFont.setColor(Color.BLACK);
+        }
         canvas.drawText("x " + totalNumSnacks, displayFont,
-                SCREEN_DIMENSIONS.x*IND_TEXT_X,SCREEN_DIMENSIONS.y*IND_SNACK_Y,
-                snackcolor);
+                SCREEN_DIMENSIONS.x*IND_TEXT_X,SCREEN_DIMENSIONS.y*IND_SNACK_Y);
 
-        // Books: TODO
 
         // Movies
-        Color dvdcolor = Color.BLACK;
         dvdInd.draw(canvas);
         int totalNumMovies = Math.min(playerInv.getNumMovies() + numMoviesSelected, SLOT_MAX_QUANTITY);
-//        if (totalNumMovies == SLOT_MAX_QUANTITY) {
-//            dvdcolor = Color.RED;
-//        }
+        if (totalNumMovies == SLOT_MAX_QUANTITY) {
+            displayFont.setColor(Color.RED);
+        } else {
+            displayFont.setColor(Color.BLACK);
+
+        }
         canvas.drawText("x " + totalNumMovies, displayFont,
-                SCREEN_DIMENSIONS.x*IND_TEXT_X,SCREEN_DIMENSIONS.y*IND_DVD_Y,
-                dvdcolor);
+                SCREEN_DIMENSIONS.x*IND_TEXT_X,SCREEN_DIMENSIONS.y*IND_DVD_Y);
+
     }
 
     // SCREEN METHODS
@@ -463,10 +454,7 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // If clicking on an item, change click status to button down
         for (RestStopItem i : items) {
-            int quantity = (i.type == Inventory.Item.ItemType.SNACK)
-                    ? numSnacksSelected + playerInv.getNumSnacks()
-                    : numMoviesSelected + playerInv.getNumMovies();
-            if (quantity < SLOT_MAX_QUANTITY && i.inArea(mousePos)) {
+            if (i.inArea(mousePos)) {
                 i.clickStatus = BUTTON_DOWN;
             }
 
@@ -486,17 +474,18 @@ public class RestStopMode implements Screen, InputProcessor {
         }
 
         for (RestStopItem i : items) {
-            int quantity = (i.type == Inventory.Item.ItemType.SNACK)
-                    ? numSnacksSelected + playerInv.getNumSnacks()
-                    : numMoviesSelected + playerInv.getNumMovies();
-            if (quantity < SLOT_MAX_QUANTITY && i.clickStatus == BUTTON_DOWN) {
+            if (i.clickStatus == BUTTON_DOWN) {
                 i.clickStatus = BUTTON_UP;
                 int oldToggleState = i.toggleState;
+                int quantity = (i.type == Inventory.Item.ItemType.SNACK)
+                        ? numSnacksSelected + playerInv.getNumSnacks()
+                        : numMoviesSelected + playerInv.getNumMovies();
 
                 // only allow the item to be selected if the user can take more
                 // or allow the item to be unselected at any time
-                if (oldToggleState == UNSELECTED && numSelected < numCanTake
-                        || oldToggleState == SELECTED) {
+                if (quantity < SLOT_MAX_QUANTITY
+                        && oldToggleState == UNSELECTED
+                        && numSelected < numCanTake || oldToggleState == SELECTED) {
                     i.switchState();
                     i.switchOverlay();
 
@@ -514,7 +503,6 @@ public class RestStopMode implements Screen, InputProcessor {
                             case DVD:
                                 numMoviesSelected -= 1;
                                 break;
-                            // TODO - book case (rn books are snacks)
                             default:
                                 break;
                         }
@@ -529,7 +517,6 @@ public class RestStopMode implements Screen, InputProcessor {
                             case DVD:
                                 numMoviesSelected += 1;
                                 break;
-                            // TODO - book case (rn books are snacks)
                             default:
                                 break;
                         }
@@ -560,6 +547,8 @@ public class RestStopMode implements Screen, InputProcessor {
     public boolean keyDown (int keycode) {
         if(keycode == Input.Keys.F) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            System.out.println("width: " + Gdx.graphics.getWidth());
+            System.out.println("height: " + Gdx.graphics.getHeight());
         } else if(keycode == Input.Keys.ESCAPE) {
             Gdx.graphics.setWindowedMode(1600,900);
         }
