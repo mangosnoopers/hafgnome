@@ -30,7 +30,7 @@ public class Wheel extends Image {
      * @param in where the mouse clicked (null if no click)
      * @param dx the change in x in the user's input
      */
-    public void update(Vector2 in, float dx, boolean keyboardTurn) {
+    public boolean update(Vector2 in, float dx, boolean keyboardTurn) {
         // change wheel angle and lateral screen movement
         if ((in != null && inArea(in)) || (keyboardTurn && dx != 0)) {
             if (ang >= -90 && ang <= 90) {
@@ -44,10 +44,12 @@ public class Wheel extends Image {
             if (ang > 90) {
                 ang = 90;
             }
+            return true;
 
         } else {
             // Move back to original angle
             ang = ang + 0.2f * -ang;
+            return false;
         }
     }
 
