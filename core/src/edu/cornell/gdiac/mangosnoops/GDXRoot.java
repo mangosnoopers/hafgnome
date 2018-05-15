@@ -66,7 +66,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** Level files - currLevel is the level that will be played */
 	private Array<String> LEVELS;
 	private static int currLevel;
-	private static final int NUM_TUTORIALS = 0;
+	private static int NUM_TUTORIALS;
 	/** Rest stop files - REST_STOPS[currLevel] is the rest stop after LEVELS[currLevel] */
 	private Array<String> REST_STOPS;
 	/** Saved level files */
@@ -128,6 +128,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		REST_STOPS.add("rest_stop_tut1.json");
 		REST_STOPS.add("rest_stop_tut2.json");
 		REST_STOPS.add("rest_stop_tut3.json");
+
+		NUM_TUTORIALS = 4;
 
 		for (File f : files) {
 			String fn = f.getName();
@@ -226,7 +228,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		// create the JSON object
 		JSONObject json = new JSONObject();
 		json.put("numSnacks", inv.getNumSnacks());
-		json.put("numBooks", 0); // TODO - Fix
 		json.put("numMovies", inv.getNumMovies());
 		json.put("currentLevelNum", idxWithoutTutorials);
 		// UNIX timestamp - seconds since 1/1/1970
@@ -289,8 +290,8 @@ public class GDXRoot extends Game implements ScreenListener {
 				// load next level index either from the levels array or saved_levels array
 				int nextIdx = levelSelect.getNextLevelIndex();
 				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS.get(nextIdx);
-//				System.out.println("NOW PLAYING LEVEL: " + next);
-				playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
+				System.out.println("NOW PLAYING LEVEL: " + next);
+				playing = new GameMode(canvas,settings,soundController,next);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
 				playing.setScreenListener(this);
