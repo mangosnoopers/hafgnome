@@ -48,7 +48,10 @@ public class Visor extends Image {
         animationState = AnimationState.CLOSING;
     }
 
-    public void close() { open = false; }
+    public void close() {
+        open = false;
+        animationState = AnimationState.CLOSING;
+    }
 
     public boolean isOpen() {
         return open;
