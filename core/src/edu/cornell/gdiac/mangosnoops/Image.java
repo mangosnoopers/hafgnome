@@ -160,6 +160,9 @@ public class Image {
         ORIGINAL_X = x;
         ORIGINAL_Y = y;
         controlBuffer = cb;
+        while(controlBuffer > 1) {
+            controlBuffer = controlBuffer/10f;
+        }
         origin = GameCanvas.TextureOrigin.BOTTOM_LEFT;
         normalTexture = tex;
     }
@@ -168,12 +171,17 @@ public class Image {
         this(x, y, relSca, tex);
         origin = o;
         normalTexture = tex;
+        controlBuffer = 0;
     }
 
     public Image(float x, float y, float relSca, float cb, Texture tex, GameCanvas.TextureOrigin o) {
         this(x, y, relSca, cb, tex);
         origin = o;
         normalTexture = tex;
+        controlBuffer = cb;
+        while(controlBuffer > 1) {
+            controlBuffer = controlBuffer/10f;
+        }
     }
 
     public Image(Image i){

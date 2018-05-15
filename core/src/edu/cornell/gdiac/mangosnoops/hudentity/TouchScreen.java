@@ -16,9 +16,9 @@ public class TouchScreen {
     private GameCanvas c;
 
     public TouchScreen(Radio r, DvdPlayer d, Texture ons, Texture ofs, Texture dvds) {
-        onScreen = new Image(0.85f, 0.24f, 0.26f, ons, GameCanvas.TextureOrigin.MIDDLE);
-        offScreen = new Image(0.85f, 0.24f, 0.26f, ofs, GameCanvas.TextureOrigin.MIDDLE);
-        dvdSlot = new Image(0.85f, 0.07f, 0.01f, 100, dvds, GameCanvas.TextureOrigin.MIDDLE);
+        onScreen = new Image(0.85f, 0.24f, 0.26f, 0.05f, ons, GameCanvas.TextureOrigin.MIDDLE);
+        offScreen = new Image(0.85f, 0.24f, 0.26f, 0.05f, ofs, GameCanvas.TextureOrigin.MIDDLE);
+        dvdSlot = new Image(0.85f, 0.07f, 0.01f,  0.05f, dvds, GameCanvas.TextureOrigin.MIDDLE);
         radio = r;
         dvdPlayer = d;
     }
@@ -28,7 +28,8 @@ public class TouchScreen {
     public DvdPlayer getDvdPlayer() { return dvdPlayer; }
 
     public boolean inDvdSlot(Vector2 p) {
-        return dvdSlot.inArea(p);
+        System.out.println("IN DVD SLOT");
+        return dvdSlot.inArea(p) || offScreen.inArea(p);
     }
 
     public void update(Vector2 p, float dx) {
