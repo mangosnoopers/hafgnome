@@ -89,7 +89,6 @@ public class SoundController {
                 if (currentStation.getAudio().isPlaying()) currentStation.getAudio().setVolume(0);
                 radioStatic.setVolume(settings.getEffectsVolume());
                 radioStatic.play();
-//            System.out.println("STATIC " + currentStation.getAudio().getVolume());
             } else {
                 radioStatic.stop();
                 Radio.Station lastStation = r.getLastStation();
@@ -98,7 +97,9 @@ public class SoundController {
                     lastStation.getAudio().setVolume(0);
                 }
                 if (currentStation != null) {
-                    if (currentStation.getAudio().isPlaying())
+                    if(!r.soundOn())
+                        currentStation.getAudio().setVolume(0);
+                    else if (currentStation.getAudio().isPlaying())
                         currentStation.getAudio().setVolume(settings.getMusicVolume());
                     else {
                         currentStation.getAudio().play();
@@ -112,7 +113,8 @@ public class SoundController {
     }
 
     public void muteRadio(Radio r) {
-        r.getCurrentStation().getAudio().stop();
+        if(r != null && r.getCurrentStation() != null)
+            r.getCurrentStation().getAudio().stop();
     }
 
     public void playDvd(DvdPlayer m) {
