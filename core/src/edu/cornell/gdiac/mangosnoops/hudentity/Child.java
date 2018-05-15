@@ -22,7 +22,7 @@ public class Child extends Image {
 
     private boolean gettingSad; //is gradually getting happier
     private boolean gettingHappy; //is gradually getting sadder
-    private static final int MOOD_DELTA = 1; //how much happiness changes each step
+    private static final int MOOD_DELTA = 2; //how much happiness changes each step
 
     /**
      * These indices indicate which section of the filmstrip corresponds
