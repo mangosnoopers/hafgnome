@@ -340,7 +340,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == reststop) {
 			// save the game when exiting the rest stop - loading will bring you to the next level
 			if (!(LEVELS.get(currLevel).contains("tut")))
-				saveGame(playing.getInventory());
+				saveGame(reststop.getPlayerInv());
 
 			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
 			playing.preLoadContent(manager);

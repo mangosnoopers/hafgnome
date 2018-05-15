@@ -95,7 +95,7 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Font sizes */
     private static final int TITLE_FONT_SIZE = 48;
     /** Shelf text location */
-    private static final Vector2 SHELF_TEXT_LOC = new Vector2(0.37175f,0.87f);
+    private static final Vector2 SHELF_TEXT_LOC = new Vector2(0.35175f,0.82f);
     /** Dimensions of the screen **/
     private static Vector2 SCREEN_DIMENSIONS;
     /** Scaling of inventory items */
@@ -162,8 +162,7 @@ public class RestStopMode implements Screen, InputProcessor {
         loadFont();
 
         // Create images
-//        shelf = new Image(0.15f,0.0f, 0.9f, shelfTex);
-        shelf = new Image(0.5f, 0.6f, 0.9f, shelfTex, GameCanvas.TextureOrigin.MIDDLE);
+        shelf = new Image(0.5f, 0.4f, 0.9f, shelfTex, GameCanvas.TextureOrigin.MIDDLE);
         readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex, GameCanvas.TextureOrigin.MIDDLE);
         background = new Image(0.5f,0.5f,1.0f, backgroundTex, GameCanvas.TextureOrigin.MIDDLE);
 
@@ -208,8 +207,8 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     private void generateItems() {
         // starting position - top left slot of the shelf
-        float slotX = 0.35f;
-        float slotY = 0.66f;
+        float slotX = 0.31f;
+        float slotY = 0.61f;
 
         // TOP SHELF: SNACKS
         // mangos
@@ -220,8 +219,8 @@ public class RestStopMode implements Screen, InputProcessor {
         }
 
         // BOTTOM SHELF - MOVIES
-        slotX = 0.35f;
-        slotY = 0.23f;
+        slotX = 0.31f;
+        slotY = 0.18f;
         // gnome country for old men
         for (int i = 0; i < numGnomeCountry; i++) {
             items.add(new RestStopItem(UNCLICKED, Inventory.Item.ItemType.DVD,
