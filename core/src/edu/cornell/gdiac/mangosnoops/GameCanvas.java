@@ -735,7 +735,7 @@ public class GameCanvas {
 			default:
 				break;
 		}
-		return p.x > xb-(cb*width) && p.x < xt+(cb*width) && (getHeight()-p.y) > yb-(cb*height) && (getHeight()-p.y) < yt+(cb*height);
+		return p.x > xb-(cb*getHeight()) && p.x < xt+(cb*getHeight()) && (getHeight()-p.y) > yb-(cb*getHeight()) && (getHeight()-p.y) < yt+(cb*getHeight());
 	}
 	
 	/**
@@ -869,6 +869,7 @@ public class GameCanvas {
 		font.setColor(color);
 		font.draw(spriteBatch, layout, x, y);
 	}
+
 
 	/**
 	 * Draws text centered on the screen.

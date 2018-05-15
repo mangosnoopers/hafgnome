@@ -102,7 +102,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		File[] files = new File("levels/savedlevels/").listFiles();
 		for (File f : files) {
 			String fn = f.getName();
-			if (fn.contains("saved_level"))
+			if (fn.matches("^saved_level[0-9]+.json$"))
 				SAVED_LEVELS.add(fn);
 		}
 	}
@@ -239,6 +239,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
 			bw.write(json.toString());
 			bw.close();
+			System.out.println("GENERATED FILE: " + filename);
 		} catch (IOException e) {
 			System.out.println("IO exception when saving");
 		}
@@ -338,7 +339,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		} else if (screen == reststop) {
 			// save the game when exiting the rest stop - loading will bring you to the next level
-			saveGame(reststop.getPlayerInv());
+			if (!(LEVELS.get(currLevel).contains("tut")))
+				saveGame(playing.getInventory());
 
 			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
 			playing.preLoadContent(manager);

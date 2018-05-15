@@ -59,10 +59,10 @@ public class Radio {
                  Texture nod,
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
-        slider = new Image(0.85f, 0.15f, 0.02f, 50, s, GameCanvas.TextureOrigin.MIDDLE);
-        pointer = new Image(0.85f, 0.17f, 0.03f, 50, p, GameCanvas.TextureOrigin.MIDDLE);
-        sound_on = new Image(0.91f, 0.3f, 0.045f, 0, son, GameCanvas.TextureOrigin.MIDDLE);
-        sound_off = new Image(0.91f, 0.3f, 0.045f, 0, soff, GameCanvas.TextureOrigin.MIDDLE);
+        slider = new Image(0.85f, 0.15f, 0.02f, 0.05f, s, GameCanvas.TextureOrigin.MIDDLE);
+        pointer = new Image(0.85f, 0.17f, 0.03f, 0.05f, p, GameCanvas.TextureOrigin.MIDDLE);
+        sound_on = new Image(0.91f, 0.3f, 0.045f, 0.05f, son, GameCanvas.TextureOrigin.MIDDLE);
+        sound_off = new Image(0.91f, 0.3f, 0.045f, 0.05f, soff, GameCanvas.TextureOrigin.MIDDLE);
         ned_like = new Image(0.79f, 0.3f, 0.05f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
         ned_dislike = new Image(0.79f, 0.3f, 0.07f, 0, ned, GameCanvas.TextureOrigin.MIDDLE);
         nosh_like = new Image(0.79f, 0.3f, 0.05f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
@@ -160,6 +160,8 @@ public class Radio {
 
     public boolean shouldPlayStatic() { return playStatic; }
 
+    public boolean soundOn() { return soundOn; }
+
     boolean prevClicked = false;
     /**
      * Updates the radio based on the user's input.
@@ -187,13 +189,6 @@ public class Radio {
         } else if(prevClicked == true && in == null && !soundOn) {
             soundOn = true;
             currentStation.getAudio().setVolume(1);
-        }
-        if(currentStation != null) {
-            if(soundOn) {
-                currentStation.getAudio().setVolume(0);
-            } else {
-                currentStation.getAudio().setVolume(1);
-            }
         }
         prevClicked = in != null && sound_on.inArea(in);
     }

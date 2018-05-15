@@ -64,19 +64,19 @@ public class Road extends RoadObject {
     float EXIT_GRASS_OFFSET = 0.6f;
 
     /** max # frames to vroom */
-    private float MAX_VROOM_TIME = 5;
+    private float MAX_VROOM_TIME = 7;
 
     /** frames left to vroom */
     private float vroomTimeLeft = MAX_VROOM_TIME;
 
     /** How quickly vroom time depreciates */
-    private float VROOM_TIME_DEPRECIATION = 20f;
+    private float VROOM_TIME_DEPRECIATION = 25f;
 
     /** Speed constants */
     private float NORMAL_SPEED = 1.4f;
-    private float VROOM_SPEED = 4f;
-    private float DECELERATION = 1.5f;
-    private float VROOM_ACCELERATION = 5f;
+    private float VROOM_SPEED = 3f;
+    private float DECELERATION = 3f;
+    private float VROOM_ACCELERATION = 6f;
 
     /** How high the road/ground objects "hover" */
     private final float ROAD_HOVER_DISTANCE = 4.25f;
@@ -170,7 +170,6 @@ public class Road extends RoadObject {
                 }
                 break;
             case DECELERATING:
-                vroomTimeLeft -= delta * VROOM_TIME_DEPRECIATION;
                 currentSpeed -= DECELERATION * delta;
                 if (currentSpeed < NORMAL_SPEED) {
                     currentSpeed = NORMAL_SPEED;
