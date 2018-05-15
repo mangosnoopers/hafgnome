@@ -1029,13 +1029,13 @@ public class GameplayController {
         Vector2 in = input.getClickPos();
         Vector2 dr = new Vector2(input.getDX(), input.getDY());
   		boolean mousePressed = input.isMousePressed();
-  		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
   		horn.updateHonk(delta);
   		visor.update(delta);
         if(in != null) {
+			satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
             visor.resolveInput(new Vector2(in), input.isPrevMousePressed());
-			wheel.update(new Vector2(in), dr.x, input.isTurnPressed());
-			vroomStick.update(new Vector2(in), dr.y);
+			if(!wheel.update(new Vector2(in), dr.x, input.isTurnPressed()))
+				vroomStick.update(new Vector2(in), dr.y);
 			touchscreen.update(new Vector2(in), dr.x);
 			if(horn.update(new Vector2(in), delta)) { soundController.beepSound(); }
 			inventory.update(new Vector2(in), mousePressed);
