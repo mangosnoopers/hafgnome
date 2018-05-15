@@ -252,9 +252,7 @@ public class LevelObject {
             scanner.close();
 
             // saved inventory amounts based on the quantities
-            // FIXME depending on inventory frankenstein
             numSnacks = json.getInt("numSnacks");
-            numBooks = json.getInt("numBooks");
             numMovies = json.getInt("numMovies");
 
             // parse the excel level associated with this save file
@@ -264,7 +262,7 @@ public class LevelObject {
         } catch (FileNotFoundException e) {
             System.out.println("Saved level JSON not found");
         } catch (IOException e) {
-            System.out.println("IOException while parsing JSON level");
+            System.out.println(e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Invalid padding setting while parsing JSON level");
         } catch (InvalidFormatException e) {
