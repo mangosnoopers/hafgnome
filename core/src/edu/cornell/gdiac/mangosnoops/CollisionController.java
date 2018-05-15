@@ -162,7 +162,10 @@ public class CollisionController {
         }
 
         if ((eInXRange || inBwnEAndLeftE) && eInYRange) {
-            if (!isFlyingFlamingo) processCarHitActions(c, e, controller.getMasterShaker());
+            if (!isFlyingFlamingo) {
+                processCarHitActions(c, e, controller.getMasterShaker());
+                controller.getVisor().close();
+            }
         }
     }
 }
