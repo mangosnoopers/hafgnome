@@ -26,8 +26,6 @@ public class SATQuestions extends Image {
     private HashMap<String, Texture> images; // Keys are the file names of the textures, values are respective Textures
     private Texture bubble; // Texture of the background bubble
     Random rand = new Random();
-    private int timer; // Used to time how long to do a right/wrong animation
-    private static final int TIMER_MAX = 30; //duration of timer
     /** -1: Do not tint draw & tint bubble
      *  0: Incorrect answer, tint bubble red
      *  1: Correct answer, tint bubble green*/
@@ -88,7 +86,6 @@ public class SATQuestions extends Image {
     private void handleRightAnswer(Child ned) {
         active = false;
         ned.setMood(Child.Mood.HAPPY);
-        timer = -1;
         answered = 1;
     }
 
@@ -99,18 +96,10 @@ public class SATQuestions extends Image {
         active = false;
         ned.decreaseMood();
         ned.setMoodShifting(true, false);
-        timer = -1;
         answered = 0;
     }
 
     public void update(Vector2 p, int numPressed, Child ned) {
-        if(answered != -1) {
-            timer ++;
-            if(timer == TIMER_MAX) {
-                timer = 0;
-                answered = -1;
-            }
-        }
         if(active) {
             if(currImageB == null) { //numerical question
                 if(numPressed == currAns) {
