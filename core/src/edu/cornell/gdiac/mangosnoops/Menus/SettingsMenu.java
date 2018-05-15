@@ -452,6 +452,6 @@ public class SettingsMenu {
     /**
      * @return Volume of music
      */
-    public float getMusicVolume() { return musicVolume; }
+    public float getMusicVolume() { return 0; }
 
 }
