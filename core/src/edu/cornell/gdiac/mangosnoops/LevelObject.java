@@ -209,7 +209,7 @@ public class LevelObject {
      * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
      */
     public LevelObject(String file) throws IOException, InvalidFormatException, RuntimeException {
-        localMiles = 0.0f;
+        localMiles = 5.0f;
 
         // Initialize collections
         songs = new ObjectMap<String,Genre>();
