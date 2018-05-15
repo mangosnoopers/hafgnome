@@ -129,7 +129,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		REST_STOPS.add("rest_stop_tut2.json");
 		REST_STOPS.add("rest_stop_tut3.json");
 
-		NUM_TUTORIALS = 1;
+		NUM_TUTORIALS = 4;
 
 		for (File f : files) {
 			String fn = f.getName();
@@ -339,7 +339,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		} else if (screen == reststop) {
 			// save the game when exiting the rest stop - loading will bring you to the next level
-			saveGame(reststop.getPlayerInv());
+			if (!(LEVELS.get(currLevel).contains("tut")))
+				saveGame(playing.getInventory());
 
 			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
 			playing.preLoadContent(manager);
