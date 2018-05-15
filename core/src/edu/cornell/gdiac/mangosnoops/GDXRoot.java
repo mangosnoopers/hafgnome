@@ -36,6 +36,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Root class for a LibGDX.  
@@ -63,18 +64,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	private SoundController soundController;
 
 	/** Level files - currLevel is the level that will be played */
-	private static final String[] LEVELS = new String[]{
-			"tut9test.xlsx", "tut0.xlsx", "tut1.xlsx", "tut2.xlsx", "level0.xlsx"};
+	private Array<String> LEVELS;
 	private static int currLevel;
-	private static final int NUM_TUTORIALS = 1;
-
+	private static final int NUM_TUTORIALS = 0;
 	/** Rest stop files - REST_STOPS[currLevel] is the rest stop after LEVELS[currLevel] */
-	// TODO - tutorials need their own rest stops
-	private static final String[] REST_STOPS = new String[]{
-			"rest_stop0.json", "rest_stop1.json", "rest_stop1.json", "rest_stop1.json"};
-
+	private Array<String> REST_STOPS;
 	/** Saved level files */
-	private Array<String> SAVED_LEVELS = new Array<String>();
+	private Array<String> SAVED_LEVELS;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -98,15 +94,53 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * Load the file names that are contained in the saved levels directory
 	 * and places them in the SAVED_LEVELS array.
 	 *
-	 * Do this before creating the first LevelMenuMode to ensure that the
-	 * correct number of nodes are displayed.
+	 * Do this in create(), before creating the first LevelMenuMode to ensure that
+	 * the correct number of nodes are displayed.
 	 */
 	private void loadSavedFilenames() {
+		SAVED_LEVELS = new Array<String>();
 		File[] files = new File("levels/savedlevels/").listFiles();
 		for (File f : files) {
 			String fn = f.getName();
 			if (fn.contains("saved_level"))
 				SAVED_LEVELS.add(fn);
+		}
+	}
+
+	/**
+	 * Load the level file names (Excel) and rest stop file names (JSON) that are
+	 * in the main level directory.
+	 */
+	private void loadLevelsRestStops() {
+		// get all files, sorted in alphabetical order
+		File[] files = new File("levels/").listFiles();
+		Arrays.sort(files);
+
+		// initialize arrays and add tutorials
+		LEVELS = new Array<String>();
+		LEVELS.add("tut0.xlsx");
+		LEVELS.add("tut1.xlsx");
+		LEVELS.add("tut2.xlsx");
+		LEVELS.add("tut3.xlsx");
+
+		REST_STOPS = new Array<String>();
+		REST_STOPS.add("rest_stop_tut0.json");
+		REST_STOPS.add("rest_stop_tut1.json");
+		REST_STOPS.add("rest_stop_tut2.json");
+		REST_STOPS.add("rest_stop_tut3.json");
+
+		for (File f : files) {
+			String fn = f.getName();
+
+			// check if it is a rest stop file - if so add to array
+			if (fn.matches("^rest_stop[0-9]+.json$")) {
+				REST_STOPS.add(fn);
+			}
+
+			// check if it is a level file - if so add to array
+			else if (fn.matches("^level[0-9]+.xlsx$")) {
+				LEVELS.add(fn);
+			}
 		}
 	}
 
@@ -117,8 +151,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * the asynchronous loader for all other assets.
 	 */
 	public void create() {
+		// load all level names, instantiate level counter
 		currLevel = 0;
+		loadLevelsRestStops();
 		loadSavedFilenames();
+
+		// other initialization shenanigans
 		Gdx.graphics.setTitle("Home Away From Gnome");
 		setCursor("images/mouse.png");
 
@@ -126,9 +164,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadingMode(canvas,manager,1);
 		settings = new SettingsMenu(this);
 		soundController = new SoundController(settings);
-		reststop = new RestStopMode(canvas, manager, REST_STOPS[currLevel],soundController);
+		reststop = new RestStopMode(canvas, manager, REST_STOPS.get(currLevel),soundController);
 		levelSelect = new LevelMenuMode(canvas, manager,soundController, NUM_TUTORIALS, SAVED_LEVELS.size);
-		playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
+		playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
 		start = new StartMenuMode(canvas, manager,settings,soundController);
 
 		loading.setScreenListener(this);
@@ -250,9 +288,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (levelSelect.loadPlaying()) {
 				// load next level index either from the levels array or saved_levels array
 				int nextIdx = levelSelect.getNextLevelIndex();
-				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS[nextIdx];
+				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS.get(nextIdx);
 //				System.out.println("NOW PLAYING LEVEL: " + next);
-				playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
+				playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
 				playing.setScreenListener(this);
@@ -278,16 +316,16 @@ public class GDXRoot extends Game implements ScreenListener {
 				//playing.dispose();
 				//playing = null;
 			} else {
-				reststop = new RestStopMode(canvas,manager,REST_STOPS[currLevel],soundController);
+				reststop = new RestStopMode(canvas,manager,REST_STOPS.get(currLevel),soundController);
 				reststop.setPlayerInv(playing.getInventory());
 
 				// increment current level index for saving purposes
 				// and for loading when exiting rest stop mode
-				currLevel = (currLevel + 1) % LEVELS.length;
+				currLevel = (currLevel + 1) % LEVELS.size;
 
 				// save the game when entering - to ensure game is saved even if user quits at rest stop
 				// only save if next level is not a tutorial
-				if (!(LEVELS[currLevel].contains("tut")))
+				if (!(LEVELS.get(currLevel).contains("tut")))
 					saveGame(playing.getInventory());
 
 				reststop.setScreenListener(this);
@@ -301,7 +339,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			// save the game when exiting the rest stop - loading will bring you to the next level
 			saveGame(reststop.getPlayerInv());
 
-			playing = new GameMode(canvas,settings,soundController,LEVELS[currLevel]);
+			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode
