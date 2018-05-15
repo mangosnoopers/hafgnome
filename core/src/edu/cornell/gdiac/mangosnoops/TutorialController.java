@@ -112,9 +112,6 @@ public class TutorialController extends GameplayController {
         vroomStick.setSpecialTexture(tutVroomTexture);
         getWheel().setSpecialTexture(tutWheel);
         if(tutIndex == 0) {
-        } else if(tutIndex == 1) {
-            vroomStick.setFlashing(true);
-            tutVroomArrow.setVisible(true);
         } else if(tutIndex == 2) {
             gnome = new Gnome(0, 10);
             gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
@@ -271,7 +268,7 @@ public class TutorialController extends GameplayController {
                     vroomStick.setFlashing(false);
                     tutVroomArrow.setVisible(false);
                 }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f) {
                 nedDialogue = "Mom I think there's\n something behind us!";
                 noshDialogueSelect =2;
                 isNoshSpeaking = true;
