@@ -870,6 +870,7 @@ public class GameCanvas {
 		font.draw(spriteBatch, layout, x, y);
 	}
 
+
 	/**
 	 * Draws text centered on the screen.
      *
