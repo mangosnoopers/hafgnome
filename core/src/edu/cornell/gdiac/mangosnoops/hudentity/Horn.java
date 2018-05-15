@@ -37,7 +37,7 @@ public class Horn extends Image {
     }
 
     public boolean update(Vector2 in, float delta) {
-        if (in != null && inArea(in)) {
+        if (inArea(in)) {
             honk();
             return true;
         } return false;
