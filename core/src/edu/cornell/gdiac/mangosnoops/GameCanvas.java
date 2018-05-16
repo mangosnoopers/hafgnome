@@ -339,13 +339,15 @@ public class GameCanvas {
      * 
      * @param image  Texture to draw as an overlay
 	 */
-    public void drawBackground(Texture image) {
+    public void drawBackground(Texture image, float speedRatio) {
 		if (!active) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
 
-		draw(image, TextureOrigin.MIDDLE, 0.5f, 0.5f, 1f, true, 0, Color.WHITE);
+		float drawY = 0.71f - 0.12f * speedRatio;
+
+		draw(image, TextureOrigin.MIDDLE, 0.5f, drawY, 1f, true, 0, Color.WHITE);
     }
 
 
