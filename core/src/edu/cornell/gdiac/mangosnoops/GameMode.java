@@ -557,18 +557,18 @@ public class GameMode implements Screen {
 		canvas.beginHUDDrawing();
 		switch (gameplayController.getRegion()) {
 			case SUBURBS:
-				canvas.drawBackground(suburbBackgroundTexture);
+				canvas.drawBackground(suburbBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 			case HIGHWAY:
-				canvas.drawBackground(highwayBackgroundTexture);
+				canvas.drawBackground(highwayBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 			case MIDWEST:
-				canvas.drawBackground(midwestBackgroundTexture);
+				canvas.drawBackground(midwestBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 			case COLORADO:
 				break;
             default:
-				canvas.drawBackground(mountainBackgroundTexture);
+				canvas.drawBackground(mountainBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 
 		}

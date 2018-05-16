@@ -48,7 +48,7 @@ public class VroomStick extends Image {
 
     public void update(Vector2 in, float dy) {
 
-        if(in != null) {
+        if (in != null) {
             in.y = SCREEN_DIMENSIONS.y-in.y;
         }
         if (in != null && inArea(in)) {
@@ -65,7 +65,7 @@ public class VroomStick extends Image {
             engaged = false;
         }
 
-        if(ang >= 0){
+        if (ang >= 0) {
             ang = 0;
         }
 
