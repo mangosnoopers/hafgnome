@@ -26,12 +26,14 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String MANGO_FILE = "images/Items/mango.png";
     private static final String READY_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
     private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
+    private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
     private Image background;
     private Texture backgroundTex;
     private Texture shelfTex;
     private Texture dvdTex;
     private Texture snackTex;
     private Texture readyButtonTex;
+    private Texture tutSpeech;
     private BitmapFont displayFont;
     private ObjectMap<String,Texture> itemTextures;
     private static Music bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bensound-jazzcomedy.mp3"));
@@ -113,6 +115,14 @@ public class RestStopMode implements Screen, InputProcessor {
     private Image snackInd;
     private Image dvdInd;
 
+    // Distinguish what level to decide if tutorial module is necessary
+    /** True iff is a tutorial level */
+    private boolean isTutorial;
+    /** What tutoiral it is, null if not a tutorial*/
+    private int tutNum;
+    /** whether or not tutorial module is being drawn right now */
+    private boolean moduleOpen;
+
     /** Set the player's inventory to inv. */
     public void setPlayerInv(Inventory inv) { playerInv = inv; }
 
@@ -141,6 +151,7 @@ public class RestStopMode implements Screen, InputProcessor {
         readyButtonTex = new Texture(READY_BUTTON_FILE);
         dvdTex = new Texture(GNOMECOUNTRY_DVD_FILE);
         snackTex = new Texture(MANGO_FILE);
+        tutSpeech = new Texture(TUT_SPEECH);
 
         itemTextures = new ObjectMap<String,Texture>();
         itemTextures.put(GNOME_COUNTRY, dvdTex);
@@ -168,6 +179,11 @@ public class RestStopMode implements Screen, InputProcessor {
 
         // Parse JSON to get item quantities/max number of items player can take
         parseJSON("levels/" + filename);
+
+        // Parse filename to decide whether it is a tutorial or not
+        isTutorial = filename.contains("tut");
+        if(isTutorial)
+            tutNum = Character.getNumericValue(filename.charAt(filename.indexOf("tut") + 3));
 
         // Generate the items, initialize some more variables
         items = new Array<RestStopItem>();
@@ -293,7 +309,28 @@ public class RestStopMode implements Screen, InputProcessor {
             drawPlayerInv();
 
         }
+        drawTutorial(canvas);
         canvas.endHUDDrawing();
+    }
+
+    /** Draws tutorial items */
+    private void drawTutorial(GameCanvas canvas) {
+        if(isTutorial) {
+            switch(tutNum) {
+                case 0: //draw module & explain snack item
+                    canvas.draw(tutSpeech, GameCanvas.TextureOrigin.BOTTOM_RIGHT, 0.5f, 0.5f, 0.1f, false);
+                    canvas.draw(tutSpeech, GameCanvas.TextureOrigin.BOTTOM_RIGHT, 0.75f, 0.5f, 0.1f, false);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3: // explain movie
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /** FIXME: Draw the fade-in transition */
