@@ -8,7 +8,7 @@ public class Flamingo extends Enemy {
 
     /** How far away the flamingo can be without being
      *  affected by the horn. */
-    private final static float FLYAWAY_DISTANCE = 2f;
+    private final static float FLYAWAY_DISTANCE = 1f;
 
     /** Whether or not the Flamingo is flying away. */
     private boolean isFlyingAway;
