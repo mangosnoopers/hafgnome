@@ -235,6 +235,22 @@ public class Road extends RoadObject {
         return currentSpeed;
     }
 
+    public void setNormalSpeed(float newSpeed) {
+        NORMAL_SPEED = newSpeed;
+    }
+
+    public void setAccelerationSpeed(float newAcc) {
+        VROOM_ACCELERATION = newAcc;
+    }
+
+    public void setVroomSpeed(float newVroom) {
+        VROOM_SPEED = newVroom;
+    }
+
+    public void setDECELERATION(float newDec) {
+        DECELERATION = newDec;
+    }
+
     /**
      * @return current speed to normal speed ratio, capped at 2x
      */
