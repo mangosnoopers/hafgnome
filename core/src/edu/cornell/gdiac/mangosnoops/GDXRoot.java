@@ -297,6 +297,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx - NUM_TUTORIALS) : LEVELS.get(nextIdx);
 				currLevel = nextIdx;
 //				System.out.println("NOW PLAYING LEVEL: " + next);
+//				System.out.println("CURR LEVEL IS NOW: " + currLevel);
 				playing = new GameMode(canvas,settings,soundController,next);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
@@ -348,7 +349,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				saveGame(reststop.getPlayerInv());
 
 			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
-			System.out.println("EXITING REST STOP, NOW PLAYING LEVEL: " + LEVELS.get(currLevel));
+//			System.out.println("EXITING REST STOP, NOW PLAYING LEVEL: " + LEVELS.get(currLevel));
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode
