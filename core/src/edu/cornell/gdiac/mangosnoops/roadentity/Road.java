@@ -235,20 +235,15 @@ public class Road extends RoadObject {
         return currentSpeed;
     }
 
-    public void setNormalSpeed(float newSpeed) {
-        NORMAL_SPEED = newSpeed;
-    }
-
-    public void setAccelerationSpeed(float newAcc) {
-        VROOM_ACCELERATION = newAcc;
-    }
-
-    public void setVroomSpeed(float newVroom) {
-        VROOM_SPEED = newVroom;
-    }
-
-    public void setDECELERATION(float newDec) {
-        DECELERATION = newDec;
+    /**
+     * Multiply the normal speed, acceleration, deceleration
+     * and the vroom speed by speed factor s
+     */
+    public void setSpeedFactor(float s) {
+        NORMAL_SPEED *= s;
+        DECELERATION *= s;
+        VROOM_ACCELERATION *= s;
+        VROOM_SPEED *= s;
     }
 
     /**
