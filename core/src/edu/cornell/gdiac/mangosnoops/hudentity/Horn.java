@@ -13,13 +13,13 @@ public class Horn extends Image {
     private boolean isHonking;
 
     /** How long a honk lasts */
-    private final static float HONK_LENGTH = 15f;
+    private final static float HONK_LENGTH = 0.75f;
 
     /** How much time remains of the honk */
     private float honkTimeRemaining;
 
     /** How quickly the honk time decreases */
-    private final static float HONK_DEPRECATION_RATE = 20;
+    private final static float HONK_DEPRECATION_RATE = 80;
 
     public Horn(float x, float y, float relScal, float cb, Texture tex) {
         super(x, y, relScal, cb, tex, GameCanvas.TextureOrigin.MIDDLE);
