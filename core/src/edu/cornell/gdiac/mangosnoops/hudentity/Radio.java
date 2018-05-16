@@ -183,12 +183,14 @@ public class Radio {
         } else {
             playStatic = false;
         }
-        if(prevClicked == true && in == null && soundOn) {
-            soundOn = false;
-            currentStation.getAudio().setVolume(0);
-        } else if(prevClicked == true && in == null && !soundOn) {
-            soundOn = true;
-            currentStation.getAudio().setVolume(1);
+        if(currentStation != null) {
+            if(prevClicked == true && in == null && soundOn) {
+                soundOn = false;
+                currentStation.getAudio().setVolume(0);
+            } else if(prevClicked == true && in == null && !soundOn) {
+                soundOn = true;
+                currentStation.getAudio().setVolume(1);
+            }
         }
         prevClicked = in != null && sound_on.inArea(in);
     }
