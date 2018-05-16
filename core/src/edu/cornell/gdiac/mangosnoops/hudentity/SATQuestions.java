@@ -18,7 +18,7 @@ public class SATQuestions extends Image {
     private static final String file = "SatQuestions/questions.json";
     private JSONArray questions;
     private boolean active; // True when there is a question active that
-                            // hasn't been answered yet
+    // hasn't been answered yet
     private String currQuestion;
     private Texture currImageA;
     private Texture currImageB;
@@ -26,6 +26,8 @@ public class SATQuestions extends Image {
     private HashMap<String, Texture> images; // Keys are the file names of the textures, values are respective Textures
     private Texture bubble; // Texture of the background bubble
     Random rand = new Random();
+    private int timer; // Used to time how long to do a right/wrong animation
+    private static final int TIMER_MAX = 30; //duration of timer
     /** -1: Do not tint draw & tint bubble
      *  0: Incorrect answer, tint bubble red
      *  1: Correct answer, tint bubble green*/
@@ -68,7 +70,7 @@ public class SATQuestions extends Image {
      * @return -1 = question area was not pressed, 1 = left area pressed, 2 = right area pressed */
     private int isInArea(Vector2 p) {
         if (p.x > X*SCREEN_DIMENSIONS.x && p.x < (X+0.3f*0.45f)*SCREEN_DIMENSIONS.x
-            && SCREEN_DIMENSIONS.y-p.y < Y*SCREEN_DIMENSIONS.y && SCREEN_DIMENSIONS.y-p.y > Y*SCREEN_DIMENSIONS.y-0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth()) {
+                && SCREEN_DIMENSIONS.y-p.y < Y*SCREEN_DIMENSIONS.y && SCREEN_DIMENSIONS.y-p.y > Y*SCREEN_DIMENSIONS.y-0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth()) {
             return 1;
         }
         else if(p.x < (X+0.3f)*SCREEN_DIMENSIONS.x && p.x > (X+0.3f*0.45f)*SCREEN_DIMENSIONS.x
@@ -86,6 +88,7 @@ public class SATQuestions extends Image {
     private void handleRightAnswer(Child ned) {
         active = false;
         ned.setMood(Child.Mood.HAPPY);
+        timer = -1;
         answered = 1;
     }
 
@@ -94,12 +97,19 @@ public class SATQuestions extends Image {
      */
     private void handleWrongAnswer(Child ned) {
         active = false;
-        ned.decreaseMood();
         ned.setMoodShifting(true, false);
+        timer = -1;
         answered = 0;
     }
 
     public void update(Vector2 p, int numPressed, Child ned) {
+        if(answered != -1) {
+            timer ++;
+            if(timer == TIMER_MAX) {
+                timer = 0;
+                answered = -1;
+            }
+        }
         if(active) {
             if(currImageB == null) { //numerical question
                 if(numPressed == currAns) {
@@ -144,7 +154,7 @@ public class SATQuestions extends Image {
             float bubbleHeight = 0.3f*SCREEN_DIMENSIONS.x*bubble.getHeight()/bubble.getWidth();
             if(currImageB == null) { //numerical question
                 canvas.draw(currImageA, Color.WHITE, 0.5f*currImageA.getWidth(), 0.5f*currImageA.getHeight(), (bubbleWidth*0.45f) + X*canvas.getWidth(), Y*canvas.getHeight() - (bubbleHeight*0.5f), 0,
-                            bubbleHeight/currImageA.getWidth(), bubbleHeight/currImageA.getWidth());
+                        bubbleHeight/currImageA.getWidth(), bubbleHeight/currImageA.getWidth());
                 font.setColor(new Color(0, 0, 0, 1));
                 canvas.drawText("Type to answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             } else { //choose the picture question
@@ -155,7 +165,6 @@ public class SATQuestions extends Image {
                 font.setColor(new Color(0, 0, 0, 1));
                 canvas.drawText("Click to answer.", font, (X+TEXT_XOFFSET)*canvas.getWidth(), (1+TEXT_YOFFSET)*canvas.getHeight()-bubbleHeight);
             }
-            font.setColor(new Color(0, 0, 0, 1));
             canvas.drawText(currQuestion, font, (X+TEXT_XOFFSET)*canvas.getWidth(), (Y-TEXT_YOFFSET)*canvas.getHeight());
         }
     }
