@@ -28,7 +28,6 @@ public class TouchScreen {
     public DvdPlayer getDvdPlayer() { return dvdPlayer; }
 
     public boolean inDvdSlot(Vector2 p) {
-        System.out.println("IN DVD SLOT");
         return dvdSlot.inArea(p) || offScreen.inArea(p);
     }
 
