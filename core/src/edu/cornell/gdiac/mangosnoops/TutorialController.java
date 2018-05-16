@@ -187,7 +187,7 @@ public class TutorialController extends GameplayController {
         int noshDialogueSelect = -1;
         int nedDialogueSelect = -1;
         stamp += road.getSpeed() * delta;
-        if(tutIndex == 0) {
+        if(tutIndex == 0) { // ========================================================================================
             if(stamp < 3) {
                 if(stamp>0.5) {
                     noshDialogue = "Moooooom why are\nwe leaving home?";
@@ -261,7 +261,7 @@ public class TutorialController extends GameplayController {
                     nedDialogue = null;
                 }
             }
-        } else if(tutIndex == 1) {
+        } else if(tutIndex == 1) { // ==================================================================================
             if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
                 if(!rearviewEnemy.exists()) {
                     nedDialogue = null;
@@ -281,7 +281,7 @@ public class TutorialController extends GameplayController {
                 vroomStick.setFlashing(false);
                 tutVroomArrow.setVisible(false);
             }
-        } else if(tutIndex == 2) {
+        } else if(tutIndex == 2) { // ==================================================================================
             if(!finishedTutorial) getRoad().setRoadExitY(500);
 
             if(stamp < 3) {
