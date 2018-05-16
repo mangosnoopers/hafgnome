@@ -157,9 +157,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		currLevel = 0;
 		loadLevelsRestStops();
 		loadSavedFilenames();
-		for (String s : LEVELS) {
-			System.out.println(s);
-		}
+//		for (String s : LEVELS) {
+//			System.out.println(s);
+//		}
 
 		// other initialization shenanigans
 		Gdx.graphics.setTitle("Home Away From Gnome");
