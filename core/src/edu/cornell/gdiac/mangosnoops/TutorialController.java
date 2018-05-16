@@ -112,9 +112,6 @@ public class TutorialController extends GameplayController {
         vroomStick.setSpecialTexture(tutVroomTexture);
         getWheel().setSpecialTexture(tutWheel);
         if(tutIndex == 0) {
-        } else if(tutIndex == 1) {
-            vroomStick.setFlashing(true);
-            tutVroomArrow.setVisible(true);
         } else if(tutIndex == 2) {
             gnome = new Gnome(0, 10);
             gnome.setFilmStrip(gnomeTexture, GNOME_FILMSTRIP_ROWS, GNOME_FILMSTRIP_COLS);
@@ -190,7 +187,7 @@ public class TutorialController extends GameplayController {
         int noshDialogueSelect = -1;
         int nedDialogueSelect = -1;
         stamp += road.getSpeed() * delta;
-        if(tutIndex == 0) {
+        if(tutIndex == 0) { // ========================================================================================
             if(stamp < 3) {
                 if(stamp>0.5) {
                     noshDialogue = "Moooooom why are\nwe leaving home?";
@@ -264,14 +261,14 @@ public class TutorialController extends GameplayController {
                     nedDialogue = null;
                 }
             }
-        } else if(tutIndex == 1) {
+        } else if(tutIndex == 1) { // ==================================================================================
             if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
                 if(!rearviewEnemy.exists()) {
                     nedDialogue = null;
                     vroomStick.setFlashing(false);
                     tutVroomArrow.setVisible(false);
                 }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.4f) {
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f) {
                 nedDialogue = "Mom I think there's\n something behind us!";
                 noshDialogueSelect =2;
                 isNoshSpeaking = true;
@@ -284,7 +281,7 @@ public class TutorialController extends GameplayController {
                 vroomStick.setFlashing(false);
                 tutVroomArrow.setVisible(false);
             }
-        } else if(tutIndex == 2) {
+        } else if(tutIndex == 2) { // ==================================================================================
             if(!finishedTutorial) getRoad().setRoadExitY(500);
 
             if(stamp < 3) {

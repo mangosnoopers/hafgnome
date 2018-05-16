@@ -157,6 +157,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		currLevel = 0;
 		loadLevelsRestStops();
 		loadSavedFilenames();
+		for (String s : LEVELS) {
+			System.out.println(s);
+		}
 
 		// other initialization shenanigans
 		Gdx.graphics.setTitle("Home Away From Gnome");
@@ -239,7 +242,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
 			bw.write(json.toString());
 			bw.close();
-			System.out.println("GENERATED FILE: " + filename);
+//			System.out.println("GENERATED FILE: " + filename);
 		} catch (IOException e) {
 			System.out.println("IO exception when saving");
 		}
@@ -290,8 +293,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (levelSelect.loadPlaying()) {
 				// load next level index either from the levels array or saved_levels array
 				int nextIdx = levelSelect.getNextLevelIndex();
-				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS.get(nextIdx);
-				System.out.println("NOW PLAYING LEVEL: " + next);
+//				System.out.println("index of next level is: " + nextIdx);
+				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx - NUM_TUTORIALS) : LEVELS.get(nextIdx);
+				currLevel = nextIdx;
+//				System.out.println("NOW PLAYING LEVEL: " + next);
 				playing = new GameMode(canvas,settings,soundController,next);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
@@ -340,9 +345,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == reststop) {
 			// save the game when exiting the rest stop - loading will bring you to the next level
 			if (!(LEVELS.get(currLevel).contains("tut")))
-				saveGame(playing.getInventory());
+				saveGame(reststop.getPlayerInv());
 
 			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
+			System.out.println("EXITING REST STOP, NOW PLAYING LEVEL: " + LEVELS.get(currLevel));
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode

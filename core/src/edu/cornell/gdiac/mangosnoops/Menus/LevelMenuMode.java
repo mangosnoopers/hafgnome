@@ -190,55 +190,55 @@ public class LevelMenuMode implements Screen, InputProcessor {
 
         // the burbs
         LevelNode burbs0 = new LevelNode(0.805f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 0);
+                GameCanvas.TextureOrigin.MIDDLE, true, 0+numTutorials);
         levelNodes.add(burbs0);
 
         LevelNode burbs1 = new LevelNode(0.775f, 0.58f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 1);
+                GameCanvas.TextureOrigin.MIDDLE, true, 1+numTutorials);
         levelNodes.add(burbs1);
 
         LevelNode burbs2 = new LevelNode(0.75f, 0.585f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 2);
+                GameCanvas.TextureOrigin.MIDDLE, true, 2+numTutorials);
         levelNodes.add(burbs2);
 
         // highway
         LevelNode hw1 = new LevelNode(0.7f, 0.58f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 3);
+                GameCanvas.TextureOrigin.MIDDLE, true, 3+numTutorials);
         levelNodes.add(hw1);
 
         LevelNode hw2 = new LevelNode(0.65f, 0.575f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 4);
+                GameCanvas.TextureOrigin.MIDDLE, true, 4+numTutorials);
         levelNodes.add(hw2);
 
         LevelNode hw3 = new LevelNode(0.6f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 5);
+                GameCanvas.TextureOrigin.MIDDLE, true, 5+numTutorials);
         levelNodes.add(hw3);
 
         // midwest
         LevelNode mw1 = new LevelNode(0.54f, 0.583f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 6);
+                GameCanvas.TextureOrigin.MIDDLE, true, 6+numTutorials);
         levelNodes.add(mw1);
 
         LevelNode mw2 = new LevelNode(0.498f, 0.615f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 7);
+                GameCanvas.TextureOrigin.MIDDLE, true, 7+numTutorials);
         levelNodes.add(mw2);
 
         LevelNode mw3 = new LevelNode(0.425f, 0.613f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 8);
+                GameCanvas.TextureOrigin.MIDDLE, true, 8+numTutorials);
         levelNodes.add(mw3);
 
         // colorado (west)
         LevelNode w1 = new LevelNode(0.365f, 0.635f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 9);
+                GameCanvas.TextureOrigin.MIDDLE, true, 9+numTutorials);
         levelNodes.add(w1);
 
         LevelNode w2 = new LevelNode(0.305f, 0.67f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 10);
+                GameCanvas.TextureOrigin.MIDDLE, true, 10+numTutorials);
         levelNodes.add(w2);
 
         // last level
         LevelNode w3 = new LevelNode(0.25f, 0.75f, LEVEL_MARKER_SIZE * 1.5f, finalLevelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 11);
+                GameCanvas.TextureOrigin.MIDDLE, true, 11+numTutorials);
         levelNodes.add(w3);
 
     }
@@ -578,9 +578,9 @@ public class LevelMenuMode implements Screen, InputProcessor {
         public void createHover() {
             // for normal levels pick texture at index levelIndex + 1 in hover assets array
             // for tutorial pick texture at index 0
-            Texture hovTex = HOVER_TEXS[levelIndex + 1];
-            if (!savedLevel) {
-                hovTex = HOVER_TEXS[0];
+            Texture hovTex = HOVER_TEXS[0];
+            if (savedLevel) {
+                hovTex = HOVER_TEXS[levelIndex - numTutorials + 1];
             }
 
             hover = new Image(position.x, position.y, 0.3f, hovTex, GameCanvas.TextureOrigin.TOP_RIGHT);
