@@ -268,7 +268,7 @@ public class TutorialController extends GameplayController {
                     vroomStick.setFlashing(false);
                     tutVroomArrow.setVisible(false);
                 }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f) {
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f && nedDialogue != null) {
                 nedDialogue = "Mom I think there's\n something behind us!";
                 noshDialogueSelect =2;
                 isNoshSpeaking = true;
