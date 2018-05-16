@@ -184,6 +184,7 @@ public class RestStopMode implements Screen, InputProcessor {
         isTutorial = filename.contains("tut");
         if(isTutorial)
             tutNum = Character.getNumericValue(filename.charAt(filename.indexOf("tut") + 3));
+        System.out.println("tutorial level " + tutNum);
 
         // Generate the items, initialize some more variables
         items = new Array<RestStopItem>();
