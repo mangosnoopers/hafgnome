@@ -239,7 +239,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(filename)));
 			bw.write(json.toString());
 			bw.close();
-			System.out.println("GENERATED FILE: " + filename);
+//			System.out.println("GENERATED FILE: " + filename);
 		} catch (IOException e) {
 			System.out.println("IO exception when saving");
 		}
@@ -290,8 +290,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (levelSelect.loadPlaying()) {
 				// load next level index either from the levels array or saved_levels array
 				int nextIdx = levelSelect.getNextLevelIndex();
-				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx) : LEVELS.get(nextIdx);
-				System.out.println("NOW PLAYING LEVEL: " + next);
+//				System.out.println("index of next level is: " + nextIdx);
+				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx - NUM_TUTORIALS) : LEVELS.get(nextIdx);
+				currLevel = nextIdx;
+//				System.out.println("NOW PLAYING LEVEL: " + next);
 				playing = new GameMode(canvas,settings,soundController,next);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
