@@ -27,13 +27,16 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String READY_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
     private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
     private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
-    private Image background;
+    private static final String DVDPOPUP_FILE = "images/restStopAssets/dvdpopup.png";
+    private static final String MANGOPOPUP_FILE = "images/restStopAssets/mangopopup.png";
     private Texture backgroundTex;
     private Texture shelfTex;
     private Texture dvdTex;
     private Texture snackTex;
     private Texture readyButtonTex;
     private Texture tutSpeech;
+    private Texture dvdPopupTex;
+    private Texture mangoPopupTex;
     private BitmapFont displayFont;
     private ObjectMap<String,Texture> itemTextures;
     private static Music bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bensound-jazzcomedy.mp3"));
@@ -46,6 +49,15 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Ready button is clicked when the player is ready to return to the road */
     private int readyStatus;
     private Image readyButton;
+
+    // IMAGES
+    private Image background;
+    private Image dvdPopup;
+    private Image mangoPopup;
+
+    // POPUP STUFF
+    private float popupDuration;
+    private static final float MAX_POPUP_DURATION = 20.0f;
 
     // ITEMS
     /** An array of the items at the rest stop */
@@ -108,10 +120,10 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Scaling for textures used to indicate # of items in inventory */
     private static final float IND_SCALING = 0.09f;
     /** Drawing for items in the indicator */
-    private static final float IND_X = 0.90f;
-    private static final float IND_TEXT_X = 0.94f;
-    private static final float IND_SNACK_Y = 0.94f;
-    private static final float IND_DVD_Y = 0.84f;
+    private static final float IND_X = 0.03f;
+    private static final float IND_TEXT_X = 0.07f;
+    private static final float IND_SNACK_Y = 0.95f;
+    private static final float IND_DVD_Y = 0.85f;
     private Image snackInd;
     private Image dvdInd;
 
@@ -152,6 +164,8 @@ public class RestStopMode implements Screen, InputProcessor {
         dvdTex = new Texture(GNOMECOUNTRY_DVD_FILE);
         snackTex = new Texture(MANGO_FILE);
         tutSpeech = new Texture(TUT_SPEECH);
+        dvdPopupTex = new Texture(DVDPOPUP_FILE);
+        mangoPopupTex = new Texture(MANGOPOPUP_FILE);
 
         itemTextures = new ObjectMap<String,Texture>();
         itemTextures.put(GNOME_COUNTRY, dvdTex);
@@ -167,6 +181,7 @@ public class RestStopMode implements Screen, InputProcessor {
         fadeIn = true;
         fadeOpacity = 1.0f;
         delay = 0;
+        popupDuration = 0.0f;
 
         // Textures and load font
         initTextures();
@@ -176,6 +191,8 @@ public class RestStopMode implements Screen, InputProcessor {
         shelf = new Image(0.5f, 0.4f, 0.9f, shelfTex, GameCanvas.TextureOrigin.MIDDLE);
         readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex, GameCanvas.TextureOrigin.MIDDLE);
         background = new Image(0.5f,0.5f,1.0f, backgroundTex, GameCanvas.TextureOrigin.MIDDLE);
+        dvdPopup = new Image(0.5f,0.5f,1.0f, dvdPopupTex, GameCanvas.TextureOrigin.MIDDLE);
+        mangoPopup = new Image(0.5f,0.5f,1.0f, mangoPopupTex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Parse JSON to get item quantities/max number of items player can take
         parseJSON("levels/" + filename);
@@ -267,6 +284,7 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
+        popupDuration += delta;
     }
 
     /**
@@ -514,22 +532,19 @@ public class RestStopMode implements Screen, InputProcessor {
             if (i.clickStatus == BUTTON_DOWN) {
                 i.clickStatus = BUTTON_UP;
                 int oldToggleState = i.toggleState;
-                int quantity = (i.type == Inventory.Item.ItemType.SNACK)
-                        ? numSnacksSelected + playerInv.getNumSnacks()
-                        : numMoviesSelected + playerInv.getNumMovies();
 
                 // only allow the item to be selected if the user can take more
                 // or allow the item to be unselected at any time
-                if (quantity < SLOT_MAX_QUANTITY
-                        && oldToggleState == UNSELECTED
-                        && numSelected < numCanTake || oldToggleState == SELECTED) {
+                if (oldToggleState == UNSELECTED && numSelected < numCanTake
+                        || oldToggleState == SELECTED) {
                     i.switchState();
-                    i.switchOverlay();
 
                     // update item quantity
                     // case 1: item was selected and is now unselected - decrease items taken
                     // case 2: item was unselected and is now selected - increase items taken
+                    //         or display popup if full
                     if (oldToggleState == SELECTED && i.toggleState == UNSELECTED) {
+                        i.switchOverlay();
                         numSelected -= 1;
 
                         // also update the amount for the specific item
@@ -543,22 +558,64 @@ public class RestStopMode implements Screen, InputProcessor {
                             default:
                                 break;
                         }
-                    } else if (oldToggleState == UNSELECTED & i.toggleState == SELECTED) {
-                        numSelected += 1;
+                    } else if (oldToggleState == UNSELECTED && i.toggleState == SELECTED) {
+                        int quantity = (i.type == Inventory.Item.ItemType.SNACK)
+                                ? numSnacksSelected + playerInv.getNumSnacks()
+                                : numMoviesSelected + playerInv.getNumMovies();
+                        if (quantity == SLOT_MAX_QUANTITY) {
+                            i.switchState();
+                            switch (i.type) {
+                                case SNACK:
+//                                    System.out.println("about to do snack popup");
+                                    canvas.beginHUDDrawing();
+                                    if (popupDuration < MAX_POPUP_DURATION) {
+                                        mangoPopup.draw(canvas);
+//                                        System.out.println("snack popup");
+                                    } else if (popupDuration == MAX_POPUP_DURATION) {
+                                        popupDuration = 0.0f;
+                                    }
+                                    canvas.endHUDDrawing();
+                                    break;
+                                case DVD:
+                                    canvas.beginHUDDrawing();
+                                    if (popupDuration < MAX_POPUP_DURATION) {
+                                        dvdPopup.draw(canvas);
+                                    } else if (popupDuration == MAX_POPUP_DURATION) {
+                                        popupDuration = 0.0f;
+                                    }
+                                    canvas.endHUDDrawing();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
 
-                        // also update the amount for the specific item
-                        switch (i.type) {
-                            case SNACK:
-                                numSnacksSelected += 1;
-                                break;
-                            case DVD:
-                                numMoviesSelected += 1;
-                                break;
-                            default:
-                                break;
+                        else {
+                            i.switchOverlay();
+                            numSelected += 1;
+                            System.out.println("selecting snack");
+
+                            // also update the amount for the specific item
+                            switch (i.type) {
+                                case SNACK:
+                                    numSnacksSelected += 1;
+                                    break;
+                                case DVD:
+                                    numMoviesSelected += 1;
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
+
+//                // if at max quantity display a warning
+//                else if (quantity == SLOT_MAX_QUANTITY
+//                        && oldToggleState == UNSELECTED
+//                        && numSelected < numCanTake || oldToggleState == SELECTED) {
+//
+//                }
 
 
                 return false;
