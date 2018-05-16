@@ -17,6 +17,7 @@ import edu.cornell.gdiac.mangosnoops.roadentity.Gnome;
 public class TutorialController extends GameplayController {
 
     /** Texture files */
+    private static final String TUT_HEALTH_FILE = "images/Tutorial/tut_gauge.png";
     private static final String TUT_KEYS_FILE = "images/Tutorial/tut_keys.png";
     private static final String TUT_WHEEL = "images/Tutorial/tut_wheel.png";
     private static final String TUT_GAUGE_FILE = "images/Tutorial/tut_gauge.png";
@@ -27,10 +28,12 @@ public class TutorialController extends GameplayController {
     private static final String TUT_INVENTORY_FILE = "images/Tutorial/tut_inventory.png";
     private static final String TUT_ARROW = "images/Tutorial/arrow.png";
     private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
+    private static final String TUT_SPEECH_REVERSE = "images/Tutorial/speechbubble_small_reverse.png";
     private static final String MODULE_BG = "images/PauseMenuAssets/pauseMenuBackground.png";
     private static final String TUT_VROOM_ARROW_FILE = "images/Tutorial/downArrow.png";
 
     /** Texture types */
+    private Texture tutHealthTexture;
     private Texture tutKeysTexture;
     private Texture tutGaugeTexture;
     private Texture tutMirrorTexture;
@@ -40,6 +43,7 @@ public class TutorialController extends GameplayController {
     private Texture tutInventoryTexture;
     private Texture arrowTexture;
     private Texture speechTexture;
+    private Texture speechReverseTexture;
     private Texture moduleTexture;
     private Texture tutWheel;
     private Texture tutVroomArrowTexture;
@@ -51,6 +55,7 @@ public class TutorialController extends GameplayController {
     private String nedDialogue = null; //null if saying nothing, otherwise draw bubble with this text
 
     /** Images that will be flashed on the screen */
+    private FlashingImage tutHealth;
     private FlashingImage tutKeys;
     private FlashingImage tutGauge;
     private FlashingImage tutMirrorNedSnack;
@@ -94,6 +99,7 @@ public class TutorialController extends GameplayController {
     public void start(float x, float y) {
         super.start(x, y);
         tutVroomArrow = new FlashingImage(0.34f, 0.1f,0.25f, tutVroomArrowTexture);
+        tutHealth = new FlashingImage(0.305f, -0.01f, 0.3f, tutHealthTexture);
         tutKeys = new FlashingImage(0.06f, 0.45f, 0.12f, tutKeysTexture);
         tutGauge = new FlashingImage(0.34f, 0.05f, 0.175f, tutGaugeTexture);
         tutMirrorNedSnack = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
@@ -103,7 +109,7 @@ public class TutorialController extends GameplayController {
         tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
         arrowNedSnack = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
         arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
-        tutRadio = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
+        tutRadio = new FlashingImage(0.305f, -0.01f, 0.3f, tutHealthTexture);
         speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
         module = new Image(0.5f,0.5f, 0.79f, moduleTexture, GameCanvas.TextureOrigin.MIDDLE);
@@ -134,6 +140,8 @@ public class TutorialController extends GameplayController {
 
     public void preLoadContent(AssetManager manager, Array<String> assets) {
         super.preLoadContent(manager, assets);
+        manager.load(TUT_HEALTH_FILE, Texture.class);
+        assets.add(TUT_HEALTH_FILE);
         manager.load(TUT_KEYS_FILE, Texture.class);
         assets.add(TUT_KEYS_FILE);
         manager.load(TUT_GAUGE_FILE, Texture.class);
@@ -152,6 +160,8 @@ public class TutorialController extends GameplayController {
         assets.add(TUT_ARROW);
         manager.load(TUT_SPEECH, Texture.class);
         assets.add(TUT_SPEECH);
+        manager.load(TUT_SPEECH_REVERSE, Texture.class);
+        assets.add(TUT_SPEECH_REVERSE);
         manager.load(MODULE_BG, Texture.class);
         assets.add(MODULE_BG);
         manager.load(TUT_WHEEL, Texture.class);
@@ -162,6 +172,7 @@ public class TutorialController extends GameplayController {
 
     public void loadContent(AssetManager manager) {
         super.loadContent(manager);
+        tutHealthTexture = createTexture(manager, TUT_HEALTH_FILE);
         tutKeysTexture = createTexture(manager, TUT_KEYS_FILE);
         tutGaugeTexture = createTexture(manager, TUT_GAUGE_FILE);
         tutMirrorTexture = createTexture(manager, TUT_MIRROR_FILE);
@@ -171,6 +182,7 @@ public class TutorialController extends GameplayController {
         tutInventoryTexture = createTexture(manager, TUT_INVENTORY_FILE);
         arrowTexture = createTexture(manager, TUT_ARROW);
         speechTexture = createTexture(manager, TUT_SPEECH);
+        speechReverseTexture = createTexture(manager, TUT_SPEECH_REVERSE);
         moduleTexture = createTexture(manager, MODULE_BG);
         tutWheel = createTexture(manager, TUT_WHEEL);
         tutVroomArrowTexture = createTexture(manager, TUT_VROOM_ARROW_FILE);
@@ -214,6 +226,7 @@ public class TutorialController extends GameplayController {
                 nedDialogueSelect =1;
                 isNedSpeaking = true;
                 tutKeys.setVisible(true);
+                tutHealth.setVisible(true);
                 getWheel().setFlashing(true);
             } else if(stamp < 20) {
                 noshDialogue = null;
@@ -221,6 +234,7 @@ public class TutorialController extends GameplayController {
             } else {
                 if(stamp > 30) {
                     tutKeys.setVisible(false);
+                    tutHealth.setVisible(false);
                     getWheel().setFlashing(false);
                 }
                 // Show to put snacks
@@ -268,7 +282,7 @@ public class TutorialController extends GameplayController {
                     vroomStick.setFlashing(false);
                     tutVroomArrow.setVisible(false);
                 }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f) {
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f && nedDialogue == null) {
                 nedDialogue = "Mom I think there's\n something behind us!";
                 noshDialogueSelect =2;
                 isNoshSpeaking = true;
@@ -289,7 +303,6 @@ public class TutorialController extends GameplayController {
                 noshDialogueSelect = 3;
                 isNoshSpeaking = true;
             } else if(stamp < 4) {
-                tutRadio.setFlashing(true);
                 noshDialogue = null;
                 nedDialogue = "Can you switch to\nClassical?";
                 nedDialogueSelect = 2;
@@ -403,7 +416,6 @@ public class TutorialController extends GameplayController {
                         }
                         break;
                     case 4: //end level
-                        tutRadio.setFlashing(false);
                         if(!finishedTutorial) {
                             getRoad().setRoadExitY(10);
                             finishedTutorial = true;
@@ -427,6 +439,7 @@ public class TutorialController extends GameplayController {
         isNedSpeaking = false;
         vroomStick.updateFlash(delta);
         getWheel().updateFlash(delta);
+        tutHealth.update(delta);
         tutKeys.update(delta);
         tutInventory.update(delta);
         tutMirrorNoshSnack.update(delta);
@@ -457,6 +470,7 @@ public class TutorialController extends GameplayController {
 
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
+        tutHealth.draw(canvas);
         tutKeys.draw(canvas);
         tutGauge.draw(canvas);
         tutMirrorNoshSnack.draw(canvas);
