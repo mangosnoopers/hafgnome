@@ -72,6 +72,11 @@ public class Road extends RoadObject {
     /** How quickly vroom time depreciates */
     private float VROOM_TIME_DEPRECIATION = 25f;
 
+    private float VROOM_DISABLED_TIME = 50f;
+    private float vroomDisabledTimeRemaining = VROOM_DISABLED_TIME;
+
+    private boolean canVroom = true;
+
     /** Speed constants */
     private float NORMAL_SPEED = 1.4f;
     private float VROOM_SPEED = 3f;
@@ -143,6 +148,14 @@ public class Road extends RoadObject {
     }
 
     public void update(float delta) {
+
+        if (!canVroom) {
+            vroomDisabledTimeRemaining -= delta * VROOM_TIME_DEPRECIATION;
+            if (vroomDisabledTimeRemaining <= 0) {
+                canVroom = true;
+                vroomDisabledTimeRemaining = VROOM_DISABLED_TIME;
+            }
+        }
 
 //        if (state != RoadState.NORMAL) {
 //            System.out.println(state);
@@ -225,7 +238,14 @@ public class Road extends RoadObject {
      * which will subsequently decay over time, back to the normal speed.
      */
     public void setVrooming() {
-        state = RoadState.ACCELERATING;
+        if (canVroom) {
+            state = RoadState.ACCELERATING;
+            canVroom = false;
+        }
+    }
+
+    public boolean canCarVroom() {
+        return canVroom;
     }
 
     /**

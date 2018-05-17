@@ -1065,14 +1065,14 @@ public class GameplayController {
         if(in != null) {
             visor.resolveInput(new Vector2(in), input.isPrevMousePressed());
 			if(!wheel.update(new Vector2(in), dr.x, input.isTurnPressed()))
-				vroomStick.update(new Vector2(in), dr.y);
+				vroomStick.update(new Vector2(in), dr.y, road.canCarVroom());
 			touchscreen.update(new Vector2(in), dr.x);
 			if(horn.update(new Vector2(in), delta)) { soundController.beepSound(); }
 			inventory.update(new Vector2(in), mousePressed);
 		}
 		else{
 			wheel.update(null, dr.x, input.isTurnPressed());
-			vroomStick.update(null, dr.y);
+			vroomStick.update(null, dr.y, road.canCarVroom());
 			touchscreen.update(null, dr.x);
 			inventory.update(null, mousePressed);
 		}
