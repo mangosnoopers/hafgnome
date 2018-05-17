@@ -6,7 +6,7 @@ core/assets/levels/level*
 core/assets/levels/savedlevels
 
 ## Jar
-out/
+out/*
 
 ## Preventing doomsday
 classes/
