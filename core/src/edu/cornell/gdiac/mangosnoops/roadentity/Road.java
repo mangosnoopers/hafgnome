@@ -236,6 +236,17 @@ public class Road extends RoadObject {
     }
 
     /**
+     * Multiply the normal speed, acceleration, deceleration
+     * and the vroom speed by speed factor s
+     */
+    public void setSpeedFactor(float s) {
+        NORMAL_SPEED *= s;
+        DECELERATION *= s;
+        VROOM_ACCELERATION *= s;
+        VROOM_SPEED *= s;
+    }
+
+    /**
      * @return current speed to normal speed ratio, capped at 2x
      */
     public float getSpeedRatio() {
