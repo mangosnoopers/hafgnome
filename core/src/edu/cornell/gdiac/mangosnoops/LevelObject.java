@@ -53,7 +53,12 @@ public class LevelObject {
     /** Y-coordinate for end of the level */
     private float levelEndY;
     /** Constant for extra time before end of level */
-    private static final float LEVEL_END_EXTRA = 10.0f;
+    private static final float LEVEL_END_EXTRA = 5.0f;
+    /** Constant for extra time before the start of level */
+    private static final float LEVEL_START_EXTRA = 6.0f;
+    /** Coordinates for the speed limit sign at the beginning of each level */
+    private static final float SPEED_LIMIT_Y = 5.0f;
+    private static final float SPEED_LIMIT_HOV = 4.309f;
 
     /** Roadside naming constants */
     private static final String BILLBOARD_END_IS_NEAR = "the end is near";
@@ -64,6 +69,10 @@ public class LevelObject {
     private static final String SUNFLOWER = "sunflower";
     private static final String TREE = "tree";
     private static final String TOPIARY = "topiary";
+    private static final String SPEEDLIMIT_25 = "speed limit 25";
+    private static final String SPEEDLIMIT_55 = "speed limit 55";
+    private static final String SPEEDLIMIT_65 = "speed limit 65";
+    private static final String SPEEDLIMIT_80 = "speed limit 80";
 
     /** Speed constants TODO */
     private static final float VERY_SLOW_SPEED = 0.8f;
@@ -209,7 +218,7 @@ public class LevelObject {
      * @throws RuntimeException for invalid settings in the Excel level builder or unsupported file types
      */
     public LevelObject(String file) throws IOException, InvalidFormatException, RuntimeException {
-        localMiles = 5.0f;
+        localMiles = LEVEL_START_EXTRA;
 
         // Initialize collections
         songs = new ObjectMap<String,Genre>();
@@ -237,6 +246,41 @@ public class LevelObject {
         // not a supported file type
         else {
             throw new RuntimeException("Unsupported file type");
+        }
+
+    }
+
+    /**
+     * Add a speed limit sign at the beginning of each level, on the right roadside.
+     * This will always be the first item in the roadsideObjs array, and will
+     * appear before any enemies/other billboard/events do.
+     *
+     * Which sign depends on the region.
+     * 25 mph = suburbs
+     * 55 mph = highway
+     * 65 mph = midwest
+     * 80 mph = west
+     *
+     * @param r The region of the level
+     * @param lanes Number of lanes in this level, used to determine x-placement
+     */
+    private void addSpeedLimit(Region r, int lanes) {
+        float x = LANE_X * (lanes+1); // right roadside
+        switch (r) {
+            case SUBURBS:
+                roadsideObjs.add(new RoadImage(x, SPEED_LIMIT_Y, SPEEDLIMIT_25, SPEED_LIMIT_HOV));
+                break;
+            case HIGHWAY:
+                roadsideObjs.add(new RoadImage(x, SPEED_LIMIT_Y, SPEEDLIMIT_55, SPEED_LIMIT_HOV));
+                break;
+            case MIDWEST:
+                roadsideObjs.add(new RoadImage(x, SPEED_LIMIT_Y, SPEEDLIMIT_65, SPEED_LIMIT_HOV));
+                break;
+            case COLORADO:
+                roadsideObjs.add(new RoadImage(x, SPEED_LIMIT_Y, SPEEDLIMIT_80, SPEED_LIMIT_HOV));
+                break;
+            default:
+                break;
         }
 
     }
@@ -320,6 +364,10 @@ public class LevelObject {
 
             // Number of lanes
             numLanes = Integer.parseInt(df.formatCellValue(sh.getRow(LANE_ROW).getCell(LANE_COL)));
+
+
+            // Add a speed limit sign depending on the region and number of lanes
+            addSpeedLimit(region, numLanes);
 
             // Random selection of blocks
             String randomStr = df.formatCellValue(sh.getRow(RANDOM_SELECT_ROW).getCell(RANDOM_SELECT_COL)).toLowerCase();
