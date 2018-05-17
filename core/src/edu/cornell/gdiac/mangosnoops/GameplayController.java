@@ -1061,8 +1061,8 @@ public class GameplayController {
   		boolean mousePressed = input.isMousePressed();
   		horn.updateHonk(delta);
   		visor.update(delta);
+		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
         if(in != null) {
-			satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
             visor.resolveInput(new Vector2(in), input.isPrevMousePressed());
 			if(!wheel.update(new Vector2(in), dr.x, input.isTurnPressed()))
 				vroomStick.update(new Vector2(in), dr.y);
