@@ -655,7 +655,7 @@ public class GameplayController {
 		inventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
 					 INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,0));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
 		inventory.load(i);
 
@@ -663,7 +663,7 @@ public class GameplayController {
 		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
 							INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,1));
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,0));
 		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,3));
 		initialInventory.load(iCopy);
 
