@@ -32,20 +32,16 @@ public class LevelMenuMode implements Screen, InputProcessor {
     private Texture pathTex;
     /** An array of hover textures for each level. Index 0 is the tutorial. */
     private static final Texture[] HOVER_TEXS = new Texture[] {
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // tutorial
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // burbs level 1
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // burbs level 2
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // burbs level 3
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // highway level 1
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // highway level 2
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // highway level 3
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // midwest level 1
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // midwest level 2
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // midwest level 3
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // west level 1
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // west level 2
-            new Texture("images/levelSelectAssets/levelHoverable.png"), // west level 3
-
+            new Texture("images/levelSelectAssets/stage1.png"), // tutorial
+            new Texture("images/levelSelectAssets/stage2.png"), // highway level 1
+            new Texture("images/levelSelectAssets/stage3.png"), // highway level 2
+            new Texture("images/levelSelectAssets/stage4.png"), // highway level 3
+            new Texture("images/levelSelectAssets/stage5.png"), // midwest level 1
+            new Texture("images/levelSelectAssets/stage6.png"), // midwest level 2
+            new Texture("images/levelSelectAssets/stage7.png"), // midwest level 3
+            new Texture("images/levelSelectAssets/stage8.png"), // west level 1
+            new Texture("images/levelSelectAssets/stage9.png"), // west level 2
+            new Texture("images/levelSelectAssets/stage10.png"), // west level 3
     };
 
     // BUTTONS
@@ -188,57 +184,57 @@ public class LevelMenuMode implements Screen, InputProcessor {
                 GameCanvas.TextureOrigin.MIDDLE, false, 0);
         levelNodes.add(tutorialDot);
 
-        // the burbs
-        LevelNode burbs0 = new LevelNode(0.805f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 0+numTutorials);
-        levelNodes.add(burbs0);
-
-        LevelNode burbs1 = new LevelNode(0.775f, 0.58f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 1+numTutorials);
-        levelNodes.add(burbs1);
-
-        LevelNode burbs2 = new LevelNode(0.75f, 0.585f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 2+numTutorials);
-        levelNodes.add(burbs2);
+//        // the burbs
+//        LevelNode burbs0 = new LevelNode(0.805f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
+//                GameCanvas.TextureOrigin.MIDDLE, true, 0+numTutorials);
+//        levelNodes.add(burbs0);
+//
+//        LevelNode burbs1 = new LevelNode(0.775f, 0.58f, LEVEL_MARKER_SIZE, levelMarkerTex,
+//                GameCanvas.TextureOrigin.MIDDLE, true, 1+numTutorials);
+//        levelNodes.add(burbs1);
+//
+//        LevelNode burbs2 = new LevelNode(0.75f, 0.585f, LEVEL_MARKER_SIZE, levelMarkerTex,
+//                GameCanvas.TextureOrigin.MIDDLE, true, 2+numTutorials);
+//        levelNodes.add(burbs2);
 
         // highway
-        LevelNode hw1 = new LevelNode(0.7f, 0.58f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 3+numTutorials);
+        LevelNode hw1 = new LevelNode(0.805f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE, true, 0+numTutorials);
         levelNodes.add(hw1);
 
-        LevelNode hw2 = new LevelNode(0.65f, 0.575f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 4+numTutorials);
+        LevelNode hw2 = new LevelNode(0.75f, 0.585f, LEVEL_MARKER_SIZE, levelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE, true, 1+numTutorials);
         levelNodes.add(hw2);
 
-        LevelNode hw3 = new LevelNode(0.6f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 5+numTutorials);
+        LevelNode hw3 = new LevelNode(0.7f, 0.58f, LEVEL_MARKER_SIZE, levelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE, true, 2+numTutorials);
         levelNodes.add(hw3);
 
         // midwest
-        LevelNode mw1 = new LevelNode(0.54f, 0.583f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 6+numTutorials);
+        LevelNode mw1 = new LevelNode(0.6f, 0.57f, LEVEL_MARKER_SIZE, levelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE, true, 3+numTutorials);
         levelNodes.add(mw1);
 
-        LevelNode mw2 = new LevelNode(0.498f, 0.615f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 7+numTutorials);
+        LevelNode mw2 = new LevelNode(0.54f, 0.583f, LEVEL_MARKER_SIZE, levelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE, true, 4+numTutorials);
         levelNodes.add(mw2);
 
-        LevelNode mw3 = new LevelNode(0.425f, 0.613f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 8+numTutorials);
+        LevelNode mw3 = new LevelNode(0.498f, 0.615f, LEVEL_MARKER_SIZE, levelMarkerTex,
+                GameCanvas.TextureOrigin.MIDDLE, true, 5+numTutorials);
         levelNodes.add(mw3);
 
         // colorado (west)
         LevelNode w1 = new LevelNode(0.365f, 0.635f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 9+numTutorials);
+                GameCanvas.TextureOrigin.MIDDLE, true, 6+numTutorials);
         levelNodes.add(w1);
 
         LevelNode w2 = new LevelNode(0.305f, 0.67f, LEVEL_MARKER_SIZE, levelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 10+numTutorials);
+                GameCanvas.TextureOrigin.MIDDLE, true, 7+numTutorials);
         levelNodes.add(w2);
 
         // last level
         LevelNode w3 = new LevelNode(0.25f, 0.75f, LEVEL_MARKER_SIZE * 1.5f, finalLevelMarkerTex,
-                GameCanvas.TextureOrigin.MIDDLE, true, 11+numTutorials);
+                GameCanvas.TextureOrigin.MIDDLE, true, 8+numTutorials);
         levelNodes.add(w3);
 
     }
