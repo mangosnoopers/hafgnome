@@ -367,6 +367,7 @@ public class RestStopMode implements Screen, InputProcessor {
 
         if (popupDuration >= MAX_POPUP_DURATION) {
             popupDuration = -1.0f;
+            generalClick = UNCLICKED;
             if (drawSnackPopup)
                 drawSnackPopup = false;
             else if (drawDVDPopup)
@@ -420,11 +421,11 @@ public class RestStopMode implements Screen, InputProcessor {
             drawPlayerInv();
 
             // Draw popups if needed
-            if (drawSnackPopup) {
+            if (drawSnackPopup && generalClick != BUTTON_UP) {
                 mangoPopup.draw(canvas);
             }
 
-            if (drawDVDPopup) {
+            if (drawDVDPopup && generalClick != BUTTON_UP) {
                 dvdPopup.draw(canvas);
             }
 
@@ -616,7 +617,6 @@ public class RestStopMode implements Screen, InputProcessor {
                                 case DVD:
                                     playerInv.getMovieSlot().incAmount(1);
                                     break;
-                                // TODO - book case (rn books are snacks)
                                 default:
                                     break;
                             }
@@ -772,6 +772,7 @@ public class RestStopMode implements Screen, InputProcessor {
                                     if (popupDuration < MAX_POPUP_DURATION) {
                                         boolean oldPopupState = drawSnackPopup;
                                         drawSnackPopup = true;
+                                        generalClick = UNCLICKED;
 
                                         // if just switching from false to true, set duration
                                         if (!oldPopupState) {
@@ -783,6 +784,7 @@ public class RestStopMode implements Screen, InputProcessor {
                                     if (popupDuration < MAX_POPUP_DURATION) {
                                         boolean oldPopupState = drawDVDPopup;
                                         drawDVDPopup = true;
+                                        generalClick = UNCLICKED;
 
                                         // if just switching from false to true, set duration
                                         if (!oldPopupState) {
