@@ -137,7 +137,8 @@ public class InputController {
 		//Read input for Gameplay
 		prevMouseClicked = mouseClicked;
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
-		pausePressed = (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) ;
+		pausePressed = (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT));
+		resetPressed = (Gdx.input.isKeyJustPressed(Input.Keys.R));
 
 		//Process number input for SAT Question
 		if(Gdx.input.isKeyPressed(Input.Keys.NUM_0)) {

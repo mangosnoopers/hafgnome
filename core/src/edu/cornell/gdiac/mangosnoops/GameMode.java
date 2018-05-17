@@ -709,18 +709,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PLAY:
-					//TODO take this out in final game so user can't just reset w/ 'r'
-					if (inputController.didReset()) {
-						gameplayController.reset();
-						soundController.reset();
-						canvas.resetCam();
-						gameState = GameState.PLAY;
-						numTimesPaused = 0;
-						gameplayController.start(canvas.getWidth() / 2.0f, 0);
-					}
-					else {
-						play(delta);
-					}
+					play(delta);
 					break;
 				case PAUSED:
 					pause_game();
