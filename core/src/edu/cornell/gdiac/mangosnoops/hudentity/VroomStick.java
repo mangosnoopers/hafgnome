@@ -46,33 +46,33 @@ public class VroomStick extends Image {
         super.draw(canvas, ang);
     }
 
-    public void update(Vector2 in, float dy) {
+    public void update(Vector2 in, float dy, boolean canVroom) {
 
-        if (in != null) {
-            in.y = SCREEN_DIMENSIONS.y-in.y;
-        }
-        if (in != null && inArea(in)) {
-            ang -= dy;
-            hitbox.setPosition(hitbox.getX(),(hitbox.getY()- dy));
-
-            if (ang < ENGAGE_ANGLE) {
-                ang = ENGAGE_ANGLE;
-                engaged = true;
+            if (in != null) {
+                in.y = SCREEN_DIMENSIONS.y - in.y;
             }
-        } else {
-            ang += 0.2f * -ang;
-            hitbox.setPosition(hitbox.getX(),hitbox.getY() + 0.02f*hitbox.getY());
-            engaged = false;
-        }
+            if (in != null && inArea(in) && canVroom) {
+                ang -= dy;
+                hitbox.setPosition(hitbox.getX(), (hitbox.getY() - dy));
 
-        if (ang >= 0) {
-            ang = 0;
-        }
+                if (ang < ENGAGE_ANGLE) {
+                    ang = ENGAGE_ANGLE;
+                    engaged = true;
+                }
+            } else {
+                ang += 0.2f * -ang;
+                hitbox.setPosition(hitbox.getX(), hitbox.getY() + 0.02f * hitbox.getY());
+                engaged = false;
+            }
 
-        if(hitbox.getY()+hitbox.getHeight() > position.y*SCREEN_DIMENSIONS.y + texture.getHeight()*SCREEN_DIMENSIONS.y*relScaDiv){
-            hitbox.setPosition(position.x*SCREEN_DIMENSIONS.x + 0.736f*texture.getWidth()*SCREEN_DIMENSIONS.y*relScaDiv,
-                    position.y*SCREEN_DIMENSIONS.y + 0.652f*texture.getHeight()*SCREEN_DIMENSIONS.y*relScaDiv);
-        }
+            if (ang >= 0) {
+                ang = 0;
+            }
+
+            if (hitbox.getY() + hitbox.getHeight() > position.y * SCREEN_DIMENSIONS.y + texture.getHeight() * SCREEN_DIMENSIONS.y * relScaDiv) {
+                hitbox.setPosition(position.x * SCREEN_DIMENSIONS.x + 0.736f * texture.getWidth() * SCREEN_DIMENSIONS.y * relScaDiv,
+                        position.y * SCREEN_DIMENSIONS.y + 0.652f * texture.getHeight() * SCREEN_DIMENSIONS.y * relScaDiv);
+            }
     }
 
     public boolean isEngaged() { return engaged; }
