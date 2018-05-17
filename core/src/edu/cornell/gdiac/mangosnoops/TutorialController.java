@@ -31,6 +31,7 @@ public class TutorialController extends GameplayController {
     private static final String TUT_SPEECH_REVERSE = "images/Tutorial/speechbubble_small_reverse.png";
     private static final String MODULE_BG = "images/PauseMenuAssets/pauseMenuBackground.png";
     private static final String TUT_VROOM_ARROW_FILE = "images/Tutorial/downArrow.png";
+    private static final String TUT_SCREEN_FILE = "images/Tutorial/tut_screen.png";
 
     /** Texture types */
     private Texture tutHealthTexture;
@@ -47,6 +48,7 @@ public class TutorialController extends GameplayController {
     private Texture moduleTexture;
     private Texture tutWheel;
     private Texture tutVroomArrowTexture;
+    private Texture tutScreenTexture;
 
     private Image module;
     private Image speechNosh;
@@ -84,6 +86,7 @@ public class TutorialController extends GameplayController {
 
     public TutorialController(GameCanvas canvas, LevelObject level, int tutNum, SoundController sc) {
         super(level.getRegion(), canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc, level.getRoadsideObjs());
+        getRoad().setSpeedFactor(level.getSpeed());
         tutIndex = tutNum;
         madeNoshMad = 0;
         madeNedMad = 0;
@@ -106,10 +109,10 @@ public class TutorialController extends GameplayController {
         tutMirrorNoshSnack = new FlashingImage(0.75f, 0.7f, 0.3f, tutMirrorTexture);
         tutHorn = new FlashingImage(0.12f, 0.12f, 0.17f, tutHornTexture);
         tutVisor = new FlashingImage(0.1f, 0.85f, 0.16f, tutVisorTexture);
-        tutInventory = new FlashingImage(0.45f, 0.075f, 0.4f, tutInventoryTexture);
+        tutInventory = new FlashingImage(0.45f, 0.073f, 0.42f, tutInventoryTexture);
         arrowNedSnack = new FlashingImage(0.6f, 0.52f, 0.24f, arrowTexture);
         arrowNoshSnack = new FlashingImage(0.7f, 0.52f, 0.24f, arrowTexture);
-        tutRadio = new FlashingImage(0.305f, -0.01f, 0.3f, tutHealthTexture);
+        tutRadio = new FlashingImage(0.68f, 0.02f, 0.41f, tutScreenTexture);
         speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
         speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
         module = new Image(0.5f,0.5f, 0.79f, moduleTexture, GameCanvas.TextureOrigin.MIDDLE);
@@ -168,6 +171,8 @@ public class TutorialController extends GameplayController {
         assets.add(TUT_WHEEL);
         manager.load(TUT_VROOM_ARROW_FILE, Texture.class);
         assets.add(TUT_VROOM_ARROW_FILE);
+        manager.load(TUT_SCREEN_FILE, Texture.class);
+        assets.add(TUT_SCREEN_FILE);
     }
 
     public void loadContent(AssetManager manager) {
@@ -186,6 +191,7 @@ public class TutorialController extends GameplayController {
         moduleTexture = createTexture(manager, MODULE_BG);
         tutWheel = createTexture(manager, TUT_WHEEL);
         tutVroomArrowTexture = createTexture(manager, TUT_VROOM_ARROW_FILE);
+        tutScreenTexture = createTexture(manager, TUT_SCREEN_FILE);
     }
 
     private float stamp = 0;
@@ -194,6 +200,7 @@ public class TutorialController extends GameplayController {
     private boolean isNedSpeaking = false;
     private boolean wasNedSpeaking = false;
     private float stamp2 = 0;
+    private int numRequests = 0;
     public void resolveActions(InputController input, float delta) {
         super.resolveActions(input, delta);
         int noshDialogueSelect = -1;
@@ -276,21 +283,17 @@ public class TutorialController extends GameplayController {
                 }
             }
         } else if(tutIndex == 1) { // ==================================================================================
-            if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
-                if(!rearviewEnemy.exists()) {
-                    nedDialogue = null;
-                    vroomStick.setFlashing(false);
-                    tutVroomArrow.setVisible(false);
-                }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f && nedDialogue == null) {
-                nedDialogue = "Mom I think there's\n something behind us!";
+            if(Math.abs(events.get(0).getY() - ypos) < 0.3f && madeNoshMad == 0) {
+                madeNoshMad++;
+                noshDialogue = "Mom I think there's\nsomething behind us!";
                 noshDialogueSelect =2;
+                stamp2 = stamp;
                 isNoshSpeaking = true;
                 rearviewSeats.setFlashing(true);
                 vroomStick.setFlashing(true);
                 tutVroomArrow.setVisible(true);
-            } else if(getVroomStick().isEngaged()) {
-                nedDialogue = null;
+            } else if(stamp - stamp2 > 3) {
+                noshDialogue = null;
                 rearviewSeats.setFlashing(false);
                 vroomStick.setFlashing(false);
                 tutVroomArrow.setVisible(false);
@@ -299,10 +302,16 @@ public class TutorialController extends GameplayController {
             if(!finishedTutorial) getRoad().setRoadExitY(500);
 
             if(stamp < 3) {
+                if(getInventory().getNumSnacks() != 0) {
+                    getInventory().clearInventory();
+                    nedDialogue = "Mom, gnomes stole our \nsnacks at 8-12!";
+                }
+            } else if(stamp < 6) {
+                nedDialogue = null;
                 noshDialogue = "I'm so sleepy Mom...";
                 noshDialogueSelect = 3;
                 isNoshSpeaking = true;
-            } else if(stamp < 4) {
+            } else if(stamp < 7) {
                 noshDialogue = null;
                 nedDialogue = "Can you switch to\nClassical?";
                 nedDialogueSelect = 2;
@@ -315,6 +324,7 @@ public class TutorialController extends GameplayController {
                             nedDialogue = "Can you switch to\nClassical?";
                             nedDialogueSelect = 2;
                             isNedSpeaking = true;
+                            tutRadio.setVisible(true);
                         }
                         else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                             nedDialogue = null;
@@ -323,6 +333,7 @@ public class TutorialController extends GameplayController {
                         if(getRadio().getCurrentStation().getGenre() == Radio.Genre.CLASSICAL) {
                             state++;
                             stamp2 = stamp;
+                            tutRadio.setVisible(false);
                         }
                         break;
                     case 1:
@@ -344,6 +355,7 @@ public class TutorialController extends GameplayController {
                             if(stamp-stamp2 > 2 && stamp-stamp2 < 3) {
                                 madeNedMad = 0;
                                 nedDialogue = null;
+                                numRequests = 0;
                                 state++;
                                 stamp2 = stamp;
                             }
@@ -376,11 +388,13 @@ public class TutorialController extends GameplayController {
                             if(stamp-stamp2 > 2 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                                 madeNoshMad = 0;
                                 state++;
+                                numRequests = 0;
                                 noshDialogue = null;
                                 stamp2 = stamp;
                             }
                         } else {
                             if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                                if(noshDialogue == null) numRequests++;
                                 noshDialogue = "Can you switch to\nComedy?";
                                 noshDialogueSelect = 4;
                                 isNoshSpeaking = true;
@@ -388,6 +402,13 @@ public class TutorialController extends GameplayController {
                             else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                                 noshDialogue = null;
                                 stamp2 = stamp;
+                            }
+                            if(numRequests == 3 && noshDialogue == null) {
+                                yonda.getNosh().setMood(Child.Mood.CRITICAL);
+                                noshDialogue = "You took too long!";
+                                madeNoshMad = 0;
+                                numRequests = 0;
+                                state++;
                             }
                         }
                         break;
@@ -405,6 +426,7 @@ public class TutorialController extends GameplayController {
                             }
                         } else {
                             if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                                if(nedDialogue == null) numRequests++;
                                 nedDialogue = "Can you switch to\nPop?";
                                 nedDialogueSelect = 4;
                                 isNedSpeaking = true;
@@ -412,6 +434,12 @@ public class TutorialController extends GameplayController {
                             else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                                 nedDialogue = null;
                                 stamp2 = stamp;
+                            }
+                            if(numRequests == 3 && nedDialogue == null) {
+                                yonda.getNed().setMood(Child.Mood.CRITICAL);
+                                nedDialogue = "You took too long!";
+                                madeNedMad = 0;
+                                state++;
                             }
                         }
                         break;
@@ -424,6 +452,25 @@ public class TutorialController extends GameplayController {
                     default:
                         break;
                 }
+            }
+        } else if(tutIndex == 3) { // ==================================================================================
+            if(madeNoshMad == 0) {
+                madeNoshMad++;
+                stamp2 = stamp;
+            }
+            if(stamp-stamp2 > 1 && stamp-stamp2 < 2 && getInventory().getNumMovies() != 0) {
+                noshDialogue = "Mooom can you put\non the movie?";
+                tutInventory.setVisible(true);
+                tutRadio.setVisible(true);
+            }
+            else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
+                noshDialogue = null;
+                stamp2 = stamp;
+            }
+            if(getInventory().getNumMovies() == 0) {
+                noshDialogue = null;
+                tutInventory.setVisible(false);
+                tutRadio.setVisible(false);
             }
         }
 

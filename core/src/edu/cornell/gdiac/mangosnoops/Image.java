@@ -124,6 +124,12 @@ public class Image {
         //used for master shaker lol
     }
 
+    /** Used in Rest Stop mode for tutorial modules */
+    public void setTexture(Texture t) {
+        texture = t;
+    }
+
+    /** Used for flashing tutorial assets */
     public void setSpecialTexture(Texture t) {
         specialTexture = t;
     }

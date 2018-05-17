@@ -175,6 +175,10 @@ public class Inventory extends Image {
     public Slot getMovieSlot() { return slots.get(0); }
     public int getNumSnacks() { return slots.get(1).amount; }
     public int getNumMovies() { return slots.get(0).amount; }
+    public void clearInventory() {
+        slots.get(0).clear();
+        slots.get(1).clear();
+    }
 
     public void cancelTake(){
         lastSlotTakenFrom.slotItem = lastSlotTakenFromState.slotItem;
@@ -250,6 +254,14 @@ public class Inventory extends Image {
         @Override
         public String toString(){
             return ("Slot #"+invPos) ;
+        }
+
+        public void clear() {
+            amount = 0;
+        }
+
+        public int getAmount() {
+            return amount;
         }
 
         /** Increment the amount by i */

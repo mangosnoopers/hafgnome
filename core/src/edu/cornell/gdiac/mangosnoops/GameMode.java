@@ -63,10 +63,6 @@ public class GameMode implements Screen {
 	// GRAPHICS AND SOUND RESOURCES
 	/** The font file to use for scores */
 	private static String FONT_FILE = "fonts/ComicSans.ttf";
-	/** The file for the cloud image */
-	private static String CLOUDS_FILE = "images/clouds.png";
-	/** The file for the sky image */
-	private static String SKY_FILE = "images/sky.png";
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
 	/** Files for pause screen assets **/

@@ -345,7 +345,7 @@ public class GameCanvas {
 			return;
 		}
 
-		float drawY = 0.71f - 0.12f * speedRatio;
+		float drawY = 0.72f - 0.12f * speedRatio;
 
 		draw(image, TextureOrigin.MIDDLE, 0.5f, drawY, 1f, true, 0, Color.WHITE);
     }
