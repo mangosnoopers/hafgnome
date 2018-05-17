@@ -57,7 +57,9 @@ public class RestStopMode implements Screen, InputProcessor {
 
     // POPUP STUFF
     private float popupDuration;
-    private static final float MAX_POPUP_DURATION = 20.0f;
+    private boolean drawSnackPopup;
+    private boolean drawDVDPopup;
+    private static final float MAX_POPUP_DURATION = 5.0f;
 
     // ITEMS
     /** An array of the items at the rest stop */
@@ -181,7 +183,9 @@ public class RestStopMode implements Screen, InputProcessor {
         fadeIn = true;
         fadeOpacity = 1.0f;
         delay = 0;
-        popupDuration = 0.0f;
+        drawSnackPopup = false;
+        drawDVDPopup = false;
+        popupDuration = -1.0f;
 
         // Textures and load font
         initTextures();
@@ -191,8 +195,8 @@ public class RestStopMode implements Screen, InputProcessor {
         shelf = new Image(0.5f, 0.4f, 0.9f, shelfTex, GameCanvas.TextureOrigin.MIDDLE);
         readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex, GameCanvas.TextureOrigin.MIDDLE);
         background = new Image(0.5f,0.5f,1.0f, backgroundTex, GameCanvas.TextureOrigin.MIDDLE);
-        dvdPopup = new Image(0.5f,0.5f,1.0f, dvdPopupTex, GameCanvas.TextureOrigin.MIDDLE);
-        mangoPopup = new Image(0.5f,0.5f,1.0f, mangoPopupTex, GameCanvas.TextureOrigin.MIDDLE);
+        dvdPopup = new Image(0.5f,0.5f,0.5f, dvdPopupTex, GameCanvas.TextureOrigin.MIDDLE);
+        mangoPopup = new Image(0.5f,0.5f,0.5f, mangoPopupTex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Parse JSON to get item quantities/max number of items player can take
         parseJSON("levels/" + filename);
@@ -284,7 +288,17 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
-        popupDuration += delta;
+        if (popupDuration >= 0.0f) {
+            popupDuration += delta;
+        }
+
+        if (popupDuration >= MAX_POPUP_DURATION) {
+            popupDuration = -1.0f;
+            if (drawSnackPopup)
+                drawSnackPopup = false;
+            else if (drawDVDPopup)
+                drawDVDPopup = false;
+        }
     }
 
     /**
@@ -326,6 +340,15 @@ public class RestStopMode implements Screen, InputProcessor {
 
             // Draw current inventory quantities
             drawPlayerInv();
+
+            // Draw popups if needed
+            if (drawSnackPopup) {
+                mangoPopup.draw(canvas);
+            }
+
+            if (drawDVDPopup) {
+                dvdPopup.draw(canvas);
+            }
 
         }
         drawTutorial(canvas);
@@ -566,24 +589,26 @@ public class RestStopMode implements Screen, InputProcessor {
                             i.switchState();
                             switch (i.type) {
                                 case SNACK:
-//                                    System.out.println("about to do snack popup");
-                                    canvas.beginHUDDrawing();
                                     if (popupDuration < MAX_POPUP_DURATION) {
-                                        mangoPopup.draw(canvas);
-//                                        System.out.println("snack popup");
-                                    } else if (popupDuration == MAX_POPUP_DURATION) {
-                                        popupDuration = 0.0f;
+                                        boolean oldPopupState = drawSnackPopup;
+                                        drawSnackPopup = true;
+
+                                        // if just switching from false to true, set duration
+                                        if (!oldPopupState) {
+                                            popupDuration = 0.0f;
+                                        }
                                     }
-                                    canvas.endHUDDrawing();
                                     break;
                                 case DVD:
-                                    canvas.beginHUDDrawing();
                                     if (popupDuration < MAX_POPUP_DURATION) {
-                                        dvdPopup.draw(canvas);
-                                    } else if (popupDuration == MAX_POPUP_DURATION) {
-                                        popupDuration = 0.0f;
+                                        boolean oldPopupState = drawDVDPopup;
+                                        drawDVDPopup = true;
+
+                                        // if just switching from false to true, set duration
+                                        if (!oldPopupState) {
+                                            popupDuration = 0.0f;
+                                        }
                                     }
-                                    canvas.endHUDDrawing();
                                     break;
                                 default:
                                     break;
@@ -593,7 +618,6 @@ public class RestStopMode implements Screen, InputProcessor {
                         else {
                             i.switchOverlay();
                             numSelected += 1;
-                            System.out.println("selecting snack");
 
                             // also update the amount for the specific item
                             switch (i.type) {
