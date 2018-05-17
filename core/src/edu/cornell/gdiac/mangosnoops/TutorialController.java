@@ -194,6 +194,7 @@ public class TutorialController extends GameplayController {
     private boolean isNedSpeaking = false;
     private boolean wasNedSpeaking = false;
     private float stamp2 = 0;
+    private int numRequests = 0;
     public void resolveActions(InputController input, float delta) {
         super.resolveActions(input, delta);
         int noshDialogueSelect = -1;
@@ -278,19 +279,20 @@ public class TutorialController extends GameplayController {
         } else if(tutIndex == 1) { // ==================================================================================
             if(Math.abs(events.get(0).getY() - ypos) < 0.1f) {
                 if(!rearviewEnemy.exists()) {
-                    nedDialogue = null;
+                    noshDialogue = null;
                     vroomStick.setFlashing(false);
                     tutVroomArrow.setVisible(false);
                 }
-            } else if(Math.abs(events.get(0).getY() - ypos) < 0.5f && nedDialogue == null) {
-                nedDialogue = "Mom I think there's\n something behind us!";
+            } else if(Math.abs(events.get(0).getY() - ypos) < 0.3f && madeNoshMad == 0) {
+                madeNoshMad++;
+                noshDialogue = "Mom I think there's\nsomething behind us!";
                 noshDialogueSelect =2;
                 isNoshSpeaking = true;
                 rearviewSeats.setFlashing(true);
                 vroomStick.setFlashing(true);
                 tutVroomArrow.setVisible(true);
             } else if(getVroomStick().isEngaged()) {
-                nedDialogue = null;
+                noshDialogue = null;
                 rearviewSeats.setFlashing(false);
                 vroomStick.setFlashing(false);
                 tutVroomArrow.setVisible(false);
@@ -376,11 +378,13 @@ public class TutorialController extends GameplayController {
                             if(stamp-stamp2 > 2 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                                 madeNoshMad = 0;
                                 state++;
+                                numRequests = 0;
                                 noshDialogue = null;
                                 stamp2 = stamp;
                             }
                         } else {
                             if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                                if(noshDialogue == null) numRequests++;
                                 noshDialogue = "Can you switch to\nComedy?";
                                 noshDialogueSelect = 4;
                                 isNoshSpeaking = true;
@@ -388,6 +392,13 @@ public class TutorialController extends GameplayController {
                             else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                                 noshDialogue = null;
                                 stamp2 = stamp;
+                            }
+                            if(numRequests == 3 && noshDialogue == null) {
+                                yonda.getNosh().setMood(Child.Mood.CRITICAL);
+                                noshDialogue = "You took too long!";
+                                madeNoshMad = 0;
+                                numRequests = 0;
+                                state++;
                             }
                         }
                         break;
@@ -405,6 +416,7 @@ public class TutorialController extends GameplayController {
                             }
                         } else {
                             if(stamp-stamp2 > 1 && stamp-stamp2 < 2) {
+                                if(nedDialogue == null) numRequests++;
                                 nedDialogue = "Can you switch to\nPop?";
                                 nedDialogueSelect = 4;
                                 isNedSpeaking = true;
@@ -412,6 +424,12 @@ public class TutorialController extends GameplayController {
                             else if(stamp-stamp2 > 3 && stamp-stamp2 < 5) {
                                 nedDialogue = null;
                                 stamp2 = stamp;
+                            }
+                            if(numRequests == 3 && nedDialogue == null) {
+                                yonda.getNed().setMood(Child.Mood.CRITICAL);
+                                nedDialogue = "You took too long!";
+                                madeNedMad = 0;
+                                state++;
                             }
                         }
                         break;
