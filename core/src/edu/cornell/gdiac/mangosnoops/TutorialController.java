@@ -86,6 +86,7 @@ public class TutorialController extends GameplayController {
 
     public TutorialController(GameCanvas canvas, LevelObject level, int tutNum, SoundController sc) {
         super(level.getRegion(), canvas, level.getLevelEndY(), level.getEnemiez(), level.getEvents(), level.getSongs(), sc, level.getRoadsideObjs());
+        getRoad().setSpeedFactor(level.getSpeed());
         tutIndex = tutNum;
         madeNoshMad = 0;
         madeNedMad = 0;

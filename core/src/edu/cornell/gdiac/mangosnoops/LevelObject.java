@@ -66,11 +66,11 @@ public class LevelObject {
     private static final String TOPIARY = "topiary";
 
     /** Speed constants TODO */
-    private static final float VERY_SLOW_SPEED = 0.25f;
-    private static final float SLOW_SPEED = 0.5f;
+    private static final float VERY_SLOW_SPEED = 0.8f;
+    private static final float SLOW_SPEED = 0.9f;
     private static final float NORMAL_SPEED = 1.0f;
-    private static final float FAST_SPEED = 1.25f;
-    private static final float VERY_FAST_SPEED = 1.5f;
+    private static final float FAST_SPEED = 1.15f;
+    private static final float VERY_FAST_SPEED = 1.25f;
 
     /** Padding constants. Converts each cell to a certain number of miles.
      *  Don't change these (the designers are going by them), but the miles
