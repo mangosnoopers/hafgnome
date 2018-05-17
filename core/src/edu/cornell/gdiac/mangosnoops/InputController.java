@@ -134,14 +134,8 @@ public class InputController {
 			settings.setFullScreen(false);
 		}
 
-		//Exit Screen
-		if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-			Gdx.app.exit();
-		}
-
 		//Read input for Gameplay
 		prevMouseClicked = mouseClicked;
-		resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 		mouseClicked = (Gdx.input.isButtonPressed(Input.Buttons.LEFT));
 		pausePressed = (Gdx.input.isKeyJustPressed(Input.Keys.P) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)) ;
 
