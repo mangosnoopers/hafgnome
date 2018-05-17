@@ -833,8 +833,10 @@ public class GameplayController {
             	e.setFilmStrip(grillTexture, GRILL_FILMSTRIP_ROWS, GRILL_FILMSTRIP_COLS);
 				((Grill) e).setFireTexture(flameTexture);
 //				System.out.println(((Grill) e).getFlames().size);
-				enemiez.addAll(((Grill) e).getFlames());
-				enemiezSave.addAll(((Grill) e).getFlames());
+				for (int i = 0; i < ((Grill) e).getFlames().size; i++) {
+					enemiez.add(((Grill) e).getFlames().get(i));
+					enemiezSave.add(((Grill) e).getFlames().get(i));
+				}
 			}
 		}
 
@@ -890,6 +892,8 @@ public class GameplayController {
 						break;
 					case FLAME:
 						Flame newFlame = new Flame(enemy);
+						newFlame.setX(newFlame.getStartPos().x);
+						newFlame.setY(newFlame.getStartPos().y);
 						newFlame.setFilmStrip(flameTexture, 1, 1);
 						enemyToCopy.put(enemy, newFlame);
 					default:
