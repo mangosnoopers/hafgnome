@@ -29,10 +29,10 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class StartMenuMode implements Screen, InputProcessor {
     private static final String BACKGROUND_FILE = "images/startMenuAssets/background.png";
-    private static final String EXITBUTTON_FILE = "images/startMenuAssets/justexitButton.png";
-    private static final String LEVELSBUTTON_FILE = "images/startMenuAssets/justlevelsButton.png";
-    private static final String SETTINGSBUTTON_FILE = "images/startMenuAssets/justsettingsButton.png";
-    private static final String STARTBUTTON_FILE = "images/startMenuAssets/juststartButton.png";
+    private static final String EXITBUTTON_FILE = "images/startMenuAssets/exit.png";
+    private static final String LEVELSBUTTON_FILE = "images/startMenuAssets/levels.png";
+    private static final String SETTINGSBUTTON_FILE = "images/startMenuAssets/settings.png";
+    private static final String STARTBUTTON_FILE = "images/startMenuAssets/start.png";
     private static final String LOGO_FILE = "images/startMenuAssets/logo.png";
 
     private Texture backgroundTexture;
