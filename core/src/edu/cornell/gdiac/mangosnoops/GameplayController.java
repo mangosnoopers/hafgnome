@@ -150,7 +150,10 @@ public class GameplayController {
     private static final String VISOR_OPEN_FILE = "images/visor_open.png";
     private static final String VISOR_CLOSED_FILE = "images/visor_closed.png";
 	/** The texture file for the road */
-	private static final String ROAD_FILE = "images/road.png";
+	private static final String SUBURB_ROAD_TEXTURE = "images/road_suburb.png";
+	private static final String MIDWEST_ROAD_TEXTURE = "images/road_midwest.png";
+	private static final String HIGHWAY_ROAD_TEXTURE = "images/road_highway.png";
+	private static final String MOUNTAINS_ROAD_TEXTURE = "images/road_mountains.png";
 	/** The texture file for the grass */
 	private static final String GRASS_FILE = "images/grass.png";
 	/** The texture file for the exit */
@@ -214,7 +217,10 @@ public class GameplayController {
     private static final String CRACKS_FILE = "images/cracks.png";
 
 	/** Texture for road */
-	private Texture roadTexture;
+	private Texture suburbRoadTexture;
+	private Texture midwestRoadTexture;
+	private Texture mountainsRoadTexture;
+	private Texture highwayRoadTexture;
 	/** Texture for grass */
 	private Texture grassTexture;
 	/** Texture for exit */
@@ -409,8 +415,14 @@ public class GameplayController {
 		assets.add(SNACK0_FILE);
 		manager.load(GRASS_FILE, Texture.class);
 		assets.add(GRASS_FILE);
-		manager.load(ROAD_FILE, Texture.class);
-		assets.add(ROAD_FILE);
+		manager.load(SUBURB_ROAD_TEXTURE, Texture.class);
+		assets.add(SUBURB_ROAD_TEXTURE);
+		manager.load(MOUNTAINS_ROAD_TEXTURE, Texture.class);
+		assets.add(MOUNTAINS_ROAD_TEXTURE);
+		manager.load(HIGHWAY_ROAD_TEXTURE, Texture.class);
+		assets.add(HIGHWAY_ROAD_TEXTURE);
+		manager.load(MIDWEST_ROAD_TEXTURE, Texture.class);
+		assets.add(MIDWEST_ROAD_TEXTURE);
 		manager.load(EXIT_FILE, Texture.class);
 		assets.add(EXIT_FILE);
 		manager.load(DASH_FILE,Texture.class);
@@ -520,7 +532,10 @@ public class GameplayController {
 		radioNoshDislike = createTexture(manager, RADIO_NOSHDISLIKE_FILE);
 		nedTexture = createTexture(manager, NED_FILE);
 		noshTexture = createTexture(manager, NOSH_FILE);
-		roadTexture = createTexture(manager, ROAD_FILE);
+		suburbRoadTexture = createTexture(manager, SUBURB_ROAD_TEXTURE);
+		mountainsRoadTexture = createTexture(manager, MOUNTAINS_ROAD_TEXTURE);
+		highwayRoadTexture = createTexture(manager, HIGHWAY_ROAD_TEXTURE);
+		midwestRoadTexture = createTexture(manager, MIDWEST_ROAD_TEXTURE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
 		dashTexture = createTexture(manager, DASH_FILE);
@@ -828,7 +843,22 @@ public class GameplayController {
 		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
-		road.setRoadTexture(roadTexture);
+		switch (getRegion()) {
+			case COLORADO:
+				road.setRoadTexture(mountainsRoadTexture);
+				break;
+			case MIDWEST:
+				road.setRoadTexture(midwestRoadTexture);
+				break;
+			case HIGHWAY:
+				road.setRoadTexture(highwayRoadTexture);
+				break;
+			case SUBURBS:
+				road.setRoadTexture(suburbRoadTexture);
+				break;
+            default:
+				road.setRoadTexture(suburbRoadTexture);
+		}
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
   }
