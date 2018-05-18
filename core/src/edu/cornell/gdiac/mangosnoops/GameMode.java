@@ -92,6 +92,13 @@ public class GameMode implements Screen {
 	protected static final String CUTSCENE3_4 = "images/cutscenes/cutscene3_4.png";
 	protected static final String CUTSCENE3_5 = "images/cutscenes/cutscene3_5.png";
 
+	// Mountains cutscene
+	protected static final String CUTSCENE4_0 = "images/cutscenes/cutscene4_0.png";
+	protected static final String CUTSCENE4_1 = "images/cutscenes/cutscene4_1.png";
+	protected static final String CUTSCENE4_2 = "images/cutscenes/cutscene4_2.png";
+	protected static final String CUTSCENE4_3 = "images/cutscenes/cutscene4_3.png";
+	protected static final String CUTSCENE4_4 = "images/cutscenes/cutscene4_4.png";
+
 	/** Cutscene textures */
 	private Texture cutscene0_0Texture;
 	private Texture cutscene0_1Texture;
@@ -123,6 +130,12 @@ public class GameMode implements Screen {
 	private Texture cutscene3_3Texture;
 	private Texture cutscene3_4Texture;
 	private Texture cutscene3_5Texture;
+
+	private Texture cutscene4_0Texture;
+	private Texture cutscene4_1Texture;
+	private Texture cutscene4_2Texture;
+	private Texture cutscene4_3Texture;
+	private Texture cutscene4_4Texture;
 
 	/** Background files */
 	protected static final String SUBURB_BG = "images/suburb_background.png";
@@ -314,6 +327,17 @@ public class GameMode implements Screen {
 		manager.load(CUTSCENE3_5,Texture.class);
 		assets.add(CUTSCENE3_5);
 
+		manager.load(CUTSCENE4_0,Texture.class);
+		assets.add(CUTSCENE4_0);
+		manager.load(CUTSCENE4_1,Texture.class);
+		assets.add(CUTSCENE4_1);
+		manager.load(CUTSCENE4_2,Texture.class);
+		assets.add(CUTSCENE4_2);
+		manager.load(CUTSCENE4_3,Texture.class);
+		assets.add(CUTSCENE4_3);
+		manager.load(CUTSCENE4_4,Texture.class);
+		assets.add(CUTSCENE4_4);
+
 		// Backgrounds
 		manager.load(SUBURB_BG,Texture.class);
 		assets.add(SUBURB_BG);
@@ -381,6 +405,21 @@ public class GameMode implements Screen {
 		}
 
 		// Allocate assets
+		if (manager.isLoaded(CUTSCENE4_0)) {
+			cutscene4_0Texture = manager.get(CUTSCENE4_0, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE4_1)) {
+			cutscene4_1Texture = manager.get(CUTSCENE4_1, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE4_2)) {
+			cutscene4_2Texture = manager.get(CUTSCENE4_2, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE4_3)) {
+			cutscene4_3Texture = manager.get(CUTSCENE4_3, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE4_4)) {
+			cutscene4_4Texture = manager.get(CUTSCENE4_4, Texture.class);
+		}
 		if (manager.isLoaded(CUTSCENE3_0)) {
 			cutscene3_0Texture = manager.get(CUTSCENE3_0, Texture.class);
 		}
@@ -558,7 +597,7 @@ public class GameMode implements Screen {
             delay = 0;
             System.out.println(cL);
             // Null out all pointers, 0 out all ints, etc.
-			if (cL == 0 || cL == 8 || cL == 5) {
+			if (cL == 0 || cL == 8 || cL == 5 || cL == 10) {
 			    gameState = GameState.CUTSCENE;
 			} else {
 				gameState = GameState.INTRO;
@@ -627,6 +666,50 @@ public class GameMode implements Screen {
 	private float CUTSCENE_3_SCENE_5_TIME = 5f;
 
 	private int cutSceneIndex = 0;
+
+	public void displayCutScene4(float delta) {
+
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			gameState = GameState.INTRO;
+		}
+		cutsceneDeltaSum += delta;
+
+		switch (cutSceneIndex) {
+			case 0:
+				if (cutsceneDeltaSum >= CUTSCENE_2_SCENE_0_TIME) {
+					cutSceneIndex = 1;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+            case 1:
+                if (cutsceneDeltaSum >= CUTSCENE_2_SCENE_1_TIME) {
+                	cutSceneIndex = 2;
+                	cutsceneDeltaSum = 0;
+				}
+				break;
+			case 2:
+				if (cutsceneDeltaSum >= CUTSCENE_2_SCENE_2_TIME) {
+					cutSceneIndex = 3;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 3:
+				if (cutsceneDeltaSum >= CUTSCENE_2_SCENE_3_TIME) {
+					cutSceneIndex = 4;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 4:
+				if (cutsceneDeltaSum >= CUTSCENE_2_SCENE_3_TIME) {
+					cutSceneIndex = 5;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 5:
+				gameState = GameState.INTRO;
+                break;
+		}
+	}
 
 	public void displayCutScene2(float delta) {
 
@@ -917,7 +1000,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PLAY:
-					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
+					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 						play(delta);
 						gameState = GameState.PAUSED;
 						exitModule = false;
@@ -925,7 +1008,7 @@ public class GameMode implements Screen {
 					else{ play(delta); }
 					break;
 					case PAUSED:
-							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
+							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 								exitModule = inputController.isMousePressed();
 								if (exitModule) gameState = GameState.PLAY;
 							} else {
@@ -941,6 +1024,8 @@ public class GameMode implements Screen {
 								displayCutScene1(delta);
 							} else if (currLevel == 12) {
 								displayCutScene3(delta);
+							} else if (currLevel == 10) {
+								displayCutScene4(delta);
 							}
 							break;
 						default:
@@ -1179,7 +1264,7 @@ public class GameMode implements Screen {
 			case PLAY:
 				break;
 			case PAUSED:
-				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
+				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 					tutorialModule = new Image(0.5f, 0.5f, 0.7f, tipFlamingoTex, GameCanvas.TextureOrigin.MIDDLE);
 					switch(indexLevel) {
 						case 1:
@@ -1363,7 +1448,26 @@ public class GameMode implements Screen {
                                 break;
 						}
 
+					} else if (currLevel == 10) {
+						switch (cutSceneIndex) {
+							case 0:
+								canvas.draw(cutscene4_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 1:
+								canvas.draw(cutscene4_1Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 2:
+								canvas.draw(cutscene4_2Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 3:
+								canvas.draw(cutscene4_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 4:
+								canvas.draw(cutscene4_4Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+						}
 					}
+
 					canvas.endHUDDrawing();
 					break;
 				case INTRO:
