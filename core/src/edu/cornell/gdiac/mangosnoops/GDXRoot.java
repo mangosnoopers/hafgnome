@@ -287,6 +287,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				playing.setScreenListener(this);
 				//Gdx.input.setInputProcessor(playing);
 				setScreen(playing);
+				playing.playCutScene(0);
 				start.dispose();
 				start = null;
 			}
@@ -316,7 +317,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			levelSelect = null;
 
 		} else if (screen == playing) {
-			if(playing.exitFromPause){
+
+			if(playing.exitFromPause || playing.beatGame()){
 				playing.exitFromPause = false;
 				start = new StartMenuMode(canvas,manager,settings,soundController);
 				start.setScreenListener(this);
