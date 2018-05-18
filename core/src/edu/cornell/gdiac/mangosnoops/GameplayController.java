@@ -1067,10 +1067,10 @@ public class GameplayController {
 
 		// nosh prefers comedy and action
 		else {
-			if (genres.contains(Radio.Genre.COMEDY))
+			if (genres.contains(Radio.Genre.ACTION))
+				return Radio.Genre.ACTION;
+			else if (genres.contains(Radio.Genre.COMEDY))
 				return Radio.Genre.COMEDY;
-			else if (genres.contains(Radio.Genre.THUG))
-				return Radio.Genre.THUG;
 		}
 
 		// creepy and jazz are neutral
