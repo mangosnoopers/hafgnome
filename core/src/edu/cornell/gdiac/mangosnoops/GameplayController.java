@@ -83,6 +83,8 @@ public class GameplayController {
 
 	private ObjectMap<String,Radio.Genre> songs;
 
+	private String levelName;
+
 	private Image healthGauge;
 	private Image rearviewDamageIndicator;
 	private Image rearviewBackground;
@@ -91,6 +93,8 @@ public class GameplayController {
 	private Image healthGaugePointer;
 
 	private Image masterShaker; //apply shake to this object and will shake all HUDObjects
+
+	private RearviewDVD rearviewDVD;
 
 	/** If there is sun shining right now */
 	public boolean sunShine;
@@ -117,6 +121,9 @@ public class GameplayController {
 	/** Grill FilmStrip information */
 	protected static final int GRILL_FILMSTRIP_ROWS = 1;
 	protected static final int GRILL_FILMSTRIP_COLS = 4;
+
+	/** Rearview DVD file */
+	private static final String REARVIEW_DVD_FILE = "images/rearview_dvd.png";
 
 	// Graphics assets for the entities
 	/** The texture file for the flame **/
@@ -208,6 +215,7 @@ public class GameplayController {
 	/** Speed signs */
 	private static final String SPEEDLIMIT_25_FILE = "images/billboards/speedLimit25.png";
 	private static final String SPEEDLIMIT_55_FILE = "images/billboards/speedLimit55.png";
+	private static final String SPEEDLIMIT_65_FILE = "images/billboards/speedLimit65.png";
 	private static final String SPEEDLIMIT_80_FILE = "images/billboards/speedLimit80.png";
 	/** Billboard font */
 	private static String BILLBOARD_FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
@@ -217,6 +225,9 @@ public class GameplayController {
 	private static final String HORN_FILE = "images/DashHUD/Horn.png";
     /** Cracks */
     private static final String CRACKS_FILE = "images/cracks.png";
+
+    /** Rearview DVD Texture */
+    private Texture rearviewDVDTexture;
 
 	/** Texture for road */
 	private Texture suburbRoadTexture;
@@ -323,6 +334,7 @@ public class GameplayController {
 	/** Speed sign textures */
 	private Texture speedLimit25Tex;
 	private Texture speedLimit55Tex;
+	private Texture speedLimit65Tex;
 	private Texture speedLimit80Tex;
 	/** Other roadside assets */
 	private Texture sunflowerTex;
@@ -338,6 +350,10 @@ public class GameplayController {
 	private static final String SUNFLOWER = "sunflower";
 	private static final String TREE = "tree";
 	private static final String TOPIARY = "topiary";
+	private static final String SPEEDLIMIT_25 = "speed limit 25";
+	private static final String SPEEDLIMIT_55 = "speed limit 55";
+	private static final String SPEEDLIMIT_65 = "speed limit 65";
+	private static final String SPEEDLIMIT_80 = "speed limit 80";
 
 	/** An object map between roadside image names and their textures */
 	private ObjectMap<String, Texture> roadsideTexs;
@@ -387,6 +403,8 @@ public class GameplayController {
 	public Image getMasterShaker() { return masterShaker; }
 
 	public Array<RoadImage> getRoadsideObjs() { return roadsideObjs; }
+
+	public RearviewDVD getRearviewDVD() { return rearviewDVD; }
 
 	public ObjectMap<String, Texture> getRoadsideTexs() { return roadsideTexs; }
 
@@ -441,6 +459,8 @@ public class GameplayController {
 		assets.add(GRASS_FILE);
 		manager.load(SUBURB_ROAD_TEXTURE, Texture.class);
 		assets.add(SUBURB_ROAD_TEXTURE);
+		manager.load(REARVIEW_DVD_FILE, Texture.class);
+		assets.add(REARVIEW_DVD_FILE);
 		manager.load(MOUNTAINS_ROAD_TEXTURE, Texture.class);
 		assets.add(MOUNTAINS_ROAD_TEXTURE);
 		manager.load(HIGHWAY_ROAD_TEXTURE, Texture.class);
@@ -561,6 +581,7 @@ public class GameplayController {
 		nedTexture = createTexture(manager, NED_FILE);
 		noshTexture = createTexture(manager, NOSH_FILE);
 		suburbRoadTexture = createTexture(manager, SUBURB_ROAD_TEXTURE);
+		rearviewDVDTexture = createTexture(manager, REARVIEW_DVD_FILE);
 		mountainsRoadTexture = createTexture(manager, MOUNTAINS_ROAD_TEXTURE);
 		highwayRoadTexture = createTexture(manager, HIGHWAY_ROAD_TEXTURE);
 		midwestRoadTexture = createTexture(manager, MIDWEST_ROAD_TEXTURE);
@@ -618,6 +639,7 @@ public class GameplayController {
 		exitSignTex = createTexture(manager, EXIT_SIGN_FILE);
 		speedLimit25Tex = createTexture(manager, SPEEDLIMIT_25_FILE);
 		speedLimit55Tex = createTexture(manager, SPEEDLIMIT_55_FILE);
+		speedLimit65Tex = createTexture(manager, SPEEDLIMIT_65_FILE);
 		speedLimit80Tex = createTexture(manager, SPEEDLIMIT_80_FILE);
 		if (manager.isLoaded(BILLBOARD_FONT_FILE)) {
 			billboardFont = manager.get(BILLBOARD_FONT_FILE,BitmapFont.class);
@@ -642,12 +664,13 @@ public class GameplayController {
 	 * Creates a new GameplayController with no active elements.
 	 *
 	 */
-	public GameplayController(Region reg, GameCanvas canvas, float endY,
+	public GameplayController(String levelNameString, Region reg, GameCanvas canvas, float endY,
 							  Array<Enemy> enemies,
 							  Array<Event> e,
 							  ObjectMap<String,Radio.Genre> s,
 							  SoundController sc,
 							  Array<RoadImage> roadsideObjs) {
+	    levelName = levelNameString;
 		region = reg;
 		soundController = sc;
 		songs = s;
@@ -752,6 +775,10 @@ public class GameplayController {
 		roadsideTexs.put(SUNFLOWER, sunflowerTex);
 		roadsideTexs.put(TREE, treeTex);
 		roadsideTexs.put(TOPIARY, topiaryTex);
+		roadsideTexs.put(SPEEDLIMIT_25, new Texture(SPEEDLIMIT_25_FILE));
+		roadsideTexs.put(SPEEDLIMIT_55, new Texture(SPEEDLIMIT_55_FILE));
+		roadsideTexs.put(SPEEDLIMIT_65, new Texture(SPEEDLIMIT_65_FILE));
+		roadsideTexs.put(SPEEDLIMIT_80, new Texture(SPEEDLIMIT_80_FILE));
 	}
 
 	/**
@@ -868,6 +895,8 @@ public class GameplayController {
         rearviewEnemy = new RearviewEnemy(0.78f, 0.8f, 0.18f,0, rearviewGnomeTexture);
 		rearviewDamageIndicator = new Image(0.78f, 0.86f, 0.3f, rearviewDamageTexture,GameCanvas.TextureOrigin.MIDDLE);
 
+		rearviewDVD = new RearviewDVD(0.78f, 0.86f, 0.3f, rearviewDVDTexture);
+
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
             if (e.getType() == RoadObject.ObjectType.GNOME) {
@@ -884,13 +913,15 @@ public class GameplayController {
             	e.setFilmStrip(grillTexture, GRILL_FILMSTRIP_ROWS, GRILL_FILMSTRIP_COLS);
 				((Grill) e).setFireTexture(flameTexture);
 //				System.out.println(((Grill) e).getFlames().size);
-				enemiez.addAll(((Grill) e).getFlames());
-				enemiezSave.addAll(((Grill) e).getFlames());
+				for (int i = 0; i < ((Grill) e).getFlames().size; i++) {
+					enemiez.add(((Grill) e).getFlames().get(i));
+					enemiezSave.add(((Grill) e).getFlames().get(i));
+				}
 			}
 		}
 
 		wheel = new Wheel(0.17f,0.19f, 0.55f, 0, wheelTexture);
-		vroomStick = new VroomStick(0.19f, 0.19f,0.33f, 0.3f, vroomStickTexture);
+		vroomStick = new VroomStick(0.17f, 0.17f,0.33f, 0.3f, vroomStickTexture);
 		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
@@ -941,6 +972,8 @@ public class GameplayController {
 						break;
 					case FLAME:
 						Flame newFlame = new Flame(enemy);
+						newFlame.setX(newFlame.getStartPos().x);
+						newFlame.setY(newFlame.getStartPos().y);
 						newFlame.setFilmStrip(flameTexture, 1, 1);
 						enemyToCopy.put(enemy, newFlame);
 					default:
@@ -1324,6 +1357,9 @@ public class GameplayController {
 				}
 			}
         }
+
+        rearviewDVD.update(delta);
+
         for (RoadImage img : roadsideObjs) {
         	img.update(delta, road.getSpeed());
 		}
@@ -1459,7 +1495,7 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
+						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000, this)) {
 							inventory.cancelTake();
 						}
 					} else {
@@ -1531,6 +1567,8 @@ public class GameplayController {
 		yonda.getNosh().draw(canvas);
 		yonda.getNed().draw(canvas);
 		rearviewCover.draw(canvas);
+
+		rearviewDVD.draw(canvas);
 
 		// Draw inventory
 		inventory.draw(canvas);

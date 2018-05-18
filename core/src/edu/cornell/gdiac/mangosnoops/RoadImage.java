@@ -61,6 +61,23 @@ public class RoadImage extends RoadObject {
     }
 
     /**
+     * Construct a roadside image at the given position.
+     * @param x the x-position of the image
+     * @param y the y-position of the image
+     * @param name the name of the roadside image
+     * @param hovDistance how far above the road this object is
+     */
+    public RoadImage(float x, float y, String name, float hovDistance) {
+        super();
+        position = new Vector2(x,y);
+        this.name = name;
+        minAnimFrame = 0;
+        maxAnimFrame = 0;
+        animeframe = 0;
+        hoverDistance = hovDistance;
+    }
+
+    /**
      * Create a copy of a road image.
      */
     public RoadImage(RoadImage i) {
@@ -71,6 +88,7 @@ public class RoadImage extends RoadObject {
         minAnimFrame = 0;
         maxAnimFrame = 0;
         animeframe = 0;
+        hoverDistance = i.getHoverDistance();
     }
 
     /**
