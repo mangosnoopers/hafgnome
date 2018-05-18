@@ -172,7 +172,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		soundController = new SoundController(settings);
 		reststop = new RestStopMode(canvas, manager, REST_STOPS.get(currLevel),soundController);
 		levelSelect = new LevelMenuMode(canvas, manager,soundController, NUM_TUTORIALS, SAVED_LEVELS.size);
-		playing = new GameMode(-1, canvas,settings,soundController,LEVELS.get(currLevel));
+		playing = new GameMode(-1, canvas,settings,soundController,LEVELS.get(0));
 		start = new StartMenuMode(canvas, manager,settings,soundController);
 
 		loading.setScreenListener(this);
@@ -284,6 +284,9 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.app.exit();
 			} else if(start.settingsButtonClicked()) {
 			} else {
+				playing = new GameMode(-1, canvas,settings,soundController,LEVELS.get(0));
+				playing.preLoadContent(manager);
+				playing.loadContent(manager);
 				playing.setScreenListener(this);
 				//Gdx.input.setInputProcessor(playing);
 				setScreen(playing);
@@ -318,6 +321,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		} else if (screen == playing) {
 		    if(playing.exitFromPause || playing.beatGame()){
+		    	currLevel = 0;
 		    	playing.exitToMainMenu = false;
 				playing.exitFromPause = false;
 				start = new StartMenuMode(canvas,manager,settings,soundController);
