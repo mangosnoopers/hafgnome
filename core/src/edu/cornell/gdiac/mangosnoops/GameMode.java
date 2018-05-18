@@ -74,6 +74,9 @@ public class GameMode implements Screen {
 	protected static final String CUTSCENE1_4 = "images/cutscenes/cutscene1_4.png";
 	protected static final String CUTSCENE1_5 = "images/cutscenes/cutscene1_5.png";
 	protected static final String CUTSCENE1_6 = "images/cutscenes/cutscene1_6.png";
+	protected static final String CUTSCENE1_7 = "images/cutscenes/cutscene1_7.png";
+	protected static final String CUTSCENE1_8 = "images/cutscenes/cutscene1_8.png";
+	protected static final String CUTSCENE1_9 = "images/cutscenes/cutscene1_9.png";
 
 	// Midwest cutscene
 	protected static final String CUTSCENE2_0 = "images/cutscenes/cutscene2_0.png";
@@ -105,6 +108,9 @@ public class GameMode implements Screen {
 	private Texture cutscene1_4Texture;
 	private Texture cutscene1_5Texture;
 	private Texture cutscene1_6Texture;
+	private Texture cutscene1_7Texture;
+	private Texture cutscene1_8Texture;
+	private Texture cutscene1_9Texture;
 
 	private Texture cutscene2_0Texture;
 	private Texture cutscene2_1Texture;
@@ -279,6 +285,12 @@ public class GameMode implements Screen {
 		assets.add(CUTSCENE1_5);
 		manager.load(CUTSCENE1_6,Texture.class);
 		assets.add(CUTSCENE1_6);
+		manager.load(CUTSCENE1_7,Texture.class);
+		assets.add(CUTSCENE1_7);
+		manager.load(CUTSCENE1_8,Texture.class);
+		assets.add(CUTSCENE1_8);
+		manager.load(CUTSCENE1_9,Texture.class);
+		assets.add(CUTSCENE1_9);
 
 		manager.load(CUTSCENE2_0,Texture.class);
 		assets.add(CUTSCENE2_0);
@@ -407,6 +419,15 @@ public class GameMode implements Screen {
 		}
 		if (manager.isLoaded(CUTSCENE1_6)) {
 			cutscene1_6Texture = manager.get(CUTSCENE1_6, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE1_7)) {
+			cutscene1_7Texture = manager.get(CUTSCENE1_7, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE1_8)) {
+			cutscene1_8Texture = manager.get(CUTSCENE1_8, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE1_9)) {
+			cutscene1_9Texture = manager.get(CUTSCENE1_9, Texture.class);
 		}
 		if (manager.isLoaded(CUTSCENE0_0)) {
 			cutscene0_0Texture = manager.get(CUTSCENE0_0, Texture.class);
@@ -707,6 +728,27 @@ public class GameMode implements Screen {
 				}
 				break;
 			case 7:
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+					cutSceneIndex = 8;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 8:
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+					cutSceneIndex = 9;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 9:
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+					cutSceneIndex = 10;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 10:
 				gameState = GameState.INTRO;
                 break;
 		}
@@ -1285,6 +1327,15 @@ public class GameMode implements Screen {
                             case 6:
                                 canvas.draw(cutscene1_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
+							case 7:
+								canvas.draw(cutscene1_7Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 8:
+								canvas.draw(cutscene1_8Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 9:
+								canvas.draw(cutscene1_9Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
 						}
 					} else if (currLevel == 12) {
 						switch (cutSceneIndex) {
