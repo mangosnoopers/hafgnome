@@ -8,7 +8,8 @@ public class Event {
 
     /** Enumeration of different types of events that can occur */
     public enum EventType {
-        REAR_ENEMY, SUN_START, SUN_END, NED_WAKES_UP, NOSH_WAKES_UP, SAT_QUESTION
+        REAR_ENEMY, SUN_START, SUN_END, NED_WAKES_UP, NOSH_WAKES_UP, SAT_QUESTION,
+        NED_REQUESTS_MUSIC, NOSH_REQUESTS_MUSIC
     }
 
     /** Return the y-coordinate where this event occurs */
