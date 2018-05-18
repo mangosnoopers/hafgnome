@@ -36,10 +36,6 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String TIP_MUSIC_FILE = "images/restStopAssets/gameTips/musictip.png";
     private static final String TIP_REQUEST_FILE = "images/restStopAssets/gameTips/requesttip.png";
     private static final String TIP_DVD_FILE = "images/restStopAssets/gameTips/dvdtip.png";
-    private static final String TIP_FLAMINGO_FILE = "images/restStopAssets/gameTips/flamingotip.png";
-    private static final String TIP_VISOR_FILE = "images/restStopAssets/gameTips/visortip.png";
-    private static final String TIP_GRILL_FILE = "images/restStopAssets/gameTips/grilltip.png";
-    private static final String TIP_SAT_FILE = "images/restStopAssets/gameTips/sattip.png";
     private static final String SNACK_GLOW_FILE = "images/Items/mangoGlow.png";
     private static final String DVD_GLOW_FILE = "images/Items/dvdGlow.png";
 
@@ -50,10 +46,6 @@ public class RestStopMode implements Screen, InputProcessor {
     private Texture tipMusicTex;
     private Texture tipRequestTex;
     private Texture tipDvdTex;
-    private Texture tipFlamningoTex;
-    private Texture tipVisorTex;
-    private Texture tipGrillTex;
-    private Texture tipSatTex;
     private Texture backgroundTex;
     private Texture shelfTex;
     private Texture dvdTex;
@@ -221,10 +213,6 @@ public class RestStopMode implements Screen, InputProcessor {
         tipMusicTex = new Texture(TIP_MUSIC_FILE);
         tipRequestTex = new Texture(TIP_REQUEST_FILE);
         tipDvdTex = new Texture(TIP_DVD_FILE);
-        tipFlamningoTex = new Texture(TIP_FLAMINGO_FILE);
-        tipVisorTex = new Texture(TIP_VISOR_FILE);
-        tipGrillTex = new Texture(TIP_GRILL_FILE);
-        tipSatTex = new Texture(TIP_SAT_FILE);
         snackGlowTex = new Texture(SNACK_GLOW_FILE);
         dvdGlowTex = new Texture(DVD_GLOW_FILE);
 
@@ -530,7 +518,7 @@ public class RestStopMode implements Screen, InputProcessor {
                     }
                     break;
                 case 3: // explain movie
-                    tutorialModule.setTexture(tipMusicTex);
+                    tutorialModule.setTexture(tipDvdTex);
                     if(generalClick != BUTTON_UP) tutorialModule.draw(canvas);
                     break;
                 default:

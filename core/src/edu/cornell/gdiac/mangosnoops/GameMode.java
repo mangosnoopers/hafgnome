@@ -123,6 +123,11 @@ public class GameMode implements Screen {
 	private static final String PAUSE_MAIN_MENU_FILE = "images/PauseMenuAssets/pauseMainMenu.png";
 	private static final String PAUSE_EXIT_FILE = "images/PauseMenuAssets/pauseExit.png";
 	private static final String PAUSE_EGG = "images/PauseMenuAssets/easterEgg.png";
+
+	private static final String TIP_FLAMINGO_FILE = "images/restStopAssets/gameTips/flamingotip.png";
+	private static final String TIP_VISOR_FILE = "images/restStopAssets/gameTips/visortip.png";
+	private static final String TIP_GRILL_FILE = "images/restStopAssets/gameTips/grilltip.png";
+	private static final String TIP_SAT_FILE = "images/restStopAssets/gameTips/sattip.png";
 	// Loaded assets
 	/** The background image for the game */
 	private Texture background;
@@ -144,6 +149,12 @@ public class GameMode implements Screen {
 	private Texture pauseMainMenuButtonTexture;
 	private Texture pauseExitButtonTexture;
 	private Texture pauseEggTexture;
+	/** Tips */
+	private Texture tipFlamingoTex;
+	private Texture tipVisorTex;
+	private Texture tipGrillTex;
+	private Texture tipSatTex;
+	private Image tutorialModule;
 	/** Counter for the game */
 	private int counter;
 	/** Tracker for global miles traversed in story mode of game TODO do something w this */
@@ -192,6 +203,8 @@ public class GameMode implements Screen {
 	private Image pauseExitButton;
 	private Image pauseEgg;
 
+	private int indexLevel; //used to put tutorial modules
+	private boolean exitModule;
 
 	/** Background textures */
 	private Texture suburbBackgroundTexture;
@@ -287,6 +300,15 @@ public class GameMode implements Screen {
 		assets.add(PAUSE_EXIT_FILE);
 		manager.load(PAUSE_EGG, Texture.class);
 		assets.add(PAUSE_EGG);
+
+		manager.load(TIP_FLAMINGO_FILE, Texture.class);
+		assets.add(TIP_FLAMINGO_FILE);
+		manager.load(TIP_VISOR_FILE, Texture.class);
+		assets.add(TIP_VISOR_FILE);
+		manager.load(TIP_GRILL_FILE, Texture.class);
+		assets.add(TIP_GRILL_FILE);
+		manager.load(TIP_SAT_FILE, Texture.class);
+		assets.add(TIP_SAT_FILE);
 		//
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -408,6 +430,18 @@ public class GameMode implements Screen {
 		if (manager.isLoaded(PAUSE_EGG)) {
 			pauseEggTexture = manager.get(PAUSE_EGG, Texture.class);
 		}
+		if (manager.isLoaded(TIP_FLAMINGO_FILE)) {
+			tipFlamingoTex = manager.get(TIP_FLAMINGO_FILE, Texture.class);
+		}
+		if (manager.isLoaded(TIP_VISOR_FILE)) {
+			tipVisorTex = manager.get(TIP_VISOR_FILE, Texture.class);
+		}
+		if (manager.isLoaded(TIP_GRILL_FILE)) {
+			tipGrillTex = manager.get(TIP_GRILL_FILE, Texture.class);
+		}
+		if (manager.isLoaded(TIP_SAT_FILE)) {
+			tipSatTex = manager.get(TIP_SAT_FILE, Texture.class);
+		}
 		// Load gameplay content
 		gameplayController.loadContent(manager);
 	}
@@ -472,7 +506,8 @@ public class GameMode implements Screen {
             if (levelName.substring(0,3).equals("tut")) {
 				gameplayController = new TutorialController(levelName, canvas, new LevelObject(levelName), Integer.parseInt(levelName.substring(3,4)), soundController);
 			} else {
-            	gameplayController = new NormalLevelController(levelName, canvas, new LevelObject(levelName), soundController);
+            	gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
+            	indexLevel = Character.getNumericValue(levelName.charAt(levelName.indexOf("level") + 5));
 			}
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight(), soundController);
         } catch (IOException e) {
@@ -704,15 +739,24 @@ public class GameMode implements Screen {
 						gameState = GameState.INTRO;
 						numTimesPaused = 0;
 					}
-					else {
-//						play(delta);
-					}
 					break;
 				case PLAY:
-					play(delta);
+					if(!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 4 || indexLevel == 6)) {
+						play(delta);
+						gameState = GameState.PAUSED;
+						exitModule = false;
+					}
+					else {
+						play(delta);
+					}
 					break;
 				case PAUSED:
-					pause_game();
+					if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 4 || indexLevel == 6)) {
+						exitModule = inputController.isMousePressed();
+						if(exitModule) gameState = GameState.PLAY;
+					} else {
+						pause_game();
+					}
 					break;
 				case CUTSCENE:
 					if (currLevel == 0) {
@@ -955,27 +999,51 @@ public class GameMode implements Screen {
 			case PLAY:
 				break;
 			case PAUSED:
-				// Weird place to do this, maybe find a way to make better
-				if(pauseMenu == null){
-					pauseMenu = new Image(0.5f,0.5f, 0.79f, pauseMenuTexture, GameCanvas.TextureOrigin.MIDDLE);
-					pauseResumeButton = new Image(0.5f,0.77f,0.09f, pauseResumeButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
-					pauseRestartButton = new Image(0.5f,0.63f,0.09f, pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
-					pauseSettingsButton = new Image(0.5f,0.49f,0.11f, pauseSettingsButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
-					pauseMainMenuButton = new Image(0.5f,0.37f,0.08f, pauseMainMenuButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
-					pauseExitButton = new Image(0.5f,0.24f,0.09f, pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
-					pauseEgg = new Image(0.7f,0.5f,0.5f, pauseEggTexture, GameCanvas.TextureOrigin.MIDDLE);
-				}
-				pauseMenu.drawNoShake(canvas);
-				if(numTimesPaused == 8 || numTimesPaused == 14 || numTimesPaused == 95 ){
-					pauseEgg.draw(canvas);
-				}
-				pauseResumeButton.drawNoShake(canvas);
-				pauseRestartButton.drawNoShake(canvas);
-				pauseSettingsButton.drawNoShake(canvas);
-				pauseMainMenuButton.drawNoShake(canvas);
-				pauseExitButton.drawNoShake(canvas);
-				if(settings.isShowing()){
-					settings.draw(canvas);
+				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 4 || indexLevel == 6)) {
+					tutorialModule = new Image(0.5f, 0.5f, 0.7f, tipFlamingoTex, GameCanvas.TextureOrigin.MIDDLE);
+					switch(indexLevel) {
+						case 1:
+							tutorialModule.setTexture(tipFlamingoTex);
+							tutorialModule.drawNoShake(canvas);
+							break;
+						case 2:
+							tutorialModule.setTexture(tipVisorTex);
+							tutorialModule.drawNoShake(canvas);
+							break;
+						case 4:
+							tutorialModule.setTexture(tipGrillTex);
+							tutorialModule.drawNoShake(canvas);
+							break;
+						case 6:
+							tutorialModule.setTexture(tipSatTex);
+							tutorialModule.drawNoShake(canvas);
+							break;
+						default:
+							break;
+					}
+				} else {
+					// Weird place to do this, maybe find a way to make better
+					if(pauseMenu == null){
+						pauseMenu = new Image(0.5f,0.5f, 0.79f, pauseMenuTexture, GameCanvas.TextureOrigin.MIDDLE);
+						pauseResumeButton = new Image(0.5f,0.77f,0.09f, pauseResumeButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+						pauseRestartButton = new Image(0.5f,0.63f,0.09f, pauseRestartButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+						pauseSettingsButton = new Image(0.5f,0.49f,0.11f, pauseSettingsButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+						pauseMainMenuButton = new Image(0.5f,0.37f,0.08f, pauseMainMenuButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+						pauseExitButton = new Image(0.5f,0.24f,0.09f, pauseExitButtonTexture, GameCanvas.TextureOrigin.MIDDLE);
+						pauseEgg = new Image(0.7f,0.5f,0.5f, pauseEggTexture, GameCanvas.TextureOrigin.MIDDLE);
+					}
+					pauseMenu.drawNoShake(canvas);
+					if(numTimesPaused == 8 || numTimesPaused == 14 || numTimesPaused == 95 ){
+						pauseEgg.draw(canvas);
+					}
+					pauseResumeButton.drawNoShake(canvas);
+					pauseRestartButton.drawNoShake(canvas);
+					pauseSettingsButton.drawNoShake(canvas);
+					pauseMainMenuButton.drawNoShake(canvas);
+					pauseExitButton.drawNoShake(canvas);
+					if(settings.isShowing()){
+						settings.draw(canvas);
+					}
 				}
 				break;
 			default:

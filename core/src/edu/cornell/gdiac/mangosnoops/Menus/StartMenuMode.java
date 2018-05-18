@@ -216,7 +216,7 @@ public class StartMenuMode implements Screen, InputProcessor {
             settings.update(new Vector2(Gdx.input.getX(), Gdx.input.getY()), soundController);
             if(!settings.isFullScreen()) resize((int)settings.currentResolution.x,(int)settings.currentResolution.y);
             else scale = 1.5f;
-            }
+        }
         soundController.play(null);
     }
 
