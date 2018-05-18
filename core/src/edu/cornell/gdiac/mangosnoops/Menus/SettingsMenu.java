@@ -212,11 +212,11 @@ public class SettingsMenu {
         screenResolutions.put(resolutionImages.get(4), new Vector2(1600,900));
 
         lastResolution = screenResolutions.get(resolutionImages.get(4));
-        currentResolution = screenResolutions.get(resolutionImages.get(1));
-        currentResImage = new Image(resolutionImages.get(1));
+        currentResolution = screenResolutions.get(resolutionImages.get(4));
+        currentResImage = new Image(resolutionImages.get(4));
         currentResImage.updateY(currentResImagePos.y);
-        currentResText = resolutionText.get(resolutionImages.get(1));
-        hoverOverImage = resolutionImages.get(1);
+        currentResText = resolutionText.get(resolutionImages.get(4));
+        hoverOverImage = resolutionImages.get(4);
         resizeScreen();
     }
 
