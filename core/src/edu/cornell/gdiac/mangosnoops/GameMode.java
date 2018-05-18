@@ -1028,9 +1028,10 @@ public class GameMode implements Screen {
 				canvas.drawBackground(midwestBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 			case COLORADO:
+				canvas.drawBackground(mountainBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
             default:
-				canvas.drawBackground(mountainBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
+				canvas.drawBackground(suburbBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 
 		}
