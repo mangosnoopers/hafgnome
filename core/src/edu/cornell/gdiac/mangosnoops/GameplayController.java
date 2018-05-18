@@ -1306,10 +1306,14 @@ public class GameplayController {
 						satQuestions.askQuestion();
 						break;
 					case NED_REQUESTS_MUSIC:
-						initSongRequest(true);
+						if (ned.isAwake() && !dvdPlayer.isPlayingDvd()) {
+							initSongRequest(true);
+						}
 						break;
 					case NOSH_REQUESTS_MUSIC:
-						initSongRequest(false);
+						if (nosh.isAwake() && !dvdPlayer.isPlayingDvd()) {
+							initSongRequest(false);
+						}
 						break;
 					default:
 						break;
