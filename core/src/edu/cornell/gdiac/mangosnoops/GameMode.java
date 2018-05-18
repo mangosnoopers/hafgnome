@@ -1136,7 +1136,7 @@ public class GameMode implements Screen {
 
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
-		gameplayController.draw(canvas, displayFont);
+		gameplayController.draw(canvas);
 
 		// Draw fade out to rest stop
 		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {

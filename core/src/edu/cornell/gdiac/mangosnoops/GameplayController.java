@@ -201,7 +201,7 @@ public class GameplayController {
 	/** Touchscreen */
 	private static final String ON_TOUCHSCREEN_FILE = "images/DashHUD/ontouchscreen.png";
 	private static final String OFF_TOUCHSCREEN_FILE = "images/DashHUD/offtouchscreen.png";
-	private static final String DVD_SLOT_FILE = "images/DashHUD/dvdslot.png";
+	private static final String DVD_SLOT_FILE = "images/MovieScreenAssets/moviebackground.png";
 	/** Billboards */
 	private static final String BILLBOARD_END_IS_NEAR_FILE = "images/billboards/the_end_is_near.png";
 	private static final String BILLBOARD_GRILL_FILE = "images/billboards/aGrillYouCanTrust.png";
@@ -860,7 +860,7 @@ public class GameplayController {
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
-		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen);
+		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot);
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrip(noshTexture, NOSH_FILMSTRIP_ROWS, NOSH_FILMSTRIP_COLS);
@@ -1503,7 +1503,7 @@ public class GameplayController {
 		droppedPos = inputController.getClickPos();
 	}
 
-	public void draw(GameCanvas canvas, BitmapFont font) {
+	public void draw(GameCanvas canvas) {
 
 	    canvas.setCameraFOV(road.getSpeedRatio());
 
@@ -1516,7 +1516,7 @@ public class GameplayController {
 			if (!i.getName().equals(EXIT_SIGN)) {
 				i.draw(canvas, roadsideTexs.get(i.getName()));
 			} else {
-				i.draw(canvas, roadsideTexs.get(i.getName()), font);
+				i.draw(canvas, roadsideTexs.get(i.getName()), displayFont);
 			}
 
 		}
@@ -1546,7 +1546,7 @@ public class GameplayController {
 		wheel.draw(canvas);
 
 		// Touchscreen
-		touchscreen.draw(canvas, font);
+		touchscreen.draw(canvas, displayFont);
 
 		// Horn
 		horn.draw(canvas, wheel.getAng());
@@ -1579,7 +1579,7 @@ public class GameplayController {
 		}
 
 		// Draw speech bubbles for music requests if necessary
-		speechBubble(canvas, font);
+		speechBubble(canvas, displayFont);
 
 		//Draw sun effect part 2
 		visor.drawSunB(canvas, sunShine);
@@ -1588,6 +1588,6 @@ public class GameplayController {
 		visor.draw(canvas);
 
 
-		satQuestions.draw(canvas, font);
+		satQuestions.draw(canvas, displayFont);
 	}
 }

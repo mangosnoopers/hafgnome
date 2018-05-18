@@ -15,9 +15,10 @@ public class TouchScreen {
     private DvdPlayer dvdPlayer;
     private GameCanvas c;
 
-    public TouchScreen(Radio r, DvdPlayer d, Texture ons, Texture ofs) {
+    public TouchScreen(Radio r, DvdPlayer d, Texture ons, Texture ofs, Texture dvd) {
         onScreen = new Image(0.83f, 0.22f, 0.33f, 0.05f, ons, GameCanvas.TextureOrigin.MIDDLE);
         offScreen = new Image(0.83f, 0.22f, 0.33f, 0.05f, ofs, GameCanvas.TextureOrigin.MIDDLE);
+        dvdScreen = new Image(0.83f, 0.22f, 0.33f, 0.05f, dvd, GameCanvas.TextureOrigin.MIDDLE);
         radio = r;
         dvdPlayer = d;
     }
@@ -43,6 +44,7 @@ public class TouchScreen {
         onScreen.draw(canvas);
         //Draw screens
         if(dvdPlayer.isPlayingDvd()) {
+            dvdScreen.draw(canvas);
             dvdPlayer.draw(canvas, displayFont);
         } else {
             if(radio.getNumStations() == 0) offScreen.draw(canvas);

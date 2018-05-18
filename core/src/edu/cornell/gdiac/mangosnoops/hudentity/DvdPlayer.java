@@ -50,12 +50,7 @@ public class DvdPlayer {
 
     public void draw(GameCanvas canvas, BitmapFont displayFont) {
         displayFont.setColor(Color.WHITE);
-        if(dvdPlayingTitle == null) {
-            canvas.drawTextCenterOriginShake("No DVD Inserted.\n", displayFont, 0.85f, 0.24f);
-            canvas.drawTextCenterOriginShake("\nPlease insert the DVD.", displayFont, 0.85f, 0.24f);
-        } else {
-            canvas.drawTextCenterOriginShake(dvdPlayingTitle, displayFont, 0.85f, 0.24f);
-            canvas.drawTextCenterOriginShake("\n\nTime Remaining: " + timeLeft, displayFont, 0.85f, 0.24f);
-        }
+//            canvas.drawTextCenterOriginShake(dvdPlayingTitle, displayFont, 0.85f, 0.24f);
+            canvas.drawTextCenterOriginShake("\nTime Remaining: " + timeLeft, displayFont, 0.85f, 0.24f);
     }
 }
