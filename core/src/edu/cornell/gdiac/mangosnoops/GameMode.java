@@ -506,7 +506,7 @@ public class GameMode implements Screen {
             if (levelName.substring(0,3).equals("tut")) {
 				gameplayController = new TutorialController(levelName, canvas, new LevelObject(levelName), Integer.parseInt(levelName.substring(3,4)), soundController);
 			} else {
-            	gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
+            	gameplayController = new NormalLevelController(levelName, canvas, new LevelObject(levelName), soundController);
             	indexLevel = Character.getNumericValue(levelName.charAt(levelName.indexOf("level") + 5));
 			}
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight(), soundController);
