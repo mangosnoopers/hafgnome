@@ -83,8 +83,6 @@ public class GameplayController {
 
 	private ObjectMap<String,Radio.Genre> songs;
 
-	private String levelName;
-
 	private Image healthGauge;
 	private Image rearviewDamageIndicator;
 	private Image rearviewBackground;
@@ -670,7 +668,7 @@ public class GameplayController {
 							  ObjectMap<String,Radio.Genre> s,
 							  SoundController sc,
 							  Array<RoadImage> roadsideObjs) {
-	    levelName = levelNameString;
+	    System.out.println(levelNameString);
 		region = reg;
 		soundController = sc;
 		songs = s;
