@@ -1475,9 +1475,11 @@ public class GameplayController {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
 					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake() && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
-						yonda.getNosh().setMood(Child.Mood.HAPPY);
+//						yonda.getNosh().setMood(Child.Mood.HAPPY);
+						yonda.getNosh().increaseMood();
 					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake() && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
-						yonda.getNed().setMood(Child.Mood.HAPPY);
+//						yonda.getNed().setMood(Child.Mood.HAPPY);
+						yonda.getNed().increaseMood();
 					} else {
 						inventory.cancelTake();
 						return;
