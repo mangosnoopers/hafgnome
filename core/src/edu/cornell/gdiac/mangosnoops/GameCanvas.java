@@ -63,8 +63,6 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
-	private Image masterImage;
-
 	// World drawing
 	PerspectiveCamera camera;
 	DecalBatch batch;
@@ -73,7 +71,6 @@ public class GameCanvas {
 	Viewport viewport;
 
 	private float shakeAmnt;
-
 	private float CAM_HEIGHT = 4.32f;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 	private float NORMAL_CAM_FOV = 67;
@@ -111,7 +108,6 @@ public class GameCanvas {
 		//camera.rotate(150, 0, 1, 0);
 		camera.update();
 
-		masterImage = new Image();
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
 
 		Gdx.gl20.glDepthMask(false);
@@ -865,6 +861,7 @@ public class GameCanvas {
     }
 
 	/**
+<<<<<<< HEAD
 	 * Draws text on the screen.
 	 *
 	 * @param text The string to draw
@@ -877,6 +874,8 @@ public class GameCanvas {
 	}
 
 	/**
+=======
+>>>>>>> 0d89fb8016bb5635d0231208c9b63352d4d8db05
 	 * Draws text on the screen with a specific color.
 	 */
 	public void drawText(String text, BitmapFont font, float x, float y, Color color) {

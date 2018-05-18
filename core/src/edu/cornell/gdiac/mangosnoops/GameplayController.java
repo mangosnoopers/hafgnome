@@ -1067,10 +1067,10 @@ public class GameplayController {
 
 		// nosh prefers comedy and action
 		else {
-			if (genres.contains(Radio.Genre.COMEDY))
+			if (genres.contains(Radio.Genre.ACTION))
+				return Radio.Genre.ACTION;
+			else if (genres.contains(Radio.Genre.COMEDY))
 				return Radio.Genre.COMEDY;
-			else if (genres.contains(Radio.Genre.THUG))
-				return Radio.Genre.THUG;
 		}
 
 		// creepy and jazz are neutral
@@ -1425,6 +1425,13 @@ public class GameplayController {
 			nosh.setMood(Child.Mood.HAPPY);
 		}
 		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
+
+		    if(r.getCurrentStationGenre() != Radio.Genre.CLASSICAL) {
+		        if(!ned.isAwake()) ned.setMood(Child.Mood.SAD);
+                if(!nosh.isAwake()) nosh.setMood(Child.Mood.SAD);
+            }
+
+			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
                 case CLASSICAL: // ned dislikes, nosh likes
                     if(ned.getCurrentMood() == Child.Mood.HAPPY){

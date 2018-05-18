@@ -252,7 +252,7 @@ public class TutorialController extends GameplayController {
                     madeNoshMad ++;
                 } else if(madeNoshMad == 1 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                     madeNoshMad ++;
-                }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY || getInventory().getNumSnacks() < 3) {
+                }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                     noshDialogue = null;
                     tutMirrorNoshSnack.setVisible(false);
                     arrowNoshSnack.setVisible(false);
@@ -264,7 +264,7 @@ public class TutorialController extends GameplayController {
                     madeNedMad ++;
                 } else if(madeNedMad == 1 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
                     madeNedMad ++;
-                } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY || getInventory().getNumSnacks() < 3){
+                } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY){
                     tutMirrorNedSnack.setVisible(false);
                     arrowNedSnack.setVisible(false);
                     if(madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {

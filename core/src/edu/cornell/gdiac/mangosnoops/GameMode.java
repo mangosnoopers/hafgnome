@@ -139,7 +139,6 @@ public class GameMode implements Screen {
 	private static final String PAUSE_MAIN_MENU_FILE = "images/PauseMenuAssets/pauseMainMenu.png";
 	private static final String PAUSE_EXIT_FILE = "images/PauseMenuAssets/pauseExit.png";
 	private static final String PAUSE_EGG = "images/PauseMenuAssets/easterEgg.png";
-
 	private static final String TIP_FLAMINGO_FILE = "images/restStopAssets/gameTips/flamingotip.png";
 	private static final String TIP_VISOR_FILE = "images/restStopAssets/gameTips/visortip.png";
 	private static final String TIP_GRILL_FILE = "images/restStopAssets/gameTips/grilltip.png";
@@ -611,7 +610,7 @@ public class GameMode implements Screen {
 	public void displayCutScene2(float delta) {
 
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			exitToMainMenu = true;
+			gameState = GameState.INTRO;
 		}
 
 		cutsceneDeltaSum += delta;
@@ -651,7 +650,6 @@ public class GameMode implements Screen {
     }
 
     public void displayCutScene1(float delta) {
-
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 			gameState = GameState.INTRO;
 		}
@@ -660,43 +658,50 @@ public class GameMode implements Screen {
 
 		switch (cutSceneIndex) {
 			case 0:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_0_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_0_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 1;
 					cutsceneDeltaSum = 0;
 				}
 				break;
             case 1:
-                if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_1_TIME) {
+                if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_1_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 	cutSceneIndex = 2;
                 	cutsceneDeltaSum = 0;
 				}
 				break;
 			case 2:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_2_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_2_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 3;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 3:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_3_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_3_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 4;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 4:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_4_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_4_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 5;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 5:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_5_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_5_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 6;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 6:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 7;
 					cutsceneDeltaSum = 0;
 				}
@@ -715,45 +720,47 @@ public class GameMode implements Screen {
 
 	public void displayCutScene3(float delta) {
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-		    exitToMainMenu = true;
-		}
-
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
 			case 0:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_0_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_0_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 1;
 					cutsceneDeltaSum = 0;
 				}
 				break;
             case 1:
-                if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_1_TIME) {
+                if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_1_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 	cutSceneIndex = 2;
                 	cutsceneDeltaSum = 0;
 				}
 				break;
 			case 2:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_2_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_2_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 3;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 3:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_3_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_3_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 4;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 4:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_4_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_4_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 5;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 5:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_5_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_5_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 6;
 					cutsceneDeltaSum = 0;
 				}
@@ -767,51 +774,54 @@ public class GameMode implements Screen {
 
 	public void displayCutScene0(float delta) {
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			gameState = GameState.INTRO;
-		}
-
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
 			case 0:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_0_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_0_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 1;
 					cutsceneDeltaSum = 0;
 				}
 				break;
             case 1:
-                if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_1_TIME) {
+                if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_1_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 	cutSceneIndex = 2;
                 	cutsceneDeltaSum = 0;
 				}
 				break;
 			case 2:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_2_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_2_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 3;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 3:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_3_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_3_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 4;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 4:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_4_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_4_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 5;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 5:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_5_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_5_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 6;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 6:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_6_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 7;
 					cutsceneDeltaSum = 0;
 				}
@@ -848,7 +858,7 @@ public class GameMode implements Screen {
 					gameplayController.start(canvas.getWidth() / 2.0f, 0);
 					break;
 				case OVER:
-					if (inputController.didReset() || restartedFromPause ) {
+					if (inputController.didReset() || restartedFromPause) {
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
@@ -856,7 +866,7 @@ public class GameMode implements Screen {
 						gameplayController.start(canvas.getWidth() / 2.0f, 0);
 						numTimesPaused = 0;
 					}
-					if(exitFromPause){
+					if (exitFromPause) {
 						gameplayController.reset();
 						soundController.reset();
 						canvas.resetCam();
@@ -865,37 +875,36 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PLAY:
-					if(!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 						play(delta);
 						gameState = GameState.PAUSED;
 						exitModule = false;
 					}
-					else {
-						play(delta);
+					else{ play(delta); }
+					break;
+					case PAUSED:
+							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+								exitModule = inputController.isMousePressed();
+								if (exitModule) gameState = GameState.PLAY;
+							} else {
+								pause_game();
+							}
+							break;
+						case CUTSCENE:
+							if (currLevel == 0) {
+								displayCutScene0(delta);
+							} else if (currLevel == 4) {
+								displayCutScene2(delta);
+							} else if (currLevel == 7) {
+								displayCutScene1(delta);
+							} else if (currLevel == 12) {
+								displayCutScene3(delta);
+							}
+							break;
+						default:
+							break;
 					}
-					break;
-				case PAUSED:
-					if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
-						exitModule = inputController.isMousePressed();
-						if(exitModule) gameState = GameState.PLAY;
-					} else {
-						pause_game();
-					}
-					break;
-				case CUTSCENE:
-					if (currLevel == 0) {
-						displayCutScene0(delta);
-					} else if (currLevel == 4) {
-						displayCutScene2(delta);
-					} else if (currLevel == 7) {
-						displayCutScene1(delta);
-					} else if (currLevel == 11) {
-						displayCutScene3(delta);
-					}
-					break;
-				default:
-					break;
-			}
+
 //		} catch (Exception e) {
 //			System.out.println("YOU SCREWED UP UPDATE YOU FOOL");
 //			System.out.println(e);
@@ -1100,7 +1109,7 @@ public class GameMode implements Screen {
 				}
 				else {
 					// ready to exit gamemode when the fade out is complete
-					if (currLevel != 11) {
+					if (currLevel != 12) {
 						exitToRestStop = true;
 					} else {
 						gameState = GameState.CUTSCENE;
@@ -1277,7 +1286,7 @@ public class GameMode implements Screen {
                                 canvas.draw(cutscene1_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
 						}
-					} else if (currLevel == 11) {
+					} else if (currLevel == 12) {
 						switch (cutSceneIndex) {
                             case 0:
                                 canvas.draw(cutscene3_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1306,6 +1315,7 @@ public class GameMode implements Screen {
 					break;
                 default:
 					draw(delta);
+					break;
 			}
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if ((exitToRestStop||exitFromPause || exitToMainMenu) && listener != null ) {
@@ -1317,7 +1327,9 @@ public class GameMode implements Screen {
 				active = false;
 			}
 		}
+
 	}
+
 
 	public boolean beatGame() {
 		return exitToMainMenu;
