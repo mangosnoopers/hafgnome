@@ -1170,8 +1170,6 @@ public class GameMode implements Screen {
 					break;
 				}
 				if (!gameplayController.getCar().isDestroyed()) {
-					canvas.drawTextCentered("YOU WON", displayFont, GAME_OVER_OFFSET);
-					canvas.drawTextCentered("Press R to restart", displayFont, GAME_OVER_OFFSET - 40);
 				} else {
 					canvas.draw(deathModule, Color.WHITE, deathModule.getWidth()*0.5f, deathModule.getHeight()*0.5f,
 							canvas.getWidth()*0.5f, canvas.getHeight()*0.5f, 0,
