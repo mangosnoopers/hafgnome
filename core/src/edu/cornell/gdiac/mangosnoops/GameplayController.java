@@ -870,7 +870,7 @@ public class GameplayController {
 		}
 
 		wheel = new Wheel(0.17f,0.19f, 0.55f, 0, wheelTexture);
-		vroomStick = new VroomStick(0.19f, 0.19f,0.33f, 0.3f, vroomStickTexture);
+		vroomStick = new VroomStick(0.17f, 0.17f,0.33f, 0.3f, vroomStickTexture);
 		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
