@@ -576,7 +576,7 @@ public class GameMode implements Screen {
 	public void displayCutScene2(float delta) {
 
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			exitToMainMenu = true;
+			gameState = GameState.INTRO;
 		}
 
 		cutsceneDeltaSum += delta;
@@ -856,7 +856,7 @@ public class GameMode implements Screen {
 						displayCutScene2(delta);
 					} else if (currLevel == 7) {
 						displayCutScene1(delta);
-					} else if (currLevel == 11) {
+					} else if (currLevel == 12) {
 						displayCutScene3(delta);
 					}
 					break;
@@ -1067,7 +1067,7 @@ public class GameMode implements Screen {
 				}
 				else {
 					// ready to exit gamemode when the fade out is complete
-					if (currLevel != 11) {
+					if (currLevel != 12) {
 						exitToRestStop = true;
 					} else {
 						gameState = GameState.CUTSCENE;
@@ -1220,7 +1220,7 @@ public class GameMode implements Screen {
                                 canvas.draw(cutscene1_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
 						}
-					} else if (currLevel == 11) {
+					} else if (currLevel == 12) {
 						switch (cutSceneIndex) {
                             case 0:
                                 canvas.draw(cutscene3_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1255,6 +1255,7 @@ public class GameMode implements Screen {
 				if(exitFromPause){
 					update(delta);
 				}
+
 				soundController.reset();
 				listener.exitScreen(this, 0);
 				active = false;
