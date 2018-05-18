@@ -40,6 +40,8 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String TIP_VISOR_FILE = "images/restStopAssets/gameTips/visortip.png";
     private static final String TIP_GRILL_FILE = "images/restStopAssets/gameTips/grilltip.png";
     private static final String TIP_SAT_FILE = "images/restStopAssets/gameTips/sattip.png";
+    private static final String SNACK_GLOW_FILE = "images/Items/mangoGlow.png";
+    private static final String DVD_GLOW_FILE = "images/Items/dvdGlow.png";
 
     private Image tutorialModule;
     private Texture tipGnomeTex;
@@ -61,6 +63,8 @@ public class RestStopMode implements Screen, InputProcessor {
     private Texture kidSpeech;
     private Texture dvdPopupTex;
     private Texture mangoPopupTex;
+    private Texture snackGlowTex;
+    private Texture dvdGlowTex;
     private BitmapFont displayFont;
     private BitmapFont speechFont;
     private ObjectMap<String,Texture> itemTextures;
@@ -221,6 +225,8 @@ public class RestStopMode implements Screen, InputProcessor {
         tipVisorTex = new Texture(TIP_VISOR_FILE);
         tipGrillTex = new Texture(TIP_GRILL_FILE);
         tipSatTex = new Texture(TIP_SAT_FILE);
+        snackGlowTex = new Texture(SNACK_GLOW_FILE);
+        dvdGlowTex = new Texture(DVD_GLOW_FILE);
 
         itemTextures = new ObjectMap<String,Texture>();
         itemTextures.put(GNOME_COUNTRY, dvdTex);
@@ -405,9 +411,9 @@ public class RestStopMode implements Screen, InputProcessor {
                         SCREEN_DIMENSIONS.x * SHELF_TEXT_LOC.x,
                         SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y);
 
-            // Draw the items with a specific overlay
+            // Draw the items
             for (RestStopItem i : items) {
-                i.draw(canvas, i.overlay);
+                i.draw(canvas);
             }
 
             // Draw the ready button - colored if pressed down
@@ -747,7 +753,7 @@ public class RestStopMode implements Screen, InputProcessor {
                     // case 2: item was unselected and is now selected - increase items taken
                     //         or display popup if full
                     if (oldToggleState == SELECTED && i.toggleState == UNSELECTED) {
-                        i.switchOverlay();
+                        i.switchGlow();
                         numSelected -= 1;
 
                         // also update the amount for the specific item
@@ -765,8 +771,10 @@ public class RestStopMode implements Screen, InputProcessor {
                         int quantity = (i.type == Inventory.Item.ItemType.SNACK)
                                 ? numSnacksSelected + playerInv.getNumSnacks()
                                 : numMoviesSelected + playerInv.getNumMovies();
+
                         if (quantity == SLOT_MAX_QUANTITY) {
                             i.switchState();
+
                             switch (i.type) {
                                 case SNACK:
                                     if (popupDuration < MAX_POPUP_DURATION) {
@@ -798,7 +806,7 @@ public class RestStopMode implements Screen, InputProcessor {
                         }
 
                         else {
-                            i.switchOverlay();
+                            i.switchGlow();
                             numSelected += 1;
 
                             // also update the amount for the specific item
@@ -815,14 +823,6 @@ public class RestStopMode implements Screen, InputProcessor {
                         }
                     }
                 }
-
-//                // if at max quantity display a warning
-//                else if (quantity == SLOT_MAX_QUANTITY
-//                        && oldToggleState == UNSELECTED
-//                        && numSelected < numCanTake || oldToggleState == SELECTED) {
-//
-//                }
-
 
                 return false;
             }
@@ -900,6 +900,8 @@ public class RestStopMode implements Screen, InputProcessor {
         private int toggleState;
         /** The item's current overlay color - white when unselected, colored when selected */
         private Color overlay;
+        /** Whether or not this item is glowing */
+        private boolean glowing;
 
         private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
             super(x,y,relSca,tex,GameCanvas.TextureOrigin.MIDDLE);
@@ -907,11 +909,40 @@ public class RestStopMode implements Screen, InputProcessor {
             type = t;
             toggleState = UNSELECTED;
             overlay = Color.WHITE;
+            glowing = false;
         }
 
         /** Switch the toggle state of the item */
         private void switchState() {
             toggleState = toggleState == UNSELECTED ? SELECTED : UNSELECTED;
+        }
+
+        /** Switch the asset between the glowing and non-glowing version */
+        private void switchGlow() {
+            switch (type) {
+                case SNACK:
+                    if (glowing) {
+                        texture = itemTextures.get(MANGO);
+                        relativeScale = ITEM_SIZE_SCALE;
+                    } else {
+                        texture = snackGlowTex;
+                        relativeScale = ITEM_SIZE_SCALE * 1.4f;
+                    }
+                    break;
+                case DVD:
+                    if (glowing) {
+                        texture = itemTextures.get(GNOME_COUNTRY);
+                        relativeScale = ITEM_SIZE_SCALE;
+                    } else {
+                        texture = dvdGlowTex;
+                        relativeScale = ITEM_SIZE_SCALE * 1.4f;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            glowing = !glowing;
         }
 
         /** Switch the overlay of the item */
