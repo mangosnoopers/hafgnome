@@ -31,7 +31,7 @@ public class RearviewDVD extends Image {
 
     public RearviewDVD(float x, float y, float relSca, Texture tex) {
         super(x, y, relSca, tex);
-        DVDFilmStrip = new FilmStrip(tex, 6, 1, 6);
+        DVDFilmStrip = new FilmStrip(tex, 1, 6, 6);
 
     }
 
@@ -70,8 +70,7 @@ public class RearviewDVD extends Image {
                 break;
         }
 
-        //DVDFilmStrip.setFrame((int) currentAnimFrame);
-        DVDFilmStrip.setFrame(0);
+        DVDFilmStrip.setFrame((int) currentAnimFrame);
 
     }
 
