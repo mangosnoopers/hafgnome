@@ -185,6 +185,13 @@ public class Child extends Image {
         }
     }
 
+    public void increaseMood() {
+        if (getCurrentMood() != Mood.SLEEP) {
+            happiness += 250;
+            if (happiness > 1000) happiness = 1000;
+        }
+    }
+
     /**
      * Returns the mood of the child
      */
