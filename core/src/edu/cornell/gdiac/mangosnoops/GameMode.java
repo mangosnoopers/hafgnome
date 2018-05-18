@@ -836,9 +836,9 @@ public class GameMode implements Screen {
 				case CUTSCENE:
 					if (currLevel == 0) {
 						displayCutScene0(delta);
-					} else if (currLevel == 7) {
-						displayCutScene2(delta);
 					} else if (currLevel == 4) {
+						displayCutScene2(delta);
+					} else if (currLevel == 7) {
 						displayCutScene1(delta);
 					} else if (currLevel == 11) {
 						displayCutScene3(delta);
@@ -1165,7 +1165,7 @@ public class GameMode implements Screen {
                                 canvas.draw(cutscene0_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
                         }
-					} else if (currLevel == 7) {
+					} else if (currLevel == 4) {
                         switch (cutSceneIndex) {
 							case 0:
 								canvas.draw(cutscene2_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1179,7 +1179,7 @@ public class GameMode implements Screen {
 							case 3:
 								canvas.draw(cutscene2_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
 						}
-					} else if (currLevel == 4) {
+					} else if (currLevel == 7) {
 						switch (cutSceneIndex) {
                             case 0:
                                 canvas.draw(cutscene1_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
