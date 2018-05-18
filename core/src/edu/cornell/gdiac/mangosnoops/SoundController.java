@@ -36,6 +36,9 @@ public class SoundController {
     private final Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/click.mp3"));
     private final Sound hoverMouse = Gdx.audio.newSound(Gdx.files.internal("sounds/mousePassOver.mp3"));
     private final Sound rearGnomeDefeated = Gdx.audio.newSound(Gdx.files.internal("sounds/rearGnomeDisappears.mp3"));
+    private final Sound snackEat = Gdx.audio.newSound(Gdx.files.internal("sounds/snackEating.mp3"));
+
+
     private final Array<Sound> noshDialogue = new Array<Sound>();
     private final Array<Sound> nedDialogue = new Array<Sound>();
 
@@ -47,7 +50,7 @@ public class SoundController {
         music = new Array<Music>();
         music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl);
         effects = new Array<Sound>();
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated, snackEat);
         carAmbience.setLooping(true);
         radioStatic.setLooping(true);
 
@@ -126,6 +129,12 @@ public class SoundController {
     public void beepSound() {
         carBeep.stop();
         carBeep.play(settings.getEffectsVolume());
+    }
+
+    /** Called in GameplayController/resolveItemDrop **/
+    public void playSnackEating(){
+        snackEat.stop();
+        snackEat.play();
     }
 
     /** Called in resolveActions when horn is honked */
@@ -278,7 +287,7 @@ public class SoundController {
         for(Sound s : effects) {
             stopAudio(s);
         }
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated,snackEat);
         effects.addAll(noshDialogue);
         effects.addAll(nedDialogue);
     }
