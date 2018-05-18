@@ -887,7 +887,7 @@ public class GameplayController {
         rearviewEnemy = new RearviewEnemy(0.78f, 0.8f, 0.18f,0, rearviewGnomeTexture);
 		rearviewDamageIndicator = new Image(0.78f, 0.86f, 0.3f, rearviewDamageTexture,GameCanvas.TextureOrigin.MIDDLE);
 
-		rearviewDVD = new RearviewDVD(0.78f, 0.86f, 0.3f, rearviewDVDTexture);
+		rearviewDVD = new RearviewDVD(0.78f, 0.865f, 0.3f, rearviewDVDTexture);
 
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
@@ -1423,8 +1423,11 @@ public class GameplayController {
 		// checks this every 200 frames (may need to adjust)
 
 		if(dvdPlayer.isPlayingDvd()) {
+		    rearviewDVD.showDVD();
 			ned.setMood(Child.Mood.HAPPY);
 			nosh.setMood(Child.Mood.HAPPY);
+		} else {
+			rearviewDVD.hideDVD();
 		}
 		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
 
@@ -1489,7 +1492,7 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000, this)) {
+						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
 							inventory.cancelTake();
 						}
 					} else {

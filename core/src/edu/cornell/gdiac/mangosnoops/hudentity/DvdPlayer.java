@@ -23,15 +23,13 @@ public class DvdPlayer {
      * @param duration
      * @return true if starts playing, false if unsuccessful (if a movie is already playing)
      */
-    public boolean playDvd(String name, int duration, GameplayController gc) {
+    public boolean playDvd(String name, int duration) {
         // TODO: add texture and draw that
         if(dvdPlayingTitle == null) {
             dvdPlayingTitle = name;
             timeLeft = duration;
-            gc.getRearviewDVD().showDVD();
             return true;
         }
-        gc.getRearviewDVD().hideDVD();
         return false;
     }
 
