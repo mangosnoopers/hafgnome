@@ -169,7 +169,7 @@ public class GameMode implements Screen {
 	/** Whether or not to exit to the rest stop */
 	private boolean exitToRestStop;
 	/** Whether or not to exit to the rest stop */
-	private boolean exitToMainMenu = false;
+	public boolean exitToMainMenu = false;
 	/** Fade delay */
 	private int delay;
 
