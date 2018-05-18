@@ -80,6 +80,14 @@ public class GameMode implements Screen {
 	protected static final String CUTSCENE2_2 = "images/cutscenes/cutscene2_2.png";
 	protected static final String CUTSCENE2_3 = "images/cutscenes/cutscene2_3.png";
 
+	// End cutscene
+	protected static final String CUTSCENE3_0 = "images/cutscenes/cutscene3_0.png";
+	protected static final String CUTSCENE3_1 = "images/cutscenes/cutscene3_1.png";
+	protected static final String CUTSCENE3_2 = "images/cutscenes/cutscene3_2.png";
+	protected static final String CUTSCENE3_3 = "images/cutscenes/cutscene3_3.png";
+	protected static final String CUTSCENE3_4 = "images/cutscenes/cutscene3_4.png";
+	protected static final String CUTSCENE3_5 = "images/cutscenes/cutscene3_5.png";
+
 	/** Cutscene textures */
 	private Texture cutscene0_0Texture;
 	private Texture cutscene0_1Texture;
@@ -101,6 +109,13 @@ public class GameMode implements Screen {
 	private Texture cutscene2_1Texture;
 	private Texture cutscene2_2Texture;
 	private Texture cutscene2_3Texture;
+
+	private Texture cutscene3_0Texture;
+	private Texture cutscene3_1Texture;
+	private Texture cutscene3_2Texture;
+	private Texture cutscene3_3Texture;
+	private Texture cutscene3_4Texture;
+	private Texture cutscene3_5Texture;
 
 	/** Background files */
 	protected static final String SUBURB_BG = "images/suburb_background.png";
@@ -152,6 +167,8 @@ public class GameMode implements Screen {
 	private float fadeOutOpacity;
 	/** Whether or not to exit to the rest stop */
 	private boolean exitToRestStop;
+	/** Whether or not to exit to the rest stop */
+	private boolean exitToMainMenu = false;
 	/** Fade delay */
 	private int delay;
 
@@ -260,6 +277,19 @@ public class GameMode implements Screen {
 		manager.load(CUTSCENE2_3,Texture.class);
 		assets.add(CUTSCENE2_3);
 
+		manager.load(CUTSCENE3_0,Texture.class);
+		assets.add(CUTSCENE3_0);
+		manager.load(CUTSCENE3_1,Texture.class);
+		assets.add(CUTSCENE3_1);
+		manager.load(CUTSCENE3_2,Texture.class);
+		assets.add(CUTSCENE3_2);
+		manager.load(CUTSCENE3_3,Texture.class);
+		assets.add(CUTSCENE3_3);
+		manager.load(CUTSCENE3_4,Texture.class);
+		assets.add(CUTSCENE3_4);
+		manager.load(CUTSCENE3_5,Texture.class);
+		assets.add(CUTSCENE3_5);
+
 		// Backgrounds
 		manager.load(SUBURB_BG,Texture.class);
 		assets.add(SUBURB_BG);
@@ -318,6 +348,24 @@ public class GameMode implements Screen {
 		}
 
 		// Allocate assets
+		if (manager.isLoaded(CUTSCENE3_0)) {
+			cutscene3_0Texture = manager.get(CUTSCENE3_0, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE3_1)) {
+			cutscene3_1Texture = manager.get(CUTSCENE3_1, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE3_2)) {
+			cutscene3_2Texture = manager.get(CUTSCENE3_2, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE3_3)) {
+			cutscene3_3Texture = manager.get(CUTSCENE3_3, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE3_4)) {
+			cutscene3_4Texture = manager.get(CUTSCENE3_4, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE3_5)) {
+			cutscene3_5Texture = manager.get(CUTSCENE3_5, Texture.class);
+		}
 		if (manager.isLoaded(CUTSCENE1_0)) {
 			cutscene1_0Texture = manager.get(CUTSCENE1_0, Texture.class);
 		}
@@ -516,6 +564,13 @@ public class GameMode implements Screen {
 	private float CUTSCENE_2_SCENE_2_TIME = 5f;
 	private float CUTSCENE_2_SCENE_3_TIME = 5f;
 
+	private float CUTSCENE_3_SCENE_0_TIME = 5f;
+	private float CUTSCENE_3_SCENE_1_TIME = 5f;
+	private float CUTSCENE_3_SCENE_2_TIME = 5f;
+	private float CUTSCENE_3_SCENE_3_TIME = 5f;
+	private float CUTSCENE_3_SCENE_4_TIME = 5f;
+	private float CUTSCENE_3_SCENE_5_TIME = 5f;
+
 	private int cutSceneIndex = 0;
 
 	public void displayCutScene2(float delta) {
@@ -605,6 +660,59 @@ public class GameMode implements Screen {
 				break;
 			case 7:
 				gameState = GameState.INTRO;
+                break;
+		}
+
+	}
+
+	public void playCutScene(int cutSceneNum) {
+		currLevel = cutSceneNum;
+		gameState = GameState.CUTSCENE;
+	}
+
+	public void displayCutScene3(float delta) {
+
+		cutsceneDeltaSum += delta;
+
+		switch (cutSceneIndex) {
+			case 0:
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_0_TIME) {
+					cutSceneIndex = 1;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+            case 1:
+                if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_1_TIME) {
+                	cutSceneIndex = 2;
+                	cutsceneDeltaSum = 0;
+				}
+				break;
+			case 2:
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_2_TIME) {
+					cutSceneIndex = 3;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 3:
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_3_TIME) {
+					cutSceneIndex = 4;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 4:
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_4_TIME) {
+					cutSceneIndex = 5;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 5:
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_5_TIME) {
+					cutSceneIndex = 6;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 6:
+			    exitToMainMenu = true;
                 break;
 		}
 
@@ -732,6 +840,8 @@ public class GameMode implements Screen {
 						displayCutScene2(delta);
 					} else if (currLevel == 4) {
 						displayCutScene1(delta);
+					} else if (currLevel == 11) {
+						displayCutScene3(delta);
 					}
 					break;
 				default:
@@ -940,7 +1050,11 @@ public class GameMode implements Screen {
 				}
 				else {
 					// ready to exit gamemode when the fade out is complete
-					exitToRestStop = true;
+					if (currLevel != 11) {
+						exitToRestStop = true;
+					} else {
+						gameState = GameState.CUTSCENE;
+					}
 				}
 			}
 		}
@@ -1089,6 +1203,27 @@ public class GameMode implements Screen {
                                 canvas.draw(cutscene1_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
 						}
+					} else if (currLevel == 11) {
+						switch (cutSceneIndex) {
+                            case 0:
+                                canvas.draw(cutscene3_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                break;
+                            case 1:
+                                canvas.draw(cutscene3_1Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                break;
+                            case 2:
+                                canvas.draw(cutscene3_2Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                break;
+                            case 3:
+                                canvas.draw(cutscene3_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                break;
+                            case 4:
+                                canvas.draw(cutscene3_4Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                break;
+                            case 5:
+                                canvas.draw(cutscene3_5Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+                                break;
+						}
 
 					}
 					canvas.endHUDDrawing();
@@ -1099,7 +1234,7 @@ public class GameMode implements Screen {
 					draw(delta);
 			}
 			// Check if end of level and ready to exit - if so transition to rest stop mode
-			if ((exitToRestStop||exitFromPause) && listener != null ) {
+			if ((exitToRestStop||exitFromPause || exitToMainMenu) && listener != null ) {
 				if(exitFromPause){
 					update(delta);
 				}
@@ -1108,6 +1243,10 @@ public class GameMode implements Screen {
 				active = false;
 			}
 		}
+	}
+
+	public boolean beatGame() {
+		return exitToMainMenu;
 	}
 
 	/**
