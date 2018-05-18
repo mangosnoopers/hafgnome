@@ -2,6 +2,7 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 
 public class RoadImage extends RoadObject {
@@ -43,6 +44,11 @@ public class RoadImage extends RoadObject {
      * Return the miles, or -1 if this item does not have an associated mileage
      */
     public int getMiles() { return miles; }
+
+    /**
+     * Set the miles.
+     */
+    public void setMiles(int m) { miles = m; }
 
     /**
      * Construct a roadside image at the given position.
@@ -154,6 +160,23 @@ public class RoadImage extends RoadObject {
         }
         canvas.drawRoadObject(t, getX(), getY(), hover,
                 width, height, 90, 0);
+    }
+
+    public void draw(GameCanvas canvas, Texture t, BitmapFont font) {
+        float width = t.getWidth() * 0.001f;
+        float height = t.getHeight() * 0.001f;
+        float hover = hoverDistance;
+        if (name.toLowerCase().equals("sunflower")) {
+            width /= 5.0f;
+            height /= 5.0f;
+            hover = 4.309f;
+        }
+        canvas.drawRoadObject(t, getX(), getY(), hover,
+                width, height, 90, 0);
+
+        // draw text
+        font.setColor(Color.WHITE);
+        canvas.drawExitSign("" + miles, t, font, getX(), getY(), hover);
     }
 
     public void setSpeed (float s) {
