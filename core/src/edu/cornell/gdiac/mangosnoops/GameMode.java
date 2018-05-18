@@ -58,13 +58,19 @@ public class GameMode implements Screen {
 	protected static final String CUTSCENE0_0 = "images/cutscenes/cutscene0_0.png";
 	protected static final String CUTSCENE0_1 = "images/cutscenes/cutscene0_1.png";
 	protected static final String CUTSCENE0_2 = "images/cutscenes/cutscene0_2.png";
-	protected static final String CUTSCENE0_3 = "images/cutscenes/cutscene0_2.png";
+	protected static final String CUTSCENE0_3 = "images/cutscenes/cutscene0_3.png";
+	protected static final String CUTSCENE0_4 = "images/cutscenes/cutscene0_4.png";
+	protected static final String CUTSCENE0_5 = "images/cutscenes/cutscene0_5.png";
+	protected static final String CUTSCENE0_6 = "images/cutscenes/cutscene0_6.png";
 
 	/** Cutscene textures */
 	private Texture cutscene0_0Texture;
 	private Texture cutscene0_1Texture;
 	private Texture cutscene0_2Texture;
 	private Texture cutscene0_3Texture;
+	private Texture cutscene0_4Texture;
+	private Texture cutscene0_5Texture;
+	private Texture cutscene0_6Texture;
 
 	/** Background files */
 	protected static final String SUBURB_BG = "images/suburb_background.png";
@@ -193,6 +199,12 @@ public class GameMode implements Screen {
 		assets.add(CUTSCENE0_2);
 		manager.load(CUTSCENE0_3,Texture.class);
 		assets.add(CUTSCENE0_3);
+		manager.load(CUTSCENE0_4,Texture.class);
+		assets.add(CUTSCENE0_4);
+		manager.load(CUTSCENE0_5,Texture.class);
+		assets.add(CUTSCENE0_5);
+		manager.load(CUTSCENE0_6,Texture.class);
+		assets.add(CUTSCENE0_6);
 
 		// Backgrounds
 		manager.load(SUBURB_BG,Texture.class);
@@ -263,6 +275,15 @@ public class GameMode implements Screen {
 		}
 		if (manager.isLoaded(CUTSCENE0_3)) {
 			cutscene0_3Texture = manager.get(CUTSCENE0_3, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE0_4)) {
+			cutscene0_4Texture = manager.get(CUTSCENE0_4, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE0_5)) {
+			cutscene0_5Texture = manager.get(CUTSCENE0_5, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE0_6)) {
+			cutscene0_6Texture = manager.get(CUTSCENE0_6, Texture.class);
 		}
         if (manager.isLoaded(SUBURB_BG)) {
 			suburbBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
@@ -378,10 +399,13 @@ public class GameMode implements Screen {
 
 
 	private float cutsceneDeltaSum = 0;
-	private float CUTSCENE_0_SCENE_0_TIME = 10f;
-	private float CUTSCENE_0_SCENE_1_TIME = 10f;
-	private float CUTSCENE_0_SCENE_2_TIME = 10f;
-	private float CUTSCENE_0_SCENE_3_TIME = 10f;
+	private float CUTSCENE_0_SCENE_0_TIME = 5f;
+	private float CUTSCENE_0_SCENE_1_TIME = 5f;
+	private float CUTSCENE_0_SCENE_2_TIME = 5f;
+	private float CUTSCENE_0_SCENE_3_TIME = 5f;
+	private float CUTSCENE_0_SCENE_4_TIME = 5f;
+	private float CUTSCENE_0_SCENE_5_TIME = 5f;
+	private float CUTSCENE_0_SCENE_6_TIME = 5f;
 
 	private int cutSceneIndex = 0;
 
@@ -415,6 +439,24 @@ public class GameMode implements Screen {
 				}
 				break;
 			case 4:
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_4_TIME) {
+					cutSceneIndex = 5;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 5:
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_5_TIME) {
+					cutSceneIndex = 6;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 6:
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_6_TIME) {
+					cutSceneIndex = 7;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 7:
 				gameState = GameState.INTRO;
                 break;
 		}
@@ -790,6 +832,15 @@ public class GameMode implements Screen {
 							break;
 						case 3:
 							canvas.draw(cutscene0_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+						case 4:
+							canvas.draw(cutscene0_4Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+						case 5:
+							canvas.draw(cutscene0_5Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+						case 6:
+							canvas.draw(cutscene0_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
 							break;
 					}
 					canvas.endHUDDrawing();
