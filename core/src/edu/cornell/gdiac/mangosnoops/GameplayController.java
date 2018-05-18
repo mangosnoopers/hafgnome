@@ -81,6 +81,8 @@ public class GameplayController {
 
 	private ObjectMap<String,Radio.Genre> songs;
 
+	private String levelName;
+
 	private Image healthGauge;
 	private Image rearviewDamageIndicator;
 	private Image rearviewBackground;
@@ -632,12 +634,13 @@ public class GameplayController {
 	 * Creates a new GameplayController with no active elements.
 	 *
 	 */
-	public GameplayController(Region reg, GameCanvas canvas, float endY,
+	public GameplayController(String levelNameString, Region reg, GameCanvas canvas, float endY,
 							  Array<Enemy> enemies,
 							  Array<Event> e,
 							  ObjectMap<String,Radio.Genre> s,
 							  SoundController sc,
 							  Array<RoadImage> roadsideObjs) {
+	    levelName = levelNameString;
 		region = reg;
 		soundController = sc;
 		songs = s;

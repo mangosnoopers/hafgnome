@@ -174,7 +174,6 @@ public class SettingsMenu {
             dropDownTexture = manager.get(DROP_DOWN_FILE,Texture.class);
         }
 
-
         //Buttons and Background
         background = new Image(0.5f, 0.5f, 1, backgroundTexture, GameCanvas.TextureOrigin.MIDDLE);
         effectsSliderTab = new Image(sliderBounds.y, 0.825f, 0.1f, sliderTabTexture, GameCanvas.TextureOrigin.MIDDLE);

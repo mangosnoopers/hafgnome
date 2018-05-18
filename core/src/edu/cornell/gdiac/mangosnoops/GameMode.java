@@ -49,8 +49,22 @@ public class GameMode implements Screen {
 		/** When the ships is dead (but shells still work) */
 		OVER,
 		/** When the pause method is called **/
-		PAUSED
+		PAUSED,
+		/** When there's a cutscene */
+		CUTSCENE
 	}
+
+	/** Cutscene files */
+	protected static final String CUTSCENE0_0 = "images/cutscenes/cutscene0_0.png";
+	protected static final String CUTSCENE0_1 = "images/cutscenes/cutscene0_1.png";
+	protected static final String CUTSCENE0_2 = "images/cutscenes/cutscene0_2.png";
+	protected static final String CUTSCENE0_3 = "images/cutscenes/cutscene0_2.png";
+
+	/** Cutscene textures */
+	private Texture cutscene0_0Texture;
+	private Texture cutscene0_1Texture;
+	private Texture cutscene0_2Texture;
+	private Texture cutscene0_3Texture;
 
 	/** Background files */
 	protected static final String SUBURB_BG = "images/suburb_background.png";
@@ -170,6 +184,16 @@ public class GameMode implements Screen {
 		manager.load(DEATH_MODULE_FILE, Texture.class);
 		assets.add(DEATH_MODULE_FILE);
 
+		// Cutscenes
+		manager.load(CUTSCENE0_0,Texture.class);
+		assets.add(CUTSCENE0_0);
+		manager.load(CUTSCENE0_1,Texture.class);
+		assets.add(CUTSCENE0_1);
+		manager.load(CUTSCENE0_2,Texture.class);
+		assets.add(CUTSCENE0_2);
+		manager.load(CUTSCENE0_3,Texture.class);
+		assets.add(CUTSCENE0_3);
+
 		// Backgrounds
 		manager.load(SUBURB_BG,Texture.class);
 		assets.add(SUBURB_BG);
@@ -228,6 +252,18 @@ public class GameMode implements Screen {
 		}
 
 		// Allocate assets
+		if (manager.isLoaded(CUTSCENE0_0)) {
+			cutscene0_0Texture = manager.get(CUTSCENE0_0, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE0_1)) {
+			cutscene0_1Texture = manager.get(CUTSCENE0_1, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE0_2)) {
+			cutscene0_2Texture = manager.get(CUTSCENE0_2, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE0_3)) {
+			cutscene0_3Texture = manager.get(CUTSCENE0_3, Texture.class);
+		}
         if (manager.isLoaded(SUBURB_BG)) {
 			suburbBackgroundTexture = manager.get(SUBURB_BG, Texture.class);
 		}
@@ -305,7 +341,11 @@ public class GameMode implements Screen {
             fadeOutOpacity = 0.0f;
             delay = 0;
             // Null out all pointers, 0 out all ints, etc.
-            gameState = GameState.INTRO;
+			if (levelName == "tut0.xlsx") {
+			    gameState = GameState.CUTSCENE;
+			} else {
+				gameState = GameState.INTRO;
+			}
             assets = new Array<String>();
 
             // Create the controllers.
@@ -313,9 +353,9 @@ public class GameMode implements Screen {
 			this.soundController = soundController;
             inputController = new InputController(settings);
             if (levelName.substring(0,3).equals("tut")) {
-				gameplayController = new TutorialController(canvas, new LevelObject(levelName), Integer.parseInt(levelName.substring(3,4)), soundController);
+				gameplayController = new TutorialController(levelName, canvas, new LevelObject(levelName), Integer.parseInt(levelName.substring(3,4)), soundController);
 			} else {
-            	gameplayController = new NormalLevelController(canvas, new LevelObject(levelName), soundController);
+            	gameplayController = new NormalLevelController(levelName, canvas, new LevelObject(levelName), soundController);
 			}
             collisionController = new CollisionController(canvas.getWidth(), canvas.getHeight(), soundController);
         } catch (IOException e) {
@@ -335,6 +375,54 @@ public class GameMode implements Screen {
 		canvas = null;
 	}
 
+
+
+	private float cutsceneDeltaSum = 0;
+	private float CUTSCENE_0_SCENE_0_TIME = 10f;
+	private float CUTSCENE_0_SCENE_1_TIME = 10f;
+	private float CUTSCENE_0_SCENE_2_TIME = 10f;
+	private float CUTSCENE_0_SCENE_3_TIME = 10f;
+
+	private int cutSceneIndex = 0;
+
+	public void displayCutScene0(float delta) {
+
+		cutsceneDeltaSum += delta;
+
+		switch (cutSceneIndex) {
+			case 0:
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_0_TIME) {
+					cutSceneIndex = 1;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+            case 1:
+                if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_1_TIME) {
+                	cutSceneIndex = 2;
+                	cutsceneDeltaSum = 0;
+				}
+				break;
+			case 2:
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_2_TIME) {
+					cutSceneIndex = 3;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 3:
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_3_TIME) {
+					cutSceneIndex = 4;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 4:
+				gameState = GameState.INTRO;
+                break;
+		}
+
+
+
+
+	}
 
 	/**
 	 * Update the game state.
@@ -393,6 +481,9 @@ public class GameMode implements Screen {
 					break;
 				case PAUSED:
 					pause_game();
+					break;
+				case CUTSCENE:
+					displayCutScene0(delta);
 					break;
 				default:
 					break;
@@ -607,6 +698,7 @@ public class GameMode implements Screen {
 
 		// Draw messages
 		switch (gameState) {
+			case CUTSCENE:
 			case INTRO:
 				break;
 			case OVER:
@@ -683,7 +775,30 @@ public class GameMode implements Screen {
 	public void render(float delta) {
 		if (active) {
 			update(delta);
-			draw(delta);
+			switch (gameState) {
+				case CUTSCENE:
+					canvas.beginHUDDrawing();
+					switch (cutSceneIndex) {
+						case 0:
+							canvas.draw(cutscene0_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+						case 1:
+							canvas.draw(cutscene0_1Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+						case 2:
+							canvas.draw(cutscene0_2Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+						case 3:
+							canvas.draw(cutscene0_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+							break;
+					}
+					canvas.endHUDDrawing();
+					break;
+				case INTRO:
+					break;
+                default:
+					draw(delta);
+			}
 			// Check if end of level and ready to exit - if so transition to rest stop mode
 			if ((exitToRestStop||exitFromPause) && listener != null ) {
 				if(exitFromPause){
