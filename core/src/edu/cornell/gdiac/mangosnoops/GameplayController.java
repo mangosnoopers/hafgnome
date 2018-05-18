@@ -211,6 +211,7 @@ public class GameplayController {
 	/** Speed signs */
 	private static final String SPEEDLIMIT_25_FILE = "images/billboards/speedLimit25.png";
 	private static final String SPEEDLIMIT_55_FILE = "images/billboards/speedLimit55.png";
+	private static final String SPEEDLIMIT_65_FILE = "images/billboards/speedLimit65.png";
 	private static final String SPEEDLIMIT_80_FILE = "images/billboards/speedLimit80.png";
 	/** Billboard font */
 	private static String BILLBOARD_FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
@@ -329,6 +330,7 @@ public class GameplayController {
 	/** Speed sign textures */
 	private Texture speedLimit25Tex;
 	private Texture speedLimit55Tex;
+	private Texture speedLimit65Tex;
 	private Texture speedLimit80Tex;
 	/** Other roadside assets */
 	private Texture sunflowerTex;
@@ -344,6 +346,10 @@ public class GameplayController {
 	private static final String SUNFLOWER = "sunflower";
 	private static final String TREE = "tree";
 	private static final String TOPIARY = "topiary";
+	private static final String SPEEDLIMIT_25 = "speed limit 25";
+	private static final String SPEEDLIMIT_55 = "speed limit 55";
+	private static final String SPEEDLIMIT_65 = "speed limit 65";
+	private static final String SPEEDLIMIT_80 = "speed limit 80";
 
 	/** An object map between roadside image names and their textures */
 	private ObjectMap<String, Texture> roadsideTexs;
@@ -603,6 +609,7 @@ public class GameplayController {
 		exitSignTex = createTexture(manager, EXIT_SIGN_FILE);
 		speedLimit25Tex = createTexture(manager, SPEEDLIMIT_25_FILE);
 		speedLimit55Tex = createTexture(manager, SPEEDLIMIT_55_FILE);
+		speedLimit65Tex = createTexture(manager, SPEEDLIMIT_65_FILE);
 		speedLimit80Tex = createTexture(manager, SPEEDLIMIT_80_FILE);
 		if (manager.isLoaded(BILLBOARD_FONT_FILE)) {
 			billboardFont = manager.get(BILLBOARD_FONT_FILE,BitmapFont.class);
@@ -721,6 +728,10 @@ public class GameplayController {
 		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
 		roadsideTexs.put(TREE, new Texture(TREE_FILE));
 		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
+		roadsideTexs.put(SPEEDLIMIT_25, new Texture(SPEEDLIMIT_25_FILE));
+		roadsideTexs.put(SPEEDLIMIT_55, new Texture(SPEEDLIMIT_55_FILE));
+		roadsideTexs.put(SPEEDLIMIT_65, new Texture(SPEEDLIMIT_65_FILE));
+		roadsideTexs.put(SPEEDLIMIT_80, new Texture(SPEEDLIMIT_80_FILE));
 	}
 
 	/**
