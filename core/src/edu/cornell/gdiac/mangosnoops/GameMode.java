@@ -28,6 +28,7 @@ import edu.cornell.gdiac.util.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import java.io.IOException;
+import java.security.Key;
 
 /**
  * The primary controller class for the game.
@@ -208,7 +209,6 @@ public class GameMode implements Screen {
 	private Image pauseMainMenuButton;
 	private Image pauseExitButton;
 	private Image pauseEgg;
-
 
 	/** Background textures */
 	private Texture suburbBackgroundTexture;
@@ -575,6 +575,10 @@ public class GameMode implements Screen {
 
 	public void displayCutScene2(float delta) {
 
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			exitToMainMenu = true;
+		}
+
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
@@ -612,6 +616,10 @@ public class GameMode implements Screen {
     }
 
     public void displayCutScene1(float delta) {
+
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			gameState = GameState.INTRO;
+		}
 
 		cutsceneDeltaSum += delta;
 
@@ -672,6 +680,10 @@ public class GameMode implements Screen {
 
 	public void displayCutScene3(float delta) {
 
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+		    exitToMainMenu = true;
+		}
+
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
@@ -719,6 +731,10 @@ public class GameMode implements Screen {
 	}
 
 	public void displayCutScene0(float delta) {
+
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			gameState = GameState.INTRO;
+		}
 
 		cutsceneDeltaSum += delta;
 
