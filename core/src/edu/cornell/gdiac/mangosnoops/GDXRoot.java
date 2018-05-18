@@ -118,18 +118,18 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		// initialize arrays and add tutorials
 		LEVELS = new Array<String>();
-//		LEVELS.add("tut0.xlsx");
-//		LEVELS.add("tut1.xlsx");
-//		LEVELS.add("tut2.xlsx");
-//		LEVELS.add("tut3.xlsx");
+		LEVELS.add("tut0.xlsx");
+		LEVELS.add("tut1.xlsx");
+		LEVELS.add("tut2.xlsx");
+		LEVELS.add("tut3.xlsx");
 
 		REST_STOPS = new Array<String>();
-//		REST_STOPS.add("rest_stop_tut0.json");
-//		REST_STOPS.add("rest_stop_tut1.json");
-//		REST_STOPS.add("rest_stop_tut2.json");
-//		REST_STOPS.add("rest_stop_tut3.json");
+		REST_STOPS.add("rest_stop_tut0.json");
+		REST_STOPS.add("rest_stop_tut1.json");
+		REST_STOPS.add("rest_stop_tut2.json");
+		REST_STOPS.add("rest_stop_tut3.json");
 
-		NUM_TUTORIALS = 0;
+		NUM_TUTORIALS = 4;
 
 		for (File f : files) {
 			String fn = f.getName();
@@ -192,7 +192,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		screen.dispose();
 		canvas.dispose();
 		canvas = null;
-	
+
 		// Unload all of the resources
 		manager.clear();
 		manager.dispose();
