@@ -32,8 +32,8 @@
       },
       {
       	"text":"Which one is hot dogs?",
-	     "imageA":"hotdogs.jpg",
-	     "imageB":"hotlegs.jpg",
+	     "imageA":"hotdogs.png",
+	     "imageB":"hotlegs.png",
 	     "correct":1
       }
    ]
