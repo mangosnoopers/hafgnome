@@ -57,6 +57,8 @@ public class Enemy extends RoadObject{
         return enemyWidth;
     }
 
+    private Vector2 startPos;
+
     /**
      * Returns the type of this object.
      *
@@ -68,7 +70,10 @@ public class Enemy extends RoadObject{
         return enemyType;
     }
 
+    public Vector2 getStartPos() { return startPos; }
+
     public Enemy(float x, float y, ObjectType type) {
+        startPos = new Vector2(x, y);
         setX(x);
         setY(y);
         Random rand = new Random();
@@ -80,6 +85,7 @@ public class Enemy extends RoadObject{
 
 
     public Enemy(Enemy e) {
+        startPos = new Vector2(e.getStartPos().x, e.getStartPos().y);
         setX(e.getX());
         setY(e.getY());
         Random rand = new Random();
