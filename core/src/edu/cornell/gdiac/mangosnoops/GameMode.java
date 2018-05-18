@@ -1333,16 +1333,8 @@ public class GameMode implements Screen {
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
-		int newSize = 0;
-		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-		size2Params.fontFileName = FONT_FILE;
-		size2Params.fontParameters.size = newSize;
-		displayFont = new BitmapFont();
-//		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
-//				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
-
-//		displayFont.getData().setScale((width/SCREEN_DIMENSIONS.x),
-//			(height/SCREEN_DIMENSIONS.y));
+		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
+				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
 		SCREEN_DIMENSIONS = new Vector2(width,height);
 
 	}

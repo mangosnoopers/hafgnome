@@ -37,8 +37,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.addIcon("images/icons/mac.png", Files.FileType.Internal);
 		config.addIcon("images/icons/windows.png", Files.FileType.Internal);
-		config.width  = 960;
-		config.height = 540;
+		config.width  = 1600;
+		config.height = 900;
 		config.fullscreen = false;
 		config.resizable = true;
 		new LwjglApplication(new GDXRoot(), config);

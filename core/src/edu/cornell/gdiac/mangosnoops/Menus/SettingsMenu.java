@@ -192,10 +192,10 @@ public class SettingsMenu {
         resolutionImages = new Array<Image>();
         float resImageOffset = resImageScale;
         resolutionImages.addAll(new Image(currentResImagePos.x,currentResImagePos.y-resImageOffset, resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
-                                    new Image(currentResImagePos.x,currentResImagePos.y-2*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
-                                    new Image(currentResImagePos.x,currentResImagePos.y-3*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
-                                    new Image(currentResImagePos.x,currentResImagePos.y-4*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
-                                    new Image(currentResImagePos.x,currentResImagePos.y-5*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE));
+                new Image(currentResImagePos.x,currentResImagePos.y-2*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                new Image(currentResImagePos.x,currentResImagePos.y-3*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                new Image(currentResImagePos.x,currentResImagePos.y-4*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE),
+                new Image(currentResImagePos.x,currentResImagePos.y-5*resImageOffset,resImageScale,dropDownTexture, GameCanvas.TextureOrigin.MIDDLE));
 
         resolutionText = new ObjectMap<Image, String>();
         resolutionText.put(resolutionImages.get(0), "1920 x 1080");
@@ -212,11 +212,11 @@ public class SettingsMenu {
         screenResolutions.put(resolutionImages.get(4), new Vector2(1600,900));
 
         lastResolution = screenResolutions.get(resolutionImages.get(4));
-        currentResolution = screenResolutions.get(resolutionImages.get(1));
-        currentResImage = new Image(resolutionImages.get(1));
+        currentResolution = screenResolutions.get(resolutionImages.get(4));
+        currentResImage = new Image(resolutionImages.get(4));
         currentResImage.updateY(currentResImagePos.y);
-        currentResText = resolutionText.get(resolutionImages.get(1));
-        hoverOverImage = resolutionImages.get(1);
+        currentResText = resolutionText.get(resolutionImages.get(4));
+        hoverOverImage = resolutionImages.get(4);
         resizeScreen();
     }
 
@@ -301,7 +301,7 @@ public class SettingsMenu {
             else if(selectButton.inArea(in)){
                 soundController.playClick();
                 fullScreen = !fullScreen;
-                resizeScreen();
+                resizeScreen();;
             }
             // SELECT BOX
             else if (currentResImage.inArea(in)) {
@@ -378,10 +378,10 @@ public class SettingsMenu {
 
         }
         currentResImage.draw(canvas);;
-       canvas.drawTextCenterOrigin(currentResText,
-                                    displayFont,
-                                    currentResImage.getPosition().x,
-                                    currentResImage.getPosition().y );
+        canvas.drawTextCenterOrigin(currentResText,
+                displayFont,
+                currentResImage.getPosition().x,
+                currentResImage.getPosition().y );
         if(gnomeSoundSelected == 'A') {
             buttonA.draw(canvas, buttonTint);
         } else if(gnomeSoundSelected == 'B') {
@@ -451,6 +451,6 @@ public class SettingsMenu {
     /**
      * @return Volume of music
      */
-    public float getMusicVolume() { return 0; }
+    public float getMusicVolume() { return musicVolume; }
 
 }
