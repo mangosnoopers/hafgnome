@@ -5,16 +5,19 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import edu.cornell.gdiac.mangosnoops.GameCanvas;
 import edu.cornell.gdiac.mangosnoops.GameplayController;
+import edu.cornell.gdiac.mangosnoops.SoundController;
 
 public class DvdPlayer {
     /** Current dvdPlaying -- is null no music is playing */
     private String dvdPlayingTitle;
     private int timeLeft;
     Texture dvdPlayingTexture;
-
-    public DvdPlayer (){
+    SoundController soundController;
+    private boolean wasPlayingDvd;
+    public DvdPlayer (SoundController sc){
         dvdPlayingTitle = null;
         timeLeft = 0;
+        soundController = sc;
     }
 
     /**
@@ -28,6 +31,8 @@ public class DvdPlayer {
         if(dvdPlayingTitle == null) {
             dvdPlayingTitle = name;
             timeLeft = duration;
+            soundController.playMovieMusic(true);
+            wasPlayingDvd = true;
             return true;
         }
         return false;
@@ -41,6 +46,7 @@ public class DvdPlayer {
     public void update() {
         if(timeLeft == 0) {
             dvdPlayingTitle = null;
+            soundController.playMovieMusic(false);
         } else {
             timeLeft--;
         }

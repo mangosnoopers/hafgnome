@@ -859,7 +859,7 @@ public class GameplayController {
 		radio = new Radio(radioknobTexture, radioSlider, radioPointer, radioSoundOn,
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
-		dvdPlayer = new DvdPlayer();
+		dvdPlayer = new DvdPlayer(soundController);
 		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen);
 		masterShaker = new Image();
         sunShine = false;
@@ -1387,6 +1387,7 @@ public class GameplayController {
 				soundController.playRearViewGnomeCrawl(false);
 			}
 			road.setVrooming();
+			soundController.playCarVroom();
 		}
 
 		if (rearviewEnemy.isAttackingCar()) {
@@ -1421,6 +1422,7 @@ public class GameplayController {
 	public void resolveChildren(int counter, Child ned, Child nosh, Radio r) {
 		// check radio station and update each child's happiness based on it,
 		// checks this every 200 frames (may need to adjust)
+
 
 		if(dvdPlayer.isPlayingDvd()) {
 		    rearviewDVD.showDVD();
@@ -1483,8 +1485,10 @@ public class GameplayController {
 				case SNACK:
 					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake() && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
 						yonda.getNosh().increaseMood();
+						soundController.playSnackEating();
 					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake() && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
 						yonda.getNed().increaseMood();
+						soundController.playSnackEating();
 					} else {
 						inventory.cancelTake();
 						return;
@@ -1494,6 +1498,8 @@ public class GameplayController {
 					if(touchscreen.inDvdSlot(droppedPos)) {
 						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
 							inventory.cancelTake();
+						} else{
+							soundController.playInsertDvd();
 						}
 					} else {
 						inventory.cancelTake();

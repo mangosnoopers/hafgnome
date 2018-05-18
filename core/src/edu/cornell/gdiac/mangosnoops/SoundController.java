@@ -23,6 +23,8 @@ public class SoundController {
     private final Music menuSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-ukulele.mp3"));
     private final Music levelSelectSong = Gdx.audio.newMusic(Gdx.files.internal("OtherSongs/bensound-retrosoul.mp3"));
     private final Music rearGnomeCrawl = Gdx.audio.newMusic(Gdx.files.internal("sounds/eerieRearGnome.mp3"));
+    private final Music movieMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/movieMusic.mp3"));
+
 
     private final Sound carBeep = Gdx.audio.newSound(Gdx.files.internal("sounds/beepbeep.mp3"));
     private final Sound gnomeDeath1 = Gdx.audio.newSound(Gdx.files.internal("sounds/gnomeGrunt_1.mp3"));
@@ -37,6 +39,8 @@ public class SoundController {
     private final Sound hoverMouse = Gdx.audio.newSound(Gdx.files.internal("sounds/mousePassOver.mp3"));
     private final Sound rearGnomeDefeated = Gdx.audio.newSound(Gdx.files.internal("sounds/rearGnomeDisappears.mp3"));
     private final Sound snackEat = Gdx.audio.newSound(Gdx.files.internal("sounds/snackEating.mp3"));
+    private final Sound insertDvd = Gdx.audio.newSound(Gdx.files.internal("sounds/insertDvd.mp3"));
+    private final Sound carVroom = Gdx.audio.newSound(Gdx.files.internal("sounds/carVroom.mp3"));
 
 
     private final Array<Sound> noshDialogue = new Array<Sound>();
@@ -48,9 +52,9 @@ public class SoundController {
     public SoundController(SettingsMenu settings){
         this.settings = settings;
         music = new Array<Music>();
-        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl);
+        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl, movieMusic);
         effects = new Array<Sound>();
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated, snackEat);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated, snackEat,insertDvd, carVroom);
         carAmbience.setLooping(true);
         radioStatic.setLooping(true);
 
@@ -125,6 +129,8 @@ public class SoundController {
         // TODO : add audio functionality
     }
 
+
+
     /** Called in resolveActions when horn is honked */
     public void beepSound() {
         carBeep.stop();
@@ -134,7 +140,31 @@ public class SoundController {
     /** Called in GameplayController/resolveItemDrop **/
     public void playSnackEating(){
         snackEat.stop();
-        snackEat.play();
+        snackEat.play(settings.getEffectsVolume());
+    }
+
+    /**called in GameplayController/resolveItemDrop **/
+    public void playInsertDvd(){
+        insertDvd.stop();
+        insertDvd.play(settings.getEffectsVolume());
+    }
+
+    /**called in GameplayController **/
+    public void playCarVroom(){
+        carVroom.stop();
+        carVroom.play(settings.getEffectsVolume());
+    }
+
+    public void playMovieMusic(boolean playing){
+        if(playing) {
+            movieMusic.stop();
+            movieMusic.setLooping(true);
+            movieMusic.setVolume(settings.getMusicVolume());
+            movieMusic.play();
+        } else{
+            movieMusic.stop();
+            movieMusic.setLooping(false);
+        }
     }
 
     /** Called in resolveActions when horn is honked */
@@ -283,11 +313,11 @@ public class SoundController {
         for(Music m : music) {
             stopAudio(m);
         }
-        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl);
+        music.addAll(carAmbience,radioStatic,menuSong,levelSelectSong, rearGnomeCrawl, movieMusic);
         for(Sound s : effects) {
             stopAudio(s);
         }
-        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated,snackEat);
+        effects.addAll(carBeep,gnomeDeath1,gnomeDeath2,gnomeDeath3,gnomeDeath4,flamingoFlap,grillCollision,carIgnition,click,hoverMouse,rearGnomeDefeated,snackEat, insertDvd, carVroom);
         effects.addAll(noshDialogue);
         effects.addAll(nedDialogue);
     }
