@@ -252,7 +252,7 @@ public class TutorialController extends GameplayController {
                     madeNoshMad ++;
                 } else if(madeNoshMad == 1 && yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                     madeNoshMad ++;
-                }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
+                }else if (madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY || getInventory().getNumSnacks() < 3) {
                     noshDialogue = null;
                     tutMirrorNoshSnack.setVisible(false);
                     arrowNoshSnack.setVisible(false);
@@ -264,19 +264,19 @@ public class TutorialController extends GameplayController {
                     madeNedMad ++;
                 } else if(madeNedMad == 1 && yonda.getNed().getCurrentMood() == Child.Mood.HAPPY) {
                     madeNedMad ++;
-                } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY){
+                } else if (madeNedMad == 2 || yonda.getNed().getCurrentMood() == Child.Mood.HAPPY || getInventory().getNumSnacks() < 3){
                     tutMirrorNedSnack.setVisible(false);
                     arrowNedSnack.setVisible(false);
                     if(madeNoshMad == 2 || yonda.getNosh().getCurrentMood() == Child.Mood.HAPPY) {
                         tutInventory.setVisible(false);
                     }
                 }
-                if(madeNoshMad != 2 && yonda.getNosh().getCurrentMood() == Child.Mood.CRITICAL) {
+                if(madeNoshMad != 2 && yonda.getNosh().getCurrentMood() == Child.Mood.CRITICAL && getInventory().getNumSnacks() > 0) {
                     noshDialogue = "GIVE ME SNACK!";
                 } else {
                     noshDialogue = null;
                 }
-                if(madeNedMad != 2 && yonda.getNed().getCurrentMood() == Child.Mood.CRITICAL) {
+                if(madeNedMad != 2 && yonda.getNed().getCurrentMood() == Child.Mood.CRITICAL && getInventory().getNumSnacks() > 0) {
                     nedDialogue = "GIVE ME SNACK!";
                 } else {
                     nedDialogue = null;

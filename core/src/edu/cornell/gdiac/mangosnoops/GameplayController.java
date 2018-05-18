@@ -1423,13 +1423,6 @@ public class GameplayController {
 			nosh.setMood(Child.Mood.HAPPY);
 		}
 		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
-
-		    if(r.getCurrentStationGenre() != Radio.Genre.CLASSICAL) {
-		        if(!ned.isAwake()) ned.setMood(Child.Mood.SAD);
-                if(!nosh.isAwake()) nosh.setMood(Child.Mood.SAD);
-            }
-
-			// TODO : ADD CASES FOR OTHER GENRES
 			switch (r.getCurrentStationGenre()){
                 case CLASSICAL: // ned dislikes, nosh likes
                     if(ned.getCurrentMood() == Child.Mood.HAPPY){
@@ -1475,10 +1468,8 @@ public class GameplayController {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
 					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake() && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
-//						yonda.getNosh().setMood(Child.Mood.HAPPY);
 						yonda.getNosh().increaseMood();
 					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake() && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
-//						yonda.getNed().setMood(Child.Mood.HAPPY);
 						yonda.getNed().increaseMood();
 					} else {
 						inventory.cancelTake();

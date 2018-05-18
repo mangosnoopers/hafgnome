@@ -241,7 +241,7 @@ public class StartMenuMode implements Screen, InputProcessor {
             offsetX = (int) (BUTTON_SCALE * scale * startbuttonTexture.getHeight() / 1.75f);
             offsetY = offsetX;
 
-            canvas.draw(logo, Color.WHITE, logo.getWidth() / 2, logo.getHeight() / 2, centerX, centerY * 3, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
+            canvas.draw(logo, Color.WHITE, logo.getWidth() / 2, logo.getHeight() / 2, centerX, centerY * 2.75f, 0, 0.59f * BUTTON_SCALE * scale, 0.59f * BUTTON_SCALE * scale);
             canvas.draw(startbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX - offsetX, centerY + offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
             canvas.draw(levelsbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX + offsetX, centerY + offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
             canvas.draw(settingbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX - offsetX, centerY - offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);

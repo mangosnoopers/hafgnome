@@ -10,6 +10,7 @@ public class TouchScreen {
 
     private Image offScreen;
     private Image onScreen;
+    private Image dvdScreen;
     private Radio radio;
     private DvdPlayer dvdPlayer;
     private GameCanvas c;

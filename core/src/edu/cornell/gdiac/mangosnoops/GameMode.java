@@ -220,7 +220,7 @@ public class GameMode implements Screen {
 	private Image pauseMainMenuButton;
 	private Image pauseExitButton;
 	private Image pauseEgg;
-	
+
 	private int indexLevel; //used to put tutorial modules
 	private boolean exitModule;
 	/** Background textures */
