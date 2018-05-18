@@ -90,6 +90,8 @@ public class GameplayController {
 
 	private Image masterShaker; //apply shake to this object and will shake all HUDObjects
 
+	private RearviewDVD rearviewDVD;
+
 	/** If there is sun shining right now */
 	public boolean sunShine;
 
@@ -115,6 +117,9 @@ public class GameplayController {
 	/** Grill FilmStrip information */
 	protected static final int GRILL_FILMSTRIP_ROWS = 1;
 	protected static final int GRILL_FILMSTRIP_COLS = 4;
+
+	/** Rearview DVD file */
+	private static final String REARVIEW_DVD_FILE = "images/rearview_dvd.png";
 
 	// Graphics assets for the entities
 	/** The texture file for the flame **/
@@ -215,6 +220,9 @@ public class GameplayController {
 	private static final String HORN_FILE = "images/DashHUD/Horn.png";
     /** Cracks */
     private static final String CRACKS_FILE = "images/cracks.png";
+
+    /** Rearview DVD Texture */
+    private Texture rearviewDVDTexture;
 
 	/** Texture for road */
 	private Texture suburbRoadTexture;
@@ -364,6 +372,8 @@ public class GameplayController {
 
 	public Array<RoadImage> getRoadsideObjs() { return roadsideObjs; }
 
+	public RearviewDVD getRearviewDVD() { return rearviewDVD; }
+
 	public ObjectMap<String, Texture> getRoadsideTexs() { return roadsideTexs; }
 
 	/**
@@ -417,6 +427,8 @@ public class GameplayController {
 		assets.add(GRASS_FILE);
 		manager.load(SUBURB_ROAD_TEXTURE, Texture.class);
 		assets.add(SUBURB_ROAD_TEXTURE);
+		manager.load(REARVIEW_DVD_FILE, Texture.class);
+		assets.add(REARVIEW_DVD_FILE);
 		manager.load(MOUNTAINS_ROAD_TEXTURE, Texture.class);
 		assets.add(MOUNTAINS_ROAD_TEXTURE);
 		manager.load(HIGHWAY_ROAD_TEXTURE, Texture.class);
@@ -533,6 +545,7 @@ public class GameplayController {
 		nedTexture = createTexture(manager, NED_FILE);
 		noshTexture = createTexture(manager, NOSH_FILE);
 		suburbRoadTexture = createTexture(manager, SUBURB_ROAD_TEXTURE);
+		rearviewDVDTexture = createTexture(manager, REARVIEW_DVD_FILE);
 		mountainsRoadTexture = createTexture(manager, MOUNTAINS_ROAD_TEXTURE);
 		highwayRoadTexture = createTexture(manager, HIGHWAY_ROAD_TEXTURE);
 		midwestRoadTexture = createTexture(manager, MIDWEST_ROAD_TEXTURE);
@@ -817,6 +830,8 @@ public class GameplayController {
         rearviewEnemy = new RearviewEnemy(0.78f, 0.8f, 0.18f,0, rearviewGnomeTexture);
 		rearviewDamageIndicator = new Image(0.78f, 0.86f, 0.3f, rearviewDamageTexture,GameCanvas.TextureOrigin.MIDDLE);
 
+		rearviewDVD = new RearviewDVD(0.78f, 0.86f, 0.3f, rearviewDVDTexture);
+
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
             if (e.getType() == RoadObject.ObjectType.GNOME) {
@@ -1055,6 +1070,8 @@ public class GameplayController {
 			}
         }
 
+        rearviewDVD.update(delta);
+
         for (RoadImage img : roadsideObjs) {
         	img.update(delta, road.getSpeed());
 		}
@@ -1190,7 +1207,7 @@ public class GameplayController {
 					break;
 				case DVD:
 					if(touchscreen.inDvdSlot(droppedPos)) {
-						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000)) {
+						if(!dvdPlayer.playDvd("Gnome Country for Old Men", 1000, this)) {
 							inventory.cancelTake();
 						}
 					} else {
@@ -1262,6 +1279,8 @@ public class GameplayController {
 		yonda.getNosh().draw(canvas);
 		yonda.getNed().draw(canvas);
 		rearviewCover.draw(canvas);
+
+		rearviewDVD.draw(canvas);
 
 		// Draw inventory
 		inventory.draw(canvas);
