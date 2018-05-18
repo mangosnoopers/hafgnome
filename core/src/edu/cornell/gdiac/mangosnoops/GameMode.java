@@ -167,7 +167,7 @@ public class GameMode implements Screen {
 	private Texture background;
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
-	private static final int FONT_SIZE = 14;
+	private static final int FONT_SIZE = 24;
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
@@ -1326,17 +1326,23 @@ public class GameMode implements Screen {
 	 * before a call to show().
 	 *
 	 * width/newsize = oldwidth/oldsize
-	 * newsize = width / (oldwidth/oldsize)
+	 * newsize*oldwidth = width*oldsize
+	 * newsize/oldsize = width/oldwidth
 	 *
 	 * @param width  The new width in pixels
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
+		int newSize = 0;
+		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+		size2Params.fontFileName = FONT_FILE;
+		size2Params.fontParameters.size = newSize;
+		displayFont = new BitmapFont();
 //		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
 //				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
 
-		displayFont.getData().setScale((width/SCREEN_DIMENSIONS.x)*displayFont.getScaleX(),
-			(height/SCREEN_DIMENSIONS.y)*displayFont.getScaleY());
+//		displayFont.getData().setScale((width/SCREEN_DIMENSIONS.x),
+//			(height/SCREEN_DIMENSIONS.y));
 		SCREEN_DIMENSIONS = new Vector2(width,height);
 
 	}
