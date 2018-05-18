@@ -219,7 +219,7 @@ public class GameplayController {
 	/** Billboard font */
 	private static String BILLBOARD_FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** The font file to use for scores */
-	private static String FONT_FILE = "fonts/ComicSans.ttf";
+	private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** The Horn! */
 	private static final String HORN_FILE = "images/DashHUD/Horn.png";
     /** Cracks */
@@ -1303,7 +1303,9 @@ public class GameplayController {
 						}
 						break;
 					case SAT_QUESTION:
-						satQuestions.askQuestion();
+						if (ned.isAwake()) {
+							satQuestions.askQuestion();
+						}
 						break;
 					case NED_REQUESTS_MUSIC:
 						initSongRequest(true);
@@ -1501,7 +1503,7 @@ public class GameplayController {
 		droppedPos = inputController.getClickPos();
 	}
 
-	public void draw(GameCanvas canvas) {
+	public void draw(GameCanvas canvas, BitmapFont font) {
 
 	    canvas.setCameraFOV(road.getSpeedRatio());
 
@@ -1514,7 +1516,7 @@ public class GameplayController {
 			if (!i.getName().equals(EXIT_SIGN)) {
 				i.draw(canvas, roadsideTexs.get(i.getName()));
 			} else {
-				i.draw(canvas, roadsideTexs.get(i.getName()), billboardFont);
+				i.draw(canvas, roadsideTexs.get(i.getName()), font);
 			}
 
 		}
@@ -1544,7 +1546,7 @@ public class GameplayController {
 		wheel.draw(canvas);
 
 		// Touchscreen
-		touchscreen.draw(canvas, displayFont);
+		touchscreen.draw(canvas, font);
 
 		// Horn
 		horn.draw(canvas, wheel.getAng());
@@ -1577,7 +1579,7 @@ public class GameplayController {
 		}
 
 		// Draw speech bubbles for music requests if necessary
-		speechBubble(canvas, displayFont);
+		speechBubble(canvas, font);
 
 		//Draw sun effect part 2
 		visor.drawSunB(canvas, sunShine);
@@ -1586,6 +1588,6 @@ public class GameplayController {
 		visor.draw(canvas);
 
 
-		satQuestions.draw(canvas, displayFont);
+		satQuestions.draw(canvas, font);
 	}
 }

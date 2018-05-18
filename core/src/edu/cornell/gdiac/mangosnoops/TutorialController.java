@@ -516,7 +516,7 @@ public class TutorialController extends GameplayController {
     }
 
     public void draw(GameCanvas canvas) {
-        super.draw(canvas);
+        super.draw(canvas, displayFont);
         tutHealth.draw(canvas);
         tutKeys.draw(canvas);
         tutGauge.draw(canvas);
