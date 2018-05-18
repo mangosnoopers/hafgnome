@@ -134,7 +134,7 @@ public class GameMode implements Screen {
 	private static Vector2 SCREEN_DIMENSIONS;
 	// GRAPHICS AND SOUND RESOURCES
 	/** The font file to use for scores */
-	private static String FONT_FILE = "fonts/ComicSans.ttf";
+	private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
 	/** Files for pause screen assets **/
@@ -154,7 +154,7 @@ public class GameMode implements Screen {
 	private Texture background;
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
-	private static final int FONT_SIZE = 24;
+	private static final int FONT_SIZE = 14;
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
@@ -1136,7 +1136,7 @@ public class GameMode implements Screen {
 
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
-		gameplayController.draw(canvas);
+		gameplayController.draw(canvas, displayFont);
 
 		// Draw fade out to rest stop
 		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {
@@ -1242,12 +1242,18 @@ public class GameMode implements Screen {
 	 * This can happen at any point during a non-paused state but will never happen
 	 * before a call to show().
 	 *
+	 * width/newsize = oldwidth/oldsize
+	 * newsize = width / (oldwidth/oldsize)
+	 *
 	 * @param width  The new width in pixels
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
-		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
-				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
+//		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
+//				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
+
+		displayFont.getData().setScale((width/SCREEN_DIMENSIONS.x)*displayFont.getScaleX(),
+			(height/SCREEN_DIMENSIONS.y)*displayFont.getScaleY());
 		SCREEN_DIMENSIONS = new Vector2(width,height);
 
 	}
