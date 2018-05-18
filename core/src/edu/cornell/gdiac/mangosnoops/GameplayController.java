@@ -76,6 +76,8 @@ public class GameplayController {
 
 	/** An array of events for this level */
 	protected Array<Event> events;
+	private ObjectSet<Radio.Genre> genres;
+
 	/** The Horn! */
 	private Horn horn;
 
@@ -369,6 +371,28 @@ public class GameplayController {
 	private static final int INV_CB = 0;
 	private static final int INV_NUM_SLOTS = 2;
 
+	// SPEECH BUBBLE / MUSIC REQUESTS
+	private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
+	private static final String TUT_SPEECH_REVERSE = "images/Tutorial/speechbubble_small_reverse.png";
+	private Texture speechTexture;
+	private Texture speechReverseTexture;
+	private Image speechNosh;
+	private Image speechNed;
+	private String noshDialogue = null; //null if saying nothing, otherwise draw bubble with this text
+	private String nedDialogue = null; //null if saying nothing, otherwise draw bubble with this text
+	private float stamp = 0;
+	private float stamp2 = 0;
+	private int nedNumRequests = 0;
+	private int noshNumRequests = 0;
+	private Radio.Genre nedRequestedGenre;
+	private Radio.Genre noshRequestedGenre;
+	private boolean nedRequestFailed = false;
+	private boolean noshRequestFailed = false;
+	private static final float NED_BUBBLE_X = 0.45f;
+	private static final float NED_BUBBLE_Y = 0.85f;
+	private static final float NOSH_BUBBLE_X = 0.64f;
+	private static final float NOSH_BUBBLE_Y = 0.9f;
+
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
 		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
@@ -522,6 +546,10 @@ public class GameplayController {
 		assets.add(SPEEDLIMIT_80_FILE);
         manager.load(CRACKS_FILE, Texture.class);
         assets.add(CRACKS_FILE);
+		manager.load(TUT_SPEECH, Texture.class);
+		assets.add(TUT_SPEECH);
+		manager.load(TUT_SPEECH_REVERSE, Texture.class);
+		assets.add(TUT_SPEECH_REVERSE);
 	}
 
 	/**
@@ -619,6 +647,8 @@ public class GameplayController {
 			billboardFont = null;
 		}
 		cracksTexture = createTexture(manager, CRACKS_FILE);
+		speechTexture = createTexture(manager, TUT_SPEECH);
+		speechReverseTexture = createTexture(manager, TUT_SPEECH_REVERSE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -649,6 +679,12 @@ public class GameplayController {
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
         enemiezSave = new Array<Enemy>();
+
+        // create an set of the genres that exist in this level
+		genres = new ObjectSet<Radio.Genre>();
+		for (Radio.Genre g : songs.values()) {
+			genres.add(g);
+		}
 
         /* 1.) Walk through the enemiez array, and construct a mapping
                that goes from enemy -> copy of enemy.
@@ -708,7 +744,7 @@ public class GameplayController {
 		satTextures = new HashMap<String, Texture>();
 
 		roadsideTexs = new ObjectMap<String, Texture>();
-		loadRoadsideTexs();
+//		loadRoadsideTexs();
 
 		// load roadside objects and create a save
 		this.roadsideObjs = roadsideObjs;
@@ -723,14 +759,22 @@ public class GameplayController {
 	 * corresponding textures.
 	 */
 	private void loadRoadsideTexs() {
-		roadsideTexs.put(BILLBOARD_END_IS_NEAR, new Texture(BILLBOARD_END_IS_NEAR_FILE));
-		roadsideTexs.put(BILLBOARD_GRILL, new Texture(BILLBOARD_GRILL_FILE));
-		roadsideTexs.put(BILLBOARD_FLAMINGO, new Texture(BILLBOARD_FLAMINGO_FILE));
-		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, new Texture(BILLBOARD_WHERE_WILL_YOU_BE_FILE));
-		roadsideTexs.put(EXIT_SIGN, new Texture(EXIT_SIGN_FILE));
-		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
-		roadsideTexs.put(TREE, new Texture(TREE_FILE));
-		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
+//		roadsideTexs.put(BILLBOARD_END_IS_NEAR, new Texture(BILLBOARD_END_IS_NEAR_FILE));
+//		roadsideTexs.put(BILLBOARD_GRILL, new Texture(BILLBOARD_GRILL_FILE));
+//		roadsideTexs.put(BILLBOARD_FLAMINGO, new Texture(BILLBOARD_FLAMINGO_FILE));
+//		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, new Texture(BILLBOARD_WHERE_WILL_YOU_BE_FILE));
+//		roadsideTexs.put(EXIT_SIGN, new Texture(EXIT_SIGN_FILE));
+//		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
+//		roadsideTexs.put(TREE, new Texture(TREE_FILE));
+//		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
+		roadsideTexs.put(BILLBOARD_END_IS_NEAR, billboardEndIsNearTex);
+		roadsideTexs.put(BILLBOARD_GRILL, billboardGrillTex);
+		roadsideTexs.put(BILLBOARD_FLAMINGO, billboardFlamingoTex);
+		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, billboardWhereWillYouBeTex);
+		roadsideTexs.put(EXIT_SIGN, exitSignTex);
+		roadsideTexs.put(SUNFLOWER, sunflowerTex);
+		roadsideTexs.put(TREE, treeTex);
+		roadsideTexs.put(TOPIARY, topiaryTex);
 		roadsideTexs.put(SPEEDLIMIT_25, new Texture(SPEEDLIMIT_25_FILE));
 		roadsideTexs.put(SPEEDLIMIT_55, new Texture(SPEEDLIMIT_55_FILE));
 		roadsideTexs.put(SPEEDLIMIT_65, new Texture(SPEEDLIMIT_65_FILE));
@@ -832,6 +876,13 @@ public class GameplayController {
 		yonda.setDashTexture(dashTexture);
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
+
+		// roadside textures
+		loadRoadsideTexs();
+
+		// speech-bubble related stuff
+		speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
+		speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
 
 		horn = new Horn(0.17f, 0.1845f, 0.17f, 0.01f, hornTexture);
 
@@ -1008,6 +1059,218 @@ public class GameplayController {
 	}
 
 	/**
+	 * Returns a genre that the child would like of the genres present in this
+	 * level.
+	 * @param ned True if the requesting child is ned, false otherwise
+	 * @returns the genre if one was found, null otherwise
+	 */
+	private Radio.Genre getLikedGenre(boolean ned) {
+		// ned prefers pop and thug
+		if (ned) {
+			if (genres.contains(Radio.Genre.POP))
+				return Radio.Genre.POP;
+			else if (genres.contains(Radio.Genre.THUG))
+				return Radio.Genre.THUG;
+		}
+
+		// nosh prefers comedy and action
+		else {
+			if (genres.contains(Radio.Genre.COMEDY))
+				return Radio.Genre.COMEDY;
+			else if (genres.contains(Radio.Genre.THUG))
+				return Radio.Genre.THUG;
+		}
+
+		// creepy and jazz are neutral
+		if (genres.contains(Radio.Genre.JAZZ))
+			return Radio.Genre.JAZZ;
+		else if (genres.contains(Radio.Genre.CREEPY))
+			return Radio.Genre.CREEPY;
+
+		// no suitable genre was found
+		return null;
+	}
+
+	/**
+	 * Returns the genre as a dialogue-suitable string
+	 * @param g the Genre the child wants to switch to
+	 */
+	private String genreToString(Radio.Genre g) {
+		switch (g) {
+			case CREEPY:
+				return "Creepy";
+			case COMEDY:
+				return "Comedy";
+			case ACTION:
+				return "Action";
+			case JAZZ:
+				return "Jazz";
+			case POP:
+				return "Pop";
+			case THUG:
+				return "Thug";
+			case CLASSICAL:
+				return "Classical";
+			default:
+				break;
+		}
+		return "";
+	}
+
+	/**
+	 * Process a child's initial music request.
+	 * @param ned True if the requesting child is ned, false otherwise
+	 */
+	private void initSongRequest(boolean ned) {
+		Radio.Genre g = getLikedGenre(ned);
+
+		if (g != null) {
+			// get appropriate dialogue
+			String dialogue = "Can you switch to\n" + genreToString(g) + "?";
+
+			// display popup for ned - first request
+			if (ned && yonda.getNed().isAwake()) {
+				nedDialogue = dialogue;
+				nedRequestedGenre = g;
+				nedRequestFailed = false;
+				stamp2 = stamp;
+				nedNumRequests = 1;
+			}
+
+			// display popup for nosh - first request
+			else if (yonda.getNosh().isAwake()) {
+				noshDialogue = dialogue;
+				noshRequestedGenre = g;
+				noshRequestFailed = false;
+				stamp2 = stamp;
+				noshNumRequests = 1;
+			}
+		}
+	}
+
+	/**
+	 * Continue to check for song requests and update accordingly.
+	 */
+	private void processSongRequests() {
+		// check for ned requests
+		if (nedRequestedGenre != null && yonda != null && yonda.getNed().isAwake()
+				&& radio != null) {
+			// request fulfilled
+			if (radio.getCurrentStation() != null && radio.getCurrentStation().getGenre() == nedRequestedGenre) {
+				nedDialogue = "Yay! I like " + genreToString(nedRequestedGenre) + "!";
+
+				// end of success dialogue
+				if (stamp - stamp2 > 2) {
+					nedNumRequests = 0;
+					nedDialogue = null;
+					nedRequestedGenre = null;
+					stamp2 = stamp;
+				}
+			}
+
+			// request not fulfilled yet
+			else {
+				if (!nedRequestFailed) {
+					if (stamp - stamp2 > 1 && stamp - stamp2 < 2) {
+						if (nedDialogue == null) nedNumRequests++;
+						nedDialogue = "Can you switch to\n" + genreToString(nedRequestedGenre) + "?";
+					} else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						yonda.getNed().setMoodShifting(true, false);
+						nedDialogue = null;
+						stamp2 = stamp;
+					}
+				}
+
+				// request failed
+				if (nedNumRequests == 3) {
+					if (nedDialogue == null) {
+						yonda.getNed().setMood(Child.Mood.CRITICAL);
+						nedDialogue = "You took too long!";
+						nedRequestFailed = true;
+						stamp2 = stamp;
+					} else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						nedNumRequests = 0;
+						nedDialogue = null;
+						nedRequestedGenre = null;
+					}
+				}
+			}
+
+		}
+
+		// check for nosh requests
+		if (noshRequestedGenre != null && yonda != null && yonda.getNosh().isAwake()
+				&& radio != null) {
+			// request fulfilled
+			if (radio.getCurrentStation() != null && radio.getCurrentStation().getGenre() == noshRequestedGenre) {
+				noshDialogue = "Yay! I like " + genreToString(noshRequestedGenre) + "!";
+
+				// end of success dialogue
+				if (stamp-stamp2 > 2) {
+					noshNumRequests = 0;
+					noshDialogue = null;
+					noshRequestedGenre = null;
+					stamp2 = stamp;
+				}
+			}
+
+			// request not fulfilled yet
+			else {
+				if (!noshRequestFailed) {
+					if (stamp - stamp2 > 1 && stamp - stamp2 < 2) {
+						if (noshDialogue == null) noshNumRequests++;
+						noshDialogue = "Can you switch to\n" + genreToString(noshRequestedGenre) + "?";
+					} else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						yonda.getNosh().setMoodShifting(true, false);
+						noshDialogue = null;
+						stamp2 = stamp;
+					}
+				}
+
+				// request failed
+				if (noshNumRequests == 3) {
+					if (noshDialogue == null) {
+						yonda.getNosh().setMood(Child.Mood.CRITICAL);
+						noshDialogue = "You took too long!";
+						noshRequestFailed = true;
+						stamp2 = stamp;
+					}
+					else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						noshNumRequests = 0;
+						noshDialogue = null;
+						noshRequestedGenre = null;
+					}
+				}
+			}
+
+		}
+
+	}
+
+	/**
+	 * Display a speech bubble for the children.
+	 * @param canvas
+	 * @param displayFont
+	 */
+	public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
+		if(nedDialogue != null) {
+			speechNed.drawNoShake(canvas);
+			displayFont.setColor(Color.BLACK);
+			canvas.drawText(nedDialogue, displayFont,
+					canvas.getWidth()*(NED_BUBBLE_X+0.01f),canvas.getHeight()*(NED_BUBBLE_Y+0.08f),
+					Color.BLACK);
+		}
+		if(noshDialogue != null){
+			speechNosh.drawNoShake(canvas);
+			displayFont.setColor(Color.BLACK);
+			canvas.drawText(noshDialogue, displayFont,
+					canvas.getWidth()*(NOSH_BUBBLE_X+0.01f),canvas.getHeight()*(NOSH_BUBBLE_Y+0.08f),
+					Color.BLACK);
+		}
+	}
+
+
+	/**
 	 * Makes the first event in the event queue occur and removes it from the
 	 * queue if it should occur at the current time. Does nothing if the first
 	 * event in the queue should not occur at this time or if the queue is empty.
@@ -1050,6 +1313,12 @@ public class GameplayController {
 					case SAT_QUESTION:
 						satQuestions.askQuestion();
 						break;
+					case NED_REQUESTS_MUSIC:
+						initSongRequest(true);
+						break;
+					case NOSH_REQUESTS_MUSIC:
+						initSongRequest(false);
+						break;
 					default:
 						break;
 				}
@@ -1065,6 +1334,11 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
+		// Update counter
+		stamp += road.getSpeed() * delta;
+
+		// Check for song requests and process if they exist
+		processSongRequests();
 
 		// Update world objects (road and gnome positions)
         road.update(delta);
@@ -1305,6 +1579,9 @@ public class GameplayController {
 			yonda.getNed().drawSpeechBubble(canvas);
 			yonda.getNosh().drawSpeechBubble(canvas);
 		}
+
+		// Draw speech bubbles for music requests if necessary
+		speechBubble(canvas, displayFont);
 
 		//Draw sun effect part 2
 		visor.drawSunB(canvas, sunShine);
