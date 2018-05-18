@@ -537,7 +537,7 @@ public class GameMode implements Screen {
             delay = 0;
             System.out.println(cL);
             // Null out all pointers, 0 out all ints, etc.
-			if (cL == 0 || cL == 7 || cL == 4) {
+			if (cL == 0 || cL == 8 || cL == 5) {
 			    gameState = GameState.CUTSCENE;
 			} else {
 				gameState = GameState.INTRO;
@@ -875,7 +875,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PLAY:
-					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
 						play(delta);
 						gameState = GameState.PAUSED;
 						exitModule = false;
@@ -883,7 +883,7 @@ public class GameMode implements Screen {
 					else{ play(delta); }
 					break;
 					case PAUSED:
-							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
 								exitModule = inputController.isMousePressed();
 								if (exitModule) gameState = GameState.PLAY;
 							} else {
@@ -893,9 +893,9 @@ public class GameMode implements Screen {
 						case CUTSCENE:
 							if (currLevel == 0) {
 								displayCutScene0(delta);
-							} else if (currLevel == 4) {
+							} else if (currLevel == 5) {
 								displayCutScene2(delta);
-							} else if (currLevel == 7) {
+							} else if (currLevel == 8) {
 								displayCutScene1(delta);
 							} else if (currLevel == 12) {
 								displayCutScene3(delta);
@@ -1139,7 +1139,7 @@ public class GameMode implements Screen {
 			case PLAY:
 				break;
 			case PAUSED:
-				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
 					tutorialModule = new Image(0.5f, 0.5f, 0.7f, tipFlamingoTex, GameCanvas.TextureOrigin.MIDDLE);
 					switch(indexLevel) {
 						case 1:
@@ -1248,7 +1248,7 @@ public class GameMode implements Screen {
                                 canvas.draw(cutscene0_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
                         }
-					} else if (currLevel == 4) {
+					} else if (currLevel == 5) {
                         switch (cutSceneIndex) {
 							case 0:
 								canvas.draw(cutscene2_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1262,7 +1262,7 @@ public class GameMode implements Screen {
 							case 3:
 								canvas.draw(cutscene2_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
 						}
-					} else if (currLevel == 7) {
+					} else if (currLevel == 8) {
 						switch (cutSceneIndex) {
                             case 0:
                                 canvas.draw(cutscene1_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
