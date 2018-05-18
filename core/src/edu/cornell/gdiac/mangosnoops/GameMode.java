@@ -74,6 +74,9 @@ public class GameMode implements Screen {
 	protected static final String CUTSCENE1_4 = "images/cutscenes/cutscene1_4.png";
 	protected static final String CUTSCENE1_5 = "images/cutscenes/cutscene1_5.png";
 	protected static final String CUTSCENE1_6 = "images/cutscenes/cutscene1_6.png";
+	protected static final String CUTSCENE1_7 = "images/cutscenes/cutscene1_7.png";
+	protected static final String CUTSCENE1_8 = "images/cutscenes/cutscene1_8.png";
+	protected static final String CUTSCENE1_9 = "images/cutscenes/cutscene1_9.png";
 
 	// Midwest cutscene
 	protected static final String CUTSCENE2_0 = "images/cutscenes/cutscene2_0.png";
@@ -105,6 +108,9 @@ public class GameMode implements Screen {
 	private Texture cutscene1_4Texture;
 	private Texture cutscene1_5Texture;
 	private Texture cutscene1_6Texture;
+	private Texture cutscene1_7Texture;
+	private Texture cutscene1_8Texture;
+	private Texture cutscene1_9Texture;
 
 	private Texture cutscene2_0Texture;
 	private Texture cutscene2_1Texture;
@@ -128,7 +134,7 @@ public class GameMode implements Screen {
 	private static Vector2 SCREEN_DIMENSIONS;
 	// GRAPHICS AND SOUND RESOURCES
 	/** The font file to use for scores */
-	private static String FONT_FILE = "fonts/ComicSans.ttf";
+	private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** Death Screen */
 	private static final String DEATH_MODULE_FILE = "images/screen_death.png";
 	/** Files for pause screen assets **/
@@ -148,7 +154,7 @@ public class GameMode implements Screen {
 	private Texture background;
 	/** The font for giving messages to the player */
 	private BitmapFont displayFont;
-	private static final int FONT_SIZE = 24;
+	private static final int FONT_SIZE = 14;
 	/** Track all loaded assets (for unloading purposes) */
 	private Array<String> assets;
 
@@ -279,6 +285,12 @@ public class GameMode implements Screen {
 		assets.add(CUTSCENE1_5);
 		manager.load(CUTSCENE1_6,Texture.class);
 		assets.add(CUTSCENE1_6);
+		manager.load(CUTSCENE1_7,Texture.class);
+		assets.add(CUTSCENE1_7);
+		manager.load(CUTSCENE1_8,Texture.class);
+		assets.add(CUTSCENE1_8);
+		manager.load(CUTSCENE1_9,Texture.class);
+		assets.add(CUTSCENE1_9);
 
 		manager.load(CUTSCENE2_0,Texture.class);
 		assets.add(CUTSCENE2_0);
@@ -407,6 +419,15 @@ public class GameMode implements Screen {
 		}
 		if (manager.isLoaded(CUTSCENE1_6)) {
 			cutscene1_6Texture = manager.get(CUTSCENE1_6, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE1_7)) {
+			cutscene1_7Texture = manager.get(CUTSCENE1_7, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE1_8)) {
+			cutscene1_8Texture = manager.get(CUTSCENE1_8, Texture.class);
+		}
+		if (manager.isLoaded(CUTSCENE1_9)) {
+			cutscene1_9Texture = manager.get(CUTSCENE1_9, Texture.class);
 		}
 		if (manager.isLoaded(CUTSCENE0_0)) {
 			cutscene0_0Texture = manager.get(CUTSCENE0_0, Texture.class);
@@ -537,7 +558,7 @@ public class GameMode implements Screen {
             delay = 0;
             System.out.println(cL);
             // Null out all pointers, 0 out all ints, etc.
-			if (cL == 0 || cL == 7 || cL == 4) {
+			if (cL == 0 || cL == 8 || cL == 5) {
 			    gameState = GameState.CUTSCENE;
 			} else {
 				gameState = GameState.INTRO;
@@ -707,6 +728,27 @@ public class GameMode implements Screen {
 				}
 				break;
 			case 7:
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+					cutSceneIndex = 8;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 8:
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+					cutSceneIndex = 9;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 9:
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+					cutSceneIndex = 10;
+					cutsceneDeltaSum = 0;
+				}
+				break;
+			case 10:
 				gameState = GameState.INTRO;
                 break;
 		}
@@ -875,7 +917,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PLAY:
-					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+					if (!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
 						play(delta);
 						gameState = GameState.PAUSED;
 						exitModule = false;
@@ -883,7 +925,7 @@ public class GameMode implements Screen {
 					else{ play(delta); }
 					break;
 					case PAUSED:
-							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+							if (!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
 								exitModule = inputController.isMousePressed();
 								if (exitModule) gameState = GameState.PLAY;
 							} else {
@@ -893,9 +935,9 @@ public class GameMode implements Screen {
 						case CUTSCENE:
 							if (currLevel == 0) {
 								displayCutScene0(delta);
-							} else if (currLevel == 4) {
+							} else if (currLevel == 5) {
 								displayCutScene2(delta);
-							} else if (currLevel == 7) {
+							} else if (currLevel == 8) {
 								displayCutScene1(delta);
 							} else if (currLevel == 12) {
 								displayCutScene3(delta);
@@ -1094,7 +1136,7 @@ public class GameMode implements Screen {
 
 		// ** Draw HUD stuff **
 		canvas.beginHUDDrawing();
-		gameplayController.draw(canvas);
+		gameplayController.draw(canvas, displayFont);
 
 		// Draw fade out to rest stop
 		if (gameplayController.getRoad().reachedEndOfLevel() && !exitToRestStop) {
@@ -1137,7 +1179,7 @@ public class GameMode implements Screen {
 			case PLAY:
 				break;
 			case PAUSED:
-				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
+				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 5)) {
 					tutorialModule = new Image(0.5f, 0.5f, 0.7f, tipFlamingoTex, GameCanvas.TextureOrigin.MIDDLE);
 					switch(indexLevel) {
 						case 1:
@@ -1198,12 +1240,18 @@ public class GameMode implements Screen {
 	 * This can happen at any point during a non-paused state but will never happen
 	 * before a call to show().
 	 *
+	 * width/newsize = oldwidth/oldsize
+	 * newsize = width / (oldwidth/oldsize)
+	 *
 	 * @param width  The new width in pixels
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
-		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
-				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
+//		displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
+//				height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
+
+		displayFont.getData().setScale((width/SCREEN_DIMENSIONS.x)*displayFont.getScaleX(),
+			(height/SCREEN_DIMENSIONS.y)*displayFont.getScaleY());
 		SCREEN_DIMENSIONS = new Vector2(width,height);
 
 	}
@@ -1246,7 +1294,7 @@ public class GameMode implements Screen {
                                 canvas.draw(cutscene0_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
                         }
-					} else if (currLevel == 4) {
+					} else if (currLevel == 5) {
                         switch (cutSceneIndex) {
 							case 0:
 								canvas.draw(cutscene2_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1260,7 +1308,7 @@ public class GameMode implements Screen {
 							case 3:
 								canvas.draw(cutscene2_3Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
 						}
-					} else if (currLevel == 7) {
+					} else if (currLevel == 8) {
 						switch (cutSceneIndex) {
                             case 0:
                                 canvas.draw(cutscene1_0Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
@@ -1283,6 +1331,15 @@ public class GameMode implements Screen {
                             case 6:
                                 canvas.draw(cutscene1_6Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
                                 break;
+							case 7:
+								canvas.draw(cutscene1_7Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 8:
+								canvas.draw(cutscene1_8Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
+							case 9:
+								canvas.draw(cutscene1_9Texture, 0, 0, canvas.getWidth(), canvas.getHeight());
+								break;
 						}
 					} else if (currLevel == 12) {
 						switch (cutSceneIndex) {
