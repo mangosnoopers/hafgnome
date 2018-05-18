@@ -759,22 +759,14 @@ public class GameplayController {
 	 * corresponding textures.
 	 */
 	private void loadRoadsideTexs() {
-//		roadsideTexs.put(BILLBOARD_END_IS_NEAR, new Texture(BILLBOARD_END_IS_NEAR_FILE));
-//		roadsideTexs.put(BILLBOARD_GRILL, new Texture(BILLBOARD_GRILL_FILE));
-//		roadsideTexs.put(BILLBOARD_FLAMINGO, new Texture(BILLBOARD_FLAMINGO_FILE));
-//		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, new Texture(BILLBOARD_WHERE_WILL_YOU_BE_FILE));
-//		roadsideTexs.put(EXIT_SIGN, new Texture(EXIT_SIGN_FILE));
-//		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
-//		roadsideTexs.put(TREE, new Texture(TREE_FILE));
-//		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
-		roadsideTexs.put(BILLBOARD_END_IS_NEAR, billboardEndIsNearTex);
-		roadsideTexs.put(BILLBOARD_GRILL, billboardGrillTex);
-		roadsideTexs.put(BILLBOARD_FLAMINGO, billboardFlamingoTex);
-		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, billboardWhereWillYouBeTex);
-		roadsideTexs.put(EXIT_SIGN, exitSignTex);
-		roadsideTexs.put(SUNFLOWER, sunflowerTex);
-		roadsideTexs.put(TREE, treeTex);
-		roadsideTexs.put(TOPIARY, topiaryTex);
+		roadsideTexs.put(BILLBOARD_END_IS_NEAR, new Texture(BILLBOARD_END_IS_NEAR_FILE));
+		roadsideTexs.put(BILLBOARD_GRILL, new Texture(BILLBOARD_GRILL_FILE));
+		roadsideTexs.put(BILLBOARD_FLAMINGO, new Texture(BILLBOARD_FLAMINGO_FILE));
+		roadsideTexs.put(BILLBOARD_WHERE_WILL_YOU_BE, new Texture(BILLBOARD_WHERE_WILL_YOU_BE_FILE));
+		roadsideTexs.put(EXIT_SIGN, new Texture(EXIT_SIGN_FILE));
+		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
+		roadsideTexs.put(TREE, new Texture(TREE_FILE));
+		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
 		roadsideTexs.put(SPEEDLIMIT_25, new Texture(SPEEDLIMIT_25_FILE));
 		roadsideTexs.put(SPEEDLIMIT_55, new Texture(SPEEDLIMIT_55_FILE));
 		roadsideTexs.put(SPEEDLIMIT_65, new Texture(SPEEDLIMIT_65_FILE));
