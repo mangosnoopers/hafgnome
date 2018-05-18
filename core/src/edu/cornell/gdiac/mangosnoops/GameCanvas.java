@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.decals.SimpleOrthoGroupStrategy;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
@@ -1020,6 +1021,13 @@ public class GameCanvas {
 		objectDecal.rotateX(xRotationAngle);
 		objectDecal.rotateY(yRotationAngle);
 		batch.add(objectDecal);
+	}
+
+	public void drawExitSign(String text, Texture t, BitmapFont font, float x, float y, float z) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
 	}
 
 	public void drawWorld() {

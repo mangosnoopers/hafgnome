@@ -231,7 +231,7 @@ public class Car extends RoadObject {
 
     public void takeExit() {
         if (!carTeleported) {
-            position.x = 0.3f;
+            //position.x = 0.3f;
             carTeleported = true;
         }
         takingExit = true;
@@ -291,10 +291,6 @@ public class Car extends RoadObject {
                 position.x = RIGHT_X_BOUND;
             }
 
-        } else {
-            if (position.x < 0.82) {
-                position.x += delta * 8 * CAR_XSPEED;
-            }
         }
 
         // Update health angle

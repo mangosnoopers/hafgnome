@@ -180,7 +180,7 @@ public class GameMode implements Screen {
 	/** Whether or not to exit to the rest stop */
 	private boolean exitToRestStop;
 	/** Whether or not to exit to the rest stop */
-	private boolean exitToMainMenu = false;
+	public boolean exitToMainMenu = false;
 	/** Fade delay */
 	private int delay;
 
@@ -1061,9 +1061,10 @@ public class GameMode implements Screen {
 				canvas.drawBackground(midwestBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 			case COLORADO:
+				canvas.drawBackground(mountainBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
             default:
-				canvas.drawBackground(mountainBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
+				canvas.drawBackground(suburbBackgroundTexture, gameplayController.getRoad().getSpeedRatio());
 				break;
 
 		}

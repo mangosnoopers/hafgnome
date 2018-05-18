@@ -23,6 +23,7 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
@@ -390,6 +391,7 @@ public class GameplayController {
 	private static final float NED_BUBBLE_Y = 0.85f;
 	private static final float NOSH_BUBBLE_X = 0.64f;
 	private static final float NOSH_BUBBLE_Y = 0.9f;
+
 
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
@@ -1496,14 +1498,18 @@ public class GameplayController {
 
 	    canvas.setCameraFOV(road.getSpeedRatio());
 
-
 		//Gnomez
 		for (Enemy e : enemiez) {
 			e.draw(canvas);
 		}
 
 		for (RoadImage i : roadsideObjs) {
-			i.draw(canvas, roadsideTexs.get(i.getName()));
+			if (!i.getName().equals(EXIT_SIGN)) {
+				i.draw(canvas, roadsideTexs.get(i.getName()));
+			} else {
+				i.draw(canvas, roadsideTexs.get(i.getName()), billboardFont);
+			}
+
 		}
 
 		//Draw sun effect part 1

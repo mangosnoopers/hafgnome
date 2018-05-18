@@ -317,8 +317,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			levelSelect = null;
 
 		} else if (screen == playing) {
-
-			if(playing.exitFromPause || playing.beatGame()){
+		    if(playing.exitFromPause || playing.beatGame()){
+		    	playing.exitToMainMenu = false;
 				playing.exitFromPause = false;
 				start = new StartMenuMode(canvas,manager,settings,soundController);
 				start.setScreenListener(this);
