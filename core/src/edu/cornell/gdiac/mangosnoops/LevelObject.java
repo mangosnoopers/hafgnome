@@ -499,6 +499,10 @@ public class LevelObject {
                 events.add(new Event(y, Event.EventType.NOSH_WAKES_UP));
             } else if (eventStr.equals("sat question")) {
                 events.add(new Event(y, Event.EventType.SAT_QUESTION));
+            } else if (eventStr.equals("ned requests music")) {
+                events.add(new Event(y, Event.EventType.NED_REQUESTS_MUSIC));
+            } else if (eventStr.equals("nosh requests music")) {
+                events.add(new Event(y, Event.EventType.NOSH_REQUESTS_MUSIC));
             } else if (!eventStr.equals("")) {
                 throw new RuntimeException("Invalid event specified: " + eventStr);
             }
