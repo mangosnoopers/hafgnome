@@ -542,14 +542,11 @@ public class RestStopMode implements Screen, InputProcessor {
     /** FIXME: Draw the fade-in transition */
     private void drawFadeIn() {
         canvas.drawFade(fadeOpacity);
-        if (fadeOpacity > 0.1f){ //) && !(Math.abs(fadeOpacity - 0.01f) <= 0.0001f)) {
-            fadeOpacity -= 0.05f;
-        }
-        else {
-            if (delay < 50) {
-                delay++;
-            }
-            else {
+
+        if (fadeIn) {
+            if (fadeOpacity > 0.01f) { //) && !(Math.abs(fadeOpacity - 0.01f) <= 0.0001f)) {
+                fadeOpacity -= 0.01f;
+            } else {
                 fadeIn = false;
             }
         }
