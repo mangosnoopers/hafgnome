@@ -29,10 +29,10 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class StartMenuMode implements Screen, InputProcessor {
     private static final String BACKGROUND_FILE = "images/startMenuAssets/background.png";
-    private static final String EXITBUTTON_FILE = "images/startMenuAssets/justexitButton.png";
-    private static final String LEVELSBUTTON_FILE = "images/startMenuAssets/justlevelsButton.png";
-    private static final String SETTINGSBUTTON_FILE = "images/startMenuAssets/justsettingsButton.png";
-    private static final String STARTBUTTON_FILE = "images/startMenuAssets/juststartButton.png";
+    private static final String EXITBUTTON_FILE = "images/startMenuAssets/exit.png";
+    private static final String LEVELSBUTTON_FILE = "images/startMenuAssets/levels.png";
+    private static final String SETTINGSBUTTON_FILE = "images/startMenuAssets/settings.png";
+    private static final String STARTBUTTON_FILE = "images/startMenuAssets/start.png";
     private static final String LOGO_FILE = "images/startMenuAssets/logo.png";
 
     private Texture backgroundTexture;
@@ -216,7 +216,7 @@ public class StartMenuMode implements Screen, InputProcessor {
             settings.update(new Vector2(Gdx.input.getX(), Gdx.input.getY()), soundController);
             if(!settings.isFullScreen()) resize((int)settings.currentResolution.x,(int)settings.currentResolution.y);
             else scale = 1.5f;
-            }
+        }
         soundController.play(null);
     }
 
@@ -227,30 +227,28 @@ public class StartMenuMode implements Screen, InputProcessor {
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
      */
-    private float fadeOut = 0;
+    private float fadeOut = 0.0f;
     private void draw() {
         canvas.clearScreen();
         canvas.beginHUDDrawing();
-        background.draw(canvas);
-        offsetX = (int)(BUTTON_SCALE*scale*startbuttonTexture.getHeight()/1.75f);
-        offsetY = offsetX;
         if(exitingToLevel){
-            fadeOut+=0.01;
+            fadeOut+=0.01f;
             if(fadeOut >= 1) fadeOut = 1;
             canvas.drawFade(fadeOut);
         }
-        canvas.draw(logo, Color.WHITE, logo.getWidth()/2, logo.getHeight()/2,
-                centerX, centerY*3, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        canvas.draw(startbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,
-                centerX-offsetX, centerY+ offsetY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        canvas.draw(levelsbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,
-                centerX+offsetX, centerY+ offsetY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        canvas.draw(settingbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,
-                centerX-offsetX, centerY- offsetY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        canvas.draw(exitbuttonTexture, Color.WHITE, startbuttonTexture.getWidth()/2, startbuttonTexture.getHeight()/2,
-                centerX+offsetX, centerY- offsetY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        if(settings.isShowing()){
-            settings.draw(canvas);
+        else {
+            background.draw(canvas);
+            offsetX = (int) (BUTTON_SCALE * scale * startbuttonTexture.getHeight() / 1.75f);
+            offsetY = offsetX;
+
+            canvas.draw(logo, Color.WHITE, logo.getWidth() / 2, logo.getHeight() / 2, centerX, centerY * 2.75f, 0, 0.59f * BUTTON_SCALE * scale, 0.59f * BUTTON_SCALE * scale);
+            canvas.draw(startbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX - offsetX, centerY + offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
+            canvas.draw(levelsbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX + offsetX, centerY + offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
+            canvas.draw(settingbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX - offsetX, centerY - offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
+            canvas.draw(exitbuttonTexture, Color.WHITE, startbuttonTexture.getWidth() / 2, startbuttonTexture.getHeight() / 2, centerX + offsetX, centerY - offsetY, 0, BUTTON_SCALE * scale, BUTTON_SCALE * scale);
+            if (settings.isShowing()) {
+                settings.draw(canvas);
+            }
         }
         canvas.endHUDDrawing();
     }

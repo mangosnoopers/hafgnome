@@ -15,7 +15,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Random;
 import java.util.Scanner;
 
 public class RestStopMode implements Screen, InputProcessor {
@@ -26,13 +25,40 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final String MANGO_FILE = "images/Items/mango.png";
     private static final String READY_BUTTON_FILE = "images/levelSelectAssets/goButton.png";
     private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
-    private Image background;
+    private static String SPEECHFONT_FILE = "fonts/ComicSans.ttf";
+    private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small_reverse.png";
+    private static final String CHILD_SPEECH = "images/Tutorial/speechbubble_small.png";
+    private static final String DVDPOPUP_FILE = "images/restStopAssets/dvdpopup.png";
+    private static final String MANGOPOPUP_FILE = "images/restStopAssets/mangopopup.png";
+    private static final String TIP_GNOME_FILE = "images/restStopAssets/gameTips/gnometip.png";
+    private static final String TIP_REAR_FILE = "images/restStopAssets/gameTips/reartip.png";
+    private static final String TIP_CLASSICAL_FILE = "images/restStopAssets/gameTips/classicaltip.png";
+    private static final String TIP_MUSIC_FILE = "images/restStopAssets/gameTips/musictip.png";
+    private static final String TIP_REQUEST_FILE = "images/restStopAssets/gameTips/requesttip.png";
+    private static final String TIP_DVD_FILE = "images/restStopAssets/gameTips/dvdtip.png";
+    private static final String SNACK_GLOW_FILE = "images/Items/mangoGlow.png";
+    private static final String DVD_GLOW_FILE = "images/Items/dvdGlow.png";
+
+    private Image tutorialModule;
+    private Texture tipGnomeTex;
+    private Texture tipRearTex;
+    private Texture tipClassicalTex;
+    private Texture tipMusicTex;
+    private Texture tipRequestTex;
+    private Texture tipDvdTex;
     private Texture backgroundTex;
     private Texture shelfTex;
     private Texture dvdTex;
     private Texture snackTex;
     private Texture readyButtonTex;
+    private Texture tutSpeech;
+    private Texture kidSpeech;
+    private Texture dvdPopupTex;
+    private Texture mangoPopupTex;
+    private Texture snackGlowTex;
+    private Texture dvdGlowTex;
     private BitmapFont displayFont;
+    private BitmapFont speechFont;
     private ObjectMap<String,Texture> itemTextures;
     private static Music bgMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/bensound-jazzcomedy.mp3"));
 
@@ -43,7 +69,25 @@ public class RestStopMode implements Screen, InputProcessor {
     private static final int BUTTON_UP = 2;
     /** Ready button is clicked when the player is ready to return to the road */
     private int readyStatus;
+    /** Counter to check if clicked for tutorial modules  */
+    private int generalClick;
     private Image readyButton;
+
+    // IMAGES
+    private Image background;
+    private Image dvdPopup;
+    private Image mangoPopup;
+
+    // KIDS TALKING -- null if no speech bubble
+    private String noshDialogue;
+    private boolean tintNoshDialogue;
+    private String nedDialogue;
+
+    // POPUP STUFF
+    private float popupDuration;
+    private boolean drawSnackPopup;
+    private boolean drawDVDPopup;
+    private static final float MAX_POPUP_DURATION = 5.0f;
 
     // ITEMS
     /** An array of the items at the rest stop */
@@ -64,7 +108,6 @@ public class RestStopMode implements Screen, InputProcessor {
     private int numSelected;
     /** Number of each specific item selected so far - used for the indicator */
     private int numSnacksSelected;
-    private int numBooksSelected;
     private int numMoviesSelected;
     /** Constants for item names */
     private static final String MANGO = "mango";
@@ -94,6 +137,7 @@ public class RestStopMode implements Screen, InputProcessor {
     // DRAWING
     /** Font sizes */
     private static final int TITLE_FONT_SIZE = 48;
+    private static final int FONT_SIZE = 24;
     /** Shelf text location */
     private static final Vector2 SHELF_TEXT_LOC = new Vector2(0.35175f,0.82f);
     /** Dimensions of the screen **/
@@ -106,12 +150,20 @@ public class RestStopMode implements Screen, InputProcessor {
     /** Scaling for textures used to indicate # of items in inventory */
     private static final float IND_SCALING = 0.09f;
     /** Drawing for items in the indicator */
-    private static final float IND_X = 0.90f;
-    private static final float IND_TEXT_X = 0.94f;
-    private static final float IND_SNACK_Y = 0.94f;
-    private static final float IND_DVD_Y = 0.84f;
+    private static final float IND_X = 0.03f;
+    private static final float IND_TEXT_X = 0.07f;
+    private static final float IND_SNACK_Y = 0.95f;
+    private static final float IND_DVD_Y = 0.85f;
     private Image snackInd;
     private Image dvdInd;
+
+    // Distinguish what level to decide if tutorial module is necessary
+    /** True iff is a tutorial level */
+    private boolean isTutorial;
+    /** What tutoiral it is, null if not a tutorial*/
+    private int indexLevel;
+    /** whether or not tutorial module is being drawn right now */
+    private boolean moduleOpen;
 
     /** Set the player's inventory to inv. */
     public void setPlayerInv(Inventory inv) { playerInv = inv; }
@@ -125,12 +177,22 @@ public class RestStopMode implements Screen, InputProcessor {
         size2Params.fontFileName = FONT_FILE;
         size2Params.fontParameters.size = TITLE_FONT_SIZE;
         manager.load(FONT_FILE, BitmapFont.class, size2Params);
+        size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        size2Params.fontFileName = SPEECHFONT_FILE;
+        size2Params.fontParameters.size = FONT_SIZE;
+        manager.load(SPEECHFONT_FILE, BitmapFont.class, size2Params);
+
 
         // Allocate the font
         if (manager.isLoaded(FONT_FILE)) {
             displayFont = manager.get(FONT_FILE,BitmapFont.class);
         } else {
             displayFont = null;
+        }
+        if (manager.isLoaded(SPEECHFONT_FILE)) {
+            speechFont = manager.get(SPEECHFONT_FILE,BitmapFont.class);
+        } else {
+            speechFont = null;
         }
     }
 
@@ -141,6 +203,18 @@ public class RestStopMode implements Screen, InputProcessor {
         readyButtonTex = new Texture(READY_BUTTON_FILE);
         dvdTex = new Texture(GNOMECOUNTRY_DVD_FILE);
         snackTex = new Texture(MANGO_FILE);
+        tutSpeech = new Texture(TUT_SPEECH);
+        kidSpeech = new Texture(CHILD_SPEECH);
+        dvdPopupTex = new Texture(DVDPOPUP_FILE);
+        mangoPopupTex = new Texture(MANGOPOPUP_FILE);
+        tipGnomeTex = new Texture(TIP_GNOME_FILE);
+        tipRearTex = new Texture(TIP_REAR_FILE);
+        tipClassicalTex = new Texture(TIP_CLASSICAL_FILE);
+        tipMusicTex = new Texture(TIP_MUSIC_FILE);
+        tipRequestTex = new Texture(TIP_REQUEST_FILE);
+        tipDvdTex = new Texture(TIP_DVD_FILE);
+        snackGlowTex = new Texture(SNACK_GLOW_FILE);
+        dvdGlowTex = new Texture(DVD_GLOW_FILE);
 
         itemTextures = new ObjectMap<String,Texture>();
         itemTextures.put(GNOME_COUNTRY, dvdTex);
@@ -156,28 +230,59 @@ public class RestStopMode implements Screen, InputProcessor {
         fadeIn = true;
         fadeOpacity = 1.0f;
         delay = 0;
+        drawSnackPopup = false;
+        drawDVDPopup = false;
+        popupDuration = -1.0f;
+        generalClick = UNCLICKED;
 
         // Textures and load font
         initTextures();
         loadFont();
 
         // Create images
+        tutorialModule = new Image(0.5f, 0.5f, 0.7f, tipGnomeTex, GameCanvas.TextureOrigin.MIDDLE);
         shelf = new Image(0.5f, 0.4f, 0.9f, shelfTex, GameCanvas.TextureOrigin.MIDDLE);
         readyButton = new Image(READY_BUTTON_REL.x, READY_BUTTON_REL.y, READY_BUTTON_SCALING.x, readyButtonTex, GameCanvas.TextureOrigin.MIDDLE);
         background = new Image(0.5f,0.5f,1.0f, backgroundTex, GameCanvas.TextureOrigin.MIDDLE);
+        dvdPopup = new Image(0.5f,0.5f,0.5f, dvdPopupTex, GameCanvas.TextureOrigin.MIDDLE);
+        mangoPopup = new Image(0.5f,0.5f,0.5f, mangoPopupTex, GameCanvas.TextureOrigin.MIDDLE);
 
         // Parse JSON to get item quantities/max number of items player can take
         parseJSON("levels/" + filename);
+
+        // Parse filename to decide whether it is a tutorial or not
+        isTutorial = filename.contains("tut");
+        if(isTutorial)
+            indexLevel = Character.getNumericValue(filename.charAt(filename.indexOf("tut") + 3));
+        else {
+            indexLevel = Character.getNumericValue(filename.charAt(filename.indexOf("level") + 5));
+        }
 
         // Generate the items, initialize some more variables
         items = new Array<RestStopItem>();
         generateItems();
         numSelected = 0;
-        numSnacksSelected = 0; numBooksSelected = 0; numMoviesSelected = 0;
+        numSnacksSelected = 0; numMoviesSelected = 0;
 
         // Indicator images
         snackInd = new Image(IND_X,IND_SNACK_Y,IND_SCALING,itemTextures.get(MANGO),GameCanvas.TextureOrigin.MIDDLE);
         dvdInd = new Image(IND_X,IND_DVD_Y,IND_SCALING,itemTextures.get(GNOME_COUNTRY), GameCanvas.TextureOrigin.MIDDLE);
+
+        // Handle whether or not to have speech bubbles from kids
+        tintNoshDialogue = false;
+        if(isTutorial) {
+            switch(indexLevel) {
+                case 2: //force user to grab movie
+                    break;
+                default:
+                    break;
+            }
+        } else { //normal level
+            switch(indexLevel) {
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -250,6 +355,18 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
+        if (popupDuration >= 0.0f) {
+            popupDuration += delta;
+        }
+
+        if (popupDuration >= MAX_POPUP_DURATION) {
+            popupDuration = -1.0f;
+            generalClick = UNCLICKED;
+            if (drawSnackPopup)
+                drawSnackPopup = false;
+            else if (drawDVDPopup)
+                drawDVDPopup = false;
+        }
     }
 
     /**
@@ -273,13 +390,18 @@ public class RestStopMode implements Screen, InputProcessor {
             shelf.draw(canvas);
             String grammar = numCanTake == 1 ? " ITEM" : " ITEMS";
             displayFont.setColor(Color.BLACK);
-            canvas.drawText("TAKE UP TO " + numCanTake + grammar, displayFont,
-                    SCREEN_DIMENSIONS.x * SHELF_TEXT_LOC.x,
-                    SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y);
+            if(numCanTake == 0)
+                canvas.drawText("THIS 8-12 GOT GNOMED", displayFont,
+                        SCREEN_DIMENSIONS.x * (SHELF_TEXT_LOC.x-0.01f),
+                        SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y);
+            else
+                canvas.drawText("TAKE UP TO " + numCanTake + grammar, displayFont,
+                        SCREEN_DIMENSIONS.x * SHELF_TEXT_LOC.x,
+                        SCREEN_DIMENSIONS.y * SHELF_TEXT_LOC.y);
 
-            // Draw the items with a specific overlay
+            // Draw the items
             for (RestStopItem i : items) {
-                i.draw(canvas, i.overlay);
+                i.draw(canvas);
             }
 
             // Draw the ready button - colored if pressed down
@@ -292,21 +414,127 @@ public class RestStopMode implements Screen, InputProcessor {
             // Draw current inventory quantities
             drawPlayerInv();
 
+            // Draw popups if needed
+            if (drawSnackPopup && generalClick != BUTTON_UP) {
+                mangoPopup.draw(canvas);
+            }
+
+            if (drawDVDPopup && generalClick != BUTTON_UP) {
+                dvdPopup.draw(canvas);
+            }
+
         }
+        speechBubble();
+        drawTutorial();
         canvas.endHUDDrawing();
+    }
+
+    private static final float NED_BUBBLE_X = 0.71f;
+    private static final float NED_BUBBLE_Y = 0.63f;
+    private static final float NOSH_BUBBLE_X = 0.55f;
+    private static final float NOSH_BUBBLE_Y = 0.49f;
+
+    public void speechBubble() {
+        if(nedDialogue != null) {
+            canvas.draw(kidSpeech, GameCanvas.TextureOrigin.BOTTOM_LEFT, NED_BUBBLE_X, NED_BUBBLE_Y, 0.1f, false, Color.NAVY);
+            speechFont.setColor(Color.WHITE);
+            canvas.drawText(nedDialogue, speechFont,
+                    canvas.getWidth()*(NED_BUBBLE_X+0.01f),canvas.getHeight()*(NED_BUBBLE_Y+0.08f));
+        }
+        if(noshDialogue != null){
+            if(tintNoshDialogue)
+                canvas.draw(kidSpeech, GameCanvas.TextureOrigin.BOTTOM_LEFT, NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, false, Color.RED);
+            else
+                canvas.draw(kidSpeech, GameCanvas.TextureOrigin.BOTTOM_LEFT, NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, false, Color.PURPLE);
+            speechFont.setColor(Color.WHITE);
+            canvas.drawText(noshDialogue, speechFont,
+                    canvas.getWidth()*(NOSH_BUBBLE_X+0.01f),canvas.getHeight()*(NOSH_BUBBLE_Y+0.08f));
+        }
+    }
+
+    int state = 0;
+    /** Draws tutorial items */
+    private void drawTutorial() {
+        if(isTutorial) {
+            float x; float y;
+            switch(indexLevel) {
+                case 0: //draw module & explain snack item
+                    if(generalClick != BUTTON_UP) tutorialModule.draw(canvas);
+                    else {
+                        x = 0.33f;
+                        y = 0.57f;
+                        canvas.draw(tutSpeech, GameCanvas.TextureOrigin.BOTTOM_LEFT, x, y, 0.1f, false, Color.YELLOW);
+                        speechFont.setColor(Color.BLACK);
+                        canvas.drawText("Make your kids happy\nby feeding them.", speechFont,
+                                canvas.getWidth()*(x+0.04f),canvas.getHeight()*(y+0.08f),
+                                Color.BLACK);
+                    }
+                    break;
+                case 1:
+                    tutorialModule.setTexture(tipRearTex);
+                    if(generalClick != BUTTON_UP) tutorialModule.draw(canvas);
+                    break;
+                case 2:
+                    switch(state) {
+                        case 0:
+                            tutorialModule.setTexture(tipClassicalTex);
+                            tutorialModule.draw(canvas);
+                            if (generalClick == BUTTON_UP){
+                                generalClick = UNCLICKED;
+                                tutorialModule.setTexture(tipMusicTex);
+                                state++;
+                            }
+                            break;
+                        case 1:
+                            tutorialModule.draw(canvas);
+                            if (generalClick == BUTTON_UP){
+                                generalClick = UNCLICKED;
+                                tutorialModule.setTexture(tipRequestTex);
+                                state++;
+                            }
+                            break;
+                        case 2:
+                            tutorialModule.draw(canvas);
+                            if (generalClick == BUTTON_UP){
+                                state++;
+                            }
+                            break;
+                        default:
+                            x = 0.33f;
+                            y = 0.57f;
+                            canvas.draw(tutSpeech, GameCanvas.TextureOrigin.BOTTOM_LEFT, x, y, 0.1f, false, Color.YELLOW);
+                            speechFont.setColor(Color.BLACK);
+                            canvas.drawText("Make your kids happy\nby feeding them.", speechFont,
+                                    canvas.getWidth()*(x+0.04f),canvas.getHeight()*(y+0.08f),
+                                    Color.BLACK);
+                            x = 0.33f;
+                            y = 0.13f;
+                            canvas.draw(tutSpeech, GameCanvas.TextureOrigin.BOTTOM_LEFT, x, y, 0.1f, false,  Color.CYAN);
+                            speechFont.setColor(Color.BLACK);
+                            canvas.drawText("Keep your kids happy\nduring an entire movie.", speechFont,
+                                    canvas.getWidth()*(x+0.04f),canvas.getHeight()*(y+0.08f),
+                                    Color.BLACK);
+                            break;
+                    }
+                    break;
+                case 3: // explain movie
+                    tutorialModule.setTexture(tipDvdTex);
+                    if(generalClick != BUTTON_UP) tutorialModule.draw(canvas);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /** FIXME: Draw the fade-in transition */
     private void drawFadeIn() {
         canvas.drawFade(fadeOpacity);
-        if (fadeOpacity > 0.1f){ //) && !(Math.abs(fadeOpacity - 0.01f) <= 0.0001f)) {
-            fadeOpacity -= 0.05f;
-        }
-        else {
-            if (delay < 50) {
-                delay++;
-            }
-            else {
+
+        if (fadeIn) {
+            if (fadeOpacity > 0.01f) { //) && !(Math.abs(fadeOpacity - 0.01f) <= 0.0001f)) {
+                fadeOpacity -= 0.01f;
+            } else {
                 fadeIn = false;
             }
         }
@@ -349,32 +577,44 @@ public class RestStopMode implements Screen, InputProcessor {
         bgMusic.play();
     }
 
+    float stamp=0;
+
     /** Called when the screen should render itself.
      * @param delta The time in seconds since the last render. */
     public void render (float delta) {
+        if(stamp > 0) stamp += delta;
+        if(isTutorial && indexLevel == 2 && noshDialogue != null && stamp > 2) {
+            noshDialogue = null;
+        }
         if (active) {
             update(delta);
             draw();
 
             if (readyStatus == BUTTON_UP && listener != null) {
-                // update inventory when player is done
-                for (RestStopItem i : items) {
-                    if (i.toggleState == SELECTED) {
-                        switch (i.type) {
-                            case SNACK:
-                                playerInv.getSnackSlot().incAmount(1);
-                                break;
-                            case DVD:
-                                playerInv.getMovieSlot().incAmount(1);
-                                break;
-                            // TODO - book case (rn books are snacks)
-                            default:
-                                break;
+                if(isTutorial && indexLevel == 2 && numMoviesSelected == 0) {
+                    if(noshDialogue == null) {
+                        noshDialogue = "I want that movie first!";
+                        stamp = 0.01f;
+                    }
+                    readyStatus = UNCLICKED;
+                } else {
+                    // update inventory when player is done
+                    for (RestStopItem i : items) {
+                        if (i.toggleState == SELECTED) {
+                            switch (i.type) {
+                                case SNACK:
+                                    playerInv.getSnackSlot().incAmount(1);
+                                    break;
+                                case DVD:
+                                    playerInv.getMovieSlot().incAmount(1);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
+                    listener.exitScreen(this,0);
                 }
-
-                listener.exitScreen(this,0);
             }
         }
     }
@@ -402,6 +642,8 @@ public class RestStopMode implements Screen, InputProcessor {
      */
     public void resize (int width, int height) {
         displayFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
+                height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
+        speechFont.getData().setScale(width / (SCREEN_DIMENSIONS.x/displayFont.getScaleX()),
                 height / (SCREEN_DIMENSIONS.y/displayFont.getScaleY()));
         SCREEN_DIMENSIONS = new Vector2(width,height);
     }
@@ -444,6 +686,10 @@ public class RestStopMode implements Screen, InputProcessor {
         if (readyStatus == BUTTON_UP) {
             return true;
         }
+        if(generalClick == UNCLICKED) {
+            generalClick = BUTTON_DOWN;
+            return true;
+        }
 
         // Check if ready button was pressed
         Vector2 mousePos = new Vector2(screenX, screenY);
@@ -466,6 +712,10 @@ public class RestStopMode implements Screen, InputProcessor {
      * @param button the button
      * @return whether the input was processed */
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+        if(generalClick == BUTTON_DOWN) {
+            generalClick = BUTTON_UP;
+            return false;
+        }
         if (readyStatus == BUTTON_DOWN) {
             soundController.playClick();
             readyStatus = BUTTON_UP;
@@ -476,22 +726,19 @@ public class RestStopMode implements Screen, InputProcessor {
             if (i.clickStatus == BUTTON_DOWN) {
                 i.clickStatus = BUTTON_UP;
                 int oldToggleState = i.toggleState;
-                int quantity = (i.type == Inventory.Item.ItemType.SNACK)
-                        ? numSnacksSelected + playerInv.getNumSnacks()
-                        : numMoviesSelected + playerInv.getNumMovies();
 
                 // only allow the item to be selected if the user can take more
                 // or allow the item to be unselected at any time
-                if (quantity < SLOT_MAX_QUANTITY
-                        && oldToggleState == UNSELECTED
-                        && numSelected < numCanTake || oldToggleState == SELECTED) {
+                if (oldToggleState == UNSELECTED && numSelected < numCanTake
+                        || oldToggleState == SELECTED) {
                     i.switchState();
-                    i.switchOverlay();
 
                     // update item quantity
                     // case 1: item was selected and is now unselected - decrease items taken
                     // case 2: item was unselected and is now selected - increase items taken
+                    //         or display popup if full
                     if (oldToggleState == SELECTED && i.toggleState == UNSELECTED) {
+                        i.switchGlow();
                         numSelected -= 1;
 
                         // also update the amount for the specific item
@@ -505,23 +752,62 @@ public class RestStopMode implements Screen, InputProcessor {
                             default:
                                 break;
                         }
-                    } else if (oldToggleState == UNSELECTED & i.toggleState == SELECTED) {
-                        numSelected += 1;
+                    } else if (oldToggleState == UNSELECTED && i.toggleState == SELECTED) {
+                        int quantity = (i.type == Inventory.Item.ItemType.SNACK)
+                                ? numSnacksSelected + playerInv.getNumSnacks()
+                                : numMoviesSelected + playerInv.getNumMovies();
 
-                        // also update the amount for the specific item
-                        switch (i.type) {
-                            case SNACK:
-                                numSnacksSelected += 1;
-                                break;
-                            case DVD:
-                                numMoviesSelected += 1;
-                                break;
-                            default:
-                                break;
+                        if (quantity == SLOT_MAX_QUANTITY) {
+                            i.switchState();
+
+                            switch (i.type) {
+                                case SNACK:
+                                    if (popupDuration < MAX_POPUP_DURATION) {
+                                        boolean oldPopupState = drawSnackPopup;
+                                        drawSnackPopup = true;
+                                        generalClick = UNCLICKED;
+
+                                        // if just switching from false to true, set duration
+                                        if (!oldPopupState) {
+                                            popupDuration = 0.0f;
+                                        }
+                                    }
+                                    break;
+                                case DVD:
+                                    if (popupDuration < MAX_POPUP_DURATION) {
+                                        boolean oldPopupState = drawDVDPopup;
+                                        drawDVDPopup = true;
+                                        generalClick = UNCLICKED;
+
+                                        // if just switching from false to true, set duration
+                                        if (!oldPopupState) {
+                                            popupDuration = 0.0f;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        else {
+                            i.switchGlow();
+                            numSelected += 1;
+
+                            // also update the amount for the specific item
+                            switch (i.type) {
+                                case SNACK:
+                                    numSnacksSelected += 1;
+                                    break;
+                                case DVD:
+                                    numMoviesSelected += 1;
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
-
 
                 return false;
             }
@@ -574,7 +860,7 @@ public class RestStopMode implements Screen, InputProcessor {
      * Will not be called on iOS.
      * @return whether the input was processed */
     public boolean mouseMoved (int screenX, int screenY) {
-        if(readyButton.inArea(new Vector2(screenX,screenY))){
+        if(generalClick == BUTTON_UP && readyButton.inArea(new Vector2(screenX,screenY))){
             readyHover = true;
             soundController.playHoverMouse();
         } else {
@@ -599,6 +885,8 @@ public class RestStopMode implements Screen, InputProcessor {
         private int toggleState;
         /** The item's current overlay color - white when unselected, colored when selected */
         private Color overlay;
+        /** Whether or not this item is glowing */
+        private boolean glowing;
 
         private RestStopItem(int clickStatus, Inventory.Item.ItemType t, float x, float y, float relSca, Texture tex) {
             super(x,y,relSca,tex,GameCanvas.TextureOrigin.MIDDLE);
@@ -606,11 +894,40 @@ public class RestStopMode implements Screen, InputProcessor {
             type = t;
             toggleState = UNSELECTED;
             overlay = Color.WHITE;
+            glowing = false;
         }
 
         /** Switch the toggle state of the item */
         private void switchState() {
             toggleState = toggleState == UNSELECTED ? SELECTED : UNSELECTED;
+        }
+
+        /** Switch the asset between the glowing and non-glowing version */
+        private void switchGlow() {
+            switch (type) {
+                case SNACK:
+                    if (glowing) {
+                        texture = itemTextures.get(MANGO);
+                        relativeScale = ITEM_SIZE_SCALE;
+                    } else {
+                        texture = snackGlowTex;
+                        relativeScale = ITEM_SIZE_SCALE * 1.4f;
+                    }
+                    break;
+                case DVD:
+                    if (glowing) {
+                        texture = itemTextures.get(GNOME_COUNTRY);
+                        relativeScale = ITEM_SIZE_SCALE;
+                    } else {
+                        texture = dvdGlowTex;
+                        relativeScale = ITEM_SIZE_SCALE * 1.4f;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            glowing = !glowing;
         }
 
         /** Switch the overlay of the item */

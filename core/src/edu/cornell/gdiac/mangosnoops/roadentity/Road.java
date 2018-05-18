@@ -72,6 +72,11 @@ public class Road extends RoadObject {
     /** How quickly vroom time depreciates */
     private float VROOM_TIME_DEPRECIATION = 25f;
 
+    private float VROOM_DISABLED_TIME = 50f;
+    private float vroomDisabledTimeRemaining = VROOM_DISABLED_TIME;
+
+    private boolean canVroom = true;
+
     /** Speed constants */
     private float NORMAL_SPEED = 1.4f;
     private float VROOM_SPEED = 3f;
@@ -144,6 +149,14 @@ public class Road extends RoadObject {
 
     public void update(float delta) {
 
+        if (!canVroom) {
+            vroomDisabledTimeRemaining -= delta * VROOM_TIME_DEPRECIATION;
+            if (vroomDisabledTimeRemaining <= 0) {
+                canVroom = true;
+                vroomDisabledTimeRemaining = VROOM_DISABLED_TIME;
+            }
+        }
+
 //        if (state != RoadState.NORMAL) {
 //            System.out.println(state);
 //        }
@@ -213,10 +226,6 @@ public class Road extends RoadObject {
             // Draw grass on the right
             canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, ROAD_X_ROTATION, 0);
 
-            // Draw exit road
-            if (y > exitY) {
-                canvas.drawRoadObject(roadTexture, EXIT_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, ROAD_X_ROTATION, 0);
-            }
         }
     }
 
@@ -225,7 +234,14 @@ public class Road extends RoadObject {
      * which will subsequently decay over time, back to the normal speed.
      */
     public void setVrooming() {
-        state = RoadState.ACCELERATING;
+        if (canVroom) {
+            state = RoadState.ACCELERATING;
+            canVroom = false;
+        }
+    }
+
+    public boolean canCarVroom() {
+        return canVroom;
     }
 
     /**
@@ -233,6 +249,17 @@ public class Road extends RoadObject {
      */
     public float getSpeed() {
         return currentSpeed;
+    }
+
+    /**
+     * Multiply the normal speed, acceleration, deceleration
+     * and the vroom speed by speed factor s
+     */
+    public void setSpeedFactor(float s) {
+        NORMAL_SPEED *= s;
+        DECELERATION *= s;
+        VROOM_ACCELERATION *= s;
+        VROOM_SPEED *= s;
     }
 
     /**

@@ -37,6 +37,12 @@ public class FlashingImage extends Image {
         hidden = true;
     }
 
+    public FlashingImage(float x, float y, float relSca, Texture tex, GameCanvas.TextureOrigin o) {
+        super(x, y, relSca, tex, o);
+        isVisibleToUser = false;
+        hidden = true;
+    }
+
     /**
      * Set the visibility to inVis.
      * @param isVis visibility

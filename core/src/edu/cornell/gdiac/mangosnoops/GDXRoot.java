@@ -90,6 +90,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	}
 
 
+
 	/**
 	 * Load the file names that are contained in the saved levels directory
 	 * and places them in the SAVED_LEVELS array.
@@ -157,9 +158,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		currLevel = 0;
 		loadLevelsRestStops();
 		loadSavedFilenames();
-		for (String s : LEVELS) {
-			System.out.println(s);
-		}
+//		for (String s : LEVELS) {
+//			System.out.println(s);
+//		}
 
 		// other initialization shenanigans
 		Gdx.graphics.setTitle("Home Away From Gnome");
@@ -171,7 +172,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		soundController = new SoundController(settings);
 		reststop = new RestStopMode(canvas, manager, REST_STOPS.get(currLevel),soundController);
 		levelSelect = new LevelMenuMode(canvas, manager,soundController, NUM_TUTORIALS, SAVED_LEVELS.size);
-		playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
+		playing = new GameMode(-1, canvas,settings,soundController,LEVELS.get(currLevel));
 		start = new StartMenuMode(canvas, manager,settings,soundController);
 
 		loading.setScreenListener(this);
@@ -192,7 +193,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		screen.dispose();
 		canvas.dispose();
 		canvas = null;
-	
+
 		// Unload all of the resources
 		manager.clear();
 		manager.dispose();
@@ -286,6 +287,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				playing.setScreenListener(this);
 				//Gdx.input.setInputProcessor(playing);
 				setScreen(playing);
+				playing.playCutScene(0);
 				start.dispose();
 				start = null;
 			}
@@ -297,7 +299,8 @@ public class GDXRoot extends Game implements ScreenListener {
 				String next = levelSelect.loadSavedLevel() ? SAVED_LEVELS.get(nextIdx - NUM_TUTORIALS) : LEVELS.get(nextIdx);
 				currLevel = nextIdx;
 //				System.out.println("NOW PLAYING LEVEL: " + next);
-				playing = new GameMode(canvas,settings,soundController,next);
+//				System.out.println("CURR LEVEL IS NOW: " + currLevel);
+				playing = new GameMode(currLevel, canvas,settings,soundController,next);
 				playing.preLoadContent(manager);
 				playing.loadContent(manager);
 				playing.setScreenListener(this);
@@ -314,7 +317,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			levelSelect = null;
 
 		} else if (screen == playing) {
-			if(playing.exitFromPause){
+		    if(playing.exitFromPause || playing.beatGame()){
+		    	playing.exitToMainMenu = false;
 				playing.exitFromPause = false;
 				start = new StartMenuMode(canvas,manager,settings,soundController);
 				start.setScreenListener(this);
@@ -347,8 +351,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (!(LEVELS.get(currLevel).contains("tut")))
 				saveGame(reststop.getPlayerInv());
 
-			playing = new GameMode(canvas,settings,soundController,LEVELS.get(currLevel));
-			System.out.println("EXITING REST STOP, NOW PLAYING LEVEL: " + LEVELS.get(currLevel));
+			playing = new GameMode(currLevel, canvas,settings,soundController,LEVELS.get(currLevel));
+//			System.out.println("EXITING REST STOP, NOW PLAYING LEVEL: " + LEVELS.get(currLevel));
 			playing.preLoadContent(manager);
 			playing.loadContent(manager);
 			playing.setInventory(reststop.getPlayerInv()); // manually set inventory bc new GameMode

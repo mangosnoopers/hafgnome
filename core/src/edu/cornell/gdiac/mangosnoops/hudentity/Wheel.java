@@ -34,7 +34,7 @@ public class Wheel extends Image {
         // change wheel angle and lateral screen movement
         if ((in != null && inArea(in)) || (keyboardTurn && dx != 0)) {
             if (ang >= -90 && ang <= 90) {
-                ang -= dx;
+                ang -= dx/2.0f;
             }
 
             if (ang < -90) {
@@ -48,7 +48,7 @@ public class Wheel extends Image {
 
         } else {
             // Move back to original angle
-            ang = ang + 0.2f * -ang;
+            ang = ang + 0.1f * -ang;
             return false;
         }
     }

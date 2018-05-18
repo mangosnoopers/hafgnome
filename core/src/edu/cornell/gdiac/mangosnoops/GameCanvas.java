@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.decals.SimpleOrthoGroupStrategy;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
@@ -62,7 +63,6 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
-
 	// World drawing
 	PerspectiveCamera camera;
 	DecalBatch batch;
@@ -70,6 +70,7 @@ public class GameCanvas {
 
 	Viewport viewport;
 
+	private float shakeAmnt;
 	private float CAM_HEIGHT = 4.32f;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
 	private float NORMAL_CAM_FOV = 67;
@@ -339,13 +340,15 @@ public class GameCanvas {
      * 
      * @param image  Texture to draw as an overlay
 	 */
-    public void drawBackground(Texture image) {
+    public void drawBackground(Texture image, float speedRatio) {
 		if (!active) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
 
-		draw(image, TextureOrigin.MIDDLE, 0.5f, 0.5f, 1f, true, 0, Color.WHITE);
+		float drawY = 0.72f - 0.12f * speedRatio;
+
+		draw(image, TextureOrigin.MIDDLE, 0.5f, drawY, 1f, true, 0, Color.WHITE);
     }
 
 
@@ -559,6 +562,7 @@ public class GameCanvas {
 	}
 	/** With shake amount */
 	public void drawShake(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle, Color c, float shakeAmnt) {
+		this.shakeAmnt = shakeAmnt;
 		Vector2 oxy = new Vector2();
 		switch(o) {
 			case MIDDLE:
@@ -857,6 +861,21 @@ public class GameCanvas {
     }
 
 	/**
+<<<<<<< HEAD
+	 * Draws text on the screen.
+	 *
+	 * @param text The string to draw
+	 * @param font The font to use
+	 * @param x The x-coordinate of the lower-left corner
+	 * @param y The y-coordinate of the lower-left corner
+	 */
+	public void drawTextShake(String text, BitmapFont font, float x, float y) {
+		drawText(text, font, x, y+shakeAmnt);
+	}
+
+	/**
+=======
+>>>>>>> 0d89fb8016bb5635d0231208c9b63352d4d8db05
 	 * Draws text on the screen with a specific color.
 	 */
 	public void drawText(String text, BitmapFont font, float x, float y, Color color) {
@@ -902,6 +921,19 @@ public class GameCanvas {
 		float ypos = y*getHeight() + (layout.height) / 2.0f;
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, layout, xpos, ypos);
+	}
+
+	public void drawTextCenterOriginShake(String text, BitmapFont font, float x, float y) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+
+		GlyphLayout layout = new GlyphLayout(font,text);
+		float xpos = x*getWidth() - (layout.width) / 2.0f;
+		float ypos = y*getHeight() + (layout.height) / 2.0f;
+		font.setColor(Color.WHITE);
+		font.draw(spriteBatch, layout, xpos, ypos + shakeAmnt);
 	}
 
 	/**
@@ -988,6 +1020,13 @@ public class GameCanvas {
 		objectDecal.rotateX(xRotationAngle);
 		objectDecal.rotateY(yRotationAngle);
 		batch.add(objectDecal);
+	}
+
+	public void drawExitSign(String text, Texture t, BitmapFont font, float x, float y, float z) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
 	}
 
 	public void drawWorld() {

@@ -180,8 +180,15 @@ public class Child extends Image {
      */
     public void decreaseMood() {
         if (getCurrentMood() != Mood.SLEEP) {
-            happiness -= 250;
+            happiness -= 251;
             if (happiness < 0) happiness = 0;
+        }
+    }
+
+    public void increaseMood() {
+        if (getCurrentMood() != Mood.SLEEP) {
+            happiness += 251;
+            if (happiness > 1000) happiness = 1000;
         }
     }
 

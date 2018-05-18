@@ -23,6 +23,7 @@ package edu.cornell.gdiac.mangosnoops;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.AssetManager;
@@ -76,6 +77,8 @@ public class GameplayController {
 
 	/** An array of events for this level */
 	protected Array<Event> events;
+	private ObjectSet<Radio.Genre> genres;
+
 	/** The Horn! */
 	private Horn horn;
 
@@ -89,6 +92,8 @@ public class GameplayController {
 	private Image healthGaugePointer;
 
 	private Image masterShaker; //apply shake to this object and will shake all HUDObjects
+
+	private RearviewDVD rearviewDVD;
 
 	/** If there is sun shining right now */
 	public boolean sunShine;
@@ -115,6 +120,9 @@ public class GameplayController {
 	/** Grill FilmStrip information */
 	protected static final int GRILL_FILMSTRIP_ROWS = 1;
 	protected static final int GRILL_FILMSTRIP_COLS = 4;
+
+	/** Rearview DVD file */
+	private static final String REARVIEW_DVD_FILE = "images/rearview_dvd.png";
 
 	// Graphics assets for the entities
 	/** The texture file for the flame **/
@@ -150,7 +158,10 @@ public class GameplayController {
     private static final String VISOR_OPEN_FILE = "images/visor_open.png";
     private static final String VISOR_CLOSED_FILE = "images/visor_closed.png";
 	/** The texture file for the road */
-	private static final String ROAD_FILE = "images/road.png";
+	private static final String SUBURB_ROAD_TEXTURE = "images/road_suburb.png";
+	private static final String MIDWEST_ROAD_TEXTURE = "images/road_midwest.png";
+	private static final String HIGHWAY_ROAD_TEXTURE = "images/road_highway.png";
+	private static final String MOUNTAINS_ROAD_TEXTURE = "images/road_mountains.png";
 	/** The texture file for the grass */
 	private static final String GRASS_FILE = "images/grass.png";
 	/** The texture file for the exit */
@@ -182,8 +193,8 @@ public class GameplayController {
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
 	private static final String SAT_AUSTRALIA_FILE = "SatQuestions/australia.png";
-    private static final String SAT_HOTDOGS_FILE = "SatQuestions/hotdogs.jpg";
-    private static final String SAT_HOTLEGS_FILE = "SatQuestions/hotlegs.jpg";
+    private static final String SAT_HOTDOGS_FILE = "SatQuestions/hotdogs.png";
+    private static final String SAT_HOTLEGS_FILE = "SatQuestions/hotlegs.png";
     private static final String SAT_JAPAN_FILE = "SatQuestions/japan.png";
     private static final String SAT_JUPITER_FILE = "SatQuestions/jupiter.png";
     private static final String SAT_NEPTUNE_FILE = "SatQuestions/neptune.png";
@@ -203,18 +214,25 @@ public class GameplayController {
 	/** Speed signs */
 	private static final String SPEEDLIMIT_25_FILE = "images/billboards/speedLimit25.png";
 	private static final String SPEEDLIMIT_55_FILE = "images/billboards/speedLimit55.png";
+	private static final String SPEEDLIMIT_65_FILE = "images/billboards/speedLimit65.png";
 	private static final String SPEEDLIMIT_80_FILE = "images/billboards/speedLimit80.png";
 	/** Billboard font */
 	private static String BILLBOARD_FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** The font file to use for scores */
-	private static String FONT_FILE = "fonts/ComicSans.ttf";
+	private static String FONT_FILE = "fonts/Roadgeek 2005 Series E.ttf";
 	/** The Horn! */
 	private static final String HORN_FILE = "images/DashHUD/Horn.png";
     /** Cracks */
     private static final String CRACKS_FILE = "images/cracks.png";
 
+    /** Rearview DVD Texture */
+    private Texture rearviewDVDTexture;
+
 	/** Texture for road */
-	private Texture roadTexture;
+	private Texture suburbRoadTexture;
+	private Texture midwestRoadTexture;
+	private Texture mountainsRoadTexture;
+	private Texture highwayRoadTexture;
 	/** Texture for grass */
 	private Texture grassTexture;
 	/** Texture for exit */
@@ -315,6 +333,7 @@ public class GameplayController {
 	/** Speed sign textures */
 	private Texture speedLimit25Tex;
 	private Texture speedLimit55Tex;
+	private Texture speedLimit65Tex;
 	private Texture speedLimit80Tex;
 	/** Other roadside assets */
 	private Texture sunflowerTex;
@@ -330,6 +349,10 @@ public class GameplayController {
 	private static final String SUNFLOWER = "sunflower";
 	private static final String TREE = "tree";
 	private static final String TOPIARY = "topiary";
+	private static final String SPEEDLIMIT_25 = "speed limit 25";
+	private static final String SPEEDLIMIT_55 = "speed limit 55";
+	private static final String SPEEDLIMIT_65 = "speed limit 65";
+	private static final String SPEEDLIMIT_80 = "speed limit 80";
 
 	/** An object map between roadside image names and their textures */
 	private ObjectMap<String, Texture> roadsideTexs;
@@ -347,6 +370,29 @@ public class GameplayController {
 	private static final int INV_CB = 0;
 	private static final int INV_NUM_SLOTS = 2;
 
+	// SPEECH BUBBLE / MUSIC REQUESTS
+	private static final String TUT_SPEECH = "images/Tutorial/speechbubble_small.png";
+	private static final String TUT_SPEECH_REVERSE = "images/Tutorial/speechbubble_small_reverse.png";
+	private Texture speechTexture;
+	private Texture speechReverseTexture;
+	private Image speechNosh;
+	private Image speechNed;
+	private String noshDialogue = null; //null if saying nothing, otherwise draw bubble with this text
+	private String nedDialogue = null; //null if saying nothing, otherwise draw bubble with this text
+	private float stamp = 0;
+	private float stamp2 = 0;
+	private int nedNumRequests = 0;
+	private int noshNumRequests = 0;
+	private Radio.Genre nedRequestedGenre;
+	private Radio.Genre noshRequestedGenre;
+	private boolean nedRequestFailed = false;
+	private boolean noshRequestFailed = false;
+	private static final float NED_BUBBLE_X = 0.45f;
+	private static final float NED_BUBBLE_Y = 0.85f;
+	private static final float NOSH_BUBBLE_X = 0.64f;
+	private static final float NOSH_BUBBLE_Y = 0.9f;
+
+
 	/** Enum specifying the region this level takes place in. */
 	public enum Region {
 		SUBURBS, HIGHWAY, MIDWEST, COLORADO;
@@ -357,6 +403,8 @@ public class GameplayController {
 	public Image getMasterShaker() { return masterShaker; }
 
 	public Array<RoadImage> getRoadsideObjs() { return roadsideObjs; }
+
+	public RearviewDVD getRearviewDVD() { return rearviewDVD; }
 
 	public ObjectMap<String, Texture> getRoadsideTexs() { return roadsideTexs; }
 
@@ -409,8 +457,16 @@ public class GameplayController {
 		assets.add(SNACK0_FILE);
 		manager.load(GRASS_FILE, Texture.class);
 		assets.add(GRASS_FILE);
-		manager.load(ROAD_FILE, Texture.class);
-		assets.add(ROAD_FILE);
+		manager.load(SUBURB_ROAD_TEXTURE, Texture.class);
+		assets.add(SUBURB_ROAD_TEXTURE);
+		manager.load(REARVIEW_DVD_FILE, Texture.class);
+		assets.add(REARVIEW_DVD_FILE);
+		manager.load(MOUNTAINS_ROAD_TEXTURE, Texture.class);
+		assets.add(MOUNTAINS_ROAD_TEXTURE);
+		manager.load(HIGHWAY_ROAD_TEXTURE, Texture.class);
+		assets.add(HIGHWAY_ROAD_TEXTURE);
+		manager.load(MIDWEST_ROAD_TEXTURE, Texture.class);
+		assets.add(MIDWEST_ROAD_TEXTURE);
 		manager.load(EXIT_FILE, Texture.class);
 		assets.add(EXIT_FILE);
 		manager.load(DASH_FILE,Texture.class);
@@ -490,6 +546,10 @@ public class GameplayController {
 		assets.add(SPEEDLIMIT_80_FILE);
         manager.load(CRACKS_FILE, Texture.class);
         assets.add(CRACKS_FILE);
+		manager.load(TUT_SPEECH, Texture.class);
+		assets.add(TUT_SPEECH);
+		manager.load(TUT_SPEECH_REVERSE, Texture.class);
+		assets.add(TUT_SPEECH_REVERSE);
 	}
 
 	/**
@@ -520,7 +580,11 @@ public class GameplayController {
 		radioNoshDislike = createTexture(manager, RADIO_NOSHDISLIKE_FILE);
 		nedTexture = createTexture(manager, NED_FILE);
 		noshTexture = createTexture(manager, NOSH_FILE);
-		roadTexture = createTexture(manager, ROAD_FILE);
+		suburbRoadTexture = createTexture(manager, SUBURB_ROAD_TEXTURE);
+		rearviewDVDTexture = createTexture(manager, REARVIEW_DVD_FILE);
+		mountainsRoadTexture = createTexture(manager, MOUNTAINS_ROAD_TEXTURE);
+		highwayRoadTexture = createTexture(manager, HIGHWAY_ROAD_TEXTURE);
+		midwestRoadTexture = createTexture(manager, MIDWEST_ROAD_TEXTURE);
 		grassTexture = createTexture(manager, GRASS_FILE);
 		exitTexture = createTexture(manager, EXIT_FILE);
 		dashTexture = createTexture(manager, DASH_FILE);
@@ -575,6 +639,7 @@ public class GameplayController {
 		exitSignTex = createTexture(manager, EXIT_SIGN_FILE);
 		speedLimit25Tex = createTexture(manager, SPEEDLIMIT_25_FILE);
 		speedLimit55Tex = createTexture(manager, SPEEDLIMIT_55_FILE);
+		speedLimit65Tex = createTexture(manager, SPEEDLIMIT_65_FILE);
 		speedLimit80Tex = createTexture(manager, SPEEDLIMIT_80_FILE);
 		if (manager.isLoaded(BILLBOARD_FONT_FILE)) {
 			billboardFont = manager.get(BILLBOARD_FONT_FILE,BitmapFont.class);
@@ -582,6 +647,8 @@ public class GameplayController {
 			billboardFont = null;
 		}
 		cracksTexture = createTexture(manager, CRACKS_FILE);
+		speechTexture = createTexture(manager, TUT_SPEECH);
+		speechReverseTexture = createTexture(manager, TUT_SPEECH_REVERSE);
 	}
 
 	protected Texture createTexture(AssetManager manager, String file) {
@@ -597,12 +664,13 @@ public class GameplayController {
 	 * Creates a new GameplayController with no active elements.
 	 *
 	 */
-	public GameplayController(Region reg, GameCanvas canvas, float endY,
+	public GameplayController(String levelNameString, Region reg, GameCanvas canvas, float endY,
 							  Array<Enemy> enemies,
 							  Array<Event> e,
 							  ObjectMap<String,Radio.Genre> s,
 							  SoundController sc,
 							  Array<RoadImage> roadsideObjs) {
+	    System.out.println(levelNameString);
 		region = reg;
 		soundController = sc;
 		songs = s;
@@ -611,6 +679,12 @@ public class GameplayController {
 							radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 							radioNoshDislike, songs);
         enemiezSave = new Array<Enemy>();
+
+        // create an set of the genres that exist in this level
+		genres = new ObjectSet<Radio.Genre>();
+		for (Radio.Genre g : songs.values()) {
+			genres.add(g);
+		}
 
         /* 1.) Walk through the enemiez array, and construct a mapping
                that goes from enemy -> copy of enemy.
@@ -655,7 +729,7 @@ public class GameplayController {
 		inventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
 					 INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> i = new Array<Inventory.Slot>();
-		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,1));
+		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.DVD,0));
 		i.add(new Inventory.Slot(i,inventory, Inventory.Item.ItemType.SNACK,3));
 		inventory.load(i);
 
@@ -663,14 +737,14 @@ public class GameplayController {
 		initialInventory = new Inventory(INV_X_LEFT,INV_Y_BOTTOM,INV_RELSCA,INV_CB,wheelTexture,
 							INV_SLOT_WIDTH, INV_SLOT_HEIGHT, INV_NUM_SLOTS);
 		Array<Inventory.Slot> iCopy = new Array<Inventory.Slot>();
-		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,1));
+		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.DVD,0));
 		iCopy.add(new Inventory.Slot(iCopy,initialInventory, Inventory.Item.ItemType.SNACK,3));
 		initialInventory.load(iCopy);
 
 		satTextures = new HashMap<String, Texture>();
 
 		roadsideTexs = new ObjectMap<String, Texture>();
-		loadRoadsideTexs();
+//		loadRoadsideTexs();
 
 		// load roadside objects and create a save
 		this.roadsideObjs = roadsideObjs;
@@ -693,6 +767,10 @@ public class GameplayController {
 		roadsideTexs.put(SUNFLOWER, new Texture(SUNFLOWER_FILE));
 		roadsideTexs.put(TREE, new Texture(TREE_FILE));
 		roadsideTexs.put(TOPIARY, new Texture(TOPIARY_FILE));
+		roadsideTexs.put(SPEEDLIMIT_25, new Texture(SPEEDLIMIT_25_FILE));
+		roadsideTexs.put(SPEEDLIMIT_55, new Texture(SPEEDLIMIT_55_FILE));
+		roadsideTexs.put(SPEEDLIMIT_65, new Texture(SPEEDLIMIT_65_FILE));
+		roadsideTexs.put(SPEEDLIMIT_80, new Texture(SPEEDLIMIT_80_FILE));
 	}
 
 	/**
@@ -782,7 +860,7 @@ public class GameplayController {
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
-		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot);
+		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen);
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrip(noshTexture, NOSH_FILMSTRIP_ROWS, NOSH_FILMSTRIP_COLS);
@@ -790,6 +868,13 @@ public class GameplayController {
 		yonda.setDashTexture(dashTexture);
 		getCar().setGaugeTexture(healthGaugeTexture);
 		getCar().setGaugePointerTexture(healthPointerTexture);
+
+		// roadside textures
+		loadRoadsideTexs();
+
+		// speech-bubble related stuff
+		speechNed = new Image(NED_BUBBLE_X , NED_BUBBLE_Y, 0.1f, speechTexture);
+		speechNosh = new Image(NOSH_BUBBLE_X, NOSH_BUBBLE_Y, 0.1f, speechTexture);
 
 		horn = new Horn(0.17f, 0.1845f, 0.17f, 0.01f, hornTexture);
 
@@ -801,6 +886,8 @@ public class GameplayController {
 		rearviewCover = new Image(0.78f, 0.86f, 0.3f, rearviewCoverTexture,GameCanvas.TextureOrigin.MIDDLE);
         rearviewEnemy = new RearviewEnemy(0.78f, 0.8f, 0.18f,0, rearviewGnomeTexture);
 		rearviewDamageIndicator = new Image(0.78f, 0.86f, 0.3f, rearviewDamageTexture,GameCanvas.TextureOrigin.MIDDLE);
+
+		rearviewDVD = new RearviewDVD(0.78f, 0.865f, 0.3f, rearviewDVDTexture);
 
 		// TODO CHANGE THIS LOL
 		for (Enemy e : enemiez) {
@@ -818,17 +905,34 @@ public class GameplayController {
             	e.setFilmStrip(grillTexture, GRILL_FILMSTRIP_ROWS, GRILL_FILMSTRIP_COLS);
 				((Grill) e).setFireTexture(flameTexture);
 //				System.out.println(((Grill) e).getFlames().size);
-				enemiez.addAll(((Grill) e).getFlames());
-				enemiezSave.addAll(((Grill) e).getFlames());
+				for (int i = 0; i < ((Grill) e).getFlames().size; i++) {
+					enemiez.add(((Grill) e).getFlames().get(i));
+					enemiezSave.add(((Grill) e).getFlames().get(i));
+				}
 			}
 		}
 
 		wheel = new Wheel(0.17f,0.19f, 0.55f, 0, wheelTexture);
-		vroomStick = new VroomStick(0.19f, 0.19f,0.33f, 0.3f, vroomStickTexture);
+		vroomStick = new VroomStick(0.17f, 0.17f,0.33f, 0.3f, vroomStickTexture);
 		visor = new Visor(visorTexture, sun, sun2, sun3, white);
 		yonda.setVisor(visor);
 
-		road.setRoadTexture(roadTexture);
+		switch (getRegion()) {
+			case COLORADO:
+				road.setRoadTexture(mountainsRoadTexture);
+				break;
+			case MIDWEST:
+				road.setRoadTexture(midwestRoadTexture);
+				break;
+			case HIGHWAY:
+				road.setRoadTexture(highwayRoadTexture);
+				break;
+			case SUBURBS:
+				road.setRoadTexture(suburbRoadTexture);
+				break;
+            default:
+				road.setRoadTexture(suburbRoadTexture);
+		}
 		road.setGrassTexture(grassTexture);
 		road.setExitTexture(exitTexture);
   }
@@ -860,6 +964,8 @@ public class GameplayController {
 						break;
 					case FLAME:
 						Flame newFlame = new Flame(enemy);
+						newFlame.setX(newFlame.getStartPos().x);
+						newFlame.setY(newFlame.getStartPos().y);
 						newFlame.setFilmStrip(flameTexture, 1, 1);
 						enemyToCopy.put(enemy, newFlame);
 					default:
@@ -945,6 +1051,218 @@ public class GameplayController {
 	}
 
 	/**
+	 * Returns a genre that the child would like of the genres present in this
+	 * level.
+	 * @param ned True if the requesting child is ned, false otherwise
+	 * @returns the genre if one was found, null otherwise
+	 */
+	private Radio.Genre getLikedGenre(boolean ned) {
+		// ned prefers pop and thug
+		if (ned) {
+			if (genres.contains(Radio.Genre.POP))
+				return Radio.Genre.POP;
+			else if (genres.contains(Radio.Genre.THUG))
+				return Radio.Genre.THUG;
+		}
+
+		// nosh prefers comedy and action
+		else {
+			if (genres.contains(Radio.Genre.ACTION))
+				return Radio.Genre.ACTION;
+			else if (genres.contains(Radio.Genre.COMEDY))
+				return Radio.Genre.COMEDY;
+		}
+
+		// creepy and jazz are neutral
+		if (genres.contains(Radio.Genre.JAZZ))
+			return Radio.Genre.JAZZ;
+		else if (genres.contains(Radio.Genre.CREEPY))
+			return Radio.Genre.CREEPY;
+
+		// no suitable genre was found
+		return null;
+	}
+
+	/**
+	 * Returns the genre as a dialogue-suitable string
+	 * @param g the Genre the child wants to switch to
+	 */
+	private String genreToString(Radio.Genre g) {
+		switch (g) {
+			case CREEPY:
+				return "Creepy";
+			case COMEDY:
+				return "Comedy";
+			case ACTION:
+				return "Action";
+			case JAZZ:
+				return "Jazz";
+			case POP:
+				return "Pop";
+			case THUG:
+				return "Thug";
+			case CLASSICAL:
+				return "Classical";
+			default:
+				break;
+		}
+		return "";
+	}
+
+	/**
+	 * Process a child's initial music request.
+	 * @param ned True if the requesting child is ned, false otherwise
+	 */
+	private void initSongRequest(boolean ned) {
+		Radio.Genre g = getLikedGenre(ned);
+
+		if (g != null) {
+			// get appropriate dialogue
+			String dialogue = "Can you switch to\n" + genreToString(g) + "?";
+
+			// display popup for ned - first request
+			if (ned && yonda.getNed().isAwake()) {
+				nedDialogue = dialogue;
+				nedRequestedGenre = g;
+				nedRequestFailed = false;
+				stamp2 = stamp;
+				nedNumRequests = 1;
+			}
+
+			// display popup for nosh - first request
+			else if (yonda.getNosh().isAwake()) {
+				noshDialogue = dialogue;
+				noshRequestedGenre = g;
+				noshRequestFailed = false;
+				stamp2 = stamp;
+				noshNumRequests = 1;
+			}
+		}
+	}
+
+	/**
+	 * Continue to check for song requests and update accordingly.
+	 */
+	private void processSongRequests() {
+		// check for ned requests
+		if (nedRequestedGenre != null && yonda != null && yonda.getNed().isAwake()
+				&& radio != null) {
+			// request fulfilled
+			if (radio.getCurrentStation() != null && radio.getCurrentStation().getGenre() == nedRequestedGenre) {
+				nedDialogue = "Yay! I like " + genreToString(nedRequestedGenre) + "!";
+
+				// end of success dialogue
+				if (stamp - stamp2 > 2) {
+					nedNumRequests = 0;
+					nedDialogue = null;
+					nedRequestedGenre = null;
+					stamp2 = stamp;
+				}
+			}
+
+			// request not fulfilled yet
+			else {
+				if (!nedRequestFailed) {
+					if (stamp - stamp2 > 1 && stamp - stamp2 < 2) {
+						if (nedDialogue == null) nedNumRequests++;
+						nedDialogue = "Can you switch to\n" + genreToString(nedRequestedGenre) + "?";
+					} else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						yonda.getNed().setMoodShifting(true, false);
+						nedDialogue = null;
+						stamp2 = stamp;
+					}
+				}
+
+				// request failed
+				if (nedNumRequests == 3) {
+					if (nedDialogue == null) {
+						yonda.getNed().setMood(Child.Mood.CRITICAL);
+						nedDialogue = "You took too long!";
+						nedRequestFailed = true;
+						stamp2 = stamp;
+					} else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						nedNumRequests = 0;
+						nedDialogue = null;
+						nedRequestedGenre = null;
+					}
+				}
+			}
+
+		}
+
+		// check for nosh requests
+		if (noshRequestedGenre != null && yonda != null && yonda.getNosh().isAwake()
+				&& radio != null) {
+			// request fulfilled
+			if (radio.getCurrentStation() != null && radio.getCurrentStation().getGenre() == noshRequestedGenre) {
+				noshDialogue = "Yay! I like " + genreToString(noshRequestedGenre) + "!";
+
+				// end of success dialogue
+				if (stamp-stamp2 > 2) {
+					noshNumRequests = 0;
+					noshDialogue = null;
+					noshRequestedGenre = null;
+					stamp2 = stamp;
+				}
+			}
+
+			// request not fulfilled yet
+			else {
+				if (!noshRequestFailed) {
+					if (stamp - stamp2 > 1 && stamp - stamp2 < 2) {
+						if (noshDialogue == null) noshNumRequests++;
+						noshDialogue = "Can you switch to\n" + genreToString(noshRequestedGenre) + "?";
+					} else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						yonda.getNosh().setMoodShifting(true, false);
+						noshDialogue = null;
+						stamp2 = stamp;
+					}
+				}
+
+				// request failed
+				if (noshNumRequests == 3) {
+					if (noshDialogue == null) {
+						yonda.getNosh().setMood(Child.Mood.CRITICAL);
+						noshDialogue = "You took too long!";
+						noshRequestFailed = true;
+						stamp2 = stamp;
+					}
+					else if (stamp - stamp2 > 3 && stamp - stamp2 < 5) {
+						noshNumRequests = 0;
+						noshDialogue = null;
+						noshRequestedGenre = null;
+					}
+				}
+			}
+
+		}
+
+	}
+
+	/**
+	 * Display a speech bubble for the children.
+	 * @param canvas
+	 * @param displayFont
+	 */
+	public void speechBubble(GameCanvas canvas, BitmapFont displayFont) {
+		if(nedDialogue != null) {
+			speechNed.drawNoShake(canvas);
+			displayFont.setColor(Color.BLACK);
+			canvas.drawText(nedDialogue, displayFont,
+					canvas.getWidth()*(NED_BUBBLE_X+0.01f),canvas.getHeight()*(NED_BUBBLE_Y+0.08f),
+					Color.BLACK);
+		}
+		if(noshDialogue != null){
+			speechNosh.drawNoShake(canvas);
+			displayFont.setColor(Color.BLACK);
+			canvas.drawText(noshDialogue, displayFont,
+					canvas.getWidth()*(NOSH_BUBBLE_X+0.01f),canvas.getHeight()*(NOSH_BUBBLE_Y+0.08f),
+					Color.BLACK);
+		}
+	}
+
+
+	/**
 	 * Makes the first event in the event queue occur and removes it from the
 	 * queue if it should occur at the current time. Does nothing if the first
 	 * event in the queue should not occur at this time or if the queue is empty.
@@ -985,7 +1303,15 @@ public class GameplayController {
 						}
 						break;
 					case SAT_QUESTION:
-						satQuestions.askQuestion();
+						if (ned.isAwake()) {
+							satQuestions.askQuestion();
+						}
+						break;
+					case NED_REQUESTS_MUSIC:
+						initSongRequest(true);
+						break;
+					case NOSH_REQUESTS_MUSIC:
+						initSongRequest(false);
 						break;
 					default:
 						break;
@@ -1002,6 +1328,11 @@ public class GameplayController {
 	 * @param delta  Number of seconds since last animation frame
 	 */
 	public void resolveActions(InputController input, float delta) {
+		// Update counter
+		stamp += road.getSpeed() * delta;
+
+		// Check for song requests and process if they exist
+		processSongRequests();
 
 		// Update world objects (road and gnome positions)
         road.update(delta);
@@ -1021,6 +1352,8 @@ public class GameplayController {
 			}
         }
 
+        rearviewDVD.update(delta);
+
         for (RoadImage img : roadsideObjs) {
         	img.update(delta, road.getSpeed());
 		}
@@ -1031,18 +1364,18 @@ public class GameplayController {
   		boolean mousePressed = input.isMousePressed();
   		horn.updateHonk(delta);
   		visor.update(delta);
+		satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
         if(in != null) {
-			satQuestions.update(in, input.getNumKeyPressed(), yonda.getNed());
             visor.resolveInput(new Vector2(in), input.isPrevMousePressed());
 			if(!wheel.update(new Vector2(in), dr.x, input.isTurnPressed()))
-				vroomStick.update(new Vector2(in), dr.y);
+				vroomStick.update(new Vector2(in), dr.y, road.canCarVroom());
 			touchscreen.update(new Vector2(in), dr.x);
 			if(horn.update(new Vector2(in), delta)) { soundController.beepSound(); }
 			inventory.update(new Vector2(in), mousePressed);
 		}
 		else{
 			wheel.update(null, dr.x, input.isTurnPressed());
-			vroomStick.update(null, dr.y);
+			vroomStick.update(null, dr.y, road.canCarVroom());
 			touchscreen.update(null, dr.x);
 			inventory.update(null, mousePressed);
 		}
@@ -1090,8 +1423,11 @@ public class GameplayController {
 		// checks this every 200 frames (may need to adjust)
 
 		if(dvdPlayer.isPlayingDvd()) {
+		    rearviewDVD.showDVD();
 			ned.setMood(Child.Mood.HAPPY);
 			nosh.setMood(Child.Mood.HAPPY);
+		} else {
+			rearviewDVD.hideDVD();
 		}
 		if (r.getCurrentStation() != null && r.isSoundOn() && r.getknobAng() <= 0 && counter%200 == 0) {
 
@@ -1146,9 +1482,9 @@ public class GameplayController {
 			switch (inventory.getItemInHand().getItemType()) {
 				case SNACK:
 					if(yonda.getNosh().inChildArea(droppedPos) && yonda.getNosh().isAwake() && yonda.getNosh().getCurrentMood() != Child.Mood.HAPPY) {
-						yonda.getNosh().setMood(Child.Mood.HAPPY);
+						yonda.getNosh().increaseMood();
 					} else if(yonda.getNed().inChildArea(droppedPos) && yonda.getNed().isAwake() && yonda.getNed().getCurrentMood() != Child.Mood.HAPPY) {
-						yonda.getNed().setMood(Child.Mood.HAPPY);
+						yonda.getNed().increaseMood();
 					} else {
 						inventory.cancelTake();
 						return;
@@ -1170,10 +1506,9 @@ public class GameplayController {
 		droppedPos = inputController.getClickPos();
 	}
 
-	public void draw(GameCanvas canvas) {
+	public void draw(GameCanvas canvas, BitmapFont font) {
 
 	    canvas.setCameraFOV(road.getSpeedRatio());
-
 
 		//Gnomez
 		for (Enemy e : enemiez) {
@@ -1181,7 +1516,12 @@ public class GameplayController {
 		}
 
 		for (RoadImage i : roadsideObjs) {
-			i.draw(canvas, roadsideTexs.get(i.getName()));
+			if (!i.getName().equals(EXIT_SIGN)) {
+				i.draw(canvas, roadsideTexs.get(i.getName()));
+			} else {
+				i.draw(canvas, roadsideTexs.get(i.getName()), font);
+			}
+
 		}
 
 		//Draw sun effect part 1
@@ -1209,7 +1549,7 @@ public class GameplayController {
 		wheel.draw(canvas);
 
 		// Touchscreen
-		touchscreen.draw(canvas, displayFont);
+		touchscreen.draw(canvas, font);
 
 		// Horn
 		horn.draw(canvas, wheel.getAng());
@@ -1229,6 +1569,8 @@ public class GameplayController {
 		yonda.getNed().draw(canvas);
 		rearviewCover.draw(canvas);
 
+		rearviewDVD.draw(canvas);
+
 		// Draw inventory
 		inventory.draw(canvas);
 		inventory.drawItemInHand(canvas);
@@ -1239,6 +1581,9 @@ public class GameplayController {
 			yonda.getNosh().drawSpeechBubble(canvas);
 		}
 
+		// Draw speech bubbles for music requests if necessary
+		speechBubble(canvas, font);
+
 		//Draw sun effect part 2
 		visor.drawSunB(canvas, sunShine);
 
@@ -1246,6 +1591,6 @@ public class GameplayController {
 		visor.draw(canvas);
 
 
-		satQuestions.draw(canvas, displayFont);
+		satQuestions.draw(canvas, font);
 	}
 }
