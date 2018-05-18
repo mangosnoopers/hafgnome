@@ -1,6 +1,7 @@
 
 package edu.cornell.gdiac.mangosnoops;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.*;
 import edu.cornell.gdiac.mangosnoops.hudentity.Radio.*;
 import edu.cornell.gdiac.mangosnoops.roadentity.*;
@@ -50,6 +51,8 @@ public class LevelObject {
 
     /** An internal tracker for number of miles traversed so far in the level */
     private float localMiles;
+    /** Total number of miles in the level */
+    private float totalMiles;
     /** Y-coordinate for end of the level */
     private float levelEndY;
     /** Constant for extra time before end of level */
@@ -219,6 +222,7 @@ public class LevelObject {
      */
     public LevelObject(String file) throws IOException, InvalidFormatException, RuntimeException {
         localMiles = LEVEL_START_EXTRA;
+        totalMiles = localMiles;
 
         // Initialize collections
         songs = new ObjectMap<String,Genre>();
@@ -248,6 +252,20 @@ public class LevelObject {
             throw new RuntimeException("Unsupported file type");
         }
 
+        // After parsing through level update any exit sign miles
+        updateSigns();
+
+    }
+
+    /**
+     * Update exit signs once the total miles is known.
+     */
+    private void updateSigns() {
+        for (RoadImage i : roadsideObjs) {
+            if (i.getName() == EXIT_SIGN) {
+                i.setMiles(milesToInt(totalMiles) - i.getMiles());
+            }
+        }
     }
 
     /**
@@ -606,13 +624,15 @@ public class LevelObject {
             levelEndY = y + LEVEL_END_EXTRA;
         }
 
+        // Update total miles
+        totalMiles = localMiles;
+
     }
 
     /**
      * Converts the miles from a float to some understandable int.
      */
     private int milesToInt(float miles) {
-        //TODO
-        return 10;
+        return (int) miles;
     }
 }
