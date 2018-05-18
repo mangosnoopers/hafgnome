@@ -301,7 +301,7 @@ public class SettingsMenu {
             else if(selectButton.inArea(in)){
                 soundController.playClick();
                 fullScreen = !fullScreen;
-                resizeScreen();;
+                resizeScreen();
             }
             // SELECT BOX
             else if (currentResImage.inArea(in)) {

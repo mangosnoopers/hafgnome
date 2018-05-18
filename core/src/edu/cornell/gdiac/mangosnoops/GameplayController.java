@@ -193,8 +193,8 @@ public class GameplayController {
 	private static final String SAT_WHALE_FILE = "SatQuestions/whale.png";
 	private static final String SAT_LEMONMAN_FILE = "SatQuestions/lemonMan.png";
 	private static final String SAT_AUSTRALIA_FILE = "SatQuestions/australia.png";
-	private static final String SAT_HOTDOGS_FILE = "SatQuestions/hotdogs.jpg";
-	private static final String SAT_HOTLEGS_FILE = "SatQuestions/hotlegs.jpg";
+	private static final String SAT_HOTDOGS_FILE = "SatQuestions/hotdogs.png";
+	private static final String SAT_HOTLEGS_FILE = "SatQuestions/hotlegs.png";
 	private static final String SAT_JAPAN_FILE = "SatQuestions/japan.png";
 	private static final String SAT_JUPITER_FILE = "SatQuestions/jupiter.png";
 	private static final String SAT_NEPTUNE_FILE = "SatQuestions/neptune.png";
