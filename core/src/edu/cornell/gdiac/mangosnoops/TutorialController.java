@@ -102,7 +102,7 @@ public class TutorialController extends GameplayController {
     public void start(float x, float y) {
         super.start(x, y);
         tutVroomArrow = new FlashingImage(0.34f, 0.1f,0.25f, tutVroomArrowTexture);
-        tutHealth = new FlashingImage(0.305f, -0.01f, 0.3f, tutHealthTexture);
+        tutHealth = new FlashingImage(0.323f, 0.02f, 0.25f, tutHealthTexture);
         tutKeys = new FlashingImage(0.06f, 0.45f, 0.12f, tutKeysTexture);
         tutGauge = new FlashingImage(0.34f, 0.05f, 0.175f, tutGaugeTexture);
         tutMirrorNedSnack = new FlashingImage(0.65f, 0.7f, 0.3f, tutMirrorTexture);
