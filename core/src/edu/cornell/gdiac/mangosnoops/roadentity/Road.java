@@ -226,10 +226,6 @@ public class Road extends RoadObject {
             // Draw grass on the right
             canvas.drawRoadObject(grassTexture, RIGHT_GRASS_X, y, ROAD_HOVER_DISTANCE, GRASS_WIDTH, GRASS_HEIGHT, ROAD_X_ROTATION, 0);
 
-            // Draw exit road
-            if (y > exitY) {
-                canvas.drawRoadObject(roadTexture, EXIT_X, y, ROAD_HOVER_DISTANCE, ROAD_WIDTH, ROAD_HEIGHT, ROAD_X_ROTATION, 0);
-            }
         }
     }
 
