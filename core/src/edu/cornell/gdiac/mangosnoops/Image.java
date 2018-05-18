@@ -199,6 +199,8 @@ public class Image {
         this.origin = i.origin;
     }
 
+    public static float getCurrentShakeAmount() { return currentShakeAmount; }
+
     public Texture getTexture() {return texture; }
 
     public static float getScreenWidth() {

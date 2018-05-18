@@ -858,7 +858,7 @@ public class GameplayController {
 				radioSoundOff, radioNedLike, radioNedDislike, radioNoshLike,
 				radioNoshDislike, songs);
 		dvdPlayer = new DvdPlayer();
-		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen, dvdSlot);
+		touchscreen = new TouchScreen(radio, dvdPlayer, onTouchscreen, offTouchscreen);
 		masterShaker = new Image();
         sunShine = false;
 		yonda.getNosh().setChildFilmStrip(noshTexture, NOSH_FILMSTRIP_ROWS, NOSH_FILMSTRIP_COLS);

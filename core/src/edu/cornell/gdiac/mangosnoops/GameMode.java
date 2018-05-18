@@ -741,7 +741,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PLAY:
-					if(!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 4 || indexLevel == 6)) {
+					if(!exitModule & (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 						play(delta);
 						gameState = GameState.PAUSED;
 						exitModule = false;
@@ -751,7 +751,7 @@ public class GameMode implements Screen {
 					}
 					break;
 				case PAUSED:
-					if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 4 || indexLevel == 6)) {
+					if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 						exitModule = inputController.isMousePressed();
 						if(exitModule) gameState = GameState.PLAY;
 					} else {
@@ -999,7 +999,7 @@ public class GameMode implements Screen {
 			case PLAY:
 				break;
 			case PAUSED:
-				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 4 || indexLevel == 6)) {
+				if(!exitModule && (indexLevel == 1 || indexLevel == 2 || indexLevel == 3 || indexLevel == 4)) {
 					tutorialModule = new Image(0.5f, 0.5f, 0.7f, tipFlamingoTex, GameCanvas.TextureOrigin.MIDDLE);
 					switch(indexLevel) {
 						case 1:
@@ -1010,12 +1010,12 @@ public class GameMode implements Screen {
 							tutorialModule.setTexture(tipVisorTex);
 							tutorialModule.drawNoShake(canvas);
 							break;
-						case 4:
-							tutorialModule.setTexture(tipGrillTex);
+						case 3:
+							tutorialModule.setTexture(tipSatTex);
 							tutorialModule.drawNoShake(canvas);
 							break;
-						case 6:
-							tutorialModule.setTexture(tipSatTex);
+						case 4:
+							tutorialModule.setTexture(tipGrillTex);
 							tutorialModule.drawNoShake(canvas);
 							break;
 						default:

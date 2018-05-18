@@ -14,7 +14,7 @@ import edu.cornell.gdiac.mangosnoops.Image;
 
 public class Radio {
     /** Rotation speed */
-    private static float SLIDER_LEFTMOSTPOS = 0.7561f;
+    private static float SLIDER_LEFTMOSTPOS = 0.6f;
     private static float SLIDER_RIGHTMOSTPOS = 0.9439f;
 
     private float slider_left;
@@ -59,10 +59,10 @@ public class Radio {
                  Texture nod,
                  ObjectMap<String,Genre> songs) {
         knob = new Image(0.75f, 0.225f, 0.07f, 0, tex, GameCanvas.TextureOrigin.MIDDLE);
-        slider = new Image(0.85f, 0.15f, 0.02f, 0.05f, s, GameCanvas.TextureOrigin.MIDDLE);
-        pointer = new Image(0.85f, 0.17f, 0.03f, 0.05f, p, GameCanvas.TextureOrigin.MIDDLE);
-        sound_on = new Image(0.91f, 0.3f, 0.045f, 0.05f, son, GameCanvas.TextureOrigin.MIDDLE);
-        sound_off = new Image(0.91f, 0.3f, 0.045f, 0.05f, soff, GameCanvas.TextureOrigin.MIDDLE);
+        slider = new Image(0.83f, 0.15f, 0.025f, 0.07f, s, GameCanvas.TextureOrigin.MIDDLE);
+        pointer = new Image(0.83f, 0.17f, 0.04f, 0.05f, p, GameCanvas.TextureOrigin.MIDDLE);
+        sound_on = new Image(0.9f, 0.3f, 0.045f, 0.04f, son, GameCanvas.TextureOrigin.MIDDLE);
+        sound_off = new Image(0.9f, 0.3f, 0.045f, 0.04f, soff, GameCanvas.TextureOrigin.MIDDLE);
         ned_like = new Image(0.79f, 0.3f, 0.05f, 0, nel, GameCanvas.TextureOrigin.MIDDLE);
         ned_dislike = new Image(0.79f, 0.3f, 0.07f, 0, ned, GameCanvas.TextureOrigin.MIDDLE);
         nosh_like = new Image(0.79f, 0.3f, 0.05f, 0, nol, GameCanvas.TextureOrigin.MIDDLE);
@@ -151,8 +151,8 @@ public class Radio {
         if(numStations != 0) {
             lastStation = currentStation;
             int stationNumber;
-            float oneUnit = (SLIDER_RIGHTMOSTPOS - SLIDER_LEFTMOSTPOS)/numStations;
-            stationNumber = (int)((pointer.getPosition().x-SLIDER_LEFTMOSTPOS)/oneUnit);
+            float oneUnit = (slider_right - slider_left)/numStations;
+            stationNumber = (int)((pointer.getPosition().x-slider_left)/oneUnit);
             if(stationNumber >= numStations) stationNumber = numStations-1;
             currentStation = stations.get(stationNumber);
         }
@@ -171,8 +171,8 @@ public class Radio {
      */
     public void update(Vector2 in, float dx) {
         setStation();
-        slider_left = 0.85f - 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
-        slider_right = 0.85f + 0.5f*slider.getTexture().getWidth()*0.02f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
+        slider_left = 0.83f - 0.5f*slider.getTexture().getWidth()*0.025f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
+        slider_right = 0.83f + 0.5f*slider.getTexture().getWidth()*0.025f*slider.getScreenHeight()/(slider.getTexture().getHeight()*slider.getScreenWidth());
         if(in != null && (slider.inArea(in) || pointer.inArea(in))) {
             soundOn = true;
             playStatic = true;
@@ -224,8 +224,8 @@ public class Radio {
             }
         }
         displayFont.setColor(Color.FIREBRICK);
-        canvas.drawTextCenterOrigin(getCurrentStationName(), displayFont, 0.85f, 0.3f);
-        canvas.drawTextCenterOrigin("\n" + getCurrentStationSong(), displayFont, 0.85f, 0.28f);
+        canvas.drawTextCenterOriginShake(getCurrentStationName(), displayFont, 0.82f, 0.3f);
+        canvas.drawTextCenterOriginShake("\n" + getCurrentStationSong(), displayFont, 0.82f, 0.28f);
     }
 
     /**

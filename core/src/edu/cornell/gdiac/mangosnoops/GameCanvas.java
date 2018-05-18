@@ -62,6 +62,7 @@ public class GameCanvas {
 	/** Cache object to unify everything under a master draw method */
 	private TextureRegion holder;
 
+	private Image masterImage;
 
 	// World drawing
 	PerspectiveCamera camera;
@@ -69,6 +70,8 @@ public class GameCanvas {
 	Array<Decal> roadDecals;
 
 	Viewport viewport;
+
+	private float shakeAmnt;
 
 	private float CAM_HEIGHT = 4.32f;
 	private Vector3 CAM_START_POS = new Vector3(0f, -10f, 4.32f);
@@ -107,6 +110,7 @@ public class GameCanvas {
 		//camera.rotate(150, 0, 1, 0);
 		camera.update();
 
+		masterImage = new Image();
 		batch = new DecalBatch(new CameraGroupStrategy(camera));
 
 		Gdx.gl20.glDepthMask(false);
@@ -561,6 +565,7 @@ public class GameCanvas {
 	}
 	/** With shake amount */
 	public void drawShake(Texture image, TextureOrigin o, float x, float y, float scale, boolean widthScale, float angle, Color c, float shakeAmnt) {
+		this.shakeAmnt = shakeAmnt;
 		Vector2 oxy = new Vector2();
 		switch(o) {
 			case MIDDLE:
@@ -859,6 +864,18 @@ public class GameCanvas {
     }
 
 	/**
+	 * Draws text on the screen.
+	 *
+	 * @param text The string to draw
+	 * @param font The font to use
+	 * @param x The x-coordinate of the lower-left corner
+	 * @param y The y-coordinate of the lower-left corner
+	 */
+	public void drawTextShake(String text, BitmapFont font, float x, float y) {
+		drawText(text, font, x, y+shakeAmnt);
+	}
+
+	/**
 	 * Draws text on the screen with a specific color.
 	 */
 	public void drawText(String text, BitmapFont font, float x, float y, Color color) {
@@ -904,6 +921,19 @@ public class GameCanvas {
 		float ypos = y*getHeight() + (layout.height) / 2.0f;
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, layout, xpos, ypos);
+	}
+
+	public void drawTextCenterOriginShake(String text, BitmapFont font, float x, float y) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+
+		GlyphLayout layout = new GlyphLayout(font,text);
+		float xpos = x*getWidth() - (layout.width) / 2.0f;
+		float ypos = y*getHeight() + (layout.height) / 2.0f;
+		font.setColor(Color.WHITE);
+		font.draw(spriteBatch, layout, xpos, ypos + shakeAmnt);
 	}
 
 	/**
