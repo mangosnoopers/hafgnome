@@ -617,51 +617,58 @@ public class GameMode implements Screen {
 
     public void displayCutScene1(float delta) {
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			gameState = GameState.INTRO;
-		}
+//		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+//			gameState = GameState.INTRO;
+//		}
 
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
 			case 0:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_0_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_0_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 1;
 					cutsceneDeltaSum = 0;
 				}
 				break;
             case 1:
-                if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_1_TIME) {
+                if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_1_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 	cutSceneIndex = 2;
                 	cutsceneDeltaSum = 0;
 				}
 				break;
 			case 2:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_2_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_2_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 3;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 3:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_3_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_3_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 4;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 4:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_4_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_4_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 5;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 5:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_5_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_5_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 6;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 6:
-				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_1_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 7;
 					cutsceneDeltaSum = 0;
 				}
@@ -680,45 +687,51 @@ public class GameMode implements Screen {
 
 	public void displayCutScene3(float delta) {
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-		    exitToMainMenu = true;
-		}
+//		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+//		    exitToMainMenu = true;
+//		}
 
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
 			case 0:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_0_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_0_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 1;
 					cutsceneDeltaSum = 0;
 				}
 				break;
             case 1:
-                if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_1_TIME) {
+                if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_1_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 	cutSceneIndex = 2;
                 	cutsceneDeltaSum = 0;
 				}
 				break;
 			case 2:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_2_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_2_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 3;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 3:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_3_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_3_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 4;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 4:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_4_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_4_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 5;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 5:
-				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_5_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_3_SCENE_5_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 6;
 					cutsceneDeltaSum = 0;
 				}
@@ -732,51 +745,58 @@ public class GameMode implements Screen {
 
 	public void displayCutScene0(float delta) {
 
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			gameState = GameState.INTRO;
-		}
+//		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+//			gameState = GameState.INTRO;
+//		}
 
 		cutsceneDeltaSum += delta;
 
 		switch (cutSceneIndex) {
 			case 0:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_0_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_0_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 1;
 					cutsceneDeltaSum = 0;
 				}
 				break;
             case 1:
-                if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_1_TIME) {
+                if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_1_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 	cutSceneIndex = 2;
                 	cutsceneDeltaSum = 0;
 				}
 				break;
 			case 2:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_2_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_2_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 3;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 3:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_3_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_3_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 4;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 4:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_4_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_4_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 5;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 5:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_5_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_5_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 6;
 					cutsceneDeltaSum = 0;
 				}
 				break;
 			case 6:
-				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_6_TIME) {
+				if (cutsceneDeltaSum >= CUTSCENE_0_SCENE_6_TIME
+						|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 					cutSceneIndex = 7;
 					cutsceneDeltaSum = 0;
 				}
